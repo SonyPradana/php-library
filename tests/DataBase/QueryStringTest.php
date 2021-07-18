@@ -10,7 +10,8 @@ class QueryStringTest extends TestCase
    */
   public function it_correct_select_query(): void
   {
-    require_once dirname(__DIR__) . '\DataBase\Helper.php';
+    require_once dirname(__DIR__) . '/DataBase/Helper.php';
+
     $select = array();
 
     // tester
