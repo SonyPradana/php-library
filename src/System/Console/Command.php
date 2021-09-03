@@ -99,6 +99,11 @@ class Command
     return $res;
   }
 
+  protected function clear_line()
+  {
+    echo "\033[1K";
+  }
+  
   /** code (bash): 31 */
   protected function textRed(string $text): string
   {
