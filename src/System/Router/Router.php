@@ -52,11 +52,11 @@ class Router
   /**
    * Grouping routes using same prafix
    * @param sting $prefix Prefix of router exprestion
-   * @return RouterFactory Function ti collact routes
+   * @return RouteFactory Function ti collact routes
    */
   public static function prefix(string $prefix)
   {
-    return new RouterFactory($prefix);
+    return new RouteFactory($prefix);
   }
 
   /**

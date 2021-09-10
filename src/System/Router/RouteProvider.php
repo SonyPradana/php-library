@@ -2,7 +2,7 @@
 
 namespace System\Router;
 
-class RouterProvider
+class RouteProvider
 {
 
   private $routes = Array();

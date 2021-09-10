@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use System\Router\Router;
-use System\Router\RouterProvider;
+use System\Router\RouteProvider;
 
 class BasicRouteTest extends TestCase
 {
@@ -31,7 +31,7 @@ class BasicRouteTest extends TestCase
 
   private function registerGroupRouter()
   {
-    Router::prefix('/page/')->routes(function(RouterProvider $router) {
+    Router::prefix('/page/')->routes(function(RouteProvider $router) {
       $router->get('one', function() {
         echo 'page one';
       });
