@@ -45,6 +45,9 @@ class BasicRouteTest extends TestCase
   {
     Router::match( ['get'], '/get', function() {
       echo "render success using get";
+    })->name('name_is_get');
+    Router::match( ['head'], '/head', function() {
+      echo "render success using get over head method";
     });
     Router::match( ['post'], '/post', function() {
       echo "render success using post";
@@ -157,6 +160,7 @@ class BasicRouteTest extends TestCase
   {
     $this->registerRouterDiferentMethod();
     $get = $this->getRespone('get', '/get');
+    $head = $this->getRespone('head', '/head');
     $post = $this->getRespone('post', '/post');
     $put = $this->getRespone('put', '/put');
     $patch = $this->getRespone('patch', '/patch');
@@ -167,6 +171,11 @@ class BasicRouteTest extends TestCase
       "render success using get",
       $get,
       "render success using get"
+    );
+    $this->assertEquals(
+      "render success using get over head method",
+      $head,
+      "render success using get over head method"
     );
     $this->assertEquals(
       "render success using post",
@@ -252,5 +261,19 @@ class BasicRouteTest extends TestCase
       $page,
       'it must render "page is not found"'
     );
+  }
+
+  /**
+   * @test
+   */
+  public function it_can_pass_global_middleware(): void
+  {
+    require_once dirname(__DIR__) . '\Router\TestMiddleware.php';
+
+    Router::middleware([
+      new TestMiddleware,
+    ]);
+
+    $this->assertEquals('oke', $_SERVER['middleware'], 'all route must pass global middleware');
   }
 }
