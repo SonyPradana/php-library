@@ -276,4 +276,32 @@ class BasicRouteTest extends TestCase
 
     $this->assertEquals('oke', $_SERVER['middleware'], 'all route must pass global middleware');
   }
+
+  /**
+   * @test
+   */
+  public function it_can_render_using_route_view(): void
+  {
+    require_once dirname(__DIR__) . '\Router\TestController.php';
+
+    Router::setConttoller(new TestController);
+
+    Router::view('/view', '\sample.html');
+    Router::view('/view-php', '\sample.php', ["contents" => ["say" => "hay"]]
+    );
+
+    // view: view-html
+    $this->assertEquals(
+      $this->getRespone('get', '/view'),
+      "<html><head></head><body></body></html>\n",
+      'it must sameoutput with template html'
+    );
+
+    // view: view-php
+    $this->assertEquals(
+      $this->getRespone('get', '/view-php'),
+      "<html><head></head><body><h1>hay</h1></body></html>\n",
+      'it must sameoutput with template html'
+    );
+  }
 }

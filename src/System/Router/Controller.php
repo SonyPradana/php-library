@@ -9,7 +9,7 @@ abstract class Controller
     call_user_func([$this, $invoke]);
   }
 
-  public static function renderView($view_name, $portal)
+  public static function renderView(string $view_path, array $portal = [])
   {
     // overwrite
   }
