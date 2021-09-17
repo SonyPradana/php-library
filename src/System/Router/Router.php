@@ -7,13 +7,6 @@ class Router
   private static $routes = Array();
   private static $pathNotFound = null;
   private static $methodNotAllowed = null;
-  /** @var Contoller */
-  private static $contoller;
-
-  public static function setConttoller(Controller $contoller) {
-    self::$contoller = $contoller;
-  }
-
   /**
    * Short hand to readable regex url
    */
@@ -88,13 +81,6 @@ class Router
         $middleware->handle();
       }
     }
-  }
-
-  public static function view(string $uri, string $view_name, array $portal = [])
-  {
-    return self::match('get', $uri,
-      fn() => self::$contoller::renderView($view_name, $portal)
-    );
   }
 
   /**
