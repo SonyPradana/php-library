@@ -1,0 +1,19 @@
+<?php
+
+class NewClass
+{
+	/** a const with Comment */
+	const COMMENT = null;
+	const CONST_0  = 0;
+	const CONST_1  = 1;
+	const CONST_2  = 2;
+	const CONST_3  = 3;
+	const CONST_4  = 4;
+	const CONST_5  = 5;
+	const CONST_6  = 6;
+	const CONST_7  = 7;
+	const CONST_8  = 8;
+	const CONST_9  = 9;
+	private const A_CONST = true;
+
+}

@@ -1,0 +1,24 @@
+<?php
+
+class NewClass
+{
+	/** 
+	 * Test
+	 * 
+	 * @var string
+	 */
+	private $test = "works";
+	private $test_0;
+	private $test_1;
+	private $test_2;
+	private $test_3;
+	private $test_4;
+	private $test_5;
+	private $test_6;
+	private $test_7;
+	private $test_8;
+	private $test_9;
+	/** @var int */
+	public $some_property = 1;
+
+}

@@ -1,0 +1,17 @@
+<?php
+
+use System\Template\Generate;
+
+class NewClass extends PHPUnit\Framework\TestCase implements testInterface
+{
+	use PhpParser\Builder\TraitUseAdaptation, PhpParser\Builder\TraitUse;
+
+	const TEST = null;
+
+	private $test;
+
+	function test()
+	{
+
+	}
+}
