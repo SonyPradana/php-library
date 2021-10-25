@@ -16,6 +16,7 @@ class Property
   public const PRIVATE_ = 1;
   public const PROTECTED_ = 2;
 
+  private $data_type;
   private $name;
   private $expecting;
 
@@ -36,7 +37,7 @@ class Property
 
   private function planTemplate(): string
   {
-    return $this->customize_template ?? "{{comment}}{{visibility}}{{static}}{{name}}{{expecting}};";
+    return $this->customize_template ?? "{{comment}}{{visibility}}{{static}}{{data type}}{{name}}{{expecting}};";
   }
 
   public function generate(): string
@@ -68,6 +69,9 @@ class Property
     // generate static
     $static = $this->is_static ? "static " : "";
 
+    // data type
+    $data_type = $this->data_type ?? "";
+
     // generate name
     $name = '$' . $this->name;
 
@@ -78,8 +82,8 @@ class Property
 
     // final
     return str_replace(
-      ["{{comment}}", "{{visibility}}", "{{static}}", "{{name}}", "{{expecting}}"],
-      [$comment, $visibility, $static, $name, $expecting],
+      ["{{comment}}", "{{visibility}}", "{{static}}", "{{data type}}", "{{name}}", "{{expecting}}"],
+      [$comment, $visibility, $static, $data_type, $name, $expecting],
       $tempalate
     );
   }
@@ -97,6 +101,13 @@ class Property
 
     return $this;
   }
+
+  public function dataType(string $data_type)
+  {
+    $this->data_type = $data_type . " ";
+    return $this;
+  }
+
   public function name(string $name)
   {
     $this->name = $name;

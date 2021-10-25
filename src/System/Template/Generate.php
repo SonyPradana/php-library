@@ -30,6 +30,9 @@ class Generate
   private $methods = [];
   private $body = [];
 
+  private $pre_replace = [[], []];
+  private $replace = [[], []];
+
   public function __construct(string $name = 'NewClass')
   {
     $this->name = $name;
@@ -59,7 +62,13 @@ class Generate
 
   public function generate(): string
   {
-    $class = $this->planTemplate();
+    // pre replace
+    $class = str_replace(
+      $this->pre_replace[0],
+      $this->pre_replace[1],
+      $this->planTemplate()
+    );
+
     $tab_dept = fn(int $dept) => str_repeat($this->tab_indent, ($dept * $this->tab_size));
 
     // scope: before
@@ -180,9 +189,13 @@ class Generate
     // end with new line
     $end = $this->end_with_newline ? "\n" : '';
 
+    // manual replace
+    $search = $this->replace[0] ?? null;
+    $replace = $this->replace[1] ?? null;
+
     return str_replace(
-      ["{{before}}", "{{comment}}", "{{rule}}", "{{head}}", "{{body}}", "{{end}}"],
-      [$before, $comment, $rule, $head, $body, $end],
+      ["{{before}}", "{{comment}}", "{{rule}}", "{{head}}", "{{body}}", "{{end}}", ...$search],
+      [$before, $comment, $rule, $head, $body, $end, ...$replace],
       $class
     );
   }
@@ -378,6 +391,32 @@ class Generate
       }
     }
 
+    return $this;
+  }
+
+  /**
+   * @param array|string $search Text to replace
+   * @param array|string $replace Text replacer
+   */
+  public function preReplace($search, $replace)
+  {
+    $search = is_array($search) ? $search : [$search];
+    $replace = is_array($replace) ? $replace : [$replace];
+
+    $this->pre_replace = [$search, $replace];
+    return $this;
+  }
+
+  /**
+   * @param array|string $search Text to replace
+   * @param array|string $replace Text replacer
+   */
+  public function replace($search, $replace)
+  {
+    $search = is_array($search) ? $search : [$search];
+    $replace = is_array($replace) ? $replace : [$replace];
+
+    $this->replace = [$search, $replace];
     return $this;
   }
 

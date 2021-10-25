@@ -4,7 +4,7 @@ namespace System\Template\Providers;
 
 use System\Template\Property;
 
-class Newproperty
+class NewProperty
 {
   public static function name(string $name)
   {

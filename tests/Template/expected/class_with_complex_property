@@ -19,6 +19,6 @@ class NewClass
 	private $test_8;
 	private $test_9;
 	/** @var int */
-	public $some_property = 1;
+	public int $some_property = 1;
 
 }

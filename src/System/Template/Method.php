@@ -150,9 +150,17 @@ class Method
     return $this;
   }
 
-  public function body(?array $body)
+  /**
+   * @param array|string|null $body Raw string body (delimete multy line with array)
+   */
+  public function body($body)
   {
-    $this->body = $body ?? [];
+    $body = $body ?? [];
+
+    $this->body = is_array($body)
+      ? $body
+      : [$body];
+
     return $this;
   }
 }

@@ -10,7 +10,7 @@ use System\Template\Property;
 use System\Template\PropertyPool;
 use System\Template\Providers\NewConst;
 use System\Template\Providers\NewFunction;
-use System\Template\Providers\Newproperty;
+use System\Template\Providers\NewProperty;
 
 class BasicTemplateTest extends TestCase
 {
@@ -52,7 +52,7 @@ class BasicTemplateTest extends TestCase
         PhpParser\Builder\TraitUse::class,
       ])
       ->consts(NewConst::name('TEST'))
-      ->propertys(Newproperty::name('test'))
+      ->propertys(NewProperty::name('test'))
       ->methods(NewFunction::name('test'))
       ->setEndWithNewLine();
 
@@ -81,7 +81,7 @@ class BasicTemplateTest extends TestCase
         PhpParser\Builder\TraitUse::class,
       ])
       ->consts(NewConst::name('TEST'))
-      ->propertys(Newproperty::name('test'))
+      ->propertys(NewProperty::name('test'))
       ->methods(
         NewFunction::name('test')
           ->customizeTemplate("{{comment}}{{before}}function {{name}}({{params}}){{return type}} {{{new line}}{{body}}{{new line}}}")
@@ -103,7 +103,7 @@ class BasicTemplateTest extends TestCase
 
     $class
     ->propertys(
-      Newproperty::name('test')
+      NewProperty::name('test')
         ->visibility(Property::PRIVATE_)
         ->addComment('Test')
         ->addLineComment()
@@ -122,6 +122,7 @@ class BasicTemplateTest extends TestCase
     $class
       ->addProperty('some_property')
       ->visibility(Property::PUBLIC_)
+      ->dataType('int')
       ->expecting("= 1")
       ->addVaribaleComment('int');
 
@@ -242,6 +243,30 @@ class BasicTemplateTest extends TestCase
       $this->getExpected('class_with_complex_comment'),
       $class->generate(),
       "this class have complex methods"
+    );
+  }
+
+  /**
+   * @test
+   */
+  public function it_can_generate_replaced_template(): void
+  {
+    // pre replace
+    $class = new Generate('old_class');
+
+    $class->preReplace('class', 'trait');
+
+    $this->assertEquals(
+      "<?php\n\ntrait old_class\n{\n\n}",
+      $class->generate()
+    );
+
+    // replace
+    $class->replace(['old_class'], ['new_class']);
+
+    $this->assertEquals(
+      "<?php\n\ntrait new_class\n{\n\n}",
+      $class->generate()
     );
   }
 }
