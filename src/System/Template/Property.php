@@ -76,9 +76,17 @@ class Property
     $name = '$' . $this->name;
 
     // generate value or expecting
-    $expecting = $this->expecting == null
-      ? ""
-      : " " . $this->expecting;
+    $expecting = "";
+    if ($this->expecting != null) {
+      $single_line  = $this->expecting[0] ?? "";
+      $multy_line   = implode(
+        "\n" . $tab_dept(1),
+        array_filter($this->expecting, fn($key) => $key > 0, ARRAY_FILTER_USE_KEY)
+      );
+      $expecting = count($this->expecting) > 1
+        ? " " . $single_line . "\n" . $tab_dept(1) . $multy_line
+        : " " . $single_line;
+    }
 
     // final
     return str_replace(
@@ -114,9 +122,15 @@ class Property
     return $this;
   }
 
-  public function expecting(string $expecting)
+  /**
+   * @param string|array $expecting Add expecting as string or array for multy line
+   */
+  public function expecting($expecting)
   {
-    $this->expecting = $expecting;
+    $this->expecting = is_array($expecting)
+      ? $expecting
+      : [$expecting];
+
     return $this;
   }
 }

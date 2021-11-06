@@ -122,9 +122,18 @@ class BasicTemplateTest extends TestCase
     $class
       ->addProperty('some_property')
       ->visibility(Property::PUBLIC_)
-      ->dataType('int')
-      ->expecting("= 1")
-      ->addVaribaleComment('int');
+      ->dataType('array')
+      ->expecting(
+        [
+          '= array(',
+          '  \'one\'    => 1,',
+          '  \'two\'    => 2,',
+          '  \'bool\'   => false,',
+          '  \'string\' => \'string\'',
+          ')'
+        ]
+      )
+      ->addVaribaleComment('array');
 
     $this->assertEquals(
       $this->getExpected('class_with_complex_property'),

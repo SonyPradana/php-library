@@ -18,7 +18,12 @@ class NewClass
 	private $test_7;
 	private $test_8;
 	private $test_9;
-	/** @var int */
-	public int $some_property = 1;
+	/** @var array */
+	public array $some_property = array(
+	  'one'    => 1,
+	  'two'    => 2,
+	  'bool'   => false,
+	  'string' => 'string'
+	);
 
 }
