@@ -1,7 +1,7 @@
 {
-    "name": "sonypradana/core",
-    "description": "Core code of php-mvc",
-    "keywords": ["framework", "php-mvc"],
+    "name": "sonypradana/php-library",
+    "description": "library to build php mvc",
+    "keywords": ["framework", "php-mvc", "php-library"],
     "license": "MIT",
     "authors": [
         {
