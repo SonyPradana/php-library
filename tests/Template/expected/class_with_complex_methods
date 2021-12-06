@@ -33,4 +33,22 @@ class NewClass
 		$bool = true;
 		return $bool;
 	}
+
+	/** 
+	 * @param string $param String param
+	 * @return string Same as param
+	 */
+	public function function_1(string $param): string
+	{
+		return $param;
+	}
+
+	/** 
+	 * @param string $param String param
+	 * @return string Same as param
+	 */
+	public function function_2(string $param): string
+	{
+		return $param;
+	}
 }

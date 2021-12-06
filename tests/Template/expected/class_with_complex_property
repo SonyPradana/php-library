@@ -25,5 +25,15 @@ class NewClass
 	  'bool'   => false,
 	  'string' => 'string'
 	);
+	/** @var string */
+	public string $from_pool_1 = 'pools_1';
+	/** @var string */
+	public string $from_pool_2 = 'pools_2';
+	/** @var string */
+	public string $from_pool_3 = 'pools_3';
+	/** @var string */
+	public string $from_pool_4 = 'pools_4';
+	/** @var string */
+	public string $from_pool_5 = 'pools_5';
 
 }

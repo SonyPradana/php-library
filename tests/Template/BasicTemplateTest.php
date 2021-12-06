@@ -135,6 +135,20 @@ class BasicTemplateTest extends TestCase
       )
       ->addVaribaleComment('array');
 
+    // add property using propertypool
+    $pool = new PropertyPool();
+    for ($i=1; $i < 6; $i++) {
+      $pool
+        ->name('from_pool_' . $i)
+        ->visibility(Property::PUBLIC_)
+        ->dataType('string')
+        ->expecting('= \'pools_' . $i . '\'')
+        ->addVaribaleComment('string')
+      ;
+    }
+    $class->propertys($pool);
+
+
     $this->assertEquals(
       $this->getExpected('class_with_complex_property'),
       $class->generate(),
@@ -183,6 +197,23 @@ class BasicTemplateTest extends TestCase
       ])
       ->addReturnComment('bool', 'true if true');
 
+      // add property using propertypool
+      $pool = new MethodPool();
+      for ($i=1; $i < 3; $i++) {
+        $pool
+          ->name('function_' . $i)
+          ->visibility(Property::PUBLIC_)
+          ->params(['string $param'])
+          ->setReturnType('string')
+          ->body([
+            'return $param;'
+          ])
+          ->addParamComment('string', '$param', 'String param')
+          ->addReturnComment('string', 'Same as param')
+        ;
+      }
+      $class->methods($pool);
+
     $this->assertEquals(
       $this->getExpected('class_with_complex_methods'),
       $class->generate(),
@@ -213,6 +244,16 @@ class BasicTemplateTest extends TestCase
       ->addConst('A_CONST')
       ->visibility(Constant::PRIVATE_)
       ->expecting('= true');
+
+    // add property using propertypool
+    $pool = new ConstPool();
+    for ($i=1; $i < 4; $i++) {
+      $pool
+        ->name('CONSTPOOL_' . $i)
+        ->expecting('= true')
+      ;
+    }
+    $class->consts($pool);
 
     $this->assertEquals(
       $this->getExpected('class_with_complex_const'),

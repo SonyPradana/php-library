@@ -100,7 +100,7 @@ class Constant
 
   public function equal(string $expecting_with)
   {
-    $this->expecting = " = " . $expecting_with;
+    $this->expecting = "= " . $expecting_with;
     return $this;
   }
 

@@ -307,7 +307,7 @@ class Generate
   }
 
   /**
-   * @param callable|Const $new_const callabe with param pools constan or single constans
+   * @param callable|Const|constPool $new_const callabe with param pools constan, single constans or constPool
    */
   public function consts($new_const)
   {
@@ -329,6 +329,15 @@ class Generate
       }
     }
 
+    // detect parameter is instance constPool
+    elseif ($new_const instanceof constPool) {
+      foreach ($new_const->getPools() as $pool) {
+        if ($pool instanceof Constant) {
+          $this->consts[] = $pool;
+        }
+      }
+    }
+
     return $this;
   }
 
@@ -338,7 +347,7 @@ class Generate
   }
 
   /**
-   * @param callable|Property $new_property callabe with param pools constan or single property
+   * @param callable|Property|PropertyPool $new_property callabe with param pools constan or single property
    */
   public function propertys($new_property)
   {
@@ -360,6 +369,15 @@ class Generate
       }
     }
 
+    // detect parameter is instance methodpool
+    elseif ($new_property instanceof PropertyPool) {
+      foreach ($new_property->getPools() as $pool) {
+        if ($pool instanceof Property) {
+          $this->propertys[] = $pool;
+        }
+      }
+    }
+
     return $this;
   }
 
@@ -369,7 +387,7 @@ class Generate
   }
 
   /**
-   * @param callable|Method $new_property callabe with param pools constan or single property
+   * @param callable|Method|MethodPool $new_property callabe with param pools constan or single property
    */
   public function methods($new_method)
   {
@@ -385,6 +403,14 @@ class Generate
       call_user_func_array($new_method, [$method]);
 
       foreach ($method->getPools() as $pool) {
+        if ($pool instanceof Method) {
+          $this->methods[] = $pool;
+        }
+      }
+    }
+    // detect parameter is instance methodpool
+    elseif ($new_method instanceof MethodPool) {
+      foreach ($new_method->getPools() as $pool) {
         if ($pool instanceof Method) {
           $this->methods[] = $pool;
         }
