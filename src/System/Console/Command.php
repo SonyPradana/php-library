@@ -10,15 +10,69 @@ class Command
   protected $CMD;
   protected $OPTION;
   protected $BASE_DIR;
+  /** @var string[] Option object mapper */
+  protected $option_mapper;
 
   public function __construct(array $argv)
   {
     // catch input argument from command line
-    $this->CMD    = $argv[1] ?? '';
-    $this->OPTION = Array(
-      $argv[2] ?? '',
-      $argv[3] ?? '',
-    );
+    array_shift($argv); // remove index 0
+
+    $this->CMD    = array_shift($argv) ?? '';
+    $this->OPTION = $argv;
+
+    // parse the option
+    // TODO: add default option
+    $this->option_mapper = $this->option_mapper($argv);
+  }
+
+  /**
+   * parse option to readable array option
+   *
+   * @param array $argv Option to parse
+   */
+  private function option_mapper(array $argv):  array
+  {
+    $options = [];
+    $options['name'] = $argv[0] ?? '';
+
+    foreach ($argv as $key => $option) {
+      if ($this->isCommmadParam($option)) {
+        $key_value = explode('=',  $option);
+        $name = preg_replace('/-(.*?)/', '', $key_value[0]);
+
+        // param have value
+        if (isset($key_value[1])) {
+          $options[$name] = $key_value[1];
+          continue;
+        }
+
+        // search value in next param
+
+        $next_key = $key + 1;
+        $default = true;
+
+        $next = $argv[$next_key] ?? $default;
+        $options[$name] = $this->isCommmadParam($next) ? $default : $next;
+      }
+    }
+
+    return $options;
+  }
+
+  private function isCommmadParam(string $command): bool
+  {
+    return substr($command, 0, 1) == '-' || substr($command, 0, 2) == '--';
+  }
+
+  protected function option(string $name, $default = null)
+  {
+    return $this->option_mapper[$name] ?? $default;
+  }
+
+  public function __get($name)
+  {
+    return $this->option($name);
   }
 
   // asset
