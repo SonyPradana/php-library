@@ -2,21 +2,11 @@
 
 namespace System\Database\MyQuery\Join;
 
-class LeftJoin extends Join
+class LeftJoin extends AbstractJoin
 {
-  public function __construct()
-  {
-    $this->_stringJoin = "";
-  }
-
-  protected function joinBuilder()
+  protected function joinBuilder(): string
   {
     $on = $this->splitJoin();
-    $this->_stringJoin =
-      "LEFT JOIN
-        $this->_tableName
-      ON
-        $on
-      ";
+    return "LEFT JOIN $this->_tableName ON $on";
   }
 }

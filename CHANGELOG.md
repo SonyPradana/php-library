@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add Parameter pool (`ConstPool`, `PropertyPool` and `MethodPool`) in method `Generate->consts(); Generate->propertys(); Generate->Methods()`
 - Add feature command name (get option directly from object name) ```Command:class```
+- Add `MyQuery->whereExits()` and `MyQuery->whereNotExits()`
+- Add `MyModel->join()` join method
+- Add MyCRUD `RESISTANT` to prevent changes from some table column
+- Add MyCRUD `hasOne` and `hasMany`
+- Add MyCRUD magic method `__get` and `__set`
+- `MyQuery` query quality, remove extra white space
+
+### Changed
+- MyQuery use `ConditionTrait` instead of `ConditionInterface`
+- MyQuery join method using `AbstractJoin` parameter instead of `Join`
+- Refactory `MyCRUD`
+- `MyCRUD` use `MyQuery` for database connection
+- `MyCRUD` change property `ID` to `PRIMERY_KEY` and `IDENTIFER`
 
 ## [0.1.3] - 2021-11-07
 ### Added

@@ -2,16 +2,11 @@
 
 namespace System\Database\MyQuery\Join;
 
-class InnerJoin extends Join
+class InnerJoin extends AbstractJoin
 {
-  protected function joinBuilder()
+  protected function joinBuilder(): string
   {
     $on = $this->splitJoin();
-    $this->_stringJoin =
-      "INNER JOIN
-        $this->_tableName
-      ON
-        $on
-      ";
+    return "INNER JOIN $this->_tableName ON $on";
   }
 }

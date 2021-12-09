@@ -2,6 +2,9 @@
 
 namespace System\Database;
 
+use System\Database\MyQuery\Join\AbstractJoin;
+use System\Database\MyQuery\Select;
+
 abstract class MyModel
 {
   /** kumpulan array filter */
@@ -26,6 +29,8 @@ abstract class MyModel
   protected $_limit_end = 10;
   /** @var string costume join */
   protected $_COSTUME_JOIN = '';
+  /** @var string[] costume join */
+  protected $_JOIN = [];
 
   const ORDER_ASC = 0;
   const ORDER_DESC = 1;
@@ -60,6 +65,7 @@ abstract class MyModel
     $this->_limit_end = $val;
     return $this;
   }
+
   /**
    * Set sort column and order
    * column name must register
@@ -71,6 +77,12 @@ abstract class MyModel
     return $this;
   }
 
+  /**
+   * Add costume where to query
+   *
+   * @param string $statment Where query statment
+   * @param array $bind Where query bind
+   */
   public function costumeWhere(string $statment, array $bind)
   {
     $this->_COSTUME_WHERE[] = array (
@@ -93,18 +105,45 @@ abstract class MyModel
     }
   }
 
+  /**
+   * Join oner or more to antoher table
+   *
+   * @param AbstractJoin $join Type of join
+   * @param bool $use_parent_table True will replace perent table to this table
+   */
+  public function join(AbstractJoin $join, bool $use_parent_table = true)
+  {
+    // rewrite table relation with this current table
+    if ($use_parent_table) {
+      $join->table($this->_TABELS[0]);
+    }
+
+    $this->_JOIN[] = $join->stringJoin();
+
+    return $this;
+  }
+
   // getter
+  /** Get this query */
   public function getQuery(): string
   {
-      return $this->query();
+    return $this->query();
   }
 
+  /**
+   * Get only where statment query
+   * */
   public function getWhere(): string
   {
-    return $this->grupQueryFilters( $this->mergeFilters() );
+    return $this->grupQueryFilters($this->mergeFilters());
   }
 
-  public function getMegerFilters()
+   /**
+   * Get filter array and groups filter
+   *
+   * @return array Groups array
+   */
+  public function getMegerFilters(): array
   {
     return $this->mergeFilters();
   }
@@ -114,7 +153,7 @@ abstract class MyModel
    * @return string query yg siap di esekusi
    */
   protected function query(): string
-{
+  {
     $table  = $this->_TABELS[0];
     $column = implode(', ', $this->_COLUMNS);
     $where_statment = $this->getWhere();
@@ -122,7 +161,10 @@ abstract class MyModel
     $sortOrder = $this->_SORT_ORDER;
     $limit = $this->_limit_start < 0 ? "LIMIT $this->_limit_end" : "LIMIT $this->_limit_start, $this->_limit_end";
     $limit = $this->_limit_end < 1 ? '' : $limit;
-    $join = $this->_COSTUME_JOIN;
+    // merge join
+    $this->_JOIN[] = $this->_COSTUME_JOIN;
+    $join = implode(" ", $this->_JOIN);
+
 
     return "SELECT $column FROM $table
       $join $where_statment ORDER BY $sortOrder $limit";
@@ -136,7 +178,9 @@ abstract class MyModel
     $table  = $this->_TABELS[0];
     $column = implode(', ', $this->_COLUMNS);
     $sortOrder = $this->_SORT_ORDER;
-    $join = $this->_COSTUME_JOIN;
+    // merge join
+    $this->_JOIN[] = $this->_COSTUME_JOIN;
+    $join = implode(" ", $this->_JOIN);
 
     return "SELECT $column FROM $table
       $join ORDER BY $sortOrder";
@@ -210,12 +254,13 @@ abstract class MyModel
     return "";
   }
 
+  /** Bind this query with set value from filter */
   protected function bindingFilters()
   {
     // binding from filter
     foreach ($this->mergeFilters() as $filters) {
       foreach ($filters['filters'] as $key => $val) {
-        if (isset( $val['value']) && $val['value'] !== '') {
+        if (isset($val['value']) && $val['value'] !== '') {
           $param = $key;
           if (isset($val['param'])) {
             $id = $val['id'] ?? '';
@@ -240,12 +285,13 @@ abstract class MyModel
 
   /**
    * Menapilakan single data dari query
+   *
    * @return array|bool False jika data tidak ditemukan
    */
   public function single()
   {
     if ($this->PDO == null) return [];
-    $this->PDO->query( $this->query() );
+    $this->PDO->query($this->query());
     $this->bindingFilters();
 
     return $this->PDO->single();
@@ -253,6 +299,8 @@ abstract class MyModel
 
   /**
    * Menampilkan data dari hasil query yang ditentukan sebelumnya
+   *
+   * @return array Single result array
    */
   public function result(): array
   {
@@ -265,16 +313,18 @@ abstract class MyModel
 
   /**
    * Menmpilkan semua data yang tersedia
+   *
+   * @return array Return data without using filter
    */
   public function resultAll(): array
   {
     if ($this->PDO == null) return [];                          // return null jika db belum siap
-    $this->PDO->query( $this->originQuery() );
+    $this->PDO->query($this->originQuery());
 
     // binding from filter
     foreach ($this->mergeFilters() as $filters) {
       foreach ($filters['filters'] as $key => $val) {
-        if (isset( $val['value']) && $val['value'] != '') {
+        if (isset($val['value']) && $val['value'] != '') {
           $param = $val['param'] ?? $key;
           $type = $val['type'] ?? null;
           $this->PDO->bind(":" . $param, $val['value'], $type);
@@ -293,8 +343,22 @@ abstract class MyModel
     return $this->PDO->resultset();
   }
 
+  /**
+   * Create new instance from static
+   *
+   * @param \MyPDO $pdo PDO DI
+  */
   public static function call(MyPDO $pdo = null)
   {
     return new static($pdo);
+  }
+
+  /**
+   * Its like costumeWhere() but more elegant syntax.
+   * Intreget with Select() class
+   */
+  public function select()
+  {
+    return new Select($this->_TABELS[0], $this->_COLUMNS, $this->PDO, ['query' => $this->query()]);
   }
 }

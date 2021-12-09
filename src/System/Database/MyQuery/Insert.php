@@ -9,7 +9,7 @@ class Insert extends Execute
   public function __construct(string $table_name, MyPDO $PDO = null)
   {
     $this->_table = $table_name;
-    $this->PDO = $PDO ?? new MyPDO();
+    $this->PDO = $PDO ?? MyPDO::getInstance();
   }
 
   public function __toString()

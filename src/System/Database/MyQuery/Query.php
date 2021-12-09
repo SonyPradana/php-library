@@ -35,7 +35,7 @@ abstract class Query
   protected $_strict_mode = true;
 
   // join
-  protected $_join = '';
+  protected $_join = [];
 
   /**
    * reset all property
@@ -89,11 +89,11 @@ abstract class Query
 
     if ($where != '' && $whereCostume != '') {
       // menggabungkan basic where dengan costume where
-      $whereString = $this->_strict_mode ? " AND $whereCostume" : " OR $whereCostume";
+      $whereString = $this->_strict_mode ? "AND $whereCostume" : "OR $whereCostume";
       return "WHERE $where $whereString";
     } elseif ($where == '' && $whereCostume != '') {
       // hanya menggunkan costume where
-      $whereString = $this->_strict_mode ? " $whereCostume" : " $whereCostume";
+      $whereString = $this->_strict_mode ? "$whereCostume" : "$whereCostume";
       return "WHERE $whereString";
     } elseif ($where != '') {
       // hanya mengunakan basic where

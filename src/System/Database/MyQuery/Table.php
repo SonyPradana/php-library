@@ -14,7 +14,7 @@ class Table
   public function __construct(string $table_name, MyPDO $PDO = null)
   {
     $this->table_name = $table_name;
-    $this->PDO = $PDO ?? new MyPDO();
+    $this->PDO = $PDO ?? MyPDO::getInstance();
   }
 
   public function insert()
@@ -54,7 +54,8 @@ class Table
         `CHARACTER_SET_NAME`,
         `COLLATION_NAME`,
         `IS_NULLABLE`,
-        `ORDINAL_POSITION`
+        `ORDINAL_POSITION`,
+        `COLUMN_KEY`
       FROM
         INFORMATION_SCHEMA.COLUMNS
       WHERE

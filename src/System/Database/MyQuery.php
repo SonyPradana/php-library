@@ -5,35 +5,51 @@ namespace System\Database;
 use System\Database\MyQuery\Table;
 
 /**
- * Query Builder untuk mempermudah pembuatan/penyusunan query,
- * penyusunan query menggunkan chain-function,
- * sehingga query lebih mudah dibaca/di-maintance
- *
- * TODO: join table support
- *
- * @return String String query yang disusun seblumnya
+ * Query Builder
  */
 class MyQuery
 {
   const ORDER_ASC   = 0;
   const ORDER_DESC  = 1;
+  /** @var MyPDO */
   protected $PDO    = null;
 
+  /**
+   * Create new Builder
+   *
+   * @param MyPDO $PDO The PDO connection, null give global instance
+   */
   public function __construct(MyPDO $PDO = null)
   {
-    $this->PDO = $PDO ?? new MyPDO();
+    $this->PDO = $PDO ?? MyPDO::getInstance();
   }
 
+  /**
+   * Create builder using invoke
+   *
+   * @param string $table_name Table name
+   */
   public function __invoke(string $table_name)
   {
-    return new Table($table_name, $this->PDO);
+    return $this->table($table_name);
   }
 
+ /**
+   * Create builder and set table name
+   *
+   * @param string $table_name Table name
+   */
   public function table(string $table_name)
   {
     return new Table($table_name, $this->PDO);
   }
 
+  /**
+   * Create Builder using static function
+   *
+   * @param string $table_name Table name
+   * @param MyPDO $PDO The PDO connection, null give global instance
+   */
   public static function from(string $table_name, MyPDO $PDO = null)
   {
     $conn = new MyQuery($PDO);

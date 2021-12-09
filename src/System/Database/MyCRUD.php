@@ -1,135 +1,133 @@
 <?php namespace System\Database;
 
+use System\Collection\Collection;
+use System\Collection\CollectionImmutable;
 use System\Database\CrudInterface;
 use System\Database\MyPDO;
+use System\Database\MyQuery\Join\InnerJoin;
 
 abstract class MyCRUD implements CrudInterface
 {
-  /** @var MyPDO */
-  protected MyPDO $PDO;
-
-  protected string $TABLE_NAME;
+  /** @var MyPDO|null */
+  protected $PDO = null;
+  /** @var string */
+  protected $TABLE_NAME;
   /** @var array */
-  protected array $COLUMNS = [];
-  // TODO: merge ke FILTERS
-  protected array $ID;
+  protected $COLUMNS = [];
+  /** @var string */
+  protected $PRIMERY_KEY = 'id';
+  /** @var string|int */
+  protected $IDENTIFER = '';
+  /** @var array set Column cant be modify */
+  protected $RESISTANT;
+  /** @var array orginal data from database */
+  protected $FRESH;
+
+  public function getID()
+  {
+    return $this->PRIMERY_KEY ?? null;
+  }
+
+  public function setID($val)
+  {
+    $this->IDENTIFER = $val;
+    return $this;
+  }
 
   protected function setter(string $key, $val)
   {
-    $this->COLUMNS[$key] = $val;
+    if (key_exists($key, $this->COLUMNS) && !isset($key, $this->RESISTANT)) {
+      $this->COLUMNS[$key] = $val;
+    }
     return $this;
   }
-  protected function getter($key)
+
+  protected function getter($key, $defaul = null)
   {
-    return $this->COLUMNS[$key];
+    return $this->COLUMNS[$key] ?? $defaul;
+  }
+
+  public function __get($name)
+  {
+    return $this->getter($name);
+  }
+
+  public function __set($name, $value)
+  {
+    $this->setter($name, $value);
   }
 
   public function read(): bool
   {
-    $get_colomn = $this->getColumn();
-    $get_table  = $this->TABLE_NAME;
-    $get_id_key = array_keys($this->ID)[0];
-    $get_id_val = array_values($this->ID)[0];
+    $key = $this->PRIMERY_KEY;
+    $value = $this->IDENTIFER;
+    $arr_column = array_keys($this->COLUMNS);
 
-    $this->PDO->query(
-      "SELECT
-        $get_colomn
-      FROM
-        $get_table
-      WHERE
-      `$get_id_key` = :$get_id_key"
-    );
+    $read = MyQuery::from($this->TABLE_NAME, $this->PDO)
+      ->select($arr_column)
+      ->equal($key, $value)
+      ->limitStart(1)
+      ->single()
+    ;
 
-    $this->PDO->bind(':' . $get_id_key, $get_id_val);
-    if( $this->PDO->single() ) {
-      $this->COLUMNS = $this->PDO->single();
-      return true;
+    if ($read == []) {
+      return false;
     }
-    return false;
+
+    $this->COLUMNS = $this->FRESH = $read;
+    return true;
   }
 
   public function cread(): bool
   {
-    $get_table  = $this->TABLE_NAME;
-    $get_column = $this->column_names();
-    $column_name = implode('`, `', $get_column);
-    $column_bind = implode(', :', $get_column);
+    $create = MyQuery::from($this->TABLE_NAME, $this->PDO)
+      ->insert()
+      ->values($this->COLUMNS)
+      ->execute()
+    ;
 
-    $this->PDO->query(
-      "INSERT INTO
-        `$get_table`
-        (`$column_name`)
-      VALUES
-        (:$column_bind)"
-    );
-    // binding
-    foreach ($this->COLUMNS as $key => $val) {
-      $this->PDO->bind(':' . $key, $val);
-    }
-
-    $this->PDO->execute();
-    if ($this->PDO->rowCount() > 0) {
-        return true;
-    }
-    return false;
+    return $this->changing($create);
   }
 
   public function update(): bool
   {
-    $get_table  = $this->TABLE_NAME;
-    $get_id_key = array_keys($this->ID)[0];
-    $get_id_val = array_values($this->ID)[0];
-    $get_set = $this->queryFilters($this->COLUMNS);
+    $key = $this->PRIMERY_KEY;
+    $value = $this->IDENTIFER;
 
-    $this->PDO->query(
-      "UPDATE
-        $get_table
-      SET
-        $get_set
-      WHERE
-        `$get_id_key` = :$get_id_key"
-    );
+    $update = MyQuery::from($this->TABLE_NAME, $this->PDO)
+      ->update()
+      ->values($this->COLUMNS)
+      ->equal($key, $value)
+      ->execute()
+    ;
 
-    // binding
-    foreach( $this->COLUMNS as $key => $val) {
-      if(isset($val) && $val !== '') {
-        $this->PDO->bind(':' . $key, $val);
-      }
-    }
-    $this->PDO->bind(':' . $get_id_key, $get_id_val);
-    $this->PDO->execute();
-
-    if( $this->PDO->rowCount() > 0){
-        return true;
-    }
-    return false;
+    return $this->changing($update);
   }
 
   public function delete(): bool
   {
-    $this->PDO->query(
-      "DELETE FROM $this->TABLE_NAME WHERE `id` = :id"
-    );
-    $this->PDO->bind(':id', $this->ID['id']);
-    $this->PDO->execute();
+    $key = $this->PRIMERY_KEY;
+    $value = $this->IDENTIFER;
 
-    if ($this->PDO->rowCount() > 0) {
-      return true;
-    }
-    return false;
+    return MyQuery::from($this->TABLE_NAME, $this->PDO)
+      ->delete()
+      ->equal($key, $value)
+      ->execute()
+    ;
   }
 
   public function isExist(): bool
   {
-    $this->PDO->query(
-      "SELECT `id` FROM $this->TABLE_NAME WHERE `id` =  :id"
-    );
-    $this->PDO->bind(':id', $this->ID['id']);
-    $this->PDO->execute();
-    if ($this->PDO->rowCount() > 0) {
-      return true;
-    }
-    return false;
+    $key = $this->PRIMERY_KEY;
+    $value = $this->IDENTIFER;
+
+    $get = MyQuery::from($this->TABLE_NAME, $this->PDO)
+      ->select(['id'])
+      ->equal($key, $value)
+      ->single()
+    ;
+
+    return $get == [] ? false : true;
   }
 
   public function getLastInsertID(): string
@@ -137,70 +135,90 @@ abstract class MyCRUD implements CrudInterface
     return $this->PDO->lastInsertId() ?? '';
   }
 
-  public function convertFromArray(array $cloulumnValue)
+  public function convertFromArray(array $arr_column)
   {
-    $this->COLUMNS = $cloulumnValue;
-    return true;
+    foreach ($arr_column as $key => $value) {
+      $this->COLUMNS[$key] = $value;
+    }
+
+    return $this;
   }
+
   public function convertToArray(): array
   {
     return $this->COLUMNS;
   }
 
-  protected function column_names()
+  public function toCollection(): Collection
   {
-    $this->PDO->query(
-      "SELECT
-        COLUMN_NAME
-      FROM
-        INFORMATION_SCHEMA.COLUMNS
-      WHERE
-        TABLE_SCHEMA = :dbs AND TABLE_NAME = :table
-    ");
-    $this->PDO->bind(':dbs', DB_NAME);
-    $this->PDO->bind(':table',  $this->TABLE_NAME);
-    $this->PDO->execute();
-    $column_name = $this->PDO->resultset();
-    return array_values(array_column($column_name, 'COLUMN_NAME'));
+    return new Collection($this->COLUMNS);
   }
 
-  // helper
-  private function getColumn(): string
+  protected function column_names(): array
   {
-    $get_column = array_keys($this->COLUMNS);
-    $get_column = array_map(function($x){
-      return '`' . $x . '`';
-    }, $get_column);
+    $table_info = MyQuery::from($this->TABLE_NAME, $this->PDO)
+      ->info()
+    ;
 
-    return implode(', ', $get_column);
+    return array_values(array_column($table_info, 'COLUMN_NAME'));
   }
 
-  protected function queryFilters(array $filters)
+  public function __isset($name)
   {
-    $query = [];
-    foreach($filters as $key => $val) {
-      if(isset($val) && $val !== '') {
-        $query[] = $this->queryBuilder($key, $key, [
-          'imperssion' => [':', ''],
-          'operator' => '='
-        ]);
-      }
+    return isset($this->COLUMNS[$name]);
+  }
+
+  protected function hasOne(string $table, string $ref = 'id')
+  {
+    $ref = MyQuery::from($this->TABLE_NAME, $this->PDO)
+      ->select([$table.'.*'])
+      ->join(InnerJoin::ref($table, $this->PRIMERY_KEY, $ref))
+      ->equal($this->PRIMERY_KEY, $this->IDENTIFER)
+      ->limitStart(1)
+      ->single()
+    ;
+
+  return new CollectionImmutable($ref);
+  }
+
+  protected function hasMany(string $table, string $ref = 'id')
+  {
+    $ref = MyQuery::from($this->TABLE_NAME, $this->PDO)
+      ->select([$table.'.*'])
+      ->join(InnerJoin::ref($table, $this->PRIMERY_KEY, $ref))
+      ->equal($this->PRIMERY_KEY, $this->IDENTIFER)
+      ->all()
+    ;
+
+  return new CollectionImmutable($ref);
+  }
+
+
+  private function changing(bool $change): bool
+  {
+    if ($change) {
+      $this->FRESH = $this->COLUMNS;
     }
 
-    $arr_query = array_filter($query);
-    return implode(', ', $arr_query);
+    return $change;
   }
 
-  protected function queryBuilder($key, $val, array $option = ["imperssion" => ["'%", "%'"], "operator" => "LIKE"])
+  public function isClean(string $column = null): bool
   {
-    $operator = $option["operator"];
-    $sur = $option["imperssion"][0];
-    $pre = $option["imperssion"][1];
-    if( isset( $val ) && $val !== '') {
-        return "$key $operator $sur$val$pre";
+    if ($column == null) {
+      return $this->COLUMNS == $this->FRESH;
     }
-    return "";
+
+    if (isset($this->FRESH[$column])) {
+      return false;
+    }
+
+    return $this->COLUMNS[$column] == $this->FRESH[$column];
   }
 
+  public function isDirty(string $column = null): bool
+  {
+    return ! $this->isClean($column);
+  }
 
 }

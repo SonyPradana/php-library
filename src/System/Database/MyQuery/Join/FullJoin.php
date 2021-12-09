@@ -2,21 +2,11 @@
 
 namespace System\Database\MyQuery\Join;
 
-class FullJoin extends Join
+class FullJoin extends AbstractJoin
 {
-  public function __construct()
-  {
-    $this->_stringJoin = "";
-  }
-
-  protected function joinBuilder()
+  protected function joinBuilder(): string
   {
     $on = $this->splitJoin();
-    $this->_stringJoin =
-      "FULL OUTER JOIN
-        $this->_tableName
-      ON
-        $on
-      ";
+    return "FULL OUTER JOIN $this->_tableName ON $on";
   }
 }
