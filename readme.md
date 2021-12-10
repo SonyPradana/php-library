@@ -4,197 +4,177 @@ Php mvc with minum mvc framework. is simple and easy to use
 
 > **Note:** This repository contains the core code of the php-mvc. If you want to build an application, visit the main [php-mvc](https://github.com/SonyPradana/php-mvc).
 
+> **Note:** This repository high inspire with `laravel\framework` and `symfony\symfony`.
+
 ## Feature
-- mvc structur
-- re-use mvc (easy to maintenance)
-- [Router](http://github.com/steampixel/simplePHPRouter) Support
-- models builder
-- query builder
-- secure 'public/' folder
-- builtin npm (sass, traser) -> minify css, js
-- CLI command
-- ready to use Rest API (get, post, put)
+- MVC base 
+- Route
+- Model (database class relation)
+- View and Controller
+- [MyQuery](#Built-in-Query-Builder) (database query builder)
+- [Collection](#Collection) (array collection)
+- [Console](#Console) (assembling beutifull console app)
+- Template (create class using class generator)
+- Cron
+- Now (time managing)
+- Http request and responese
 
-## Optional Feature
-- laravel-mix
-- tailwind css
-- vue router
-
-this app is ready to use vue route, be default vue route is disable using comment. if you want just remove comment and run your ```npm```.
-
-- laravel mix
-```js
-// vue router - optional
-// mix.js('resources/vue/app.js', 'public/vue')
-//   .postCss("resources/vue/css/app.css", "public/vue/css", [
-//     require("tailwindcss"),
-//   ])
-```
-- vue router
-```php
-// vue apps router - optional
-// if you use vue-router (sub path) forget register router here
-// Route::get('/(:text)', function() {
-//   return (new VueAppController)->index();
-// });
-```
-
-## Serve your apps (4 steps)
-- clone this repository
-```bash
-git clone https://github.com/SonyPradana/php-mvc my-project-name
- ```
- - composer update
- ```bash
- composer install
- ```
-- building recouce css / js (optional)
-```bash
-npm install
-npm run dev
-```
-- serve your page
-```bash
-php -S 127.0.0.1:3000 -t public/
-# or using cli command
-php cli serve
-```
-### Short hand to setup project
-you can do manual by follow instruction above, or run this command to easy setup (its same result)
-```bash
-# type or copy this command to your terminal
-./bin/setup.sh
-```
-## Built in cli command
-### make controll and view
-```bash
-php cli make:controller controllerName
-```
-### make model /models
-model name is singular
-```bash
-php cli make:model user --table-name=users
-php cli make:models user --table-name=users
-```
-before you make model, make sure database config has set.
-to config your database you must copy ```.env.example``` to ```.env```.
-
-## Built in Query Builder
+## **Built in Query Builder**
 of cource we are support CRUD data base, this a sample
+
 ### Select data 
 ```php
-$db = new MyQuery();
-$db('table_name')
+MyQuery::from('table_name')
   ->select(['column_1'])
   ->equal('column_2', 'fast_mvc')
-  ->all();  
+  ->order("column_1", MyQuery::ORDER_ASC)
+  ->limit(1, 10)
+  ->all()
+;  
 ```
 the result will show data from query,
 its same with SQL query
 ```SQL
-SELECT `column_1` FROM `table_name` WHERE (`column_2` = 'fast_mvc')
+SELECT `column_1` FROM `table_name` WHERE (`column_2` = 'fast_mvc') ORDER BY `table_name`.`column_1` ASC LIMIT 1, 10
 ```
-also support join table
+[🔝 Back to contents](#Feature)
+
 ### Update data 
 ```php
-$db = new MyQuery();
-$db('table_name')
+MyQuery::from('table_name')
   ->update()
-  ->value('column_3', 'simple_mvc')
-  ->equal('column_2', 'fast_mvc')
-  ->execute();  
+  ->values([
+    'column_1' => 'simple_mvc',
+    'column_2' => 'fast_mvc',
+    'column_3' => 123
+  ])
+  ->equal('column_4', 'fast_mvc')
+  ->execute()
+;
 ```
 the result is boolen true if sql success excute quert,
 its same with SQL query
 ```SQL
-UPDATE `table_name` SET `column_3` = 'simple_mvc' WHERE (`column_2` = 'fast_mvc')
+UPDATE `table_name` SET `column_1` = 'simple_mvc', `column_2` = 'fast_mvc', 'column_3' = 123  WHERE (`column_4` = 'speed')
 ```
-### Also support Insert and Delete
-```PHP
+[🔝 Back to contents](#Feature)
+
+### Insert and Delete
+```php
 // insert
-$db = new MyQuery();
-$db('table_name')
+MyQuery::from('table_name')
   ->insert()
   ->values([
     'column_1'  => '',
     'column_2'  => 'simple_mvc',
     'column_3'  => 'fast_mvc'
     ])
-  ->execute();
+  ->execute()
+;
 // delete
-$db('table_name')
+MyQuery::from('table_name')
   ->delete()
   ->equal('column_3', 'slow_mvc')
-  ->execute();
+  ->execute()
+;
 ```
 its supported cancel transation if you needed
 
-## Cron job schaduler
-Command chaduler for run cron job, just run one cron job to handle all shaduler. cli will automatily run your any shaduler base time you set.
+[🔝 Back to contents](#Feature)
 
-### Register command
+## Collection 
+Array collection, handel functional array as chain method
+
+### Create New Collection
 ```php
-// ../app/command/CronCommand.php
-class CronCommand
+$coll = new Collection(['vb_net', 'c_sharp', 'java', 'python', 'php', 'javascript', 'html']);
+
+$arr = $coll
+  ->remove('html')
+  ->sort()
+  ->filter(fn ($item) => strlen($item) > 4)
+  ->map(fn ($item) => ucfirst($item))
+  ->each(function($item) {
+    echo $item . PHP_EOL;
+  })
+  ->all()
+;
+
+// arr = ['c_sharp', 'javascript', 'python', 'vb_net']
+```
+[🔝 Back to contents](#Feature)
+
+### Available Methods
+- `add()`
+- `remove()`
+- `set()`
+- `clear()`
+- `replace()`
+- `each()`
+- `map`
+- `filter()`
+- `sort()`
+- `sortDesc()`
+- `sortKey()`
+- `sortKeyDesc()`
+- `sortBy()`
+- `sortByDecs()`
+- `all()`
+
+[🔝 Back to contents](#Feature)
+
+## Console
+
+Assembling beautifull console app make easy
+
+- naming parameter
+- coloring console (text and background)
+
+### Build simple console app
+```php
+class GreatConsole extends Console
 {
-  public function schaduler(Schadule $schadule): void
+  public function println()
   {
-    // put your schaduller here
-    $schadule->call(function() {
-      echo "Its Cron Job Schaduller, run every hour\n";
-    })
-    ->hourly();
-    // add schaule as many as possible
+    // getter to get param form cli argument
+    $name = $this->name ?? 'animus';
+
+    $this->prints(
+      $this->textGreen("Great console application\n"),
+      "hay my name is " . $this->bgYellow($name)
+    );
+  }
+
+  public function printHelp()
+  {
+   return array(
+     'option' => array(
+        "run" . $this->tab(3) . "Run greate app"
+     ),
+     'argument' => array(
+        $this->textDim("--name") . $this->tab(3) . "Set file name"
+     )
+   );
   }
 }
 ```
-#### avilable time
- - justintime - run every cron call
- - everyTenMinute - run every 10 minute
- - everyThirtyMinutes - run every 30 minute
- - everyTwoHour - run every 2 hour
- - everyTwelveHour - run every 12 hour / half day
- - hourly - run every 1 hour
- - haurlyAt - run every single hour (costume time)
- - daily - run every 00.00 
- - dailyAt - run every single day 1-31 (costume time)
- - weekly - run every week (sunday)
- - mountly - run every frist day in mount
 
-### Cli command
-```bash
-  php CLI cron
-  # will run shaduler in the same time you type
+**Run your app**
 
-  php CLi cron:work
-  # simultanly run cronjob every minute
+- create bootstrapper
+```php
+#!usr/bin/env php
+
+// $argv come with default global php 
+return (new greatConsole($argv))->println();
+
 ```
-### Setup local cron schaduller
-here the sample use ```cron:work```:
+
+- on your console
 ```bash
-Simulate Cron in terminal (every minute)
+php cli greate --name php_mvc
 
-Ctrl+C to stop
-Run Cron at - Fri, 20 19
-Run Cron at - Fri, 20 20
-Run Cron at - Fri, 20 21
-...
-...
-Run Cron at - Fri, 24 59
+# output:
+# Great console application
+# hay my name is php_mvc
 ```
-will cek every minute in your schadule
-### Setup serve cron schaduller
-on your server cron job command type
-```bash
-* * * * * * usr/local/bin/php ../bin/cron.script.php >/dev/null 2>&1
-```
-locate cron to cron.script.php
-### Setup 
-
-
-## Update and Maintenance 🚀
-this repository will be maintans every thursday or friday (probely 😅), Open contribution
-
-## Todo
-- Support Basic Auth
-- Support MiddleWare Router
