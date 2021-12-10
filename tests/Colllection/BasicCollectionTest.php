@@ -52,13 +52,13 @@ class BasicCollectionTest extends TestCase
     $this->assertEquals($test->count(), 6, 'count item in collection');
 
     // count by
-    $countBy = $test->countBy(function($item) {
+    $countIf = $test->countIf(function($item) {
       // find letter contain 'e' letter
       return strpos($item, "e") !== false
         ? true
         : false;
     });
-    $this->assertEquals(4, $countBy, 'count item in collection with some condition');
+    $this->assertEquals(4, $countIf, 'count item in collection with some condition');
 
     // first and last item cek
     $this->assertEquals("mangga", $test->first('bukan buah'), 'get first item in collection');
@@ -202,6 +202,43 @@ class BasicCollectionTest extends TestCase
       $copy_origin,
       'its like filter but the oposite'
     );
+
+    // chunk
+    $chunk = $test->clone()->chunk(3)->all();
+    $this->assertEquals(
+      [
+        ["buah_1" => "mangga", "buah_3" => "apel", "buah_4" => "melon"],
+        ["buah_5" => "rambutan", "buah_6" => "peer"]
+      ],
+      $chunk,
+      'chunk to 3'
+    );
+
+    // split
+    $split = $test->clone()->split(3)->all();
+    $this->assertEquals(
+        [
+          ["buah_1" => "mangga", "buah_3" => "apel"],
+          ["buah_4" => "melon", "buah_5" => "rambutan"],
+          ["buah_6" => "peer"]
+        ],
+      $split,
+      'split to 2'
+    );
+
+    $only = $test->clone()->only(["buah_1", "buah_5"]);
+    $this->assertEquals(
+      ["buah_1" => "mangga", "buah_5" => "rambutan"],
+      $only->all(),
+      "show only some"
+    );
+
+    $except = $test->clone()->except(["buah_3", "buah_4", "buah_6"]);
+    $this->assertEquals(
+      ['buah_1' => 'mangga', 'buah_5' => 'rambutan'],
+      $except->all(),
+      "show list with except"
+    );
   }
 
   /** @test */
@@ -231,13 +268,13 @@ class BasicCollectionTest extends TestCase
     $this->assertEquals($test->count(), 6, 'count item in collection');
 
     // count by
-    $countBy = $test->countBy(function($item) {
+    $countIf = $test->countIf(function($item) {
       // find letter contain 'e' letter
       return strpos($item, "e") !== false
         ? true
         : false;
     });
-    $this->assertEquals(4, $countBy, 'count item in collection with some condition');
+    $this->assertEquals(4, $countIf, 'count item in collection with some condition');
 
     // first and last item cek
     $this->assertEquals("mangga", $test->first('bukan buah'), 'get first item in collection');

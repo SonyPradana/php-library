@@ -158,4 +158,31 @@ class Collection extends AbstractCollectionImmutable
     return new Collection($this->collection);
   }
 
+  public function chunk(int $lenght, bool $preserve_keys = true): self
+  {
+    $this->collection = array_chunk($this->collection, $lenght, $preserve_keys);
+
+    return $this;
+  }
+
+  public function split(int $count, bool $preserve_keys = true): self
+  {
+    $lenght = ceil($this->lenght() / $count);
+    return $this->chunk($lenght);
+  }
+
+  public function except(array $excepts)
+  {
+    $this->filter(fn ($item, $key) => ! in_array($key, $excepts));
+
+    return $this;
+  }
+
+  public function only(array $only)
+  {
+    $this->filter(fn ($item, $key) => in_array($key, $only));
+
+    return $this;
+  }
+
 }

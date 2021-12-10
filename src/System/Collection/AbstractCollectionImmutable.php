@@ -59,7 +59,7 @@ abstract class AbstractCollectionImmutable
     return count($this->collection);
   }
 
-  public function countBy(callable $condition): int
+  public function countIf(callable $condition): int
   {
     $count = 0;
     foreach ($this->collection as $key => $item) {
@@ -69,6 +69,11 @@ abstract class AbstractCollectionImmutable
     }
 
     return $count;
+  }
+
+  public function countBy(): array
+  {
+    return array_count_values($this->collection);
   }
 
   public function each(callable $callable)
@@ -150,6 +155,21 @@ abstract class AbstractCollectionImmutable
   public function isEmpty(): bool
   {
     return empty($this->collection);
+  }
+
+  public function lenght(): int
+  {
+    return count($this->collection);
+  }
+
+  public function sum(): int
+  {
+    return array_sum($this->collection);
+  }
+
+  public function avg(): int
+  {
+    return $this->sum() / $this->count();
   }
 
 }
