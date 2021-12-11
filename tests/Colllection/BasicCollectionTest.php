@@ -239,6 +239,20 @@ class BasicCollectionTest extends TestCase
       $except->all(),
       "show list with except"
     );
+
+    // fletten
+    $array_nesting = [
+      "first" => ['buah_1' => 'mangga', ['buah_2' => 'jeruk', 'buah_3' => 'apel', 'buah_4' => 'melon']],
+      "mid" => ['buah_4' => 'melon', ['buah_5' => 'rambutan']],
+      "last" => ['buah_6' => 'peer']
+    ];
+    $flatten = new Collection($array_nesting);
+    $this->assertEquals(
+      $original,
+      $flatten->flatten()->all(),
+      'flatten nesting array'
+    );
+
   }
 
   /** @test */

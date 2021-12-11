@@ -185,4 +185,35 @@ class Collection extends AbstractCollectionImmutable
     return $this;
   }
 
+  public function flatten($depth = INF): self
+  {
+    $flatten = $this->flatten_recursing($this->collection, $depth);
+    $this->replace($flatten);
+
+    return $this;
+  }
+
+  private function flatten_recursing(array $array, $depth = INF): array
+  {
+    $result = [];
+
+    foreach ($array as $key => $item) {
+      $item = $item instanceof Collection ? $item->all() : $item;
+
+      if (! is_array($item)) {
+          $result[$key] = $item;
+      } else {
+        $values = $depth === 1
+          ? array_values($item)
+          : $this->flatten_recursing($item, $depth - 1);
+
+        foreach ($values as $key_dept => $value) {
+          $result[$key_dept] = $value;
+        }
+      }
+    }
+
+    return $result;
+  }
+
 }
