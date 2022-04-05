@@ -31,11 +31,11 @@ class BasicRouteTest extends TestCase
 
   private function registerGroupRouter()
   {
-    Router::prefix('/page/')->routes(function(RouteProvider $router) {
-      $router->get('one', function() {
+    Router::prefix('/page/')->group(function() {
+      Router::get('one', function() {
         echo 'page one';
       });
-      $router->get('two', function() {
+      Router::get('two', function() {
         echo 'page two';
       });
     });
@@ -270,9 +270,7 @@ class BasicRouteTest extends TestCase
   {
     require_once dirname(__DIR__) . '\Router\TestMiddleware.php';
 
-    Router::middleware([
-      new TestMiddleware,
-    ]);
+    Router::middleware([new TestMiddleware])->group(fn () => true);
 
     $this->assertEquals('oke', $_SERVER['middleware'], 'all route must pass global middleware');
   }
