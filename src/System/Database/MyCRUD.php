@@ -2,11 +2,10 @@
 
 use System\Collection\Collection;
 use System\Collection\CollectionImmutable;
-use System\Database\CrudInterface;
 use System\Database\MyPDO;
 use System\Database\MyQuery\Join\InnerJoin;
 
-abstract class MyCRUD implements CrudInterface
+abstract class MyCRUD
 {
   /** @var MyPDO|null */
   protected $PDO = null;
@@ -25,7 +24,7 @@ abstract class MyCRUD implements CrudInterface
 
   public function getID()
   {
-    return $this->PRIMERY_KEY ?? null;
+    return $this->IDENTIFER;
   }
 
   public function setID($val)
