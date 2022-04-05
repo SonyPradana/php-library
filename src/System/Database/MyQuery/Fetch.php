@@ -2,8 +2,15 @@
 
 namespace System\Database\MyQuery;
 
+use System\Collection\Collection;
+
 abstract class Fetch extends Query
 {
+  public function get(): ?Collection
+  {
+    return new Collection($this->all());
+  }
+
   public function single(): array
   {
     $this->builder();
