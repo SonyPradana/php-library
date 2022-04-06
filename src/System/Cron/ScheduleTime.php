@@ -83,7 +83,7 @@ class ScheduleTime
     }
   }
 
-  protected function ($message, array $contex)
+  protected function interpolate($message, array $contex)
   {
     // do stuff
   }
