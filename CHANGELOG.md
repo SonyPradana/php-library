@@ -6,6 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2022-04-06
+### Added
+- Added Collection->immutable class
+- Added Fetch->get() return as collection
+- Added uploadfile class
+- Added method close() to closed middleware
+- Add `Router::prefix()->group()` group router base on prefix.
+- Add `Router::name()->group()` group router base on name.
+- Add `Router::midleware()->group()` group router base on midleware.
+- Add `Router::controller()->group()` group router base on controller.
+- Add `Router::group(array, closure)` costume group.
+- Add `Router::current()` get current route.
+- Router group can be combine with other router group.
+
+### Changed
+- Change `MyCrud` not implement `CrudInterface`
+
 ## [0.2.1] - 2021-12-11
 ### Added
 - Add `collection::class` method `split`, `chunk`, `only`, `except` and `flatten`
