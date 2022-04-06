@@ -9,7 +9,9 @@ class MyPDO
   private $user = DB_USER;
   private $pass = DB_PASS;
 
+  /** @var \PDO PDO */
   private $dbh;
+  /** @var \PDOStatement */
   private $stmt;
 
   public function __construct(string $database_name = DB_NAME)
@@ -29,11 +31,13 @@ class MyPDO
     }
   }
 
+  /** Create connaction using static */
   public static function conn(string $database_name = DB_NAME)
   {
     return new self($database_name);
   }
 
+  /** @var self[] */
   private static $MySelf = [];
 
   /**
@@ -42,7 +46,7 @@ class MyPDO
    * @param string $database_name string Database Name   *
    * @return MyPDO MyPDO with singleton
    */
-  public static function getInstance(string $database_name = DB_NAME)
+  public static function getInstance(string $database_name = DB_NAME): self
   {
     return self::$MySelf[$database_name] = self::$MySelf[$database_name] ?? new self($database_name);
   }
@@ -50,7 +54,7 @@ class MyPDO
   /**
    *  mempersiapkan statement pada query
    */
-  public function query(string $query)
+  public function query(string $query): self
   {
     $this->stmt = $this->dbh->prepare($query);
     return $this;
@@ -59,7 +63,7 @@ class MyPDO
   /**
    * menggantikan paramater input dari user dengan sebuah placeholder
    */
-  public function bind($param, $value, $type = null)
+  public function bind($param, $value, $type = null): self
   {
     if (is_null($type)) {
       switch (true){
@@ -84,7 +88,10 @@ class MyPDO
   }
 
   /**
-   * menjalankan atau mengeksekusi query
+   * Menjalankan atau mengeksekusi query
+   *
+   * @return bool True if success
+   * @throws \PDOException
    */
   public function execute()
   {
@@ -111,6 +118,8 @@ class MyPDO
 
   /**
    * menampilkan jumlah data yang berhasil di simpan, di ubah maupun dihapus
+   *
+   * @return int The number of rows.
    */
   public function rowCount()
   {
@@ -119,24 +128,43 @@ class MyPDO
 
   /**
    * id dari data yang terakhir disimpan
-   * @return string last id
+   * @return string|false last id
    */
   public function lastInsertId()
   {
     return $this->dbh->lastInsertId();
   }
 
-  public function beginTransaction()
+  /**
+   * Initiates a transaction
+   *
+   * @return bool True if success
+   * @throws \PDOException
+   */
+  public function beginTransaction(): bool
   {
     return $this->dbh->beginTransaction();
   }
 
-  public function endTransaction()
+  /**
+   * Commits a transaction
+   *
+   * @return bool True if success
+   * @throws \PDOException
+   */
+  public function endTransaction(): bool
   {
     return $this->dbh->commit();
   }
 
-  public function cancelTransaction(){
+  /**
+   * Rolls back a transaction
+   *
+   * @return bool True if success
+   * @throws \PDOException
+   */
+  public function cancelTransaction(): bool
+  {
     return $this->dbh->rollBack();
   }
 }

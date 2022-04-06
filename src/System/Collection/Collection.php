@@ -216,4 +216,9 @@ class Collection extends AbstractCollectionImmutable
     return $result;
   }
 
+  public function immutable(): CollectionImmutable
+  {
+    return new CollectionImmutable($this->collection);
+  }
+
 }

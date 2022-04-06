@@ -2,13 +2,23 @@
 
 namespace System\Router;
 
+use Closure;
+use System\Http\Response;
+
 class Router
 {
-  private static $routes = Array();
+  /** @var Route[] */
+  private static $routes = [];
   private static $pathNotFound = null;
   private static $methodNotAllowed = null;
+  public static $group = [
+    'prefix' => ''
+  ];
+  /** @var Route */
+  private static $current;
+
   /**
-   * Short hand to readable regex url
+   * Alias router param to readable regex url.
    */
   public static $patterns = Array (
     '(:id)'   => '(\d+)',
@@ -19,6 +29,12 @@ class Router
     '(:all)'  => '(.*)',
   );
 
+  /**
+   * Repalce alias to regex.
+   * @param string $url Alias patern url
+   *
+   * @return string Patern regex
+   */
   public static function mapPatterns(string $url): string
   {
     $user_pattern         = array_keys(self::$patterns);
@@ -35,23 +51,44 @@ class Router
     if (isset($route['expression'])
     && isset($route['function'])
     && isset($route['method'])) {
-      array_push(self::$routes, $route);
+      self::$routes[] = new Route($route);
     }
   }
 
-  public static function mergeRoutes(array $array_routes)
+  /**
+   * Merge router array from other router array.
+   *
+   * @return void
+   */
+  public static function mergeRoutes(array $array_routes): void
   {
-    // warning:: all item will push without validation
-    array_push(self::$routes, ...$array_routes);
+    foreach ($array_routes as $route) {
+      self::addRoutes($route);
+    }
   }
 
   /**
-   * Get routes has added
+   * Get routes array.
+   *
    * @return array Routes array
    */
   public static function getRoutes()
   {
-    return self::$routes;
+    $routes = [];
+    foreach (self::$routes as $route) {
+      $routes[] = $route->route();
+    }
+    return $routes;
+  }
+
+  /**
+   * Get current route.
+   *
+   * @return Route
+   */
+  public static function current(): Route
+  {
+    return self::$current;
   }
 
   /**
@@ -62,43 +99,119 @@ class Router
     self::$routes = Array();
     self::$pathNotFound = null;
     self::$methodNotAllowed = null;
+    self::$group = [
+      'prefix'  => '',
+      'as'      => '',
+    ];
   }
 
   /**
    * Grouping routes using same prafix
-   * @param sting $prefix Prefix of router exprestion
-   * @return RouteFactory Function ti collact routes
+   * @param string $prefix Prefix of router exprestion
    */
   public static function prefix(string $prefix)
   {
-    return new RouteFactory($prefix);
+    return new RouteGroup(
+      // set up
+      function() use ($prefix) {
+        Router::$group['prefix'] = $prefix;
+      },
+      // reset
+      function() {
+        Router::$group['prefix'] = '';
+      }
+    );
   }
 
+  /**
+   * Run mindle before run group route.
+   *
+   * @param AbstractMiddleware[] $middlewares Middleware
+   */
   public static function middleware(array $middlewares)
   {
-    foreach ($middlewares as $middleware) {
-      if ($middleware instanceof AbstractMiddleware) {
-        $middleware->handle();
+    return new RouteGroup(
+      // load midleware
+      function() use ($middlewares) {
+        foreach ($middlewares as $middleware) {
+          $middleware->handle();
+        }
+      },
+      // close midleware
+      function() use ($middlewares) {
+        foreach ($middlewares as $middleware) {
+          $middleware->close();
+        }
       }
-    }
+    );
+  }
+
+  public static function name(string $name)
+  {
+    return new RouteGroup(
+      // setup
+      function () use ($name) {
+        Router::$group['as'] = $name;
+      },
+      // reset
+      function () {
+        Router::$group['as'] = '';
+      }
+    );
+  }
+
+  public static function controller(string $class_name)
+  {
+    // backup current route
+    $reset_group = self::$group;
+
+    $route_group = new RouteGroup(
+      // setup
+      function () use ($class_name) {
+        self::$group['controller'] = $class_name;
+      },
+      // reset
+      function () use ($reset_group) {
+        self::$group = $reset_group;
+      }
+    );
+
+    return $route_group;
+  }
+
+  public static function group(array $setup_group, Closure $group): void
+  {
+    // backup currect
+    $reset_group = self::$group;
+
+    $route_group = new RouteGroup(
+      // setup
+      function () use ($setup_group) {
+        self::$group = $setup_group;
+      },
+      // reset
+      function () use ($reset_group) {
+        self::$group = $reset_group;
+      }
+    );
+
+    $route_group->group($group);
   }
 
   /**
    * Function used to add a new route
    * @param array|string $method Methods allow
    * @param string $expression Route string or expression
-   * @param callable|array $function Function to call if route with allowed method is found
+   * @param callable|array|string $function Function to call if route with allowed method is found
    */
   public static function match($method, string $uri, $callback)
   {
-    if (is_array($callback)) {
-      $callback = function() use ($callback) {
-        $a = new $callback[0];
-        return $a($callback[1]);
-      };
+    $uri = self::$group['prefix'] . $uri;
+    if (isset(self::$group['controller']) && is_string($callback)) {
+      $callback = [self::$group['controller'], $callback];
     }
 
-    return new RouteNamed([
+    return self::$routes[] = new Route([
       'method'      => $method,
       'expression'  => self::mapPatterns($uri),
       'function'    => $callback
@@ -270,7 +383,8 @@ class Router
               array_shift($matches); // Remove basepath
             }
 
-            call_user_func_array($route['function'], $matches);
+            // execute request
+            self::$current = self::execute($route, $matches);
 
             $route_match_found = true;
 
@@ -300,6 +414,20 @@ class Router
         }
       }
     }
+  }
+
+  /**
+   * converet route function to action callable.
+   */
+  private static function execute(Route $current, array $params): Route
+  {
+    $current['function'] = is_array($current['function'])
+      ? [new $current['function'][0], $current['function'][1]]
+      : $current['function'];
+
+    call_user_func($current['function'], ...$params);
+
+    return $current;
   }
 
 }

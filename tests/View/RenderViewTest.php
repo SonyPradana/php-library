@@ -23,15 +23,15 @@ class RenderViewTest extends TestCase
 
     // view: view-html
     $this->assertEquals(
-      $render_html,
       "<html><head></head><body></body></html>\n",
+      $render_html,
       'it must sameoutput with template html'
     );
 
     // view: view-php
     $this->assertEquals(
-      $render_php,
       "<html><head></head><body><h1>hay</h1></body></html>\n",
+      $render_php,
       'it must sameoutput with template html'
     );
   }
