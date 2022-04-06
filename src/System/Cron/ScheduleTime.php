@@ -72,9 +72,20 @@ class ScheduleTime
       // stopwatch
       $watch_end = round(microtime(true) - $watch_start, 3) * 1000;
 
-      // put your command log here
-      // code...
+      // send command log
+      if (! $this->animusly) {
+        $this->interpolate($out_put, [
+          'excute_time' => $watch_end,
+          'cron_time'   => $this->time,
+          'event_name'  => $this->event_name,
+        ]);
+      }
     }
+  }
+
+  protected function ($message, array $contex)
+  {
+    // do stuff
   }
 
   public function isDue()

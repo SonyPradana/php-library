@@ -4,8 +4,8 @@ namespace System\Cron;
 
 class Schedule
 {
-  private $time;
-  private $pools = [];
+  protected $time;
+  protected $pools = [];
 
   public function __construct(int $time = null)
   {
