@@ -1,6 +1,6 @@
 <?php
 
-// declare(strict_types=1);
+declare(strict_types=1);
 
 namespace System\Integrate\Http;
 
@@ -25,8 +25,9 @@ class Karnel
 
     /**
      * Handle http request.
-     * 
-     * @return Respone
+     *
+     * @param Request $request Incoming request
+     * @return Respone Respone handle
      */
     public function handle(Request $request)
     {

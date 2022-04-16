@@ -34,7 +34,6 @@ class Application extends Container
     public function __construct(string $base_path)
     {
         parent::__construct();
-        Dotenv::createImmutable($base_path)->load();
         // load config and load provider
         static::$app = $this;
         $this->loadConfig($base_path);
@@ -247,6 +246,7 @@ class Application extends Container
     {
         return $this->get('path.cache');
     }
+    
     public function config_path()
     {
         return $this->get('path.config');
