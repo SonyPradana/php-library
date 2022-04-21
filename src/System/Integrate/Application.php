@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Integrate;
 
 use Dotenv\Dotenv;
+use Exception;
 use System\Container\Container;
 
 class Application extends Container
@@ -37,6 +38,7 @@ class Application extends Container
         // load config and load provider
         static::$app = $this;
         $this->loadConfig($base_path);
+        // boot provider
         $this->bootProvider();
     }
 
@@ -61,13 +63,24 @@ class Application extends Container
         $this->setBasePath($base_path);
         $this->setAppPath($base_path);
         $config_path = $base_path . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR;
-        $configs = array_merge(
-            include($config_path . 'app.config.php'),
-            include($config_path . 'database.config.php'),
-            include($config_path . 'pusher.config.php'),
-            include($config_path . 'headermenu.config.php'),
-            include($config_path . 'cachedriver.config.php'),
-        );
+
+        // check file exis
+        $configs = $this->defaultConfigs();
+        $paths = [
+           'app.config.php',
+           'database.config.php',
+           'pusher.config.php',
+           'cachedriver.config.php',
+        ];
+        foreach ($paths as $path) {
+            if (! file_exists($config_path.$path)) {
+                throw new Exception('Config file \''.$path.'\' not found.');
+            }
+
+            $config     = include($config_path.$path);
+            $configs    = array_merge($config, $configs);
+        }
+
         // base env
         $this->set('environment', $configs['ENVIRONMENT']);
         // application path
@@ -92,21 +105,70 @@ class Application extends Container
     }
 
     /**
+     * Default config, prevent for empety config
+     *
+     * @return array Configs
+     */
+    private function defaultConfigs()
+    {
+        return [
+            // app config
+            'BASEURL'           => '/',
+            'time_zone'         => 'Asia/Jakarta',
+            'APP_KEY'            => '',
+            'ENVIRONMENT'        => 'dev',
+
+            'MODEL_PATH'        => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'library'.DIRECTORY_SEPARATOR.'model'.DIRECTORY_SEPARATOR,
+            'VIEW_PATH'         => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR,
+            'CONTROLLER_PATH'   => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'controllers'.DIRECTORY_SEPARATOR,
+            'SERVICES_PATH'     => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'services'.DIRECTORY_SEPARATOR,
+            'COMPONENT_PATH'    => DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR,
+            'COMMNAD_PATH'      => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'commands'.DIRECTORY_SEPARATOR,
+            'CACHE_PATH'        => DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR,
+            'CONFIG'            => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR,
+            'MIDDLEWARE'        => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'middleware'.DIRECTORY_SEPARATOR,
+            'SERVICE_PROVIDER'  => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'Providers'.DIRECTORY_SEPARATOR,
+
+            'providers'         => [
+                // provider class name
+            ],
+
+            // db config
+            'DB_HOST' => 'localhost',
+            'DB_USER' => 'root',
+            'DB_PASS' => '',
+            'DB_NAME' => '',
+
+            // pusher
+            'PUSHER_APP_ID'         => $_ENV['PUSHER_APP_ID'] ?? '',
+            'PUSHER_APP_KEY'        => $_ENV['PUSHER_APP_KEY'] ?? '',
+            'PUSHER_APP_SECRET'     => $_ENV['PUSHER_APP_SECRET'] ?? '',
+            'PUSHER_APP_CLUSTER'    => $_ENV['PUSHER_APP_CLUSTER'] ?? '',
+
+            // redis driver
+            'REDIS_HOST' => '127.0.0.1',
+            'REDIS_PASS' => '',
+            'REDIS_PORT' => 6379,
+
+            // memcahe
+            'MEMCACHED_HOST' => '127.0.0.1',
+            'MEMCACHED_PASS' => '',
+            'MEMCACHED_PORT' => 6379,
+        ];
+    }
+
+    /**
      * Helper add define for legency API.
      *
      * @param array<int, string> $configs Array configuration
      */
     private function defineder(array $configs)
     {
-      // db
+        // db
         define('DB_HOST', $configs['DB_HOST']);
         define('DB_USER', $configs['DB_USER']);
         define('DB_PASS', $configs['DB_PASS']);
         define('DB_NAME', $configs['DB_NAME']);
-        // medical record header menu
-        define('MENU_MEDREC', $configs['MENU_MEDREC']);
-        define('MENU_KIA_ANAK', $configs['MENU_KIA_ANAK']);
-        define('MENU_POSYANDU', $configs['MENU_POSYANDU']);
         // redis
         define('REDIS_HOST', $configs['REDIS_HOST']);
         define('REDIS_PASS', $configs['REDIS_PASS']);
@@ -125,18 +187,21 @@ class Application extends Container
         $this->set('path.bash', $path);
         return $this;
     }
+
     public function setAppPath(string $path)
     {
         $this->app_path = $path.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR;
-        $this->set('path.app', $path);
+        $this->set('path.app', $this->app_path);
         return $this;
     }
+
     public function setModelPath(string $path)
     {
         $this->model_path = $this->base_path . $path;
         $this->set('path.model', $this->model_path);
         return $this;
     }
+
     public function setViewPath(string $path)
     {
         $this->view_path = $this->base_path . $path;
@@ -246,7 +311,7 @@ class Application extends Container
     {
         return $this->get('path.cache');
     }
-    
+
     public function config_path()
     {
         return $this->get('path.config');
