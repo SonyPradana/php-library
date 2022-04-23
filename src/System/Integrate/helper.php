@@ -270,9 +270,11 @@ if (! function_exists('config')) {
 
     /**
      * Get Application Configuration.
+     * 
+     * @return System\Collection\CollectionImmutable Configs
      */
     function config()
     {
-        return app()->get('config');
+        return new System\Collection\CollectionImmutable(app()->get('config'));
     }
 }
