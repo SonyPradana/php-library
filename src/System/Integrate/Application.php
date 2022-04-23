@@ -102,6 +102,8 @@ class Application extends Container
         // load provider
         $this->providers = $configs['PROVIDERS'];
         $this->defineder($configs);
+        // give access to get config directly
+        $this->set('config', $configs);
     }
 
     /**

@@ -265,3 +265,14 @@ if (! function_exists('app')) {
         return System\Integrate\Application::getIntance();
     }
 }
+
+if (! function_exists('config')) {
+
+    /**
+     * Get Application Configuration.
+     */
+    function config()
+    {
+        return app()->get('config');
+    }
+}
