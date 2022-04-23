@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace System\Integrate;
 
-use Dotenv\Dotenv;
-use Exception;
 use System\Container\Container;
 
 class Application extends Container
@@ -73,12 +71,14 @@ class Application extends Container
            'cachedriver.config.php',
         ];
         foreach ($paths as $path) {
-            if (! file_exists($config_path.$path)) {
-                throw new Exception('Config file \''.$path.'\' not found.');
-            }
+            $file_path = $config_path.$path;
 
-            $config     = include($config_path.$path);
-            $configs    = array_merge($config, $configs);
+            if (file_exists($file_path)) {
+                $config     = include($file_path);
+                foreach ($config as $key => $value) {
+                    $configs[$key] = $value;
+                }
+            }
         }
 
         // base env
