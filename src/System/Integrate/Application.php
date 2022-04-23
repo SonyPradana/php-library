@@ -142,10 +142,10 @@ class Application extends Container
             'DB_NAME' => '',
 
             // pusher
-            'PUSHER_APP_ID'         => $_ENV['PUSHER_APP_ID'] ?? '',
-            'PUSHER_APP_KEY'        => $_ENV['PUSHER_APP_KEY'] ?? '',
-            'PUSHER_APP_SECRET'     => $_ENV['PUSHER_APP_SECRET'] ?? '',
-            'PUSHER_APP_CLUSTER'    => $_ENV['PUSHER_APP_CLUSTER'] ?? '',
+            'PUSHER_APP_ID'         => '',
+            'PUSHER_APP_KEY'        => '',
+            'PUSHER_APP_SECRET'     => '',
+            'PUSHER_APP_CLUSTER'    => '',
 
             // redis driver
             'REDIS_HOST' => '127.0.0.1',
