@@ -131,7 +131,7 @@ class Application extends Container
             'MIDDLEWARE'        => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'middleware'.DIRECTORY_SEPARATOR,
             'SERVICE_PROVIDER'  => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'Providers'.DIRECTORY_SEPARATOR,
 
-            'providers'         => [
+            'PROVIDERS'         => [
                 // provider class name
             ],
 
@@ -167,18 +167,18 @@ class Application extends Container
     private function defineder(array $configs)
     {
         // db
-        define('DB_HOST', $configs['DB_HOST']);
-        define('DB_USER', $configs['DB_USER']);
-        define('DB_PASS', $configs['DB_PASS']);
-        define('DB_NAME', $configs['DB_NAME']);
+        defined('DB_HOST') || define('DB_HOST', $configs['DB_HOST']);
+        defined('DB_USER') || define('DB_USER', $configs['DB_USER']);
+        defined('DB_PASS') || define('DB_PASS', $configs['DB_PASS']);
+        defined('DB_NAME') || define('DB_NAME', $configs['DB_NAME']);
         // redis
-        define('REDIS_HOST', $configs['REDIS_HOST']);
-        define('REDIS_PASS', $configs['REDIS_PASS']);
-        define('REDIS_PORT', $configs['REDIS_PORT']);
+        defined('REDIS_HOST') || define('REDIS_HOST', $configs['REDIS_HOST']);
+        defined('REDIS_PASS') || define('REDIS_PASS', $configs['REDIS_PASS']);
+        defined('REDIS_PORT') || define('REDIS_PORT', $configs['REDIS_PORT']);
         // memcache
-        define('MEMCACHED_HOST', $configs['MEMCACHED_HOST']);
-        define('MEMCACHED_PASS', $configs['MEMCACHED_PASS']);
-        define('MEMCACHED_PORT', $configs['MEMCACHED_PORT']);
+        defined('MEMCACHED_HOST') || define('MEMCACHED_HOST', $configs['MEMCACHED_HOST']);
+        defined('MEMCACHED_PASS') || define('MEMCACHED_PASS', $configs['MEMCACHED_PASS']);
+        defined('MEMCACHED_PORT') || define('MEMCACHED_PORT', $configs['MEMCACHED_PORT']);
     }
 
     // setter region ---------------------------------------
@@ -354,5 +354,15 @@ class Application extends Container
             $this->call([$provider, 'boot']);
         }
         $this->isBooted = true;
+    }
+
+    /**
+     * Flush or reset application (static).
+     *
+     * @return void
+     */
+    public function flush()
+    {
+       static::$app = null;
     }
 }
