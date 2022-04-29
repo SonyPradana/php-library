@@ -22,7 +22,8 @@
             "System\\": "src/System/"
         },
         "files": [
-          "src/System/Integrate/helper.php"
+          "src/System/Integrate/helper.php",
+          "src/System/Time/helper.php"
         ]
     },
     "minimum-stability": "dev",
