@@ -262,7 +262,7 @@ if (! function_exists('app')) {
         if (null === $app) {
             throw new Exception('Apllication not start yet!');
         }
-        return System\Integrate\Application::getIntance();
+        return $app;
     }
 }
 
@@ -270,7 +270,7 @@ if (! function_exists('config')) {
 
     /**
      * Get Application Configuration.
-     * 
+     *
      * @return System\Collection\CollectionImmutable Configs
      */
     function config()

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Integrate;
 
 use System\Container\Container;
+use System\Integrate\Providers\IntegrateServiceProvider;
 
 class Application extends Container
 {
@@ -22,6 +23,7 @@ class Application extends Container
     private $middleware_path;
     private $service_provider_path;
     // property
+    /** @var ServiceProvider[] */
     private $providers;
     private $isBooted = false;
 
@@ -33,10 +35,20 @@ class Application extends Container
     public function __construct(string $base_path)
     {
         parent::__construct();
-        // load config and load provider
+
+        // base binding
         static::$app = $this;
+        $this->set('app', $this);
+        $this->set(Container::class, $this);
+
+        // load config and load provider
         $this->loadConfig($base_path);
+
+        // register base provider
+        $this->register(new IntegrateServiceProvider($this));
+
         // boot provider
+        $this->registerProvider();
         $this->bootProvider();
     }
 
@@ -345,15 +357,28 @@ class Application extends Container
     }
 
     // core region
+
+    /**
+     * Boot service provider.
+     *
+     * @return void
+    */
     public function bootProvider()
     {
         if ($this->isBooted) {
             return;
         }
         foreach ($this->providers as $provider) {
-            $this->call([$provider, 'boot']);
+            // $this->call([$provider, 'boot']);
         }
         $this->isBooted = true;
+    }
+
+    public function registerProvider()
+    {
+        foreach ($this->providers as $provider) {
+            $this->call([$provider, 'register']);
+        }
     }
 
     /**
@@ -364,5 +389,16 @@ class Application extends Container
     public function flush()
     {
        static::$app = null;
+    }
+
+    /**
+     * Register service provider.
+     *
+     * @param ServiceProvider $provider
+     * @return void
+     */
+    public function register($provider)
+    {
+        $provider->register();
     }
 }

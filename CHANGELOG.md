@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added `flush()` method to reset application container.
 - Added global function `now()` instance of `System\Time\Now::class`.
+- Added function to load register service provider (in `Application::class`).
 
 ### Changed
 - Application container have default config by default.
