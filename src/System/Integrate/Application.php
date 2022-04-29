@@ -369,7 +369,7 @@ class Application extends Container
             return;
         }
         foreach ($this->providers as $provider) {
-            // $this->call([$provider, 'boot']);
+            $this->call([$provider, 'boot']);
         }
         $this->isBooted = true;
     }
