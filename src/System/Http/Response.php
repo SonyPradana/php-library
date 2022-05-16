@@ -36,10 +36,14 @@ class Response
   // property
   private $content;
   private $respone_code;
+
   /** Header array pools */
   private $headers;
   private $is_array;  // content type
   private $remove_headers = [];
+
+  /** @var string Default content type */
+  private $content_type = 'Content-Type: text/html';
 
   /**
    * Create rosone http base on conten and header
@@ -79,6 +83,8 @@ class Response
     header($respone_template);
 
     // header
+    $this->headers[] = $this->content_type;
+    // add costume header
     foreach ($this->headers as $header) {
       header($header);
     }
@@ -154,12 +160,11 @@ class Response
    */
   public function json($content = null)
   {
-    $this->header('Content-Type: application/json');
+    $this->content_type = 'Content-Type: application/json';
 
     if ($content != null) {
       $this->setContent($content);
     }
-    $this->send();
 
     return $this;
   }
@@ -172,12 +177,11 @@ class Response
    */
   public function html(bool $minify = false)
   {
-    $this->headers[] = 'Content-Type: text/html';
+    $this->content_type = 'Content-Type: text/html';
 
     if (! $this->is_array && $minify) {
       $this->setContent($this->minify($this->content));
     }
-    $this->send();
 
     return $this;
   }
@@ -187,8 +191,7 @@ class Response
    */
   public function planText()
   {
-    $this->headers[] = 'Content-Type: text/html';
-    $this->send();
+    $this->content_type = 'Content-Type: text/html';
 
     return $this;
   }

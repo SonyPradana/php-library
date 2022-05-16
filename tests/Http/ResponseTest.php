@@ -34,7 +34,7 @@ class ResponseTest extends TestCase
   public function it_render_html_response()
   {
     ob_start();
-    $this->response_html->html();
+    $this->response_html->html()->send();
     $html = ob_get_clean();
 
     $this->assertEquals(
@@ -49,7 +49,7 @@ class ResponseTest extends TestCase
   public function it_render_json_response()
   {
     ob_start();
-    $this->response_json->json();
+    $this->response_json->json()->send();
     $json = ob_get_clean();
 
     $this->assertJson($json);
@@ -68,7 +68,7 @@ class ResponseTest extends TestCase
     $this->response_html->setContent('edited');
 
     ob_start();
-    $this->response_html->html();
+    $this->response_html->html()->send();
     $html = ob_get_clean();
 
     $this->assertEquals(

@@ -14,25 +14,25 @@ class RenderViewTest extends TestCase
     $test_php = dirname(__DIR__) . '\View\sample\sample.php';
 
     ob_start();
-    View::render($test_html);
+    View::render($test_html)->send();
     $render_html = ob_get_clean();
 
     ob_start();
-    View::render($test_php, ["contents" => ["say" => "hay"]]);
+    View::render($test_php, ["contents" => ["say" => "hay"]])->send();
     $render_php = ob_get_clean();
 
     // view: view-html
     $this->assertEquals(
       "<html><head></head><body></body></html>\n",
       $render_html,
-      'it must sameoutput with template html'
+      'it must same output with template html'
     );
 
     // view: view-php
     $this->assertEquals(
       "<html><head></head><body><h1>hay</h1></body></html>\n",
       $render_php,
-      'it must sameoutput with template html'
+      'it must same output with template html'
     );
   }
 }

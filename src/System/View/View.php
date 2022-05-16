@@ -20,7 +20,7 @@ class View
 
     // send render content to client
     $response = new Response();
-    $response
+    return $response
       ->setContent($html)
       ->setResponeCode(\System\Http\Response::HTTP_OK)
       ->setHeaders([$content_type])
@@ -30,8 +30,7 @@ class View
         'X-Powered-By',
         'Connection',
         'Server',
-      ])
-      ->send();
+      ]);
   }
 
 }
