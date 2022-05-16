@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2022-05-15
+### Added
+- Add `RouteDispatcher::class` dispatch request route.
+
+### Changed
+- `Router::class` run throw `RouteDispatcher::class`.
+- `View::render` return as `Respone::class`.
+- `respone->html()`, `respone->json()`, `respone->planText()` no longger send respone. Its just set content type.
+
 ## [0.5.0] - 2022-04-29
 ### Added
 - Added `flush()` method to reset application container.
