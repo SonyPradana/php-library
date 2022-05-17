@@ -343,12 +343,6 @@ class Router
         self::$current = $dispatcher->current();
 
         call_user_func_array($dispatch['callable'], $dispatch['params']);
-        try {
-            //code...
-        } catch (\Throwable $th) {
-            // var_dump();
-            // exit;
-        }
   }
 
 }

@@ -27,7 +27,7 @@ class Karnel
      * Handle http request.
      *
      * @param Request $request Incoming request
-     * @return Respone Respone handle
+     * @return Response Respone handle
      */
     public function handle(Request $request)
     {

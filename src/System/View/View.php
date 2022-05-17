@@ -19,8 +19,7 @@ class View
     $html = ob_get_clean();
 
     // send render content to client
-    $response = new Response();
-    return $response
+    return (new Response)
       ->setContent($html)
       ->setResponeCode(\System\Http\Response::HTTP_OK)
       ->setHeaders([$content_type])
