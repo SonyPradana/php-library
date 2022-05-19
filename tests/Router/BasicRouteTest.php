@@ -2,7 +2,6 @@
 
 use PHPUnit\Framework\TestCase;
 use System\Router\Router;
-use System\Router\RouteProvider;
 
 class BasicRouteTest extends TestCase
 {
@@ -210,6 +209,7 @@ class BasicRouteTest extends TestCase
   public function it_route_is_method_not_allowed(): void
   {
     $this->registerRouterMethodNotAlloed();
+
     $get = $this->getRespone('post', '/get');
     $post = $this->getRespone('get', '/post');
     $put = $this->getRespone('get', '/put');
@@ -270,7 +270,13 @@ class BasicRouteTest extends TestCase
   {
     require_once dirname(__DIR__) . '\Router\TestMiddleware.php';
 
-    Router::middleware([new TestMiddleware])->group(fn () => true);
+    Router::middleware([TestMiddleware::class])->group(function () {
+        Router::get('/', fn () => true);
+    });
+    $_SERVER['REQUEST_URI'] = '/';
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    Router::run();
+    Router::Reset();
 
     $this->assertEquals('oke', $_SERVER['middleware'], 'all route must pass global middleware');
   }

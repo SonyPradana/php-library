@@ -1,8 +1,8 @@
 <?php
 
-namespace System\Router;
+declare(strict_types=1);
 
-use Closure;
+namespace System\Router;
 
 class Router
 {
@@ -134,18 +134,16 @@ class Router
    */
   public static function middleware(array $middlewares)
   {
+    $reset_group = self::$group;
+
     return new RouteGroup(
       // load midleware
       function() use ($middlewares) {
-        foreach ($middlewares as $middleware) {
-          $middleware->handle();
-        }
+        self::$group['middleware'] = $middlewares;
       },
       // close midleware
-      function() use ($middlewares) {
-        foreach ($middlewares as $middleware) {
-          $middleware->close();
-        }
+      function() use ($reset_group) {
+        self::$group = $reset_group;
       }
     );
   }
@@ -183,7 +181,7 @@ class Router
     return $route_group;
   }
 
-  public static function group(array $setup_group, Closure $group): void
+  public static function group(array $setup_group, \Closure $group): void
   {
     // backup currect
     $reset_group = self::$group;
@@ -214,11 +212,13 @@ class Router
     if (isset(self::$group['controller']) && is_string($callback)) {
       $callback = [self::$group['controller'], $callback];
     }
+    $middleware = self::$group['middleware'] ?? [];
 
     return self::$routes[] = new Route([
       'method'      => $method,
       'expression'  => self::mapPatterns($uri),
-      'function'    => $callback
+      'function'    => $callback,
+      'middleware'  => $middleware
     ]);
   }
 
@@ -342,7 +342,13 @@ class Router
 
         self::$current = $dispatcher->current();
 
-        call_user_func_array($dispatch['callable'], $dispatch['params']);
+        // run middleware
+        foreach ($dispatch['middleware'] as $middleware) {
+            $middleware_class = new $middleware;
+            $middleware_class->handle();
+        }
+
+        return call_user_func_array($dispatch['callable'], $dispatch['params']);
   }
 
 }

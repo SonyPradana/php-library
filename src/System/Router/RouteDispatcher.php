@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Router;
 
 use System\Http\Request;
@@ -140,13 +142,17 @@ class RouteDispatcher
     /**
      * Catch action from callable (found, not_found, method_not_allowed).
      *
+     * @param callable $callable Callback
+     * @param array $param Callaback params
+     * @param class-name[] $middleware Array of middleware class-name
      * @return void
      */
-    private function trigger(callable $callable, $params)
+    private function trigger(callable $callable, $params, $middleware = [])
     {
         $this->trigger = [
-            'callable'  => $callable,
-            'params'    => $params
+            'callable'      => $callable,
+            'params'        => $params,
+            'middleware'    => $middleware
         ];
     }
 
@@ -221,7 +227,7 @@ class RouteDispatcher
                         }
 
                         // execute request
-                        $this->trigger($this->found, [$route['function'], $matches]);
+                        $this->trigger($this->found, [$route['function'], $matches], $route['middleware'] ?? []);
                         $this->current = $route;
 
                         $route_match_found = true;
