@@ -23,9 +23,32 @@ class Route implements ArrayAccess
     }
   }
 
-  public function name(string $name): void
+  /**
+   * Set Route name.
+   *
+   * @param string $name Route name (uniq)
+   * @return self
+   */
+  public function name(string $name)
   {
     $this->route['name'] = $this->prefix_name . $name;
+
+    return $this;
+  }
+
+  /**
+   * Add middleware this route.
+   *
+   * @param array $route Route class-name
+   * @return self
+   */
+  public function middleware($middlewares)
+  {
+    foreach ($middlewares as $middleware) {
+        $this->route['middleware'][] = $middleware;
+    }
+
+    return $this;
   }
 
   # ArrayAccess ---------------------------------------------

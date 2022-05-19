@@ -13,6 +13,14 @@ class Karnel
     /** @var Container */
     protected $app;
 
+    /** @var array Global middleware */
+    protected $middleware = [
+        //
+    ];
+
+    /** @var array Middleware has register */
+    protected $middleware_used = [];
+
     /**
      * Set instance.
      *
@@ -33,4 +41,45 @@ class Karnel
     {
         return new Response();
     }
+
+    /**
+     * Handle middleware class.
+     *
+     * @param array $middlewares Middleware array class-name
+     * @return self
+     */
+    protected function handle_middleware($middlewares)
+    {
+        foreach ($middlewares as $middleware) {
+            // prevent duplicate middleware
+            if (in_array($middleware, $this->middleware_used)) {
+                continue;
+            }
+
+            $this->app->call([$middleware, 'handle']);
+            $this->middleware_used[] = $middleware;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Handle middleware and execute callback.
+     *
+     * @param callable $callable Callable
+     * @param array $params Parameter to use
+     * @param array $middlewares Middleware array class-name
+     * @return mixed Callavle result
+     */
+    protected function call_middleware($callable, $params = [], $middleware = [])
+    {
+        // global middleware
+        $this->handle_middleware($this->middleware);
+
+        // user middleware
+        $this->handle_middleware($middleware);
+
+        return $this->app->call($callable, $params);
+    }
+
 }

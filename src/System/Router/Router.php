@@ -343,8 +343,14 @@ class Router
         self::$current = $dispatcher->current();
 
         // run middleware
+        $middleware_used = [];
         foreach ($dispatch['middleware'] as $middleware) {
-            $middleware_class = new $middleware;
+            if (in_array($middleware, $middleware_used)) {
+                continue;
+            }
+
+            $middleware_used[]  = $middleware;
+            $middleware_class   = new $middleware;
             $middleware_class->handle();
         }
 

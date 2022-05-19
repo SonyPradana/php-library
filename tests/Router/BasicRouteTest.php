@@ -266,7 +266,7 @@ class BasicRouteTest extends TestCase
   /**
    * @test
    */
-  public function it_can_pass_global_middleware(): void
+  public function it_can_pass_group_middleware(): void
   {
     require_once dirname(__DIR__) . '\Router\TestMiddleware.php';
 
@@ -279,5 +279,43 @@ class BasicRouteTest extends TestCase
     Router::Reset();
 
     $this->assertEquals('oke', $_SERVER['middleware'], 'all route must pass global middleware');
+  }
+
+  /**
+   * @test
+   */
+  public function it_can_pass_single_middleware(): void
+  {
+    require_once dirname(__DIR__) . '\Router\TestMiddleware.php';
+
+    Router::get('/', fn () => true)->middleware([TestMiddleware::class]);
+    $_SERVER['REQUEST_URI'] = '/';
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    Router::run();
+    Router::Reset();
+
+    $this->assertEquals('oke', $_SERVER['middleware'], 'all route must pass global middleware');
+  }
+
+  /**
+   * @test
+   */
+  public function it_can_pass_midleware_run_once(): void
+  {
+    require_once dirname(__DIR__) . '\Router\TestMiddleware.php';
+
+    TestMiddleware::$last = 0;
+    Router::middleware([TestMiddleware::class])->group(function () {
+        Router::get('/', fn () => true)->middleware([TestMiddleware::class]);
+    });
+
+    $_SERVER['REQUEST_URI'] = '/';
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+    Router::run();
+    Router::Reset();
+
+    $this->assertEquals(1, TestMiddleware::$last, 'all route must pass global middleware');
+
+    TestMiddleware::$last = 0;
   }
 }
