@@ -189,6 +189,9 @@ class Router
     $route_group = new RouteGroup(
       // setup
       function () use ($setup_group) {
+        foreach ((array) self::$group['middleware'] as $middleware) {
+            $setup_group['middleware'][] = $middleware;
+        }
         self::$group = $setup_group;
       },
       // reset

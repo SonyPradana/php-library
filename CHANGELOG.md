@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Remove database defineder (`DB_NAME`, `DB_HOST`, `DB_USER`, `DB_PASS`).
 
+### Fixed
+- Fixed `Route::group` can't combine middleware.
+
 ## [0.6.1] - 2022-05-19
 ###  Added
 - Prevent duplicate middleware call.
