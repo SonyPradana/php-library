@@ -1,6 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use System\Database\MyPDO;
 use System\Database\MyQuery;
 use System\Database\MyQuery\Join\FullJoin;
 use System\Database\MyQuery\Join\InnerJoin;
@@ -12,11 +13,19 @@ use function PHPUnit\Framework\equalTo;
 
 final class QueryStringTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        $db = new MyPDO([
+            'database_name'  => '',
+            'host'           => '',
+            'user'           => '',
+            'password'       => '',
+        ]);
+    }
+    
   /** @test */
   public function it_correct_select_query(): void
   {
-    require_once dirname(__DIR__) . '/DataBase/Helper.php';
-
     $select = array();
 
     // tester

@@ -178,11 +178,6 @@ class Application extends Container
      */
     private function defineder(array $configs)
     {
-        // db
-        defined('DB_HOST') || define('DB_HOST', $configs['DB_HOST']);
-        defined('DB_USER') || define('DB_USER', $configs['DB_USER']);
-        defined('DB_PASS') || define('DB_PASS', $configs['DB_PASS']);
-        defined('DB_NAME') || define('DB_NAME', $configs['DB_NAME']);
         // redis
         defined('REDIS_HOST') || define('REDIS_HOST', $configs['REDIS_HOST']);
         defined('REDIS_PASS') || define('REDIS_PASS', $configs['REDIS_PASS']);

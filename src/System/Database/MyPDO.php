@@ -5,19 +5,20 @@ use \PDOException;
 
 class MyPDO
 {
-  private $host = DB_HOST;
-  private $user = DB_USER;
-  private $pass = DB_PASS;
-
   /** @var \PDO PDO */
   private $dbh;
   /** @var \PDOStatement */
   private $stmt;
 
-  public function __construct(string $database_name = DB_NAME)
+  public function __construct(array $configs)
   {
+      $database_name    = $configs['database_name'];
+      $host             = $configs['host'];
+      $user             = $configs['user'];
+      $pass             = $configs['password'];
+
     // konfigurasi driver
-    $dsn = 'mysql:host=' . $this->host . ';dbname=' . $database_name;
+    $dsn = "mysql:host=$host;dbname=$database_name";
     $option = array (
       PDO::ATTR_PERSISTENT => true,
       PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
@@ -25,30 +26,32 @@ class MyPDO
 
     // menjalankan koneksi daabase
     try {
-      $this->dbh = new PDO($dsn, $this->user, $this->pass, $option);
+      $this->dbh = new PDO($dsn, $user, $pass, $option);
     } catch(PDOException $e) {
       die($e->getMessage());
     }
+
+    // set instance
+    static::$Instance = $this;
   }
 
   /** Create connaction using static */
-  public static function conn(string $database_name = DB_NAME)
+  public static function conn(array $configs)
   {
-    return new self($database_name);
+    return new self($configs);
   }
 
-  /** @var self[] */
-  private static $MySelf = [];
+  /** @var self */
+  private static $Instance;
 
   /**
    * Singleton pattern implemnt for Databese connation
    *
-   * @param string $database_name string Database Name   *
    * @return MyPDO MyPDO with singleton
    */
-  public static function getInstance(string $database_name = DB_NAME): self
+  public static function getInstance(): self
   {
-    return self::$MySelf[$database_name] = self::$MySelf[$database_name] ?? new self($database_name);
+      return self::$Instance;
   }
 
   /**
@@ -133,6 +136,21 @@ class MyPDO
   public function lastInsertId()
   {
     return $this->dbh->lastInsertId();
+  }
+
+  public function transaction(callable $callable)
+  {
+      if ($allow_tansaction = $this->beginTransaction()) {
+          return $allow_tansaction;
+      }
+
+      if ($callable === false) {
+          return false;
+      }
+
+      if ($success_commit = $this->endTransaction()) {
+          return $success_commit;
+      }
   }
 
   /**
