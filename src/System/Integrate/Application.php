@@ -26,11 +26,11 @@ class Application extends Container
 
     // property ------------------------------
     /** @var ServiceProvider[] */
-    private $providers;
+    private $providers = [];
     /** @var ServiceProvider[] */
-    private $boot_registered;
+    private $boot_registered = [];
     /** @var ServiceProvider[] */
-    private $provider_registered;
+    private $provider_registered = [];
     /** @var boolean */
     private $isBooted = false;
 
