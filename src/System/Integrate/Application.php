@@ -10,7 +10,8 @@ use System\Integrate\Providers\IntegrateServiceProvider;
 class Application extends Container
 {
     private static $app;
-    // path
+
+    // path ----------------------------------
     private $base_path;
     private $app_path;
     private $model_path;
@@ -22,9 +23,15 @@ class Application extends Container
     private $config_path;
     private $middleware_path;
     private $service_provider_path;
-    // property
+
+    // property ------------------------------
     /** @var ServiceProvider[] */
     private $providers;
+    /** @var ServiceProvider[] */
+    private $boot_registered;
+    /** @var ServiceProvider[] */
+    private $provider_registered;
+    /** @var boolean */
     private $isBooted = false;
 
     /**
@@ -39,6 +46,7 @@ class Application extends Container
         // base binding
         static::$app = $this;
         $this->set('app', $this);
+        $this->set(\System\Integrate\Application::class, $this);
         $this->set(Container::class, $this);
 
         // load config and load provider
@@ -363,16 +371,33 @@ class Application extends Container
         if ($this->isBooted) {
             return;
         }
+
         foreach ($this->providers as $provider) {
+            if (in_array($provider, $this->boot_registered)) {
+                continue;
+            }
+
             $this->call([$provider, 'boot']);
+            $this->boot_registered[] = $provider;
         }
+
         $this->isBooted = true;
     }
 
     public function registerProvider()
     {
+        if (! $this->isBooted) {
+            return;
+        }
+
         foreach ($this->providers as $provider) {
+            if (in_array($provider, $this->provider_registered)) {
+                continue;
+            }
+
             $this->call([$provider, 'register']);
+
+            $this->provider_registered[] = $provider;
         }
     }
 
