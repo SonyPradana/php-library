@@ -10,7 +10,8 @@ use System\Integrate\Providers\IntegrateServiceProvider;
 class Application extends Container
 {
     private static $app;
-    // path
+
+    // path ----------------------------------
     private $base_path;
     private $app_path;
     private $model_path;
@@ -22,9 +23,31 @@ class Application extends Container
     private $config_path;
     private $middleware_path;
     private $service_provider_path;
-    // property
-    /** @var ServiceProvider[] */
-    private $providers;
+
+    // property ------------------------------
+
+    /**
+     * All service provider.
+     *
+     * @var ServiceProvider[]
+     */
+    private $providers = [];
+
+    /**
+     * Booted service provider.
+     *
+     * @var ServiceProvider[]
+     */
+    private $booted_providers = [];
+
+    /**
+     * Looded service provider
+     *
+     * @var ServiceProvider[]
+     */
+    private $looded_providers = [];
+
+    /** @var boolean */
     private $isBooted = false;
 
     /**
@@ -39,13 +62,14 @@ class Application extends Container
         // base binding
         static::$app = $this;
         $this->set('app', $this);
+        $this->set(\System\Integrate\Application::class, $this);
         $this->set(Container::class, $this);
 
         // load config and load provider
         $this->loadConfig($base_path);
 
         // register base provider
-        $this->register(new IntegrateServiceProvider($this));
+        $this->register(IntegrateServiceProvider::class);
 
         // boot provider
         $this->registerProvider();
@@ -363,16 +387,33 @@ class Application extends Container
         if ($this->isBooted) {
             return;
         }
+
         foreach ($this->providers as $provider) {
+            if (in_array($provider, $this->booted_providers)) {
+                continue;
+            }
+
             $this->call([$provider, 'boot']);
+            $this->booted_providers[] = $provider;
         }
+
         $this->isBooted = true;
     }
 
     public function registerProvider()
     {
+        if (! $this->isBooted) {
+            return;
+        }
+
         foreach ($this->providers as $provider) {
+            if (in_array($provider, $this->looded_providers)) {
+                continue;
+            }
+
             $this->call([$provider, 'register']);
+
+            $this->looded_providers[] = $provider;
         }
     }
 
@@ -389,11 +430,24 @@ class Application extends Container
     /**
      * Register service provider.
      *
-     * @param ServiceProvider $provider
-     * @return void
+     * @param string $provider Class-name service provider
+     * @return ServiceProvider
      */
     public function register($provider)
     {
+        $provider_class_name = $provider;
+        $provider = new $provider($this);
+
         $provider->register();
+        $this->looded_providers[] = $provider_class_name;
+
+        if ($this->isBooted) {
+            $provider->boot();
+            $this->booted_providers[] = $provider_class_name;
+        }
+
+        $this->providers[] = $provider_class_name;
+
+        return $provider;
     }
 }
