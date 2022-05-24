@@ -25,12 +25,28 @@ class Application extends Container
     private $service_provider_path;
 
     // property ------------------------------
-    /** @var ServiceProvider[] */
+
+    /**
+     * All service provider.
+     *
+     * @var ServiceProvider[]
+     */
     private $providers = [];
-    /** @var ServiceProvider[] */
-    private $boot_registered = [];
-    /** @var ServiceProvider[] */
-    private $provider_registered = [];
+
+    /**
+     * Booted service provider.
+     *
+     * @var ServiceProvider[]
+     */
+    private $booted_providers = [];
+
+    /**
+     * Looded service provider
+     *
+     * @var ServiceProvider[]
+     */
+    private $looded_providers = [];
+
     /** @var boolean */
     private $isBooted = false;
 
@@ -373,12 +389,12 @@ class Application extends Container
         }
 
         foreach ($this->providers as $provider) {
-            if (in_array($provider, $this->boot_registered)) {
+            if (in_array($provider, $this->booted_providers)) {
                 continue;
             }
 
             $this->call([$provider, 'boot']);
-            $this->boot_registered[] = $provider;
+            $this->booted_providers[] = $provider;
         }
 
         $this->isBooted = true;
@@ -391,13 +407,13 @@ class Application extends Container
         }
 
         foreach ($this->providers as $provider) {
-            if (in_array($provider, $this->provider_registered)) {
+            if (in_array($provider, $this->looded_providers)) {
                 continue;
             }
 
             $this->call([$provider, 'register']);
 
-            $this->provider_registered[] = $provider;
+            $this->looded_providers[] = $provider;
         }
     }
 
