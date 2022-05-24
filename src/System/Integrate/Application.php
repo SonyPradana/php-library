@@ -69,7 +69,7 @@ class Application extends Container
         $this->loadConfig($base_path);
 
         // register base provider
-        $this->register(new IntegrateServiceProvider($this));
+        $this->register(IntegrateServiceProvider::class);
 
         // boot provider
         $this->registerProvider();
@@ -430,11 +430,24 @@ class Application extends Container
     /**
      * Register service provider.
      *
-     * @param ServiceProvider $provider
-     * @return void
+     * @param string $provider Class-name service provider
+     * @return ServiceProvider
      */
     public function register($provider)
     {
+        $provider_class_name = $provider;
+        $provider = new $provider($this);
+
         $provider->register();
+        $this->looded_providers[] = $provider_class_name;
+
+        if ($this->isBooted) {
+            $provider->boot();
+            $this->booted_providers[] = $provider_class_name;
+        }
+
+        $this->providers[] = $provider_class_name;
+
+        return $provider;
     }
 }
