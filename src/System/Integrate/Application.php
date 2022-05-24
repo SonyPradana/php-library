@@ -425,6 +425,10 @@ class Application extends Container
     public function flush()
     {
        static::$app = null;
+
+       $this->providers = [];
+       $this->looded_providers = [];
+       $this->booted_providers = [];
     }
 
     /**
