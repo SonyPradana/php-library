@@ -13,6 +13,9 @@ use function PHPUnit\Framework\equalTo;
 
 final class QueryStringTest extends TestCase
 {
+    /** @var MyPDO */
+    private $PDO;
+
     protected function setUp(): void
     {
         $db = new MyPDO([
@@ -21,8 +24,14 @@ final class QueryStringTest extends TestCase
             'user'           => '',
             'password'       => '',
         ]);
+
+        $this->PDO = $db;
     }
-    
+    protected function tearDown(): void
+    {
+        $this->PDO = null;
+    }
+
   /** @test */
   public function it_correct_select_query(): void
   {
@@ -30,32 +39,32 @@ final class QueryStringTest extends TestCase
 
     // tester
 
-    $select['between'] = MyQuery::from("test")
+    $select['between'] = MyQuery::from("test", $this->PDO)
       ->select()
       ->between("column_1", 1, 100)
     ;
 
-    $select['compare'] = MyQuery::from("test")
+    $select['compare'] = MyQuery::from("test", $this->PDO)
       ->select()
       ->between("column_1", 1, 100)
     ;
 
-    $select['equal'] = MyQuery::from("test")
+    $select['equal'] = MyQuery::from("test", $this->PDO)
       ->select()
       ->equal("column_1", "test")
     ;
 
-    $select['in'] = MyQuery::from("test")
+    $select['in'] = MyQuery::from("test", $this->PDO)
       ->select()
       ->in("column_1", [1, 2, 3, 4])
     ;
 
-    $select['like'] = MyQuery::from("test")
+    $select['like'] = MyQuery::from("test", $this->PDO)
       ->select()
       ->like("column_1", "test")
     ;
 
-    $select['where'] = MyQuery::from("test")
+    $select['where'] = MyQuery::from("test", $this->PDO)
       ->select()
       ->where("a < :a OR b > :b", ['a' => 1, 'b' => 2])
     ;
@@ -103,7 +112,7 @@ final class QueryStringTest extends TestCase
   /** @test */
   public function it_correct_select_query_and_limit_order(): void
   {
-    $select = MyQuery::from("test")
+    $select = MyQuery::from("test", $this->PDO)
       ->select()
       ->between("column_1", 1, 100)
       ->limit(1, 10)
@@ -120,7 +129,7 @@ final class QueryStringTest extends TestCase
   /** @test */
   public function it_correct_select_multy_column(): void
   {
-    $select = MyQuery::from("test")
+    $select = MyQuery::from("test", $this->PDO)
       ->select(['column_1', 'column_2', 'column_3'])
       ->equal("column_1", 123)
       ->equal("column_2", 'abc')
@@ -137,7 +146,7 @@ final class QueryStringTest extends TestCase
   /** @test */
   public function it_correct_select_using_or_statment(): void
   {
-    $select = MyQuery::from("test")
+    $select = MyQuery::from("test", $this->PDO)
       ->select(['column_1', 'column_2', 'column_3'])
       ->equal("column_1", 123)
       ->equal("column_2", 'abc')
@@ -154,7 +163,7 @@ final class QueryStringTest extends TestCase
   /** @test */
   public function it_correct_insert_query_multy_values(): void
   {
-    $insert = MyQuery::from('test')
+    $insert = MyQuery::from('test', $this->PDO)
       ->insert()
       // insert using multy value
       ->values([
@@ -177,37 +186,37 @@ final class QueryStringTest extends TestCase
   public function it_correct_update_query(): void
   {
     $update = array();
-    $update['between'] = MyQuery::from('test')
+    $update['between'] = MyQuery::from('test', $this->PDO)
       ->update()
       ->value('a', 'b')
       ->between('coulumn_1', 1, 100)
     ;
 
-    $update['compare'] = MyQuery::from('test')
+    $update['compare'] = MyQuery::from('test', $this->PDO)
       ->update()
       ->value('a', 'b')
       ->compare("ten", ">", 9)
     ;
 
-    $update['equal'] = MyQuery::from('test')
+    $update['equal'] = MyQuery::from('test', $this->PDO)
       ->update()
       ->value('a', 'b')
       ->equal('ten', 10)
     ;
 
-    $update['in'] = MyQuery::from('test')
+    $update['in'] = MyQuery::from('test', $this->PDO)
       ->update()
       ->value('a', 'b')
       ->in('column_1', [1, 2, 3, 4, 5])
     ;
 
-    $update['like'] = MyQuery::from('test')
+    $update['like'] = MyQuery::from('test', $this->PDO)
       ->update()
       ->value('a', 'b')
       ->like('i', 'you')
     ;
 
-    $update['where'] = MyQuery::from('test')
+    $update['where'] = MyQuery::from('test', $this->PDO)
       ->update()
       ->value('a', 'b')
       ->where('col1 = :col1 OR col2 = :col2', ['col1' => 1, 'col2' => 2])
@@ -250,32 +259,32 @@ final class QueryStringTest extends TestCase
   public function it_correct_delete_query(): void
   {
     $delete = array();
-    $delete['between'] = MyQuery::from('test')
+    $delete['between'] = MyQuery::from('test', $this->PDO)
       ->delete()
       ->between('coulumn_1', 1, 100)
     ;
 
-    $delete['compare'] = MyQuery::from('test')
+    $delete['compare'] = MyQuery::from('test', $this->PDO)
       ->delete()
       ->compare("ten", ">", 9)
     ;
 
-    $delete['equal'] = MyQuery::from('test')
+    $delete['equal'] = MyQuery::from('test', $this->PDO)
       ->delete()
       ->equal('ten', 10)
     ;
 
-    $delete['in'] = MyQuery::from('test')
+    $delete['in'] = MyQuery::from('test', $this->PDO)
       ->delete()
       ->in('column_1', [1, 2, 3, 4, 5])
     ;
 
-    $delete['like'] = MyQuery::from('test')
+    $delete['like'] = MyQuery::from('test', $this->PDO)
       ->delete()
       ->like('i', 'you')
     ;
 
-    $delete['where'] = MyQuery::from('test')
+    $delete['where'] = MyQuery::from('test', $this->PDO)
       ->delete()
       ->where('col1 = :col1 OR col2 = :col2', ['col1' => 1, 'col2' => 2])
     ;
@@ -317,7 +326,7 @@ final class QueryStringTest extends TestCase
   public function it_correct_select_join_query(): void
   {
     // inner join
-    $select['inner'] = MyQuery::from('base_table')
+    $select['inner'] = MyQuery::from('base_table', $this->PDO)
       ->select()
       ->join(InnerJoin::ref('join_table', 'base_id', 'join_id'))
     ;
@@ -329,7 +338,7 @@ final class QueryStringTest extends TestCase
     );
 
     // left join
-    $select['left'] = MyQuery::from('base_table')
+    $select['left'] = MyQuery::from('base_table', $this->PDO)
       ->select()
       ->join(LeftJoin::ref('join_table', 'base_id', 'join_id'))
     ;
@@ -341,7 +350,7 @@ final class QueryStringTest extends TestCase
     );
 
     // right join
-    $select['right'] = MyQuery::from('base_table')
+    $select['right'] = MyQuery::from('base_table', $this->PDO)
       ->select()
       ->join(RightJoin::ref('join_table', 'base_id', 'join_id'))
     ;
@@ -353,7 +362,7 @@ final class QueryStringTest extends TestCase
     );
 
     // full join
-    $select['full'] = MyQuery::from('base_table')
+    $select['full'] = MyQuery::from('base_table', $this->PDO)
       ->select()
       ->join(FullJoin::ref('join_table', 'base_id', 'join_id'))
     ;
@@ -370,10 +379,10 @@ final class QueryStringTest extends TestCase
   /** @test */
   public function it_can_generate_where_exits_query(): void
   {
-    $select = MyQuery::from('base_1')
+    $select = MyQuery::from('base_1', $this->PDO)
       ->select()
       ->whereExist(
-        Select::from('base_2')
+        Select::from('base_2', $this->PDO)
           ->equal('test', 'success')
           ->where('base_1.id = base_2.id')
       )
@@ -389,10 +398,10 @@ final class QueryStringTest extends TestCase
     );
 
     // where not exist
-    $select = MyQuery::from('base_1')
+    $select = MyQuery::from('base_1', $this->PDO)
       ->select()
       ->whereNotExist(
-        Select::from('base_2')
+        Select::from('base_2', $this->PDO)
           ->equal('test', 'success')
           ->where('base_1.id = base_2.id')
       )

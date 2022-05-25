@@ -5,10 +5,26 @@ use \PDOException;
 
 class MyPDO
 {
-  /** @var \PDO PDO */
+  /**
+   * PDO class.
+   *
+   *  @var \PDO PDO
+   */
   private $dbh;
-  /** @var \PDOStatement */
+
+  /**
+   * PDO Statment.
+   *
+   * @var \PDOStatement
+   */
   private $stmt;
+
+  /**
+   * Array config.
+   *
+   * @var array
+   */
+  private $configs;
 
   public function __construct(array $configs)
   {
@@ -17,6 +33,8 @@ class MyPDO
       $user             = $configs['user'];
       $pass             = $configs['password'];
 
+      $this->configs = $configs;
+
     // konfigurasi driver
     $dsn = "mysql:host=$host;dbname=$database_name";
     $option = array (
@@ -24,15 +42,12 @@ class MyPDO
       PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     );
 
-    // menjalankan koneksi daabase
+    // menjalankan koneksi database
     try {
       $this->dbh = new PDO($dsn, $user, $pass, $option);
     } catch(PDOException $e) {
       die($e->getMessage());
     }
-
-    // set instance
-    static::$Instance = $this;
   }
 
   /** Create connaction using static */
@@ -41,17 +56,14 @@ class MyPDO
     return new self($configs);
   }
 
-  /** @var self */
-  private static $Instance;
-
   /**
-   * Singleton pattern implemnt for Databese connation
+   * Get config connection.
    *
-   * @return MyPDO MyPDO with singleton
+   * @return array
    */
-  public static function getInstance(): self
+  public function configs()
   {
-      return self::$Instance;
+      return $this->configs;
   }
 
   /**

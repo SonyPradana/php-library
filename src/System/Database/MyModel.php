@@ -348,7 +348,7 @@ abstract class MyModel
    *
    * @param \MyPDO $pdo PDO DI
   */
-  public static function call(MyPDO $pdo = null)
+  public static function call(MyPDO $pdo)
   {
     return new static($pdo);
   }

@@ -11,11 +11,11 @@ class Select extends Fetch
 {
   use ConditionTrait;
 
-  public function __construct(string $table_name, array $columns_name, MyPDO $PDO = null, array $options = null)
+  public function __construct(string $table_name, array $columns_name, MyPDO $PDO, array $options = null)
   {
     $this->_table = $table_name;
     $this->_column = $columns_name;
-    $this->PDO = $PDO ?? MyPDO::getInstance();
+    $this->PDO = $PDO;
 
     // defaul query
     if (count($this->_column) > 1) {
@@ -31,9 +31,9 @@ class Select extends Fetch
     return $this->builder();
   }
 
-  public static function from(string $table_name, array $column_name = array('*'))
+  public static function from(string $table_name, MyPDO $PDO, array $column_name = array('*'))
   {
-    return new static($table_name, $column_name);
+    return new static($table_name, $column_name, $PDO);
   }
 
   /**

@@ -9,10 +9,10 @@ class Update extends Execute
 {
   use ConditionTrait;
 
-  public function __construct(string $table_name, MyPDO $PDO = null)
+  public function __construct(string $table_name, MyPDO $PDO)
   {
     $this->_table = $table_name;
-    $this->PDO = $PDO ?? MyPDO::getInstance();
+    $this->PDO = $PDO;
   }
 
   public function __toString()

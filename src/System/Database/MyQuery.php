@@ -19,9 +19,9 @@ class MyQuery
    *
    * @param MyPDO $PDO The PDO connection, null give global instance
    */
-  public function __construct(MyPDO $PDO = null)
+  public function __construct(MyPDO $PDO)
   {
-    $this->PDO = $PDO ?? MyPDO::getInstance();
+    $this->PDO = $PDO;
   }
 
   /**
@@ -50,7 +50,7 @@ class MyQuery
    * @param string $table_name Table name
    * @param MyPDO $PDO The PDO connection, null give global instance
    */
-  public static function from(string $table_name, MyPDO $PDO = null)
+  public static function from(string $table_name, MyPDO $PDO)
   {
     $conn = new MyQuery($PDO);
     return $conn->table($table_name);

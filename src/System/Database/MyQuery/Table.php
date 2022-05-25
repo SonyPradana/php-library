@@ -11,10 +11,10 @@ class Table
   protected $PDO = null;
   protected $table_name;
 
-  public function __construct(string $table_name, MyPDO $PDO = null)
+  public function __construct(string $table_name, MyPDO $PDO)
   {
     $this->table_name = $table_name;
-    $this->PDO = $PDO ?? MyPDO::getInstance();
+    $this->PDO = $PDO;
   }
 
   public function insert()
@@ -62,7 +62,7 @@ class Table
         TABLE_SCHEMA = :dbs AND TABLE_NAME = :table"
     );
     $this->PDO->bind(':table', $this->table_name);
-    $this->PDO->bind(':dbs', DB_NAME);
+    $this->PDO->bind(':dbs', $this->PDO->configs('database_name'));
     return $this->PDO->resultset() ?? array();
   }
 }
