@@ -16,13 +16,13 @@ final class QueryStringTest extends TestCase
     protected function setUp(): void
     {
         $db = new MyPDO([
-            'database_name'  => '',
-            'host'           => '',
+            'database_name'  => 'test',
+            'host'           => 'localhost',
             'user'           => '',
             'password'       => '',
         ]);
     }
-    
+
   /** @test */
   public function it_correct_select_query(): void
   {
