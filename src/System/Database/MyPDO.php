@@ -1,5 +1,6 @@
 <?php namespace System\Database;
 
+use Exception;
 use \PDO;
 use \PDOException;
 
@@ -28,7 +29,7 @@ class MyPDO
     try {
       $this->dbh = new PDO($dsn, $user, $pass, $option);
     } catch(PDOException $e) {
-      die($e->getMessage());
+        throw new Exception($e->getMessage());
     }
 
     // set instance
