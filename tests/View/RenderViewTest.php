@@ -10,8 +10,8 @@ class RenderViewTest extends TestCase
    */
   public function it_can_render_using_view_classes(): void
   {
-    $test_html = dirname(__DIR__) . '\View\sample\sample.html';
-    $test_php = dirname(__DIR__) . '\View\sample\sample.php';
+    $test_html  = __DIR__.DIRECTORY_SEPARATOR.'sample'.DIRECTORY_SEPARATOR.'sample.html';
+    $test_php   = __DIR__.DIRECTORY_SEPARATOR.'sample'.DIRECTORY_SEPARATOR.'sample.php';
 
     ob_start();
     View::render($test_html)->send();

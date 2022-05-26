@@ -49,7 +49,7 @@ class ApplicationTest extends TestCase
     /** @test */
     public function it_can_not_duplicate_register()
     {
-        require_once dirname(__DIR__) . '\Integrate\Provider\TestServiceProvider.php';
+        require_once __DIR__.DIRECTORY_SEPARATOR.'Provider'.DIRECTORY_SEPARATOR.'TestServiceProvider.php';
 
         $app = new Application('/');
 
