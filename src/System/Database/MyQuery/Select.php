@@ -31,7 +31,7 @@ class Select extends Fetch
     return $this->builder();
   }
 
-  public static function from(string $table_name, MyPDO $PDO, array $column_name = array('*'))
+  public static function from(string $table_name, array $column_name, MyPDO $PDO)
   {
     return new static($table_name, $column_name, $PDO);
   }
