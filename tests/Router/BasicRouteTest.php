@@ -268,7 +268,7 @@ class BasicRouteTest extends TestCase
    */
   public function it_can_pass_group_middleware(): void
   {
-    require_once dirname(__DIR__) . '\Router\TestMiddleware.php';
+    require_once __DIR__.DIRECTORY_SEPARATOR.'TestMiddleware.php';
 
     Router::middleware([TestMiddleware::class])->group(function () {
         Router::get('/', fn () => true);
@@ -286,7 +286,7 @@ class BasicRouteTest extends TestCase
    */
   public function it_can_pass_single_middleware(): void
   {
-    require_once dirname(__DIR__) . '\Router\TestMiddleware.php';
+    require_once __DIR__.DIRECTORY_SEPARATOR.'TestMiddleware.php';
 
     Router::get('/', fn () => true)->middleware([TestMiddleware::class]);
     $_SERVER['REQUEST_URI'] = '/';
@@ -302,7 +302,7 @@ class BasicRouteTest extends TestCase
    */
   public function it_can_pass_midleware_run_once(): void
   {
-    require_once dirname(__DIR__) . '\Router\TestMiddleware.php';
+    require_once __DIR__.DIRECTORY_SEPARATOR.'TestMiddleware.php';
 
     TestMiddleware::$last = 0;
     Router::middleware([TestMiddleware::class])->group(function () {

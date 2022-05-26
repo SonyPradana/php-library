@@ -9,27 +9,13 @@ use System\Database\MyQuery\Join\LeftJoin;
 use System\Database\MyQuery\Join\RightJoin;
 use System\Database\MyQuery\Select;
 
-use function PHPUnit\Framework\equalTo;
-
 final class QueryStringTest extends TestCase
 {
-    /** @var MyPDO */
     private $PDO;
 
     protected function setUp(): void
     {
-        $db = new MyPDO([
-            'database_name'  => '',
-            'host'           => '',
-            'user'           => '',
-            'password'       => '',
-        ]);
-
-        $this->PDO = $db;
-    }
-    protected function tearDown(): void
-    {
-        $this->PDO = null;
+      $this->PDO = Mockery::mock(MyPDO::class);
     }
 
   /** @test */
@@ -379,10 +365,12 @@ final class QueryStringTest extends TestCase
   /** @test */
   public function it_can_generate_where_exits_query(): void
   {
-    $select = MyQuery::from('base_1', $this->PDO)
+
+      $select = MyQuery::from('base_1', $this->PDO)
       ->select()
       ->whereExist(
-        Select::from('base_2', $this->PDO)
+        (new Select('base_2', ['*'], $this->PDO))
+        // Select::from('base_2')
           ->equal('test', 'success')
           ->where('base_1.id = base_2.id')
       )
@@ -401,7 +389,8 @@ final class QueryStringTest extends TestCase
     $select = MyQuery::from('base_1', $this->PDO)
       ->select()
       ->whereNotExist(
-        Select::from('base_2', $this->PDO)
+        (new Select('base_2', ['*'], $this->PDO))
+        // Select::from('base_2', $this->PDO)
           ->equal('test', 'success')
           ->where('base_1.id = base_2.id')
       )

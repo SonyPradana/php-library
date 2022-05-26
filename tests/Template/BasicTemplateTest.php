@@ -16,7 +16,7 @@ class BasicTemplateTest extends TestCase
 {
   private function getExpected(string $expected): string
   {
-    $file_name = dirname(__DIR__) . '/Template/expected/' . $expected;
+    $file_name = __DIR__.DIRECTORY_SEPARATOR.'expected'.DIRECTORY_SEPARATOR.$expected;
     return file_get_contents($file_name);
   }
 

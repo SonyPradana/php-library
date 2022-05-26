@@ -12,33 +12,23 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - uses: mirromutth/mysql-action@v1.1
-      with:
-        host port: 3800
-        container port: 3307
-        character set server: 'utf8'
-        collation server: 'utf8_general_ci'
-        mysql version: '5.5'
-        mysql database: 'test'
-        mysql root password: 'root'
-        mysql user: ''
-        mysql password: ''
-
     - name: Validate composer.json and composer.lock
       run: composer validate
 
     - name: Cache Composer packages
       id: composer-cache
-      uses: actions/cache@v2
+      run: |
+        echo "::set-output name=dir::$(composer config cache-files-dir)"
+    - uses: actions/cache@v3
       with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
-          ${{ runner.os }}-php-
+          ${{ runner.os }}-composer-
 
     - name: Install dependencies
       if: steps.composer-cache.outputs.cache-hit != 'true'
-      run: composer install --prefer-dist --no-progress --no-suggest
+      run: composer install --dev --prefer-dist --no-progress --no-suggest
 
     - name: reload autoload
       run: composer dump-autoload
