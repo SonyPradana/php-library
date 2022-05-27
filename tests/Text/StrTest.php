@@ -38,7 +38,7 @@ final class StrTest extends TestCase
     {
         $text = 'i love laravel';
 
-        $this->assertEquals(13, Str::lasrIndexOf($text, 'l'));
+        $this->assertEquals(13, Str::lastIndexOf($text, 'l'));
     }
 
     /** @test */

@@ -56,7 +56,7 @@ class Str
      * @param string $find Find
      * @return int|false
      */
-    public static function lasrIndexOf(string $text, string $find)
+    public static function lastIndexOf(string $text, string $find)
     {
         return strpos($text, $find, -1);
     }
