@@ -16,7 +16,7 @@ final class StrMacroTest extends TestCase
     }
 
     /** @test */
-    public function itThrowError()
+    public function it_can_throw_error_when_macro_not_found()
     {
         $this->expectExceptionMessage('Macro hay is not macro able.');
         Str::hay();
@@ -29,8 +29,9 @@ final class StrMacroTest extends TestCase
 
         Str::resetMacro();
 
-        $this->expectExceptionMessage('Macro hay is not macro able.');
+        $this->expectExceptionMessage('Macro add_prefix is not macro able.');
 
         Str::add_prefix('a', 'b');
+        Str::resetMacro();
     }
 }

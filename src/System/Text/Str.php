@@ -10,19 +10,19 @@ class Str
 
     /**
      * Register string macro.
-     * 
+     *
      * @param string $macro_name Method name
      * @param callable $call_back Method call able
      * @param void
      */
-    public static macro(string $macro_name, $call_back)
+    public static function macro(string $macro_name, $call_back)
     {
-        $this->macro[$macro_name] = $call_back;
+        self::$macros[$macro_name] = $call_back;
     }
 
     /**
      * Call macro.
-     * 
+     *
      * @param string $method Method name
      * @param array $parameters Parameters
      * @return mixed
@@ -30,7 +30,7 @@ class Str
     public static function __callStatic(string $method, array $parameters)
     {
         if (! array_key_exists($method, self::$macros)) {
-            throw new Exception('Macro '.$method.' is not macro able.');            
+            throw new \Exception('Macro '.$method.' is not macro able.');
         }
 
         return call_user_func_array(self::$macros[$method], $parameters);
@@ -38,26 +38,24 @@ class Str
 
     /**
      * Cek macro already register.
-     * 
+     *
      * @param string $macro_name Macro name
      * @return boolean True if macro has register
      */
-    
+
     public static function hasMacro(string $macro_name)
     {
-        return array_key_exists($method, self::$macros);
+        return array_key_exists($macro_name, self::$macros);
     }
 
     /**
      * Reset registered macro.
-     * 
+     *
      * @return void
      */
     public static function resetMacro()
     {
         self::$macros = [];
-
-        return self;
     }
 
     /**
