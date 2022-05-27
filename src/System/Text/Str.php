@@ -289,4 +289,58 @@ class Str
 
         return implode('', $result);
     }
+
+    // Backward Compatible php 8.0 --------------------------------
+
+    /**
+     * Check text contain with.
+     *
+     * @param string $text Text
+     * @param string $find Text contain
+     * @return bool True if text contain
+     *
+     * @link https://github.com/symfony/polyfill-php80/blob/main/Php80.php
+     */
+    public static function contains(string $text, string $find)
+    {
+        return '' === $find || false !== strpos($text, $find);
+    }
+
+    /**
+     * Check text starts with with.
+     *
+     * @param string $text Text
+     * @param string $start_with Start with
+     * @return bool True if text starts with
+     *
+     * @link https://github.com/symfony/polyfill-php80/blob/main/Php80.php
+     */
+    public static function startsWith(string $text, string $start_with)
+    {
+        return 0 === strncmp($text, $start_with, \strlen($start_with));
+    }
+
+    /**
+     * Check text ends with with.
+     *
+     * @param string $text Text
+     * @param string $start_with Start with
+     * @return bool True if text ends with
+     *
+     * @link https://github.com/symfony/polyfill-php80/blob/main/Php80.php
+     */
+    public static function endsWith(string $text, string $start_with)
+    {
+        if ('' === $start_with || $start_with === $text) {
+            return true;
+        }
+
+        if ('' === $text) {
+            return false;
+        }
+
+        $needleLength = \strlen($start_with);
+
+        return $needleLength <= \strlen($text) && 0 === substr_compare($text, $start_with, -$needleLength);
+    }
 }

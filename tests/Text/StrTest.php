@@ -219,4 +219,31 @@ final class StrTest extends TestCase
         $this->assertEquals('iLoveLaravel', Str::toCamelCase($text));
     }
 
+    /** @test */
+    public function it_can_detect_text_contain_with()
+    {
+        $text = 'i love laravel';
+
+        $this->assertTrue(Str::contains($text, 'laravel'));
+        $this->assertFalse(Str::contains($text, 'symfony'));
+    }
+
+    /** @test */
+    public function it_can_detect_text_starts_with()
+    {
+        $text = 'i love laravel';
+
+        $this->assertTrue(Str::startsWith($text, 'i'));
+        $this->assertFalse(Str::startsWith($text, 'love'));
+    }
+
+    /** @test */
+    public function it_can_detect_text_ends_with()
+    {
+        $text = 'i love laravel';
+
+        $this->assertTrue(Str::endsWith($text, 'laravel'));
+        $this->assertFalse(Str::endsWith($text, 'love'));
+    }
+
 }
