@@ -11,12 +11,21 @@ class MyPDO
   /** @var \PDOStatement */
   private $stmt;
 
+  /**
+   * Connection configuration.
+   *
+   * @var array<string, string>
+   */
+  private $configs;
+
   public function __construct(array $configs)
   {
       $database_name    = $configs['database_name'];
       $host             = $configs['host'];
       $user             = $configs['user'];
       $pass             = $configs['password'];
+
+      $this->configs = $configs;
 
     // konfigurasi driver
     $dsn = "mysql:host=$host;dbname=$database_name";
@@ -40,6 +49,16 @@ class MyPDO
   public static function conn(array $configs)
   {
     return new self($configs);
+  }
+
+  /**
+   * Get connection configuration.
+   *
+   * @return array<string, string)
+   */
+  public function configs()
+  {
+      return $this->configs();
   }
 
   /** @var self */
