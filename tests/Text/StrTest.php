@@ -246,4 +246,59 @@ final class StrTest extends TestCase
         $this->assertFalse(Str::endsWith($text, 'love'));
     }
 
+    /** @test */
+    public function it_can_make_slugify_from_text()
+    {
+        $text = 'i love laravel';
+
+        $this->assertEquals('i-love-laravel', Str::slug($text));
+
+        $text = '-~+-';
+
+        $this->expectErrorMessage($text.' doest return anythink.');
+        Str::slug($text);
+    }
+
+    /** @test */
+    public function it_can_render_template_string()
+    {
+        $template = 'i love {lang}';
+        $data = ['lang' => 'laravel'];
+
+        $this->assertEquals('i love laravel', Str::template($template, $data));
+    }
+
+    /** @test */
+    public function it_can_count_text()
+    {
+        $text = 'i love laravel';
+
+        $this->assertEquals(14, Str::length($text));
+    }
+
+    /** @test */
+    public function it_can_repeat_text()
+    {
+        $text = 'test';
+
+        $this->assertEquals('testtesttest', Str::repeat($text, 3));
+    }
+
+    /** @test */
+    public function it_can_detect_string()
+    {
+        $this->assertTrue(Str::isString('text'));
+
+        $this->assertFalse(Str::isString(123));
+        $this->assertFalse(Str::isString(false));
+        $this->assertFalse(Str::isString([]));
+    }
+
+    /** @test */
+    public function it_can_detect_empty_string()
+    {
+        $this->assertTrue(str::isEmpty(''));
+        $this->assertFalse(str::isEmpty('test'));
+    }
+
 }
