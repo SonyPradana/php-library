@@ -58,7 +58,7 @@ class MyPDO
    */
   public function configs()
   {
-      return $this->configs();
+      return $this->configs;
   }
 
   /** @var self */
