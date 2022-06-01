@@ -390,6 +390,24 @@ class Str
         return '' === $text;
     }
 
+    /**
+     * Retreves the matches of string against a search pattern.
+     *
+     * @param string $text String
+     * @param string $pattern String leguler expresstion
+     * @return bool
+     */
+    public static function isMatch(string $text, string $pattern)
+    {
+        $has_result = preg_match($pattern, $text);
+
+        if (1 === $has_result) {
+            return true;
+        }
+
+        return false;
+    }
+
     // Backward Compatible php 8.0 --------------------------------
 
     /**
