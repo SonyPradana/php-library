@@ -18,6 +18,11 @@ final class QueryStringTest extends TestCase
       $this->PDO = Mockery::mock(MyPDO::class);
     }
 
+    protected function tearDown(): void
+    {
+        Mockery::close();
+    }
+
   /** @test */
   public function it_correct_select_query(): void
   {
