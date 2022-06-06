@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.7.0] - 2022-06-06
 ### Added 
 - Added `MyPDO::config()` PDO connection configure.
 - Added string manipulation `Str::chartAt`, `Str::concat`, `Str::indexOf`, `Str::lastIndexOf`, `Str::match`, `Str::repalce`, `Str::search`, `Str::slice`, `Str::split`, `Str::toLowerCase`, `Str::toUpperCase`, `Str::firstUpper`, `Str::firstUppeAll`, `Str::toPascalCase`, `Str::toCamelCase`, `Str::contains`, `Str::startsWith`, `Str::endsWith`, `Str::template`, `Str::slug`, `Str::repeat`, `Str::length`, `Str::isString`, `Str::isEmpty`, `Str::isMatch`.
