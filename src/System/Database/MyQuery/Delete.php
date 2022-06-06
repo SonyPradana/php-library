@@ -7,26 +7,25 @@ use System\Database\MyQuery\Traits\ConditionTrait;
 
 class Delete extends Execute
 {
-  use ConditionTrait;
+    use ConditionTrait;
 
-  public function __construct(string $table_name, MyPDO $PDO = null)
-  {
-    $this->_table = $table_name;
-    $this->PDO    = $PDO ?? MyPDO::getInstance();
-  }
+    public function __construct(string $table_name, MyPDO $PDO = null)
+    {
+        $this->_table = $table_name;
+        $this->PDO    = $PDO ?? MyPDO::getInstance();
+    }
 
-  public function __toString()
-  {
-    return $this->builder();
-  }
+    public function __toString()
+    {
+        return $this->builder();
+    }
 
-  protected function builder(): string
-  {
-    $where = $this->getWhere();
+    protected function builder(): string
+    {
+        $where = $this->getWhere();
 
-    $this->_query = "DELETE FROM `$this->_table` $where";
+        $this->_query = "DELETE FROM `$this->_table` $where";
 
-    return $this->_query;
-  }
-
+        return $this->_query;
+    }
 }

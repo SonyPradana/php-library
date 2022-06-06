@@ -22,13 +22,13 @@ class TextAPITest extends TestCase
     // api test ----------------------------
 
     /** @test */
-    public function it_can_return_chartAt()
+    public function itCanReturnChartAt()
     {
         $this->assertEquals('o', $this->text->chartAt(3));
     }
 
     /** @test */
-    public function it_can_return_slice()
+    public function itCanReturnSlice()
     {
         $this->markTestIncomplete(
             'This test has not been implemented yet.'
@@ -38,55 +38,55 @@ class TextAPITest extends TestCase
     }
 
     /** @test */
-    public function it_can_return_lower()
+    public function itCanReturnLower()
     {
         $this->assertEquals('i love symfony', $this->text->lower());
     }
 
     /** @test */
-    public function it_can_return_upper()
+    public function itCanReturnUpper()
     {
         $this->assertEquals('I LOVE SYMFONY', $this->text->upper());
     }
 
     /** @test */
-    public function it_can_return_firstUpper()
+    public function itCanReturnFirstUpper()
     {
         $this->assertEquals('I love symfony', $this->text->firstUpper());
     }
 
     /** @test */
-    public function it_can_return_firstUpperAll()
+    public function itCanReturnFirstUpperAll()
     {
         $this->assertEquals('I Love Symfony', $this->text->firstUpperAll());
     }
 
     /** @test */
-    public function it_can_return_snack()
+    public function itCanReturnSnack()
     {
         $this->assertEquals('i_love_symfony', $this->text->snack());
     }
 
     /** @test */
-    public function it_can_return_kebab()
+    public function itCanReturnKebab()
     {
         $this->assertEquals('i-love-symfony', $this->text->kebab());
     }
 
     /** @test */
-    public function it_can_return_pascal()
+    public function itCanReturnPascal()
     {
         $this->assertEquals('ILoveSymfony', $this->text->pascal());
     }
 
     /** @test */
-    public function it_can_return_camel()
+    public function itCanReturnCamel()
     {
         $this->assertEquals('iLoveSymfony', $this->text->camel());
     }
 
     /** @test */
-    public function it_can_return_slug()
+    public function itCanReturnSlug()
     {
         $this->assertEquals('i-love-symfony', $this->text->slug());
     }
@@ -94,31 +94,31 @@ class TextAPITest extends TestCase
     // bool ------------------------------
 
     /** @test */
-    public function it_can_return_isEmpty()
+    public function itCanReturnIsEmpty()
     {
         $this->assertFalse($this->text->isEmpty());
     }
 
     /** @test */
-    public function it_can_return_is()
+    public function itCanReturnIs()
     {
         $this->assertFalse($this->text->is(Regex::USER));
     }
 
     /** @test */
-    public function it_can_return_contains()
+    public function itCanReturnContains()
     {
         $this->assertTrue($this->text->contains('love'));
     }
 
     /** @test */
-    public function it_can_return_startsWith()
+    public function itCanReturnStartsWith()
     {
         $this->assertTrue($this->text->startsWith('i love'));
     }
 
     /** @test */
-    public function it_can_return_endsWith()
+    public function itCanReturnEndsWith()
     {
         $this->assertTrue($this->text->endsWith('symfony'));
     }
@@ -126,25 +126,23 @@ class TextAPITest extends TestCase
     // int ---------------------------------------
 
     /** @test */
-    public function it_can_return_length()
+    public function itCanReturnLength()
     {
         $this->assertIsInt($this->text->length());
         $this->assertEquals(14, $this->text->length());
     }
 
     /** @test */
-    public function it_can_return_indexOf()
+    public function itCanReturnIndexOf()
     {
         $this->assertIsInt($this->text->length());
         $this->assertEquals(7, $this->text->indexOf('symfony'));
     }
 
     /** @test */
-    public function it_can_return_LastIndexOf()
+    public function itCanReturnLastIndexOf()
     {
         $this->assertIsInt($this->text->length());
         $this->assertEquals(3, $this->text->indexOf('o'));
     }
-
-
 }

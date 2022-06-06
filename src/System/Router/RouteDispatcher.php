@@ -21,19 +21,19 @@ class RouteDispatcher
     private $method_not_allowed = null;
 
     // setup --------------------
-    private $basepath = '';
-    private $case_matters = false;
+    private $basepath               = '';
+    private $case_matters           = false;
     private $trailing_slash_matters = false;
-    private $multimatch = false;
+    private $multimatch             = false;
 
-    /** @var Array */
+    /** @var array */
     private $trigger;
     /** @var Route */
     private $current;
 
     /**
      * @param Request $request Incoming request
-     * @param Route[] $routes Array of route
+     * @param Route[] $routes  Array of route
      */
     public function __construct(Request $request, $routes)
     {
@@ -44,8 +44,8 @@ class RouteDispatcher
     /**
      * Create new costruct using uri and method.
      *
-     * @param string $uri Ulr
-     * @param string $method Method
+     * @param string  $uri    Ulr
+     * @param string  $method Method
      * @param Route[] $routes Array of route
      */
     public static function dispatchFrom(string $uri, string $method, $routes)
@@ -61,6 +61,7 @@ class RouteDispatcher
      * Setup Base Path.
      *
      * @param string $basepath Base Path
+     *
      * @return self
      */
     public function basePath(string $base_path)
@@ -73,7 +74,8 @@ class RouteDispatcher
     /**
      * Cese sensitive metters.
      *
-     * @param boolean $case_matters Cese sensitive metters
+     * @param bool $case_matters Cese sensitive metters
+     *
      * @return self
      */
     public function caseMatters(bool $case_matters)
@@ -86,7 +88,8 @@ class RouteDispatcher
     /**
      * Trailing slash matters.
      *
-     * @param boolean $trailling_slash_metters Trailing slash matters
+     * @param bool $trailling_slash_metters Trailing slash matters
+     *
      * @return self
      */
     public function trailingSlashMatters(bool $trailling_slash_metters)
@@ -99,7 +102,8 @@ class RouteDispatcher
     /**
      * Return Multy route.
      *
-     * @param boolean $multimath Return Multy route
+     * @param bool $multimath Return Multy route
+     *
      * @return self
      */
     public function multimatch(bool $multimath)
@@ -142,9 +146,10 @@ class RouteDispatcher
     /**
      * Catch action from callable (found, not_found, method_not_allowed).
      *
-     * @param callable $callable Callback
-     * @param array $param Callaback params
+     * @param callable     $callable   Callback
+     * @param array        $param      Callaback params
      * @param class-name[] $middleware Array of middleware class-name
+     *
      * @return void
      */
     private function trigger(callable $callable, $params, $middleware = [])
@@ -152,17 +157,17 @@ class RouteDispatcher
         $this->trigger = [
             'callable'      => $callable,
             'params'        => $params,
-            'middleware'    => $middleware
+            'middleware'    => $middleware,
         ];
     }
 
     /**
      * Dispatch routes and setup trigger.
      *
-     * @param string $basepath Base Path
-     * @param boolean $case_matters Cese sensitive metters
-     * @param boolean $trailing_slash_matters Trailing slash matters
-     * @param boolean $multimatch Return Multy route
+     * @param string $basepath               Base Path
+     * @param bool   $case_matters           Cese sensitive metters
+     * @param bool   $trailing_slash_matters Trailing slash matters
+     * @param bool   $multimatch             Return Multy route
      */
     private function dispatch($basepath = '', $case_matters = false, $trailing_slash_matters = false, $multimatch = false)
     {
@@ -182,7 +187,7 @@ class RouteDispatcher
                 $path = $parsed_url['path'];
             } else {
                 // If the path is not equal to the base path (including a trailing slash)
-                if ($basepath.'/' != $parsed_url['path']) {
+                if ($basepath . '/' != $parsed_url['path']) {
                     // Cut the trailing slash away because it does not matters
                     $path = rtrim($parsed_url['path'], '/');
                 } else {
@@ -194,30 +199,29 @@ class RouteDispatcher
         // Get current request method
         $method = $this->request->getMethod();
 
-        $path_match_found = false;
+        $path_match_found  = false;
         $route_match_found = false;
 
         foreach ($this->routes as $route) {
-
             // If the method matches check the path
 
             // Add basepath to matching string
             if ($basepath != '' && $basepath != '/') {
-                $route['expression'] = '('.$basepath.')'.$route['expression'];
+                $route['expression'] = '(' . $basepath . ')' . $route['expression'];
             }
 
             // Add 'find string start' automatically
-            $route['expression'] = '^'.$route['expression'];
+            $route['expression'] = '^' . $route['expression'];
 
             // Add 'find string end' automatically
-            $route['expression'] = $route['expression'].'$';
+            $route['expression'] = $route['expression'] . '$';
 
             // Check path match
-            if (preg_match('#'.$route['expression'].'#'.($case_matters ? '' : 'i').'u', $path, $matches)) {
+            if (preg_match('#' . $route['expression'] . '#' . ($case_matters ? '' : 'i') . 'u', $path, $matches)) {
                 $path_match_found = true;
 
                 // Cast allowed method to array if it's not one already, then run through all methods
-                foreach ((array)$route['method'] as $allowedMethod) {
+                foreach ((array) $route['method'] as $allowedMethod) {
                     // Check method match
                     if (strtolower($method) == strtolower($allowedMethod)) {
                         array_shift($matches); // Always remove first element. This contains the whole string
@@ -242,7 +246,6 @@ class RouteDispatcher
             if ($route_match_found && !$multimatch) {
                 break;
             }
-
         }
 
         // No matching route was found

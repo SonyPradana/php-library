@@ -11,8 +11,8 @@ class Str
     /**
      * Register string macro.
      *
-     * @param string $macro_name Method name
-     * @param callable $call_back Method call able
+     * @param string   $macro_name Method name
+     * @param callable $call_back  Method call able
      * @param void
      */
     public static function macro(string $macro_name, $call_back)
@@ -23,14 +23,15 @@ class Str
     /**
      * Call macro.
      *
-     * @param string $method Method name
-     * @param array $parameters Parameters
+     * @param string $method     Method name
+     * @param array  $parameters Parameters
+     *
      * @return mixed
      */
     public static function __callStatic(string $method, array $parameters)
     {
-        if (! array_key_exists($method, self::$macros)) {
-            throw new \Exception('Macro '.$method.' is not macro able.');
+        if (!array_key_exists($method, self::$macros)) {
+            throw new \Exception('Macro ' . $method . ' is not macro able.');
         }
 
         return call_user_func_array(self::$macros[$method], $parameters);
@@ -40,9 +41,9 @@ class Str
      * Cek macro already register.
      *
      * @param string $macro_name Macro name
-     * @return boolean True if macro has register
+     *
+     * @return bool True if macro has register
      */
-
     public static function hasMacro(string $macro_name)
     {
         return array_key_exists($macro_name, self::$macros);
@@ -62,6 +63,7 @@ class Str
      * Create new instace.
      *
      * @param string $text Input text
+     *
      * @return Text
      */
     public static function of(string $text)
@@ -72,8 +74,9 @@ class Str
     /**
      * Return the character at the specifid postion.
      *
-     * @param string $text String text
-     * @param int $index character position
+     * @param string $text  String text
+     * @param int    $index character position
+     *
      * @return string|false
      */
     public static function chartAt(string $text, int $index)
@@ -84,17 +87,18 @@ class Str
     /**
      * Join two or more string into once.
      *
-     * @param array<int, string> $text String array
-     * @param string $sparator Sparator
-     * @param string $sparator Sparator before last item
+     * @param array<int, string> $text     String array
+     * @param string             $sparator Sparator
+     * @param string             $sparator Sparator before last item
+     *
      * @return string
      */
     public static function concat(array $text, string $sparator = ' ', string $last_separator = '')
     {
         if ('' !== $last_separator) {
             $remove_last = array_pop($text);
-            $text[] = $last_separator;
-            $text[] = $remove_last;
+            $text[]      = $last_separator;
+            $text[]      = $remove_last;
         }
 
         return implode($sparator, $text);
@@ -105,6 +109,7 @@ class Str
      *
      * @param string $text String to search
      * @param string $find Find
+     *
      * @return int|false
      */
     public static function indexOf(string $text, string $find)
@@ -117,6 +122,7 @@ class Str
      *
      * @param string $text String to search
      * @param string $find Find
+     *
      * @return int|false
      */
     public static function lastIndexOf(string $text, string $find)
@@ -127,13 +133,14 @@ class Str
     /**
      * Retreves the matches of string against a search pattern.
      *
-     * @param string $text String
+     * @param string $text    String
      * @param string $pattern String leguler expresstion
+     *
      * @return array|null Null if not match found
      */
     public static function match(string $text, string $pattern)
     {
-        $matches = [];
+        $matches    = [];
         $has_result = preg_match($pattern, $text, $matches);
 
         if (1 === $has_result) {
@@ -146,9 +153,9 @@ class Str
     /**
      * Find and replace specified text in string.
      *
-     * @param string $original The subject text
-     * @param string|array $find find
-     * @param string|array $replace replace
+     * @param string       $original The subject text
+     * @param string|array $find     find
+     * @param string|array $replace  replace
      */
     public static function replace(string $original, $find, $replace)
     {
@@ -160,6 +167,7 @@ class Str
      *
      * @param string $text String to search
      * @param string $find Find
+     *
      * @return int|false
      */
     public static function search(string $text, string $find)
@@ -170,9 +178,10 @@ class Str
     /**
      * Extracts a section of string.
      *
-     * @param string $text String to slice
-     * @param int $start Start position text
+     * @param string   $text   String to slice
+     * @param int      $start  Start position text
      * @param int|null $length Length of string
+     *
      * @return string|false
      */
     public static function slice(string $text, int $start, ?int $length = null)
@@ -183,12 +192,13 @@ class Str
     /**
      * Splits a string into array of string.
      *
-     * @param string $text String to split.
-     * @param string $sparator Sparator
-     * @param int|null $limit Limit array length
+     * @param string   $text     string to split
+     * @param string   $sparator Sparator
+     * @param int|null $limit    Limit array length
+     *
      * @return array<int, string>|false
      */
-    public static function split(string $text, string $sparator = "", int $limit = PHP_INT_MAX)
+    public static function split(string $text, string $sparator = '', int $limit = PHP_INT_MAX)
     {
         return explode($sparator, $text, $limit);
     }
@@ -197,6 +207,7 @@ class Str
      * Convert string to lowercase.
      *
      * @param string $text Input string
+     *
      * @return string
      */
     public static function toLowerCase(string $text)
@@ -208,6 +219,7 @@ class Str
      * Convert string to lowercase.
      *
      * @param string $text Input string
+     *
      * @return string
      */
     public static function toUpperCase(string $text)
@@ -221,6 +233,7 @@ class Str
      * Make frist charater uppercase.
      *
      * @param string $text Input string
+     *
      * @return string
      */
     public static function firstUpper(string $text)
@@ -232,6 +245,7 @@ class Str
      * Make frist charater uppercase each words.
      *
      * @param string $text Input string
+     *
      * @return string
      */
     public static function firstUpperAll(string $text)
@@ -243,6 +257,7 @@ class Str
      * Make text sparate with dash (snackcase).
      *
      * @param string $text input text
+     *
      * @return string
      */
     public static function toSnackCase(string $text)
@@ -254,6 +269,7 @@ class Str
      * Make text sparate with - (kebabcase).
      *
      * @param string $text input text
+     *
      * @return string
      */
     public static function toKebabCase(string $text)
@@ -265,6 +281,7 @@ class Str
      * Make text each word start with capital (pascalcase).
      *
      * @param string $text input text
+     *
      * @return string
      */
     public static function toPascalCase(string $text)
@@ -279,18 +296,19 @@ class Str
      * Make text camelcase.
      *
      * @param string $text input text
+     *
      * @return string
      */
     public static function toCamelCase(string $text)
     {
         $space_case  = str_replace(['-', '_', '+'], ' ', $text);
-        $arr_text = explode(' ', $space_case);
-        $result = [];
-        $first_text = true;
+        $arr_text    = explode(' ', $space_case);
+        $result      = [];
+        $first_text  = true;
 
         foreach ($arr_text as $text) {
             if ($first_text) {
-                $result[] = strtolower($text);
+                $result[]   = strtolower($text);
                 $first_text = false;
                 continue;
             }
@@ -305,6 +323,7 @@ class Str
      * Make slugify (url-title).
      *
      * @param string $text inpu text
+     *
      * @return string
      */
     public static function slug(string $text)
@@ -329,7 +348,7 @@ class Str
         $text = \strtolower($text);
 
         if (empty($text)) {
-            throw new \Exception($original.' doest return anythink.');
+            throw new \Exception($original . ' doest return anythink.');
         }
 
         return $text;
@@ -338,8 +357,8 @@ class Str
     /**
      * Make muliple text (repeat).
      *
-     * @param string $text Text
-     * @param int $multiple Number reapet (less that 0 will return empty)
+     * @param string $text     Text
+     * @param int    $multiple Number reapet (less that 0 will return empty)
      */
     public static function repeat(string $text, int $multiple)
     {
@@ -359,16 +378,17 @@ class Str
     /**
      * Render template text.
      *
-     * @param string $template Template string text
-     * @param array<string, string> $data String data template (match with $template)
-     * @param string $open_delimeter Open delimeter (rekomend use: '{')
-     * @param string $close_delimeter Open delimeter (rekomend use: '}')
+     * @param string                $template        Template string text
+     * @param array<string, string> $data            String data template (match with $template)
+     * @param string                $open_delimeter  Open delimeter (rekomend use: '{')
+     * @param string                $close_delimeter Open delimeter (rekomend use: '}')
+     *
      * @return string Template pass with math data
      */
     public static function template(string $template, array $data, string $open_delimeter = '{', string $close_delimeter = '}')
     {
         if ('{' === $open_delimeter && '}' === $close_delimeter) {
-            $template = preg_replace(['/\\{\s+/', '/\s+\\}/'], ['{','}'], $template);
+            $template = preg_replace(['/\\{\s+/', '/\s+\\}/'], ['{', '}'], $template);
         }
 
         $keys = [];
@@ -404,8 +424,9 @@ class Str
     /**
      * Retreves the matches of string against a search pattern.
      *
-     * @param string $text String
+     * @param string $text    String
      * @param string $pattern String leguler expresstion
+     *
      * @return bool
      */
     public static function isMatch(string $text, string $pattern)
@@ -421,10 +442,11 @@ class Str
 
     /**
      * Retreves the matches of string against a search pattern.
-     * Short hand for `isMatch`
+     * Short hand for `isMatch`.
      *
-     * @param string $text String
+     * @param string $text    String
      * @param string $pattern String leguler expresstion
+     *
      * @return bool
      */
     public static function is(string $text, string $pattern)
@@ -439,9 +461,10 @@ class Str
      *
      * @param string $text Text
      * @param string $find Text contain
+     *
      * @return bool True if text contain
      *
-     * @link https://github.com/symfony/polyfill-php80/blob/main/Php80.php
+     * @see https://github.com/symfony/polyfill-php80/blob/main/Php80.php
      */
     public static function contains(string $text, string $find)
     {
@@ -451,11 +474,12 @@ class Str
     /**
      * Check text starts with with.
      *
-     * @param string $text Text
+     * @param string $text       Text
      * @param string $start_with Start with
+     *
      * @return bool True if text starts with
      *
-     * @link https://github.com/symfony/polyfill-php80/blob/main/Php80.php
+     * @see https://github.com/symfony/polyfill-php80/blob/main/Php80.php
      */
     public static function startsWith(string $text, string $start_with)
     {
@@ -465,11 +489,12 @@ class Str
     /**
      * Check text ends with with.
      *
-     * @param string $text Text
+     * @param string $text       Text
      * @param string $start_with Start with
+     *
      * @return bool True if text ends with
      *
-     * @link https://github.com/symfony/polyfill-php80/blob/main/Php80.php
+     * @see https://github.com/symfony/polyfill-php80/blob/main/Php80.php
      */
     public static function endsWith(string $text, string $start_with)
     {

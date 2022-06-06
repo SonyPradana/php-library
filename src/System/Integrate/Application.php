@@ -41,19 +41,19 @@ class Application extends Container
     private $booted_providers = [];
 
     /**
-     * Looded service provider
+     * Looded service provider.
      *
      * @var ServiceProvider[]
      */
     private $looded_providers = [];
 
-    /** @var boolean */
+    /** @var bool */
     private $isBooted = false;
 
     /**
      * Contructor.
      *
-     * @param string $base_path Application path.
+     * @param string $base_path application path
      */
     public function __construct(string $base_path)
     {
@@ -100,17 +100,17 @@ class Application extends Container
 
         // check file exis
         $configs = $this->defaultConfigs();
-        $paths = [
+        $paths   = [
            'app.config.php',
            'database.config.php',
            'pusher.config.php',
            'cachedriver.config.php',
         ];
         foreach ($paths as $path) {
-            $file_path = $config_path.$path;
+            $file_path = $config_path . $path;
 
             if (file_exists($file_path)) {
-                $config     = include($file_path);
+                $config     = include $file_path;
                 foreach ($config as $key => $value) {
                     $configs[$key] = $value;
                 }
@@ -143,7 +143,7 @@ class Application extends Container
     }
 
     /**
-     * Default config, prevent for empety config
+     * Default config, prevent for empety config.
      *
      * @return array Configs
      */
@@ -151,21 +151,21 @@ class Application extends Container
     {
         return [
             // app config
-            'BASEURL'           => '/',
-            'time_zone'         => 'Asia/Jakarta',
+            'BASEURL'            => '/',
+            'time_zone'          => 'Asia/Jakarta',
             'APP_KEY'            => '',
             'ENVIRONMENT'        => 'dev',
 
-            'MODEL_PATH'        => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'library'.DIRECTORY_SEPARATOR.'model'.DIRECTORY_SEPARATOR,
-            'VIEW_PATH'         => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR,
-            'CONTROLLER_PATH'   => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'controllers'.DIRECTORY_SEPARATOR,
-            'SERVICES_PATH'     => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'services'.DIRECTORY_SEPARATOR,
-            'COMPONENT_PATH'    => DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR,
-            'COMMNAD_PATH'      => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'commands'.DIRECTORY_SEPARATOR,
-            'CACHE_PATH'        => DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR,
-            'CONFIG'            => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR,
-            'MIDDLEWARE'        => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'middleware'.DIRECTORY_SEPARATOR,
-            'SERVICE_PROVIDER'  => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'Providers'.DIRECTORY_SEPARATOR,
+            'MODEL_PATH'        => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR,
+            'VIEW_PATH'         => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
+            'CONTROLLER_PATH'   => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR,
+            'SERVICES_PATH'     => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'services' . DIRECTORY_SEPARATOR,
+            'COMPONENT_PATH'    => DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR,
+            'COMMNAD_PATH'      => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'commands' . DIRECTORY_SEPARATOR,
+            'CACHE_PATH'        => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR,
+            'CONFIG'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR,
+            'MIDDLEWARE'        => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'middleware' . DIRECTORY_SEPARATOR,
+            'SERVICE_PROVIDER'  => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Providers' . DIRECTORY_SEPARATOR,
 
             'PROVIDERS'         => [
                 // provider class name
@@ -218,13 +218,15 @@ class Application extends Container
     {
         $this->base_path = $path;
         $this->set('path.bash', $path);
+
         return $this;
     }
 
     public function setAppPath(string $path)
     {
-        $this->app_path = $path.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR;
+        $this->app_path = $path . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR;
         $this->set('path.app', $this->app_path);
+
         return $this;
     }
 
@@ -232,6 +234,7 @@ class Application extends Container
     {
         $this->model_path = $this->base_path . $path;
         $this->set('path.model', $this->model_path);
+
         return $this;
     }
 
@@ -239,6 +242,7 @@ class Application extends Container
     {
         $this->view_path = $this->base_path . $path;
         $this->set('path.view', $this->view_path);
+
         return $this;
     }
 
@@ -246,6 +250,7 @@ class Application extends Container
     {
         $this->controller_path = $this->base_path . $path;
         $this->set('path.controller', $this->controller_path);
+
         return $this;
     }
 
@@ -253,6 +258,7 @@ class Application extends Container
     {
         $this->services_path = $this->base_path . $path;
         $this->set('path.services', $this->services_path);
+
         return $this;
     }
 
@@ -260,6 +266,7 @@ class Application extends Container
     {
         $this->component_path = $this->base_path . $path;
         $this->set('path.component', $this->component_path);
+
         return $this;
     }
 
@@ -267,6 +274,7 @@ class Application extends Container
     {
         $this->command_path = $this->base_path . $path;
         $this->set('path.command', $this->command_path);
+
         return $this;
     }
 
@@ -274,6 +282,7 @@ class Application extends Container
     {
         $this->cache_path = $this->base_path . $path;
         $this->set('path.cache', $this->cache_path);
+
         return $this;
     }
 
@@ -281,6 +290,7 @@ class Application extends Container
     {
         $this->config_path = $this->base_path . $path;
         $this->set('path.config', $this->config_path);
+
         return $this;
     }
 
@@ -288,6 +298,7 @@ class Application extends Container
     {
         $this->middleware_path = $this->base_path . $path;
         $this->set('path.middleware', $this->middleware_path);
+
         return $this;
     }
 
@@ -295,6 +306,7 @@ class Application extends Container
     {
         $this->service_provider_path = $this->base_path . $path;
         $this->set('path.provider', $this->service_provider_path);
+
         return $this;
     }
 
@@ -381,7 +393,7 @@ class Application extends Container
      * Boot service provider.
      *
      * @return void
-    */
+     */
     public function bootProvider()
     {
         if ($this->isBooted) {
@@ -402,7 +414,7 @@ class Application extends Container
 
     public function registerProvider()
     {
-        if (! $this->isBooted) {
+        if (!$this->isBooted) {
             return;
         }
 
@@ -424,23 +436,24 @@ class Application extends Container
      */
     public function flush()
     {
-       static::$app = null;
+        static::$app = null;
 
-       $this->providers = [];
-       $this->looded_providers = [];
-       $this->booted_providers = [];
+        $this->providers        = [];
+        $this->looded_providers = [];
+        $this->booted_providers = [];
     }
 
     /**
      * Register service provider.
      *
      * @param string $provider Class-name service provider
+     *
      * @return ServiceProvider
      */
     public function register($provider)
     {
         $provider_class_name = $provider;
-        $provider = new $provider($this);
+        $provider            = new $provider($this);
 
         $provider->register();
         $this->looded_providers[] = $provider_class_name;

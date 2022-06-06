@@ -9,7 +9,7 @@ final class HelperFunctionTest extends TestCase
     /**
      * @test
      */
-    public function ItCanUseFunctionHelper()
+    public function itCanUseFunctionHelper()
     {
         $this->assertEquals(time(), now()->timestamp);
     }

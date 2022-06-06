@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace System\Text;
 
-use Stringable;
-
-use function gettype;
-
 class Text
 {
     /**
@@ -52,8 +48,9 @@ class Text
     /**
      * Basicly is history for text modify.
      *
-     * @param string|bool|array $text new incoming text
-     * @param string $function_name Method to call (Str::class)
+     * @param string|bool|array $text          new incoming text
+     * @param string            $function_name Method to call (Str::class)
+     *
      * @return string
      */
     private function execute($text, string $function_name)
@@ -65,7 +62,7 @@ class Text
         $this->_latest[] = [
             'function'  => $function_name,
             'return'    => $text,
-            'type'      => \gettype($text)
+            'type'      => \gettype($text),
         ];
 
         return $text;
@@ -75,6 +72,7 @@ class Text
      * Push new string text without erase history.
      *
      * @param string $text New text
+     *
      * @return self
      */
     public function text(string $text)
@@ -121,8 +119,8 @@ class Text
      */
     public function reset()
     {
-        $this->_current = $this->_original;
-        $this->_latest = [];
+        $this->_current          = $this->_original;
+        $this->_latest           = [];
         $this->_throw_on_failure = false;
 
         return $this;
@@ -132,6 +130,7 @@ class Text
      * Refresh class with new text.
      *
      * @param string $text Input string
+     *
      * @return self
      */
     public function refresh(string $text)
@@ -145,6 +144,7 @@ class Text
      * Throw when string method return 'false' instance 'string'.
      *
      * @param bool $throw_error Throw on failure
+     *
      * @return self
      */
     public function throwOnFailure(bool $throw_error)
@@ -160,6 +160,7 @@ class Text
      * Return the character at the specifid postion.
      *
      * @param int $index character position
+     *
      * @return self
      */
     public function chartAt(int $index)
@@ -174,8 +175,9 @@ class Text
     /**
      * Extracts a section of string.
      *
-     * @param int $start Start position text
+     * @param int      $start  Start position text
      * @param int|null $length Length of string
+     *
      * @return self
      */
     public function slice(int $start, ?int $length = null)
@@ -195,6 +197,7 @@ class Text
      * Convert string to lowercase.
      *
      * @param string $text Input string
+     *
      * @return self
      */
     public function lower()
@@ -209,6 +212,7 @@ class Text
      * Convert string to lowercase.
      *
      * @param string $text Input string
+     *
      * @return self
      */
     public function upper()
@@ -327,6 +331,7 @@ class Text
      *
      * @param string $text String to search
      * @param string $find Find
+     *
      * @return int|false
      */
     public function indexOf(string $find)
@@ -339,6 +344,7 @@ class Text
      *
      * @param string $text String to search
      * @param string $find Find
+     *
      * @return int|false
      */
     public function lastIndexOf(string $find)
@@ -362,6 +368,7 @@ class Text
      * Check string is empty string.
      *
      * @param string $pattern String leguler expresstion
+     *
      * @return bool
      */
     public function is(string $pattern)
@@ -373,6 +380,7 @@ class Text
      * Check string is empty string.
      *
      * @param string $pattern String leguler expresstion
+     *
      * @return bool
      */
     public function isMatch(string $pattern)
@@ -384,6 +392,7 @@ class Text
      * Check text contain with.
      *
      * @param string $find Text contain
+     *
      * @return bool True if text contain
      */
     public function contains(string $find)
@@ -395,6 +404,7 @@ class Text
      * Check text starts with with.
      *
      * @param string $start_with Start with
+     *
      * @return bool True if text starts with
      */
     public function startsWith(string $start_with)
@@ -406,6 +416,7 @@ class Text
      * Check text ends with with.
      *
      * @param string $end_with Start with
+     *
      * @return bool True if text ends with
      */
     public function endsWith(string $end_with)
