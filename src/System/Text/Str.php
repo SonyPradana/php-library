@@ -290,6 +290,106 @@ class Str
         return implode('', $result);
     }
 
+    /**
+     * Make slugify (url-title).
+     *
+     * @param string $text inpu text
+     * @return string
+     */
+    public static function slug(string $text)
+    {
+        $original = $text;
+        // replace non letter or digits by -
+        $text = \preg_replace('~[^\pL\d]+~u', '-', $text);
+
+        // transliterate
+        $text = \iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+
+        // remove unwanted characters
+        $text = \preg_replace('~[^-\w]+~', '', $text);
+
+        // trim
+        $text = \trim($text, '-');
+
+        // remove duplicate -
+        $text = \preg_replace('~-+~', '-', $text);
+
+        // lowercase
+        $text = \strtolower($text);
+
+        if (empty($text)) {
+            throw new \Exception($original.' doest return anythink.');
+        }
+
+        return $text;
+    }
+
+    /**
+     * Make muliple text (repeat).
+     *
+     * @param string $text Text
+     * @param int $multiple Number reapet (less that 0 will return empty)
+     */
+    public static function repeat(string $text, int $multiple)
+    {
+        return \str_repeat($text, $multiple);
+    }
+
+    /**
+     * Get string length (0 if empty).
+     *
+     * @return int
+     */
+    public static function length(string $text)
+    {
+        return \strlen($text);
+    }
+
+    /**
+     * Render template text.
+     *
+     * @param string $template Template string text
+     * @param array<string, string> $data String data template (match with $template)
+     * @param string $open_delimeter Open delimeter (rekomend use: '{')
+     * @param string $close_delimeter Open delimeter (rekomend use: '}')
+     * @return string Template pass with math data
+     */
+    public static function template(string $template, array $data, string $open_delimeter = '{', string $close_delimeter = '}')
+    {
+        if ('{' === $open_delimeter && '}' === $close_delimeter) {
+            $template = preg_replace(['/\\{\s+/', '/\s+\\}/'], ['{','}'], $template);
+        }
+
+        $keys = [];
+        foreach ($data as $key => $value) {
+            $keys[] = $open_delimeter . $key . $close_delimeter;
+        }
+
+        return \str_replace($keys, $data, $template);
+    }
+
+    // condition ------------------------------------
+
+    /**
+     * Check determinate input is string.
+     *
+     * @return bool
+     */
+    public static function isString($text)
+    {
+        return \is_string($text);
+    }
+
+    /**
+     * Check string is empty string.
+     *
+     * @return bool
+     *  */
+    public static function isEmpty(string $text)
+    {
+        return '' === $text;
+    }
+
     // Backward Compatible php 8.0 --------------------------------
 
     /**
@@ -317,7 +417,7 @@ class Str
      */
     public static function startsWith(string $text, string $start_with)
     {
-        return 0 === strncmp($text, $start_with, \strlen($start_with));
+        return 0 === \strncmp($text, $start_with, \strlen($start_with));
     }
 
     /**
@@ -341,6 +441,6 @@ class Str
 
         $needleLength = \strlen($start_with);
 
-        return $needleLength <= \strlen($text) && 0 === substr_compare($text, $start_with, -$needleLength);
+        return $needleLength <= \strlen($text) && 0 === \substr_compare($text, $start_with, -$needleLength);
     }
 }
