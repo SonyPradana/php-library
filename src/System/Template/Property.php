@@ -7,130 +7,133 @@ use System\Template\Traits\FormatterTrait;
 
 class Property
 {
-  use FormatterTrait;
-  use CommentTrait;
+    use FormatterTrait;
+    use CommentTrait;
 
-  private $is_static = false;
-  private $visibility = self::PRIVATE_;
-  public const PUBLIC_ = 0;
-  public const PRIVATE_ = 1;
-  public const PROTECTED_ = 2;
+    private $is_static      = false;
+    private $visibility     = self::PRIVATE_;
+    public const PUBLIC_    = 0;
+    public const PRIVATE_   = 1;
+    public const PROTECTED_ = 2;
 
-  private $data_type;
-  private $name;
-  private $expecting;
+    private $data_type;
+    private $name;
+    private $expecting;
 
-  public function __construct(string $name)
-  {
-    $this->name = $name;
-  }
+    public function __construct(string $name)
+    {
+        $this->name = $name;
+    }
 
-  public function __toString()
-  {
-    return $this->generate();
-  }
+    public function __toString()
+    {
+        return $this->generate();
+    }
 
-  public static function new(string $name)
-  {
-    return new self($name);
-  }
+    public static function new(string $name)
+    {
+        return new self($name);
+    }
 
-  private function planTemplate(): string
-  {
-    return $this->customize_template ?? "{{comment}}{{visibility}}{{static}}{{data type}}{{name}}{{expecting}};";
-  }
+    private function planTemplate(): string
+    {
+        return $this->customize_template ?? '{{comment}}{{visibility}}{{static}}{{data type}}{{name}}{{expecting}};';
+    }
 
-  public function generate(): string
-  {
-    $tempalate = $this->planTemplate();
-    $tab_dept = fn(int $dept) => str_repeat($this->tab_indent, ($dept * $this->tab_size));
+    public function generate(): string
+    {
+        $tempalate = $this->planTemplate();
+        $tab_dept  = fn (int $dept) => str_repeat($this->tab_indent, ($dept * $this->tab_size));
 
-    $comment = $this->generateComment(1);
-    $comment = count($this->comments) > 0
+        $comment = $this->generateComment(1);
+        $comment = count($this->comments) > 0
       ? $comment . "\n" . $tab_dept(1)
       : $comment;
 
-    // generate visibility
-    $visibility = '';
-    switch ($this->visibility) {
+        // generate visibility
+        $visibility = '';
+        switch ($this->visibility) {
       case self::PUBLIC_:
-        $visibility = "public ";
+        $visibility = 'public ';
         break;
 
       case self::PROTECTED_:
-        $visibility = "protected ";
+        $visibility = 'protected ';
         break;
 
       case self::PRIVATE_:
-        $visibility = "private ";
+        $visibility = 'private ';
         break;
     }
 
-    // generate static
-    $static = $this->is_static ? "static " : "";
+        // generate static
+        $static = $this->is_static ? 'static ' : '';
 
-    // data type
-    $data_type = $this->data_type ?? "";
+        // data type
+        $data_type = $this->data_type ?? '';
 
-    // generate name
-    $name = '$' . $this->name;
+        // generate name
+        $name = '$' . $this->name;
 
-    // generate value or expecting
-    $expecting = "";
-    if ($this->expecting != null) {
-      $single_line  = $this->expecting[0] ?? "";
-      $multy_line   = implode(
+        // generate value or expecting
+        $expecting = '';
+        if ($this->expecting != null) {
+            $single_line  = $this->expecting[0] ?? '';
+            $multy_line   = implode(
         "\n" . $tab_dept(1),
-        array_filter($this->expecting, fn($key) => $key > 0, ARRAY_FILTER_USE_KEY)
+        array_filter($this->expecting, fn ($key) => $key > 0, ARRAY_FILTER_USE_KEY)
       );
-      $expecting = count($this->expecting) > 1
-        ? " " . $single_line . "\n" . $tab_dept(1) . $multy_line
-        : " " . $single_line;
-    }
+            $expecting = count($this->expecting) > 1
+        ? ' ' . $single_line . "\n" . $tab_dept(1) . $multy_line
+        : ' ' . $single_line;
+        }
 
-    // final
-    return str_replace(
-      ["{{comment}}", "{{visibility}}", "{{static}}", "{{data type}}", "{{name}}", "{{expecting}}"],
+        // final
+        return str_replace(
+      ['{{comment}}', '{{visibility}}', '{{static}}', '{{data type}}', '{{name}}', '{{expecting}}'],
       [$comment, $visibility, $static, $data_type, $name, $expecting],
       $tempalate
     );
-  }
+    }
 
-  // setter
-  public function setStatic(bool $is_static = true)
-  {
-    $this->is_static = $is_static;
-    return $this;
-  }
+    // setter
+    public function setStatic(bool $is_static = true)
+    {
+        $this->is_static = $is_static;
 
-  public function visibility(int $visibility = self::PUBLIC_)
-  {
-    $this->visibility = $visibility;
+        return $this;
+    }
 
-    return $this;
-  }
+    public function visibility(int $visibility = self::PUBLIC_)
+    {
+        $this->visibility = $visibility;
 
-  public function dataType(string $data_type)
-  {
-    $this->data_type = $data_type . " ";
-    return $this;
-  }
+        return $this;
+    }
 
-  public function name(string $name)
-  {
-    $this->name = $name;
-    return $this;
-  }
+    public function dataType(string $data_type)
+    {
+        $this->data_type = $data_type . ' ';
 
-  /**
-   * @param string|array $expecting Add expecting as string or array for multy line
-   */
-  public function expecting($expecting)
-  {
-    $this->expecting = is_array($expecting)
+        return $this;
+    }
+
+    public function name(string $name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @param string|array $expecting Add expecting as string or array for multy line
+     */
+    public function expecting($expecting)
+    {
+        $this->expecting = is_array($expecting)
       ? $expecting
       : [$expecting];
 
-    return $this;
-  }
+        return $this;
+    }
 }

@@ -1,8 +1,13 @@
 <?php
 
 $finder = PhpCsFixer\Finder::create()
-    ->in(__DIR__ . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'Integrate')
-    ->in(__DIR__ . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'System' . DIRECTORY_SEPARATOR . 'Integrate')
+    ->in(__DIR__ . DIRECTORY_SEPARATOR . 'tests')
+    ->in(__DIR__ . DIRECTORY_SEPARATOR . 'src')
+    ->exclude([
+        __DIR__ . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'Text',
+        __DIR__ . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'Template',
+        __DIR__ . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'System' . DIRECTORY_SEPARATOR . 'Text',
+    ])
     ->append(['.php-cs-fixer.php']);
 
 $rules = [

@@ -8,7 +8,7 @@ use System\Text\Str;
 final class StrTest extends TestCase
 {
     /** @test */
-    public function it_return_charcter_specifid_postion()
+    public function itReturnCharcterSpecifidPostion()
     {
         $text = 'i love laravel';
 
@@ -16,7 +16,7 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_Join_two_or_more_string_into_once()
+    public function itJoinTwoOrMoreStringIntoOnce()
     {
         $text = ['i', 'love', 'laravel'];
 
@@ -26,7 +26,7 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_can_find_index_of_string()
+    public function itCanFindIndexOfString()
     {
         $text = 'i love laravel';
 
@@ -34,7 +34,7 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_can_find_last_index_of_string()
+    public function itCanFindLastIndexOfString()
     {
         $text = 'i love laravel';
 
@@ -42,7 +42,7 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_can_find_matches_from_pattern()
+    public function itCanFindMatchesFromPattern()
     {
         $text = 'i love laravel';
 
@@ -56,7 +56,7 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_can_sarch_text()
+    public function itCanSarchText()
     {
         $text = 'i love laravel';
 
@@ -75,7 +75,7 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_can_splint_string()
+    public function itCanSplintString()
     {
         $text = 'i love laravel';
 
@@ -84,7 +84,7 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_can_find_and_replace_text()
+    public function itCanFindAndReplaceText()
     {
         $text = 'i love laravel';
 
@@ -92,7 +92,7 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_can_uppercase_string()
+    public function itCanUppercaseString()
     {
         $text = 'i love laravel';
 
@@ -100,7 +100,7 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_can_lowercase_string()
+    public function itCanLowercaseString()
     {
         $text = 'I LOVE LARAVEL';
 
@@ -108,7 +108,7 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_can_ucfirst_string()
+    public function itCanUcfirstString()
     {
         $text = 'laravel';
 
@@ -116,7 +116,7 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_can_ucword_string()
+    public function itCanUcwordString()
     {
         $text = 'i love laravel';
 
@@ -124,7 +124,7 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_can_snackcase()
+    public function itCanSnackcase()
     {
         $text = 'i love laravel';
 
@@ -148,7 +148,7 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_can_kebabcase()
+    public function itCanKebabcase()
     {
         $text = 'i love laravel';
 
@@ -172,7 +172,7 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_can_pascalcase()
+    public function itCanPascalcase()
     {
         $text = 'i love laravel';
 
@@ -196,7 +196,7 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_can_camelcase()
+    public function itCanCamelcase()
     {
         $text = 'i love laravel';
 
@@ -220,7 +220,7 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_can_detect_text_contain_with()
+    public function itCanDetectTextContainWith()
     {
         $text = 'i love laravel';
 
@@ -229,7 +229,7 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_can_detect_text_starts_with()
+    public function itCanDetectTextStartsWith()
     {
         $text = 'i love laravel';
 
@@ -238,7 +238,7 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_can_detect_text_ends_with()
+    public function itCanDetectTextEndsWith()
     {
         $text = 'i love laravel';
 
@@ -247,7 +247,7 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_can_make_slugify_from_text()
+    public function itCanMakeSlugifyFromText()
     {
         $text = 'i love laravel';
 
@@ -255,21 +255,21 @@ final class StrTest extends TestCase
 
         $text = '-~+-';
 
-        $this->expectErrorMessage($text.' doest return anythink.');
+        $this->expectErrorMessage($text . ' doest return anythink.');
         Str::slug($text);
     }
 
     /** @test */
-    public function it_can_render_template_string()
+    public function itCanRenderTemplateString()
     {
         $template = 'i love {lang}';
-        $data = ['lang' => 'laravel'];
+        $data     = ['lang' => 'laravel'];
 
         $this->assertEquals('i love laravel', Str::template($template, $data));
     }
 
     /** @test */
-    public function it_can_count_text()
+    public function itCanCountText()
     {
         $text = 'i love laravel';
 
@@ -277,7 +277,7 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_can_repeat_text()
+    public function itCanRepeatText()
     {
         $text = 'test';
 
@@ -285,7 +285,7 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_can_detect_string()
+    public function itCanDetectString()
     {
         $this->assertTrue(Str::isString('text'));
 
@@ -295,10 +295,9 @@ final class StrTest extends TestCase
     }
 
     /** @test */
-    public function it_can_detect_empty_string()
+    public function itCanDetectEmptyString()
     {
         $this->assertTrue(str::isEmpty(''));
         $this->assertFalse(str::isEmpty('test'));
     }
-
 }

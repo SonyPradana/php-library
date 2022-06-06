@@ -15,7 +15,7 @@ final class QueryStringTest extends TestCase
 
     protected function setUp(): void
     {
-      $this->PDO = Mockery::mock(MyPDO::class);
+        $this->PDO = Mockery::mock(MyPDO::class);
     }
 
     protected function tearDown(): void
@@ -23,138 +23,137 @@ final class QueryStringTest extends TestCase
         Mockery::close();
     }
 
-  /** @test */
-  public function it_correct_select_query(): void
-  {
-    $select = array();
+    /** @test */
+    public function itCorrectSelectQuery(): void
+    {
+        $select = [];
 
-    // tester
+        // tester
 
-    $select['between'] = MyQuery::from("test", $this->PDO)
+        $select['between'] = MyQuery::from('test', $this->PDO)
       ->select()
-      ->between("column_1", 1, 100)
+      ->between('column_1', 1, 100)
     ;
 
-    $select['compare'] = MyQuery::from("test", $this->PDO)
+        $select['compare'] = MyQuery::from('test', $this->PDO)
       ->select()
-      ->between("column_1", 1, 100)
+      ->between('column_1', 1, 100)
     ;
 
-    $select['equal'] = MyQuery::from("test", $this->PDO)
+        $select['equal'] = MyQuery::from('test', $this->PDO)
       ->select()
-      ->equal("column_1", "test")
+      ->equal('column_1', 'test')
     ;
 
-    $select['in'] = MyQuery::from("test", $this->PDO)
+        $select['in'] = MyQuery::from('test', $this->PDO)
       ->select()
-      ->in("column_1", [1, 2, 3, 4])
+      ->in('column_1', [1, 2, 3, 4])
     ;
 
-    $select['like'] = MyQuery::from("test", $this->PDO, $this->PDO)
+        $select['like'] = MyQuery::from('test', $this->PDO, $this->PDO)
       ->select()
-      ->like("column_1", "test")
+      ->like('column_1', 'test')
     ;
 
-    $select['where'] = MyQuery::from("test", $this->PDO, $this->PDO)
+        $select['where'] = MyQuery::from('test', $this->PDO, $this->PDO)
       ->select()
-      ->where("a < :a OR b > :b", ['a' => 1, 'b' => 2])
+      ->where('a < :a OR b > :b', ['a' => 1, 'b' => 2])
     ;
 
-    // assertation
+        // assertation
 
-    $this->assertEquals(
-      "SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN :b_start AND :b_end)",
+        $this->assertEquals(
+      'SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN :b_start AND :b_end)',
       $select['between'],
-      "select with where statment is between"
+      'select with where statment is between'
     );
 
-    $this->assertEquals(
-      "SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN :b_start AND :b_end)",
+        $this->assertEquals(
+      'SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN :b_start AND :b_end)',
       $select['compare'],
-      "select with where statment is compare"
+      'select with where statment is compare'
     );
 
-    $this->assertEquals(
-      "SELECT * FROM `test` WHERE (`test`.`column_1` IN (:in_0, :in_1, :in_2, :in_3))",
+        $this->assertEquals(
+      'SELECT * FROM `test` WHERE (`test`.`column_1` IN (:in_0, :in_1, :in_2, :in_3))',
       $select['in'],
-      "select with where statment is in"
+      'select with where statment is in'
     );
 
-    $this->assertEquals(
-      "SELECT * FROM `test` WHERE ( (test.column_1 = :column_1) )",
+        $this->assertEquals(
+      'SELECT * FROM `test` WHERE ( (test.column_1 = :column_1) )',
       $select['equal'],
-      "select with where statment is equal"
+      'select with where statment is equal'
     );
 
-    $this->assertEquals(
-      "SELECT * FROM `test` WHERE ( (test.column_1 LIKE :column_1) )",
+        $this->assertEquals(
+      'SELECT * FROM `test` WHERE ( (test.column_1 LIKE :column_1) )',
       $select['like'],
-      "select with where statment is like"
+      'select with where statment is like'
     );
 
-    $this->assertEquals(
-      "SELECT * FROM `test` WHERE a < :a OR b > :b",
+        $this->assertEquals(
+      'SELECT * FROM `test` WHERE a < :a OR b > :b',
       $select['where'],
-      "select with where statment is like"
+      'select with where statment is like'
     );
+    }
 
-  }
-
-  /** @test */
-  public function it_correct_select_query_and_limit_order(): void
-  {
-    $select = MyQuery::from("test", $this->PDO)
+    /** @test */
+    public function itCorrectSelectQueryAndLimitOrder(): void
+    {
+        $select = MyQuery::from('test', $this->PDO)
       ->select()
-      ->between("column_1", 1, 100)
+      ->between('column_1', 1, 100)
       ->limit(1, 10)
-      ->order("column_1", MyQuery::ORDER_ASC)
+      ->order('column_1', MyQuery::ORDER_ASC)
     ;
 
-    $this->assertEquals(
-      "SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN :b_start AND :b_end) ORDER BY `test`.`column_1` ASC LIMIT 1, 10",
+        $this->assertEquals(
+      'SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN :b_start AND :b_end) ORDER BY `test`.`column_1` ASC LIMIT 1, 10',
       $select,
-      "select with where statment is between"
+      'select with where statment is between'
     );
-  }
+    }
 
-  /** @test */
-  public function it_correct_select_multy_column(): void
-  {
-    $select = MyQuery::from("test", $this->PDO)
+    /** @test */
+    public function itCorrectSelectMultyColumn(): void
+    {
+        $select = MyQuery::from('test', $this->PDO)
       ->select(['column_1', 'column_2', 'column_3'])
-      ->equal("column_1", 123)
-      ->equal("column_2", 'abc')
-      ->equal("column_3", true)
+      ->equal('column_1', 123)
+      ->equal('column_2', 'abc')
+      ->equal('column_3', true)
     ;
 
-    $this->assertEquals(
-      "SELECT `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (test.column_1 = :column_1) AND (test.column_2 = :column_2) AND (test.column_3 = :column_3) )",
+        $this->assertEquals(
+      'SELECT `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (test.column_1 = :column_1) AND (test.column_2 = :column_2) AND (test.column_3 = :column_3) )',
       $select,
-      "select statment must have 3 selected query"
+      'select statment must have 3 selected query'
     );
-  }
+    }
 
-  /** @test */
-  public function it_correct_select_using_or_statment(): void
-  {
-    $select = MyQuery::from("test", $this->PDO)
+    /** @test */
+    public function itCorrectSelectUsingOrStatment(): void
+    {
+        $select = MyQuery::from('test', $this->PDO)
       ->select(['column_1', 'column_2', 'column_3'])
-      ->equal("column_1", 123)
-      ->equal("column_2", 'abc')
+      ->equal('column_1', 123)
+      ->equal('column_2', 'abc')
       ->strictMode(false)
     ;
 
-    $this->assertEquals(
-      "SELECT `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (test.column_1 = :column_1) OR (test.column_2 = :column_2) )",
+        $this->assertEquals(
+      'SELECT `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (test.column_1 = :column_1) OR (test.column_2 = :column_2) )',
       $select,
-      "select statment must have using or statment"
+      'select statment must have using or statment'
     );
-  }
+    }
 
-  /** @test */
-  public function it_correct_insert_query_multy_values(): void
-  {
-    $insert = MyQuery::from('test', $this->PDO)
+    /** @test */
+    public function itCorrectInsertQueryMultyValues(): void
+    {
+        $insert = MyQuery::from('test', $this->PDO)
       ->insert()
       // insert using multy value
       ->values([
@@ -166,212 +165,209 @@ final class QueryStringTest extends TestCase
       ->value('g', 'h')
     ;
 
-      $this->assertEquals(
-        "INSERT INTO `test` (a, c, e, g) VALUES (:val_a, :val_c, :val_e, :val_g)",
+        $this->assertEquals(
+        'INSERT INTO `test` (a, c, e, g) VALUES (:val_a, :val_c, :val_e, :val_g)',
         $insert,
-        "insert must equal with query 1 new row with 2 data"
+        'insert must equal with query 1 new row with 2 data'
       );
-  }
+    }
 
-  /** @test */
-  public function it_correct_update_query(): void
-  {
-    $update = array();
-    $update['between'] = MyQuery::from('test', $this->PDO)
+    /** @test */
+    public function itCorrectUpdateQuery(): void
+    {
+        $update            = [];
+        $update['between'] = MyQuery::from('test', $this->PDO)
       ->update()
       ->value('a', 'b')
       ->between('coulumn_1', 1, 100)
     ;
 
-    $update['compare'] = MyQuery::from('test', $this->PDO)
+        $update['compare'] = MyQuery::from('test', $this->PDO)
       ->update()
       ->value('a', 'b')
-      ->compare("ten", ">", 9)
+      ->compare('ten', '>', 9)
     ;
 
-    $update['equal'] = MyQuery::from('test', $this->PDO)
+        $update['equal'] = MyQuery::from('test', $this->PDO)
       ->update()
       ->value('a', 'b')
       ->equal('ten', 10)
     ;
 
-    $update['in'] = MyQuery::from('test', $this->PDO)
+        $update['in'] = MyQuery::from('test', $this->PDO)
       ->update()
       ->value('a', 'b')
       ->in('column_1', [1, 2, 3, 4, 5])
     ;
 
-    $update['like'] = MyQuery::from('test', $this->PDO)
+        $update['like'] = MyQuery::from('test', $this->PDO)
       ->update()
       ->value('a', 'b')
       ->like('i', 'you')
     ;
 
-    $update['where'] = MyQuery::from('test', $this->PDO)
+        $update['where'] = MyQuery::from('test', $this->PDO)
       ->update()
       ->value('a', 'b')
       ->where('col1 = :col1 OR col2 = :col2', ['col1' => 1, 'col2' => 2])
     ;
 
-      // assertation
+        // assertation
 
-      $this->assertEquals(
-        "UPDATE `test` SET `a` = :val_a WHERE (`test`.`coulumn_1` BETWEEN :b_start AND :b_end)",
+        $this->assertEquals(
+        'UPDATE `test` SET `a` = :val_a WHERE (`test`.`coulumn_1` BETWEEN :b_start AND :b_end)',
         $update['between'],
-        "update query must same with between operator"
+        'update query must same with between operator'
       );
 
-      $this->assertEquals(
-        "UPDATE `test` SET `a` = :val_a WHERE ( (test.ten > :ten) )",
+        $this->assertEquals(
+        'UPDATE `test` SET `a` = :val_a WHERE ( (test.ten > :ten) )',
         $update['compare'],
-        "update query must same with compire operator"
+        'update query must same with compire operator'
       );
 
-      $this->assertEquals(
-        "UPDATE `test` SET `a` = :val_a WHERE ( (test.ten = :ten) )",
+        $this->assertEquals(
+        'UPDATE `test` SET `a` = :val_a WHERE ( (test.ten = :ten) )',
         $update['equal'],
-        "update query must same with equal operator"
+        'update query must same with equal operator'
       );
 
-      $this->assertEquals(
-        "UPDATE `test` SET `a` = :val_a WHERE (`test`.`column_1` IN (:in_0, :in_1, :in_2, :in_3, :in_4))",
+        $this->assertEquals(
+        'UPDATE `test` SET `a` = :val_a WHERE (`test`.`column_1` IN (:in_0, :in_1, :in_2, :in_3, :in_4))',
         $update['in'],
-        "update query must same with in operator"
+        'update query must same with in operator'
       );
 
-      $this->assertEquals(
-        "UPDATE `test` SET `a` = :val_a WHERE col1 = :col1 OR col2 = :col2",
+        $this->assertEquals(
+        'UPDATE `test` SET `a` = :val_a WHERE col1 = :col1 OR col2 = :col2',
         $update['where'],
-        "update query must same with where operator"
+        'update query must same with where operator'
       );
-  }
+    }
 
-  /** @test */
-  public function it_correct_delete_query(): void
-  {
-    $delete = array();
-    $delete['between'] = MyQuery::from('test', $this->PDO)
+    /** @test */
+    public function itCorrectDeleteQuery(): void
+    {
+        $delete            = [];
+        $delete['between'] = MyQuery::from('test', $this->PDO)
       ->delete()
       ->between('coulumn_1', 1, 100)
     ;
 
-    $delete['compare'] = MyQuery::from('test', $this->PDO)
+        $delete['compare'] = MyQuery::from('test', $this->PDO)
       ->delete()
-      ->compare("ten", ">", 9)
+      ->compare('ten', '>', 9)
     ;
 
-    $delete['equal'] = MyQuery::from('test', $this->PDO)
+        $delete['equal'] = MyQuery::from('test', $this->PDO)
       ->delete()
       ->equal('ten', 10)
     ;
 
-    $delete['in'] = MyQuery::from('test', $this->PDO)
+        $delete['in'] = MyQuery::from('test', $this->PDO)
       ->delete()
       ->in('column_1', [1, 2, 3, 4, 5])
     ;
 
-    $delete['like'] = MyQuery::from('test', $this->PDO)
+        $delete['like'] = MyQuery::from('test', $this->PDO)
       ->delete()
       ->like('i', 'you')
     ;
 
-    $delete['where'] = MyQuery::from('test', $this->PDO)
+        $delete['where'] = MyQuery::from('test', $this->PDO)
       ->delete()
       ->where('col1 = :col1 OR col2 = :col2', ['col1' => 1, 'col2' => 2])
     ;
 
-      // assertation
+        // assertation
 
-      $this->assertEquals(
-        "DELETE FROM `test` WHERE (`test`.`coulumn_1` BETWEEN :b_start AND :b_end)",
+        $this->assertEquals(
+        'DELETE FROM `test` WHERE (`test`.`coulumn_1` BETWEEN :b_start AND :b_end)',
         $delete['between'],
-        "delete query must same with between operator"
+        'delete query must same with between operator'
       );
 
-      $this->assertEquals(
-        "DELETE FROM `test` WHERE ( (test.ten > :ten) )",
+        $this->assertEquals(
+        'DELETE FROM `test` WHERE ( (test.ten > :ten) )',
         $delete['compare'],
-        "delete query must same with compire operator"
+        'delete query must same with compire operator'
       );
 
-      $this->assertEquals(
-        "DELETE FROM `test` WHERE ( (test.ten = :ten) )",
+        $this->assertEquals(
+        'DELETE FROM `test` WHERE ( (test.ten = :ten) )',
         $delete['equal'],
-        "delete query must same with equal operator"
+        'delete query must same with equal operator'
       );
 
-      $this->assertEquals(
-        "DELETE FROM `test` WHERE (`test`.`column_1` IN (:in_0, :in_1, :in_2, :in_3, :in_4))",
+        $this->assertEquals(
+        'DELETE FROM `test` WHERE (`test`.`column_1` IN (:in_0, :in_1, :in_2, :in_3, :in_4))',
         $delete['in'],
-        "delete query must same with in operator"
+        'delete query must same with in operator'
       );
 
-      $this->assertEquals(
-        "DELETE FROM `test` WHERE col1 = :col1 OR col2 = :col2",
+        $this->assertEquals(
+        'DELETE FROM `test` WHERE col1 = :col1 OR col2 = :col2',
         $delete['where'],
-        "delete query must same with where operator"
+        'delete query must same with where operator'
       );
-  }
+    }
 
-  /** @test */
-  public function it_correct_select_join_query(): void
-  {
-    // inner join
-    $select['inner'] = MyQuery::from('base_table', $this->PDO)
+    /** @test */
+    public function itCorrectSelectJoinQuery(): void
+    {
+        // inner join
+        $select['inner'] = MyQuery::from('base_table', $this->PDO)
       ->select()
       ->join(InnerJoin::ref('join_table', 'base_id', 'join_id'))
     ;
 
-    $this->assertEquals(
-      "SELECT * FROM `base_table` INNER JOIN join_table ON base_table.base_id = join_table.join_id",
+        $this->assertEquals(
+      'SELECT * FROM `base_table` INNER JOIN join_table ON base_table.base_id = join_table.join_id',
       $select['inner'],
       'expect select inner join'
     );
 
-    // left join
-    $select['left'] = MyQuery::from('base_table', $this->PDO)
+        // left join
+        $select['left'] = MyQuery::from('base_table', $this->PDO)
       ->select()
       ->join(LeftJoin::ref('join_table', 'base_id', 'join_id'))
     ;
 
-    $this->assertEquals(
-      "SELECT * FROM `base_table` LEFT JOIN join_table ON base_table.base_id = join_table.join_id",
+        $this->assertEquals(
+      'SELECT * FROM `base_table` LEFT JOIN join_table ON base_table.base_id = join_table.join_id',
       $select['left'],
       'expect select left join'
     );
 
-    // right join
-    $select['right'] = MyQuery::from('base_table', $this->PDO)
+        // right join
+        $select['right'] = MyQuery::from('base_table', $this->PDO)
       ->select()
       ->join(RightJoin::ref('join_table', 'base_id', 'join_id'))
     ;
 
-    $this->assertEquals(
-      "SELECT * FROM `base_table` RIGHT JOIN join_table ON base_table.base_id = join_table.join_id",
+        $this->assertEquals(
+      'SELECT * FROM `base_table` RIGHT JOIN join_table ON base_table.base_id = join_table.join_id',
       $select['right'],
       'expect select right join'
     );
 
-    // full join
-    $select['full'] = MyQuery::from('base_table', $this->PDO)
+        // full join
+        $select['full'] = MyQuery::from('base_table', $this->PDO)
       ->select()
       ->join(FullJoin::ref('join_table', 'base_id', 'join_id'))
     ;
 
-    $this->assertEquals(
-      "SELECT * FROM `base_table` FULL OUTER JOIN join_table ON base_table.base_id = join_table.join_id",
+        $this->assertEquals(
+      'SELECT * FROM `base_table` FULL OUTER JOIN join_table ON base_table.base_id = join_table.join_id',
       $select['full'],
       'expect select full join'
     );
-  }
+    }
 
-
-
-  /** @test */
-  public function it_can_generate_where_exits_query(): void
-  {
-
-      $select = MyQuery::from('base_1', $this->PDO)
+    /** @test */
+    public function itCanGenerateWhereExitsQuery(): void
+    {
+        $select = MyQuery::from('base_1', $this->PDO)
       ->select()
       ->whereExist(
         (new Select('base_2', ['*'], $this->PDO))
@@ -384,14 +380,14 @@ final class QueryStringTest extends TestCase
       ->__toString()
     ;
 
-    $this->assertEquals(
-      "SELECT * FROM `base_1` WHERE EXISTS (SELECT * FROM `base_2` WHERE ( (base_2.test = :test) ) AND base_1.id = base_2.id) ORDER BY `base_1`.`id` ASC LIMIT 1, 10",
+        $this->assertEquals(
+      'SELECT * FROM `base_1` WHERE EXISTS (SELECT * FROM `base_2` WHERE ( (base_2.test = :test) ) AND base_1.id = base_2.id) ORDER BY `base_1`.`id` ASC LIMIT 1, 10',
       $select,
-      "where exist query"
+      'where exist query'
     );
 
-    // where not exist
-    $select = MyQuery::from('base_1', $this->PDO)
+        // where not exist
+        $select = MyQuery::from('base_1', $this->PDO)
       ->select()
       ->whereNotExist(
         (new Select('base_2', ['*'], $this->PDO))
@@ -404,10 +400,10 @@ final class QueryStringTest extends TestCase
       ->__toString()
     ;
 
-    $this->assertEquals(
-      "SELECT * FROM `base_1` WHERE NOT EXISTS (SELECT * FROM `base_2` WHERE ( (base_2.test = :test) ) AND base_1.id = base_2.id) ORDER BY `base_1`.`id` ASC LIMIT 1, 10",
+        $this->assertEquals(
+      'SELECT * FROM `base_1` WHERE NOT EXISTS (SELECT * FROM `base_2` WHERE ( (base_2.test = :test) ) AND base_1.id = base_2.id) ORDER BY `base_1`.`id` ASC LIMIT 1, 10',
       $select,
-      "where exist query"
+      'where exist query'
     );
-  }
+    }
 }

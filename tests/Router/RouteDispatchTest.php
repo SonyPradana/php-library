@@ -18,15 +18,15 @@ class RouteDispatchTest extends TestCase
     {
         return [
             new Route([
-                'method' => 'GET',
+                'method'     => 'GET',
                 'expression' => '/',
-                'function' => fn () => true
-            ])
+                'function'   => fn ()   => true,
+            ]),
         ];
     }
 
     /** @test */
-    public function it_can_result_current_route()
+    public function itCanResultCurrentRoute()
     {
         $dispatcher = RouteDispatcher::dispatchFrom('/', 'GET', $this->routes());
 
@@ -36,13 +36,13 @@ class RouteDispatchTest extends TestCase
             fn ($path, $method) => 'method not allowd - - ',
         );
 
-        $real_route = $this->routes()[0];
+        $real_route               = $this->routes()[0];
         $real_route['expression'] = '^/$';
         $this->assertEquals($real_route, $dispatcher->current());
     }
 
     /** @test */
-    public function it_can_dispatch_and_call()
+    public function itCanDispatchAndCall()
     {
         $dispatcher = RouteDispatcher::dispatchFrom('/', 'GET', $this->routes());
 
@@ -58,12 +58,12 @@ class RouteDispatchTest extends TestCase
     }
 
     /** @test */
-    public function it_can_dispatch_and_run_found()
+    public function itCanDispatchAndRunFound()
     {
         $dispatcher = RouteDispatcher::dispatchFrom('/', 'GET', $this->routes());
 
         $dispatch = $dispatcher->run(
-            fn () => 'found',
+            fn ()      => 'found',
             fn ($path) => 'not found - ',
             fn ($path, $method) => 'method not allowd - - ',
         );
@@ -74,12 +74,12 @@ class RouteDispatchTest extends TestCase
     }
 
     /** @test */
-    public function it_can_dispatch_and_run_not_found()
+    public function itCanDispatchAndRunNotFound()
     {
         $dispatcher = RouteDispatcher::dispatchFrom('/not-found', 'GET', $this->routes());
 
         $dispatch = $dispatcher->run(
-            fn () => 'found',
+            fn ()      => 'found',
             fn ($path) => 'not found - ',
             fn ($path, $method) => 'method not allowd - - ',
         );
@@ -90,12 +90,12 @@ class RouteDispatchTest extends TestCase
     }
 
     /** @test */
-    public function it_can_dispatch_and_run_method_not_allowed()
+    public function itCanDispatchAndRunMethodNotAllowed()
     {
         $dispatcher = RouteDispatcher::dispatchFrom('/', 'POST', $this->routes());
 
         $dispatch = $dispatcher->run(
-            fn () => 'found',
+            fn ()      => 'found',
             fn ($path) => 'not found - ',
             fn ($path, $method) => 'method not allowd - - ',
         );
