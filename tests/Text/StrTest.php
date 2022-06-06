@@ -297,7 +297,7 @@ final class StrTest extends TestCase
     /** @test */
     public function itCanDetectEmptyString()
     {
-        $this->assertTrue(str::isEmpty(''));
-        $this->assertFalse(str::isEmpty('test'));
+        $this->assertTrue(Str::isEmpty(''));
+        $this->assertFalse(Str::isEmpty('test'));
     }
 }

@@ -60,6 +60,17 @@ class Str
     }
 
     /**
+     * Create new instace.
+     *
+     * @param string $text Input text
+     * @return Text
+     */
+    public static function of(string $text)
+    {
+        return new Text($text);
+    }
+
+    /**
      * Return the character at the specifid postion.
      *
      * @param string $text  String text
@@ -407,6 +418,37 @@ class Str
     public static function isEmpty(string $text)
     {
         return '' === $text;
+    }
+
+    /**
+     * Retreves the matches of string against a search pattern.
+     *
+     * @param string $text String
+     * @param string $pattern String leguler expresstion
+     * @return bool
+     */
+    public static function isMatch(string $text, string $pattern)
+    {
+        $has_result = preg_match($pattern, $text);
+
+        if (1 === $has_result) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Retreves the matches of string against a search pattern.
+     * Short hand for `isMatch`
+     *
+     * @param string $text String
+     * @param string $pattern String leguler expresstion
+     * @return bool
+     */
+    public static function is(string $text, string $pattern)
+    {
+        return static::isMatch($text, $pattern);
     }
 
     // Backward Compatible php 8.0 --------------------------------
