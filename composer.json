@@ -23,6 +23,7 @@
         },
         "files": [
           "src/System/Integrate/helper.php",
+          "src/System/Text/helper.php",
           "src/System/Time/helper.php"
         ]
     },
