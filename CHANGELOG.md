@@ -6,9 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added 
+- Added `MyPDO::config()` PDO connection configure.
 - Added string manipulation `Str::chartAt`, `Str::concat`, `Str::indexOf`, `Str::lastIndexOf`, `Str::match`, `Str::repalce`, `Str::search`, `Str::slice`, `Str::split`, `Str::toLowerCase`, `Str::toUpperCase`, `Str::firstUpper`, `Str::firstUppeAll`, `Str::toPascalCase`, `Str::toCamelCase`, `Str::contains`, `Str::startsWith`, `Str::endsWith`, `Str::template`, `Str::slug`, `Str::repeat`, `Str::length`, `Str::isString`, `Str::isEmpty`, `Str::isMatch`.
 - Added string macro `System\Text\Str::macro`.
 - Added common regex `System\Text\Regex::class`.
+- Added string class for manipulation string `System\Text\Text::class`.
+
+### Changed
+- Change composer require php version `7.4` and `8.0`.
+
 ## [0.6.2] - 2022-05-27
 ### Changed
 - New `MyPDO::__construct` params, using array contain database configuration.
