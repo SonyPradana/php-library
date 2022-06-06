@@ -173,13 +173,13 @@ final class RegexStrTest extends TestCase
     public function test_regex_ipv4_or_ipv6()
     {
         $test = '0.0.0.0';
-        $this->assertTrue(Str::isMatch($test, Regex::IPV4N6));
+        $this->assertTrue(Str::isMatch($test, Regex::IPV4_6));
 
         $test = '1200:0000:AB00:1234:0000:2552:7777:1313';
-        $this->assertTrue(Str::isMatch($test, Regex::IPV4N6));
+        $this->assertTrue(Str::isMatch($test, Regex::IPV4_6));
 
         $test = '1200:0000:AB00:1234:O000:2552:7777:1313';
-        $this->assertFalse(Str::isMatch($test, Regex::IPV4N6));
+        $this->assertFalse(Str::isMatch($test, Regex::IPV4_6));
     }
 
     public function test_regex_url()
