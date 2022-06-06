@@ -408,6 +408,19 @@ class Str
         return false;
     }
 
+    /**
+     * Retreves the matches of string against a search pattern.
+     * Short hand for `isMatch`
+     *
+     * @param string $text String
+     * @param string $pattern String leguler expresstion
+     * @return bool
+     */
+    public static function is(string $text, string $pattern)
+    {
+        return static::isMatch($text, $pattern);
+    }
+
     // Backward Compatible php 8.0 --------------------------------
 
     /**
