@@ -59,6 +59,17 @@ class Str
     }
 
     /**
+     * Create new instace.
+     *
+     * @param string $text Input text
+     * @return Text
+     */
+    public static function of(string $text)
+    {
+        return new Text($text);
+    }
+
+    /**
      * Return the character at the specifid postion.
      *
      * @param string $text String text
