@@ -2,8 +2,7 @@
 
 namespace System\Text;
 
-if (! function_exists('string')) {
-
+if (!function_exists('string')) {
     function string($text)
     {
         return new Text($text);

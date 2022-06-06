@@ -63,6 +63,7 @@ class Str
      * Create new instace.
      *
      * @param string $text Input text
+     *
      * @return Text
      */
     public static function of(string $text)
@@ -423,8 +424,9 @@ class Str
     /**
      * Retreves the matches of string against a search pattern.
      *
-     * @param string $text String
+     * @param string $text    String
      * @param string $pattern String leguler expresstion
+     *
      * @return bool
      */
     public static function isMatch(string $text, string $pattern)
@@ -440,10 +442,11 @@ class Str
 
     /**
      * Retreves the matches of string against a search pattern.
-     * Short hand for `isMatch`
+     * Short hand for `isMatch`.
      *
-     * @param string $text String
+     * @param string $text    String
      * @param string $pattern String leguler expresstion
+     *
      * @return bool
      */
     public static function is(string $text, string $pattern)
