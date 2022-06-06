@@ -15,7 +15,6 @@ class Karnel
 
     /** @var array Global middleware */
     protected $middleware = [
-        //
     ];
 
     /** @var array Middleware has register */
@@ -35,6 +34,7 @@ class Karnel
      * Handle http request.
      *
      * @param Request $request Incoming request
+     *
      * @return Response Respone handle
      */
     public function handle(Request $request)
@@ -46,6 +46,7 @@ class Karnel
      * Handle middleware class.
      *
      * @param array $middlewares Middleware array class-name
+     *
      * @return self
      */
     protected function handle_middleware($middlewares)
@@ -66,9 +67,10 @@ class Karnel
     /**
      * Handle middleware and execute callback.
      *
-     * @param callable $callable Callable
-     * @param array $params Parameter to use
-     * @param array $middlewares Middleware array class-name
+     * @param callable $callable    Callable
+     * @param array    $params      Parameter to use
+     * @param array    $middlewares Middleware array class-name
+     *
      * @return mixed Callavle result
      */
     protected function call_middleware($callable, $params = [], $middleware = [])
@@ -81,5 +83,4 @@ class Karnel
 
         return $this->app->call($callable, $params);
     }
-
 }

@@ -35,7 +35,7 @@ class ApplicationTest extends TestCase
     }
 
     /** @test */
-    public function it_can_load_default_config()
+    public function itCanLoadDefaultConfig()
     {
         $app = new Application('/');
 
@@ -47,9 +47,9 @@ class ApplicationTest extends TestCase
     }
 
     /** @test */
-    public function it_can_not_duplicate_register()
+    public function itCanNotDuplicateRegister()
     {
-        require_once __DIR__.DIRECTORY_SEPARATOR.'Provider'.DIRECTORY_SEPARATOR.'TestServiceProvider.php';
+        require_once __DIR__ . DIRECTORY_SEPARATOR . 'Provider' . DIRECTORY_SEPARATOR . 'TestServiceProvider.php';
 
         $app = new Application('/');
 
@@ -60,28 +60,28 @@ class ApplicationTest extends TestCase
 
         $test = $app->get('ping');
 
-        $this->assertEquals('pong',$test);
+        $this->assertEquals('pong', $test);
     }
 
     private function defaultConfigs()
     {
         return [
             // app config
-            'BASEURL'           => '/',
-            'time_zone'         => 'Asia/Jakarta',
+            'BASEURL'            => '/',
+            'time_zone'          => 'Asia/Jakarta',
             'APP_KEY'            => '',
             'ENVIRONMENT'        => 'dev',
 
-            'MODEL_PATH'        => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'library'.DIRECTORY_SEPARATOR.'model'.DIRECTORY_SEPARATOR,
-            'VIEW_PATH'         => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR,
-            'CONTROLLER_PATH'   => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'controllers'.DIRECTORY_SEPARATOR,
-            'SERVICES_PATH'     => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'services'.DIRECTORY_SEPARATOR,
-            'COMPONENT_PATH'    => DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR,
-            'COMMNAD_PATH'      => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'commands'.DIRECTORY_SEPARATOR,
-            'CACHE_PATH'        => DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR,
-            'CONFIG'            => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR,
-            'MIDDLEWARE'        => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'middleware'.DIRECTORY_SEPARATOR,
-            'SERVICE_PROVIDER'  => DIRECTORY_SEPARATOR.'app'.DIRECTORY_SEPARATOR.'Providers'.DIRECTORY_SEPARATOR,
+            'MODEL_PATH'        => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR,
+            'VIEW_PATH'         => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
+            'CONTROLLER_PATH'   => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR,
+            'SERVICES_PATH'     => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'services' . DIRECTORY_SEPARATOR,
+            'COMPONENT_PATH'    => DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR,
+            'COMMNAD_PATH'      => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'commands' . DIRECTORY_SEPARATOR,
+            'CACHE_PATH'        => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR,
+            'CONFIG'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR,
+            'MIDDLEWARE'        => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'middleware' . DIRECTORY_SEPARATOR,
+            'SERVICE_PROVIDER'  => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Providers' . DIRECTORY_SEPARATOR,
 
             'PROVIDERS'         => [
                 // provider class name
@@ -110,5 +110,4 @@ class ApplicationTest extends TestCase
             'MEMCACHED_PORT' => 6379,
         ];
     }
-
 }

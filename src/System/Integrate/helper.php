@@ -2,35 +2,35 @@
 
 // path aplication
 
-if (! function_exists("app_path")) {
-
+if (!function_exists('app_path')) {
     /**
-     * Get full aplication path, base on config file
+     * Get full aplication path, base on config file.
      *
      * @param string $folder_name
-     *  Application path name
-     * @param bool $include_basePath
-     *  True to add base path to result
+     *                                 Application path name
+     * @param bool   $include_basePath
+     *                                 True to add base path to result
+     *
      * @return string
-     *  Application path folder
+     *                Application path folder
      */
-    function app_path(string $folder_name): string {
+    function app_path(string $folder_name): string
+    {
         $path = app()->app_path() ?? '';
 
         return $path . DIRECTORY_SEPARATOR . $folder_name;
     }
 }
 
-
-if (! function_exists("model_path")) {
-
+if (!function_exists('model_path')) {
     /**
-     * Get aplication model path, base on config file
+     * Get aplication model path, base on config file.
      *
      * @param bool $include_basePath
-     *  True to add base path to result
+     *                               True to add base path to result
+     *
      * @return string
-     *  Application path folder
+     *                Application path folder
      */
     function model_path(string $surfix_path = ''): string
     {
@@ -40,15 +40,15 @@ if (! function_exists("model_path")) {
     }
 }
 
-if (! function_exists("view_path")) {
-
+if (!function_exists('view_path')) {
     /**
-     * Get aplication view path, base on config file
+     * Get aplication view path, base on config file.
      *
      * @param bool $include_basePath
-     *  True to add base path to result
+     *                               True to add base path to result
+     *
      * @return string
-     *  Application path folder
+     *                Application path folder
      */
     function view_path(string $surfix_path = ''): string
     {
@@ -58,34 +58,34 @@ if (! function_exists("view_path")) {
     }
 }
 
-if (! function_exists("controllers_path")) {
-
-  /**
-   * Get aplication controllers path, base on config file
-   *
-   * @param bool $include_basePath
-   *  True to add base path to result
-   * @return string
-   *  Application path folder
-   */
-  function controllers_path(string $surfix_path = ''): string
-  {
-    $path = app()->controller_path() . $surfix_path;
-
-    return $path
-    ;
-  }
-}
-
-if (! function_exists("services_path")) {
-
+if (!function_exists('controllers_path')) {
     /**
-     * Get aplication services path, base on config file
+     * Get aplication controllers path, base on config file.
      *
      * @param bool $include_basePath
-     *  True to add base path to result
+     *                               True to add base path to result
+     *
      * @return string
-     *  Application path folder
+     *                Application path folder
+     */
+    function controllers_path(string $surfix_path = ''): string
+    {
+        $path = app()->controller_path() . $surfix_path;
+
+        return $path
+    ;
+    }
+}
+
+if (!function_exists('services_path')) {
+    /**
+     * Get aplication services path, base on config file.
+     *
+     * @param bool $include_basePath
+     *                               True to add base path to result
+     *
+     * @return string
+     *                Application path folder
      */
     function services_path(string $surfix_path = ''): string
     {
@@ -95,15 +95,15 @@ if (! function_exists("services_path")) {
     }
 }
 
-if (! function_exists("component_path")) {
-
+if (!function_exists('component_path')) {
     /**
-     * Get aplication component path, base on config file
+     * Get aplication component path, base on config file.
      *
      * @param bool $include_basePath
-     *  True to add base path to result
+     *                               True to add base path to result
+     *
      * @return string
-     *  Application path folder
+     *                Application path folder
      */
     function component_path(string $surfix_path = ''): string
     {
@@ -113,15 +113,15 @@ if (! function_exists("component_path")) {
     }
 }
 
-if (! function_exists("commands_path")) {
-
+if (!function_exists('commands_path')) {
     /**
-     * Get aplication commands path, base on config file
+     * Get aplication commands path, base on config file.
      *
      * @param bool $include_basePath
-     *  True to add base path to result
+     *                               True to add base path to result
+     *
      * @return string
-     *  Application path folder
+     *                Application path folder
      */
     function commands_path(string $surfix_path = ''): string
     {
@@ -131,15 +131,15 @@ if (! function_exists("commands_path")) {
     }
 }
 
-if (! function_exists("cache_path")) {
-
+if (!function_exists('cache_path')) {
     /**
-     * Get aplication cache path, base on config file
+     * Get aplication cache path, base on config file.
      *
      * @param bool $include_basePath
-     *  True to add base path to result
+     *                               True to add base path to result
+     *
      * @return string
-     *  Application path folder
+     *                Application path folder
      */
     function cache_path(string $surfix_path = ''): string
     {
@@ -149,15 +149,15 @@ if (! function_exists("cache_path")) {
     }
 }
 
-if (! function_exists("config_path")) {
-
+if (!function_exists('config_path')) {
     /**
-     * Get aplication config path, base on config file
+     * Get aplication config path, base on config file.
      *
      * @param bool $include_basePath
-     *  True to add base path to result
+     *                               True to add base path to result
+     *
      * @return string
-     *  Application path folder
+     *                Application path folder
      */
     function config_path(string $surfix_path = ''): string
     {
@@ -167,15 +167,15 @@ if (! function_exists("config_path")) {
     }
 }
 
-if (! function_exists("middleware_path")) {
-
+if (!function_exists('middleware_path')) {
     /**
-     * Get aplication middleware path, base on config file
+     * Get aplication middleware path, base on config file.
      *
      * @param bool $include_basePath
-     *  True to add base path to result
+     *                               True to add base path to result
+     *
      * @return string
-     *  Application path folder
+     *                Application path folder
      */
     function middleware_path(string $surfix_path = ''): string
     {
@@ -185,7 +185,7 @@ if (! function_exists("middleware_path")) {
     }
 }
 
-if (! function_exists('provider_path')) {
+if (!function_exists('provider_path')) {
     function provider_path(string $surfix_path = ''): string
     {
         $path = app()->provider_path() . $surfix_path;
@@ -194,15 +194,15 @@ if (! function_exists('provider_path')) {
     }
 }
 
-if (! function_exists("base_path")) {
-
+if (!function_exists('base_path')) {
     /**
-     * Get base path
+     * Get base path.
      *
      * @param string $insert_path
-     *  Insert string in end of path
+     *                            Insert string in end of path
+     *
      * @return string
-     * Base path folder
+     *                Base path folder
      */
     function base_path(string $insert_path = ''): string
     {
@@ -212,10 +212,9 @@ if (! function_exists("base_path")) {
 
 // app config
 
-if (! function_exists('app_env')) {
-
+if (!function_exists('app_env')) {
     /**
-     * Cek application environment mode
+     * Cek application environment mode.
      *
      * @return string Application environment mode
      */
@@ -225,10 +224,9 @@ if (! function_exists('app_env')) {
     }
 }
 
-if (! function_exists('is_production')) {
-
+if (!function_exists('is_production')) {
     /**
-     * Cek application production mode
+     * Cek application production mode.
      *
      * @return bool True if in production mode
      */
@@ -238,10 +236,9 @@ if (! function_exists('is_production')) {
     }
 }
 
-if (! function_exists('is_dev')) {
-
+if (!function_exists('is_dev')) {
     /**
-     * Cek application developent mode
+     * Cek application developent mode.
      *
      * @return bool True if in dev moded
      */
@@ -251,8 +248,7 @@ if (! function_exists('is_dev')) {
     }
 }
 
-if (! function_exists('app')) {
-
+if (!function_exists('app')) {
     /**
      * Get Application container.
      */
@@ -262,12 +258,12 @@ if (! function_exists('app')) {
         if (null === $app) {
             throw new Exception('Apllication not start yet!');
         }
+
         return $app;
     }
 }
 
-if (! function_exists('config')) {
-
+if (!function_exists('config')) {
     /**
      * Get Application Configuration.
      *
