@@ -20,7 +20,7 @@ class RouteDispatchTest extends TestCase
             new Route([
                 'method'     => 'GET',
                 'expression' => '/',
-                'function'   => fn ()   => true,
+                'function'   => fn () => true,
             ]),
         ];
     }
