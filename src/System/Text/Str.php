@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace System\Text;
 
+use System\Collection\Collection;
+
 class Str
 {
     private static $macros = [];
@@ -397,6 +399,92 @@ class Str
         }
 
         return \str_replace($keys, $data, $template);
+    }
+
+    /**
+     * Fill string with string if length is less.
+     *
+     * @param string $text       String Text
+     * @param string $fill       String fill for miss length
+     * @param int    $max_length max length of output string
+     * @param bool   $fill_start If true filling from start
+     *
+     * @return string
+     */
+    private static function fillText(string $text, string $fill, int $max_length, bool $fill_start)
+    {
+        $max_length = $max_length < \strlen($text) ? \strlen($text) : $max_length;
+        $deviation  = $max_length - \strlen($text);
+
+        if (0 === $deviation) {
+            return $text;
+        }
+
+        $prefix = \str_repeat($fill, $deviation);
+
+        return $fill_start
+            ? $prefix . $text
+            : $text . $prefix;
+    }
+
+    /**
+     * Fill string (start) with string if length is less.
+     *
+     * @param string $text       String Text
+     * @param string $fill       String fill for miss length
+     * @param int    $max_length max length of output string
+     *
+     * @return string
+     */
+    public static function fill(string $text, string $fill, int $max_length)
+    {
+        return static::fillText($text, $fill, $max_length, true);
+    }
+
+    /**
+     * Fill string (end) with string if length is less.
+     *
+     * @param string $text       String text
+     * @param string $fill       String fill for miss length
+     * @param int    $max_length max length of output string
+     *
+     * @return string
+     */
+    public static function fillEnd(string $text, string $fill, int $max_length)
+    {
+        return static::fillText($text, $fill, $max_length, false);
+    }
+
+    /**
+     * Create mask string.
+     *
+     * @param string $text        String text
+     * @param string $mask        Mask
+     * @param int    $start       Start postion mask
+     * @param int    $mask_length Mask lenght
+     *
+     * @return string String with mask
+     */
+    public static function mask(string $text, string $mask, int $start, int $mask_length = 9999)
+    {
+        // negative postion, count from end text
+        if ($start < 0) {
+            $start = \strlen($text) + $start;
+        }
+
+        $end = $start + $mask_length;
+        $start--;
+        $arr_text =  preg_split('//', $text, -1, PREG_SPLIT_NO_EMPTY);
+        $new      = new Collection($arr_text);
+        $new_text = $new->map(function ($string, $index) use ($mask, $start, $end) {
+            if ($index > $start && $index < $end) {
+                return $mask;
+            }
+
+            return $string;
+        });
+
+        return \implode('', $new_text->all());
     }
 
     // condition ------------------------------------

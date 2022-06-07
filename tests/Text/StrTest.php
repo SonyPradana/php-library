@@ -300,4 +300,25 @@ final class StrTest extends TestCase
         $this->assertTrue(Str::isEmpty(''));
         $this->assertFalse(Str::isEmpty('test'));
     }
+
+    /** @test */
+    public function itCanDetectFillStringInTheStart()
+    {
+        $this->assertEquals('001212', Str::fill('1212', '0', 6));
+    }
+
+    /** @test */
+    public function itCanDetectFillStringInTheEnd()
+    {
+        $this->assertEquals('121200', Str::fillEnd('1212', '0', 6));
+    }
+
+    /** @test */
+    public function itCanMakeMask()
+    {
+        $this->assertEquals('l****el', Str::mask('laravel', '*', 1, 4));
+        $this->assertEquals('l******', Str::mask('laravel', '*', 1));
+        $this->assertEquals('lara*el', Str::mask('laravel', '*', -3, 1));
+        $this->assertEquals('lara***', Str::mask('laravel', '*', -3));
+    }
 }

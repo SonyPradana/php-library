@@ -145,4 +145,34 @@ class TextAPITest extends TestCase
         $this->assertIsInt($this->text->length());
         $this->assertEquals(3, $this->text->indexOf('o'));
     }
+
+    /** @test */
+    public function itCanReturnFill()
+    {
+        $this->text->text('1234');
+        $this->assertEquals('001234', $this->text->fill('0', 6));
+    }
+
+    /** @test */
+    public function itCanReturnFillEnd()
+    {
+        $this->text->text('1234');
+        $this->assertEquals('123400', $this->text->fillEnd('0', 6));
+    }
+
+    /** @test */
+    public function itCanReturnMask()
+    {
+        $this->text->text('laravel');
+        $this->assertEquals('l****el', $this->text->mask('*', 1, 4));
+
+        $this->text->text('laravel');
+        $this->assertEquals('l******', $this->text->mask('*', 1));
+
+        $this->text->text('laravel');
+        $this->assertEquals('lara*el', $this->text->mask('*', -3, 1));
+
+        $this->text->text('laravel');
+        $this->assertEquals('lara***', $this->text->mask('*', -3));
+    }
 }

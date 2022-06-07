@@ -314,6 +314,55 @@ class Text
         return $this;
     }
 
+    /**
+     * Fill string (start) with string if length is less.
+     *
+     * @param string $fill       String fill for miss length
+     * @param int    $max_length max length of output string
+     *
+     * @return self
+     */
+    public function fill(string $fill, $length)
+    {
+        $text = Str::fill($this->_current, $fill, $length);
+        $this->execute($text, __FUNCTION__);
+
+        return $this;
+    }
+
+    /**
+     * Fill string (end) with string if length is less.
+     *
+     * @param string $fill       String fill for miss length
+     * @param int    $max_length max length of output string
+     *
+     * @return self
+     */
+    public function fillEnd(string $fill, $length)
+    {
+        $text = Str::fillEnd($this->_current, $fill, $length);
+        $this->execute($text, __FUNCTION__);
+
+        return $this;
+    }
+
+    /**
+     * Create mask string.
+     *
+     * @param string $mask        Mask
+     * @param int    $start       Start postion mask
+     * @param int    $mask_length Mask lenght
+     *
+     * @return self
+     */
+    public function mask(string $mask, int $start, int $mask_length = 9999)
+    {
+        $text = Str::mask($this->_current, $mask, $start, $mask_length);
+        $this->execute($text, __FUNCTION__);
+
+        return $this;
+    }
+
     // int -----------------------------------------------
 
     /**
