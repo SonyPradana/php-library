@@ -23,6 +23,7 @@
             "System\\": "src/System/"
         },
         "files": [
+          "src/System/Collection/helper.php",
           "src/System/Integrate/helper.php",
           "src/System/Text/helper.php",
           "src/System/Time/helper.php"
