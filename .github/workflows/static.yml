@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dependency-version: [prefer-lowest, prefer-stable]
+        dependency-version: [prefer-stable]
 
     name: PHPStan ${{ matrix.dependency-version }}
 
@@ -44,8 +44,12 @@ jobs:
         tools: composer:v2
         coverage: none
 
-    - name: Install Dependencies
-      run: composer update --no-interaction --no-progress --ansi
+    - name: Install dependencies
+      uses: nick-invision/retry@v1
+        with:
+          timeout_minutes: 5
+          max_attempts: 5
+          command: composer update --prefer-stable --prefer-dist --no-interaction --no-progress
 
     - name: Run PHPStan
       run: vendor/bin/phpstan analyse --no-progress --debug --ansi
