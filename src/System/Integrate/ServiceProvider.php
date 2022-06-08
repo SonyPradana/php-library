@@ -19,7 +19,7 @@ abstract class ServiceProvider
     /**
      * Create a new service provider instance.
      *
-     * @param Application|System\Container\Container $app
+     * @param Application|Container $app
      *
      * @return void
      */

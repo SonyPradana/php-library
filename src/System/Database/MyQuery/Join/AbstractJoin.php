@@ -80,8 +80,8 @@ abstract class AbstractJoin
     /**
      * Compare identical two table.
      *
-     * @param string $main_coumn identical of the main table column
-     * @param string $main_coumn identical of the ref table column
+     * @param string $main_column    Identical of the main table column
+     * @param string $compire_column Identical of the ref table column
      */
     public function compare(string $main_column, string $compire_column = null)
     {

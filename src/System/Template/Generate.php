@@ -322,7 +322,7 @@ class Generate
     }
 
     /**
-     * @param callable|Const|constPool $new_const callabe with param pools constan, single constans or constPool
+     * @param callable|Constant|ConstPool $new_const callabe with param pools constan, single constans or constPool
      */
     public function consts($new_const)
     {
@@ -345,7 +345,7 @@ class Generate
         }
 
         // detect parameter is instance constPool
-        elseif ($new_const instanceof constPool) {
+        elseif ($new_const instanceof ConstPool) {
             foreach ($new_const->getPools() as $pool) {
                 if ($pool instanceof Constant) {
                     $this->consts[] = $pool;
@@ -402,7 +402,7 @@ class Generate
     }
 
     /**
-     * @param callable|Method|MethodPool $new_property callabe with param pools constan or single property
+     * @param callable|Method|MethodPool $new_method callabe with param pools constan or single property
      */
     public function methods($new_method)
     {

@@ -2,6 +2,8 @@
 
 namespace System\Database\MyQuery;
 
+use System\Database\MyPDO;
+
 abstract class Query
 {
     /** @var MyPDO PDO property */
@@ -61,7 +63,7 @@ abstract class Query
      * Where statment setter,
      * menambahakan syarat pada query builder.
      *
-     * @param string $key         Key atau nama column
+     * @param string $bind        Key atau nama column
      * @param string $comparation tanda hubung yang akan digunakan (AND|OR|>|<|=|LIKE)
      * @param string $value       Value atau nilai dari key atau nama column
      */

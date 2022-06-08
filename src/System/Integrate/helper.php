@@ -6,13 +6,9 @@ if (!function_exists('app_path')) {
     /**
      * Get full aplication path, base on config file.
      *
-     * @param string $folder_name
-     *                                 Application path name
-     * @param bool   $include_basePath
-     *                                 True to add base path to result
+     * @param string $folder_name Special path name
      *
-     * @return string
-     *                Application path folder
+     * @return string Application path folder
      */
     function app_path(string $folder_name): string
     {
@@ -26,11 +22,9 @@ if (!function_exists('model_path')) {
     /**
      * Get aplication model path, base on config file.
      *
-     * @param bool $include_basePath
-     *                               True to add base path to result
+     * @param string $surfix_path Add string end of path
      *
-     * @return string
-     *                Application path folder
+     * @return string Model path folder
      */
     function model_path(string $surfix_path = ''): string
     {
@@ -44,11 +38,9 @@ if (!function_exists('view_path')) {
     /**
      * Get aplication view path, base on config file.
      *
-     * @param bool $include_basePath
-     *                               True to add base path to result
+     * @param string $surfix_path Add string end of path
      *
-     * @return string
-     *                Application path folder
+     * @return string View path folder
      */
     function view_path(string $surfix_path = ''): string
     {
@@ -62,11 +54,9 @@ if (!function_exists('controllers_path')) {
     /**
      * Get aplication controllers path, base on config file.
      *
-     * @param bool $include_basePath
-     *                               True to add base path to result
+     * @param string $surfix_path Add string end of path
      *
-     * @return string
-     *                Application path folder
+     * @return string Controller path folder
      */
     function controllers_path(string $surfix_path = ''): string
     {
@@ -81,11 +71,9 @@ if (!function_exists('services_path')) {
     /**
      * Get aplication services path, base on config file.
      *
-     * @param bool $include_basePath
-     *                               True to add base path to result
+     * @param string $surfix_path Add string end of path
      *
-     * @return string
-     *                Application path folder
+     * @return string Service path folder
      */
     function services_path(string $surfix_path = ''): string
     {
@@ -99,11 +87,9 @@ if (!function_exists('component_path')) {
     /**
      * Get aplication component path, base on config file.
      *
-     * @param bool $include_basePath
-     *                               True to add base path to result
+     * @param string $surfix_path Add string end of path
      *
-     * @return string
-     *                Application path folder
+     * @return string Component path folder
      */
     function component_path(string $surfix_path = ''): string
     {
@@ -117,11 +103,9 @@ if (!function_exists('commands_path')) {
     /**
      * Get aplication commands path, base on config file.
      *
-     * @param bool $include_basePath
-     *                               True to add base path to result
+     * @param string $surfix_path Add string end of path
      *
-     * @return string
-     *                Application path folder
+     * @return string Command path folder
      */
     function commands_path(string $surfix_path = ''): string
     {
@@ -135,11 +119,9 @@ if (!function_exists('cache_path')) {
     /**
      * Get aplication cache path, base on config file.
      *
-     * @param bool $include_basePath
-     *                               True to add base path to result
+     * @param string $surfix_path Add string end of path
      *
-     * @return string
-     *                Application path folder
+     * @return string Cache path folder
      */
     function cache_path(string $surfix_path = ''): string
     {
@@ -153,11 +135,9 @@ if (!function_exists('config_path')) {
     /**
      * Get aplication config path, base on config file.
      *
-     * @param bool $include_basePath
-     *                               True to add base path to result
+     * @param string $surfix_path Add string end of path
      *
-     * @return string
-     *                Application path folder
+     * @return string Config path folder
      */
     function config_path(string $surfix_path = ''): string
     {
@@ -171,11 +151,9 @@ if (!function_exists('middleware_path')) {
     /**
      * Get aplication middleware path, base on config file.
      *
-     * @param bool $include_basePath
-     *                               True to add base path to result
+     * @param string $surfix_path Add string end of path
      *
-     * @return string
-     *                Application path folder
+     * @return string Middleware path folder
      */
     function middleware_path(string $surfix_path = ''): string
     {

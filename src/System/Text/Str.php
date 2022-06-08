@@ -6,7 +6,7 @@ namespace System\Text;
 
 use System\Collection\Collection;
 
-class Str
+final class Str
 {
     private static $macros = [];
 
@@ -15,7 +15,8 @@ class Str
      *
      * @param string   $macro_name Method name
      * @param callable $call_back  Method call able
-     * @param void
+     *
+     * @return void
      */
     public static function macro(string $macro_name, $call_back)
     {
@@ -194,9 +195,9 @@ class Str
     /**
      * Splits a string into array of string.
      *
-     * @param string   $text     string to split
-     * @param string   $sparator Sparator
-     * @param int|null $limit    Limit array length
+     * @param string $text     string to split
+     * @param string $sparator Sparator
+     * @param int    $limit    Limit array length
      *
      * @return array<int, string>|false
      */

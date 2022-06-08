@@ -7,7 +7,7 @@ namespace System\Integrate;
 use System\Container\Container;
 use System\Integrate\Providers\IntegrateServiceProvider;
 
-class Application extends Container
+final class Application extends Container
 {
     private static $app;
 

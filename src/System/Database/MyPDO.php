@@ -6,7 +6,7 @@ use Exception;
 use PDO;
 use PDOException;
 
-class MyPDO
+final class MyPDO
 {
     /** @var \PDO PDO */
     private $dbh;
@@ -56,7 +56,7 @@ class MyPDO
     /**
      * Get connection configuration.
      *
-     * @return array<string, string)
+     * @return array<string, string>
      */
     public function configs()
     {

@@ -67,9 +67,9 @@ class Karnel
     /**
      * Handle middleware and execute callback.
      *
-     * @param callable $callable    Callable
-     * @param array    $params      Parameter to use
-     * @param array    $middlewares Middleware array class-name
+     * @param callable       $callable   Callable
+     * @param array          $params     Parameter to use
+     * @param class-string[] $middleware Middleware array class-name
      *
      * @return mixed Callavle result
      */
