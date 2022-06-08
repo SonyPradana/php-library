@@ -43,8 +43,8 @@ class MyPDO
             throw new Exception($e->getMessage());
         }
 
-        // set instance
-        static::$Instance = $this; # @phpstan-ignore-line
+        // set instance @phpstan-ignore-next-line
+        static::$Instance = $this;
     }
 
     /** Create connaction using static */
@@ -93,21 +93,21 @@ class MyPDO
     {
         if (is_null($type)) {
             switch (true) {
-        case is_int($value):
-          $type = PDO::PARAM_INT;
-          break;
+                case is_int($value):
+                    $type = PDO::PARAM_INT;
+                    break;
 
-        case is_bool($value):
-          $type = PDO::PARAM_BOOL;
-          break;
+                case is_bool($value):
+                    $type = PDO::PARAM_BOOL;
+                    break;
 
-        case is_null($value):
-          $type = PDO::PARAM_NULL;
-          break;
+                case is_null($value):
+                    $type = PDO::PARAM_NULL;
+                    break;
 
-        default:
-          $type = PDO::PARAM_STR;
-      }
+                default:
+                    $type = PDO::PARAM_STR;
+            }
         }
         $this->stmt->bindValue($param, $value, $type);
 
