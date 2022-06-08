@@ -6,7 +6,7 @@ use Exception;
 use PDO;
 use PDOException;
 
-final class MyPDO
+class MyPDO
 {
     /** @var \PDO PDO */
     private $dbh;
@@ -32,9 +32,9 @@ final class MyPDO
         // konfigurasi driver
         $dsn    = "mysql:host=$host;dbname=$database_name";
         $option = [
-      PDO::ATTR_PERSISTENT => true,
-      PDO::ATTR_ERRMODE    => PDO::ERRMODE_EXCEPTION,
-    ];
+            PDO::ATTR_PERSISTENT => true,
+            PDO::ATTR_ERRMODE    => PDO::ERRMODE_EXCEPTION,
+        ];
 
         // menjalankan koneksi daabase
         try {
@@ -44,7 +44,7 @@ final class MyPDO
         }
 
         // set instance
-        static::$Instance = $this;
+        static::$Instance = $this; # @phpstan-ignore-line
     }
 
     /** Create connaction using static */
