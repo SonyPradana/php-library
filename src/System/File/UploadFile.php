@@ -12,7 +12,7 @@ namespace System\File;
  */
 class UploadFile
 {
-    /** @var string Succes file upload status */
+    /** @var bool Succes file upload status */
     private $_success = false;
     /** @var bool Is set property */
     private $_isset = false;

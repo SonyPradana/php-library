@@ -199,7 +199,7 @@ final class Application extends Container
     /**
      * Helper add define for legency API.
      *
-     * @param array<int, string> $configs Array configuration
+     * @param array<string, string> $configs Array configuration
      */
     private function defineder(array $configs)
     {
