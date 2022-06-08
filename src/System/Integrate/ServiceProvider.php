@@ -19,11 +19,9 @@ abstract class ServiceProvider
     /**
      * Create a new service provider instance.
      *
-     * @param Application $app
-     *
      * @return void
      */
-    public function __construct($app)
+    public function __construct(Application $app)
     {
         $this->app = $app;
     }
