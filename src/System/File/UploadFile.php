@@ -42,6 +42,13 @@ class UploadFile
     /** @var int Upload maksimal file size */
     private $upload_size_max = 50000;
 
+    /**
+     * Provide error message.
+     *
+     * @var string
+     */
+    private $_error_message = '';
+
     // setter
     /**
      * Set file name (without extention).

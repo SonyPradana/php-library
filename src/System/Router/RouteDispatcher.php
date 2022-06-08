@@ -6,7 +6,7 @@ namespace System\Router;
 
 use System\Http\Request;
 
-class RouteDispatcher
+final class RouteDispatcher
 {
     // dispatch
     /** @var Request */

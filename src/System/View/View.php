@@ -8,6 +8,10 @@ class View
 {
     public static function render(string $view_path, array $portal = [])
     {
+        if (! file_exists($view_path)) {
+            throw new \Exception('View path not exists');
+        }
+
         $auth         = new Portal($portal['auth'] ?? []);
         $meta         = new Portal($portal['meta'] ?? []);
         $content      = new Portal($portal['contents'] ?? []);
@@ -15,7 +19,7 @@ class View
 
         // get render content
         ob_start();
-        require_once $view_path ?? '';
+        require_once $view_path;
         $html = ob_get_clean();
 
         // send render content to client

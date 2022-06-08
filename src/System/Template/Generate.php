@@ -204,13 +204,15 @@ class Generate
     private function ruleText(): string
     {
         switch ($this->rule) {
-      case self::SET_CLASS:
-        return '';
-      case self::SET_ABSTRACT:
-        return 'abstract';
-      case self::SET_TRAIT:
-        return 'trait';
-    }
+            case self::SET_CLASS:
+                return '';
+            case self::SET_ABSTRACT:
+                return 'abstract';
+            case self::SET_TRAIT:
+                return 'trait';
+            default:
+                return '';
+        }
     }
 
     public function save(string $path_to_save)
