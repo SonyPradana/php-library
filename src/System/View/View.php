@@ -8,7 +8,7 @@ class View
 {
     public static function render(string $view_path, array $portal = [])
     {
-        if (! file_exists($view_path)) {
+        if (!file_exists($view_path)) {
             throw new \Exception('View path not exists');
         }
 

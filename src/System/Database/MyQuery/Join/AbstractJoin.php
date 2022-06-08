@@ -31,8 +31,8 @@ abstract class AbstractJoin
      */
     public static function ref(string $ref_table, string $id, ?string $ref_id = null)
     {
-        /** @phpstan-ignore-next-line */
-        return (new static)
+        /* @phpstan-ignore-next-line */
+        return (new static())
             ->tableRef($ref_table)
             ->compare($id, $ref_id);
     }
