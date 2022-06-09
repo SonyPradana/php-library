@@ -37,7 +37,7 @@ class RenderViewTest extends TestCase
     }
 
     /** @test */
-    public function it_throw_when_file_not_found()
+    public function itThrowWhenFileNotFound()
     {
         $this->expectExceptionMessage('View path not exists');
 

@@ -5,6 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Changed `Str::class` to final class.
+- Changed `Select::class` to final class.
+- Changed `Application::class` to final class.
+- Changed `RouteDispatcher::class` to final class.
+- Changed `ServiceProvider::__construct()` param from `Container::class` to `Application::class`.
+- Changed `View::render` throw exception when file not found.
+
+### Security
+- `MyModel::call()`, Unsafe usage of `new static()`.
+- `MyPDO::$Instance`, Unsafe usage of `new static()`.
+- `AbstractJoin::ref()`, Unsafe usage of `new static()`.
+- `Controller::static()`, Unsafe usage of `new static()`.
+- `Router::getRoutes()`, Call to an undefined method `System\Router\Route::route()`.
 
 ## [0.7.0] - 2022-06-06
 ### Added 
