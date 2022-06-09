@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.7.1] - 2022-06-09
+### Added
+- Added `Str::fill()`, `Str::fillEnd()` and `Str::mask()`.
+- Added `Text::fill()`, `Text::fillEnd()` and `Text::mask()`.
+
+### Fixed
+- Fixed `MyCRUD::setter()` check `MyCRUD::RESISTANT` always true.
+- Fixed `MyCRUD::getLastInsertID()` cant set default id (if id is empty).
+- Fixed `MyPDO::transaction` return `MyPDO::beginTransaction` without run callable function.
+
 ### Changed
 - Changed `Str::class` to final class.
 - Changed `Select::class` to final class.
