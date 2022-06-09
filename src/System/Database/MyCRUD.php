@@ -37,7 +37,7 @@ abstract class MyCRUD
 
     protected function setter(string $key, $val)
     {
-        if (key_exists($key, $this->COLUMNS) && !isset($this->RESISTANT)) {
+        if (key_exists($key, $this->COLUMNS) && !isset($this->RESISTANT[$key])) {
             $this->COLUMNS[$key] = $val;
         }
 
@@ -66,11 +66,11 @@ abstract class MyCRUD
         $arr_column = array_keys($this->COLUMNS);
 
         $read = MyQuery::from($this->TABLE_NAME, $this->PDO)
-      ->select($arr_column)
-      ->equal($key, $value)
-      ->limitStart(1)
-      ->single()
-    ;
+            ->select($arr_column)
+            ->equal($key, $value)
+            ->limitStart(1)
+            ->single()
+        ;
 
         if ($read == []) {
             return false;
@@ -84,10 +84,10 @@ abstract class MyCRUD
     public function cread(): bool
     {
         $create = MyQuery::from($this->TABLE_NAME, $this->PDO)
-      ->insert()
-      ->values($this->COLUMNS)
-      ->execute()
-    ;
+            ->insert()
+            ->values($this->COLUMNS)
+            ->execute()
+        ;
 
         return $this->changing($create);
     }
@@ -98,11 +98,11 @@ abstract class MyCRUD
         $value = $this->IDENTIFER;
 
         $update = MyQuery::from($this->TABLE_NAME, $this->PDO)
-      ->update()
-      ->values($this->COLUMNS)
-      ->equal($key, $value)
-      ->execute()
-    ;
+            ->update()
+            ->values($this->COLUMNS)
+            ->equal($key, $value)
+            ->execute()
+        ;
 
         return $this->changing($update);
     }
@@ -113,10 +113,10 @@ abstract class MyCRUD
         $value = $this->IDENTIFER;
 
         return MyQuery::from($this->TABLE_NAME, $this->PDO)
-      ->delete()
-      ->equal($key, $value)
-      ->execute()
-    ;
+            ->delete()
+            ->equal($key, $value)
+            ->execute()
+        ;
     }
 
     public function isExist(): bool
@@ -125,17 +125,19 @@ abstract class MyCRUD
         $value = $this->IDENTIFER;
 
         $get = MyQuery::from($this->TABLE_NAME, $this->PDO)
-      ->select(['id'])
-      ->equal($key, $value)
-      ->single()
-    ;
+            ->select(['id'])
+            ->equal($key, $value)
+            ->single()
+        ;
 
         return $get == [] ? false : true;
     }
 
     public function getLastInsertID(): string
     {
-        return $this->PDO->lastInsertId() ?? '';
+        $id = $this->PDO->lastInsertId();
+
+        return $id === false ? '' : $id;
     }
 
     public function convertFromArray(array $arr_column)
@@ -160,8 +162,8 @@ abstract class MyCRUD
     protected function column_names(): array
     {
         $table_info = MyQuery::from($this->TABLE_NAME, $this->PDO)
-      ->info()
-    ;
+            ->info()
+        ;
 
         return array_values(array_column($table_info, 'COLUMN_NAME'));
     }
@@ -174,12 +176,12 @@ abstract class MyCRUD
     protected function hasOne(string $table, string $ref = 'id')
     {
         $ref = MyQuery::from($this->TABLE_NAME, $this->PDO)
-      ->select([$table . '.*'])
-      ->join(InnerJoin::ref($table, $this->PRIMERY_KEY, $ref))
-      ->equal($this->PRIMERY_KEY, $this->IDENTIFER)
-      ->limitStart(1)
-      ->single()
-    ;
+            ->select([$table . '.*'])
+            ->join(InnerJoin::ref($table, $this->PRIMERY_KEY, $ref))
+            ->equal($this->PRIMERY_KEY, $this->IDENTIFER)
+            ->limitStart(1)
+            ->single()
+        ;
 
         return new CollectionImmutable($ref);
     }
@@ -187,11 +189,11 @@ abstract class MyCRUD
     protected function hasMany(string $table, string $ref = 'id')
     {
         $ref = MyQuery::from($this->TABLE_NAME, $this->PDO)
-      ->select([$table . '.*'])
-      ->join(InnerJoin::ref($table, $this->PRIMERY_KEY, $ref))
-      ->equal($this->PRIMERY_KEY, $this->IDENTIFER)
-      ->all()
-    ;
+            ->select([$table . '.*'])
+            ->join(InnerJoin::ref($table, $this->PRIMERY_KEY, $ref))
+            ->equal($this->PRIMERY_KEY, $this->IDENTIFER)
+            ->all()
+        ;
 
         return new CollectionImmutable($ref);
     }
