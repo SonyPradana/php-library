@@ -205,11 +205,12 @@ class Generate
     {
         switch ($this->rule) {
             case self::SET_CLASS:
-                return '';
             case self::SET_ABSTRACT:
                 return 'abstract';
+
             case self::SET_TRAIT:
                 return 'trait';
+
             default:
                 return '';
         }

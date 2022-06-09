@@ -35,4 +35,12 @@ class RenderViewTest extends TestCase
       'it must same output with template html'
     );
     }
+
+    /** @test */
+    public function it_throw_when_file_not_found()
+    {
+        $this->expectExceptionMessage('View path not exists');
+
+        View::render('unknow');
+    }
 }
