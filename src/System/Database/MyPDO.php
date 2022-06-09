@@ -168,17 +168,16 @@ class MyPDO
 
     public function transaction(callable $callable)
     {
-        if ($allow_tansaction = $this->beginTransaction()) {
-            return $allow_tansaction;
-        }
-
-        if ($callable === false) {
+        if (false === $this->beginTransaction()) {
             return false;
         }
 
-        if ($success_commit = $this->endTransaction()) {
-            return $success_commit;
+        $return_call =  call_user_func($callable);
+        if (false === $return_call) {
+            return $this->cancelTransaction();
         }
+
+        return $this->endTransaction();
     }
 
     /**

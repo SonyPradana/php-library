@@ -26,6 +26,6 @@ abstract class Controller
     public static function static()
     {
         /* @phpstan-ignore-next-line */
-        return self::$_static ?? new static();
+        return self::$_static = self::$_static ?? new static();
     }
 }
