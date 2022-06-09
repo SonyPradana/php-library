@@ -2,6 +2,8 @@
 
 namespace System\Database\MyQuery;
 
+use System\Database\MyPDO;
+
 abstract class Query
 {
     /** @var MyPDO PDO property */
@@ -9,7 +11,7 @@ abstract class Query
     /** @var string Main query */
     protected $_query;
     /** @var string Table Name */
-    protected $_table = null;
+    protected $_table = '';
     /** @var array Columns name */
     protected $_column = ['*'];
     /** @var array Binder for PDO bind */
@@ -18,7 +20,7 @@ abstract class Query
     protected $_limit_start = 0;
     /** @var int Limit end to */
     protected $_limit_end = 0;
-    /** @var int Sort result ASC|DESC */
+    /** @var string Sort result ASC|DESC */
     protected $_sort_order  = '';
     public const ORDER_ASC  = 0;
     public const ORDER_DESC = 1;
@@ -42,7 +44,7 @@ abstract class Query
      */
     public function reset()
     {
-        $this->_table         = null;
+        $this->_table         = '';
         $this->_column        = ['*'];
         $this->_binder        = [];
         $this->_limit_start   = 0;
@@ -61,7 +63,7 @@ abstract class Query
      * Where statment setter,
      * menambahakan syarat pada query builder.
      *
-     * @param string $key         Key atau nama column
+     * @param string $bind        Key atau nama column
      * @param string $comparation tanda hubung yang akan digunakan (AND|OR|>|<|=|LIKE)
      * @param string $value       Value atau nilai dari key atau nama column
      */

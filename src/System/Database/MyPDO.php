@@ -32,9 +32,9 @@ class MyPDO
         // konfigurasi driver
         $dsn    = "mysql:host=$host;dbname=$database_name";
         $option = [
-      PDO::ATTR_PERSISTENT => true,
-      PDO::ATTR_ERRMODE    => PDO::ERRMODE_EXCEPTION,
-    ];
+            PDO::ATTR_PERSISTENT => true,
+            PDO::ATTR_ERRMODE    => PDO::ERRMODE_EXCEPTION,
+        ];
 
         // menjalankan koneksi daabase
         try {
@@ -43,7 +43,7 @@ class MyPDO
             throw new Exception($e->getMessage());
         }
 
-        // set instance
+        // set instance @phpstan-ignore-next-line
         static::$Instance = $this;
     }
 
@@ -56,7 +56,7 @@ class MyPDO
     /**
      * Get connection configuration.
      *
-     * @return array<string, string)
+     * @return array<string, string>
      */
     public function configs()
     {
@@ -93,21 +93,21 @@ class MyPDO
     {
         if (is_null($type)) {
             switch (true) {
-        case is_int($value):
-          $type = PDO::PARAM_INT;
-          break;
+                case is_int($value):
+                    $type = PDO::PARAM_INT;
+                    break;
 
-        case is_bool($value):
-          $type = PDO::PARAM_BOOL;
-          break;
+                case is_bool($value):
+                    $type = PDO::PARAM_BOOL;
+                    break;
 
-        case is_null($value):
-          $type = PDO::PARAM_NULL;
-          break;
+                case is_null($value):
+                    $type = PDO::PARAM_NULL;
+                    break;
 
-        default:
-          $type = PDO::PARAM_STR;
-      }
+                default:
+                    $type = PDO::PARAM_STR;
+            }
         }
         $this->stmt->bindValue($param, $value, $type);
 

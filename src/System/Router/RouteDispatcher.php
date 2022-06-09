@@ -6,7 +6,7 @@ namespace System\Router;
 
 use System\Http\Request;
 
-class RouteDispatcher
+final class RouteDispatcher
 {
     // dispatch
     /** @var Request */
@@ -60,7 +60,7 @@ class RouteDispatcher
     /**
      * Setup Base Path.
      *
-     * @param string $basepath Base Path
+     * @param string $base_path Base Path
      *
      * @return self
      */
@@ -146,9 +146,9 @@ class RouteDispatcher
     /**
      * Catch action from callable (found, not_found, method_not_allowed).
      *
-     * @param callable     $callable   Callback
-     * @param array        $param      Callaback params
-     * @param class-name[] $middleware Array of middleware class-name
+     * @param callable       $callable   Callback
+     * @param array          $params     Callaback params
+     * @param class-string[] $middleware Array of middleware class-name
      *
      * @return void
      */

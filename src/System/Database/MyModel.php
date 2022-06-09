@@ -361,10 +361,11 @@ abstract class MyModel
     /**
      * Create new instance from static.
      *
-     * @param \MyPDO $pdo PDO DI
+     * @param MyPDO $pdo PDO DI
      */
     public static function call(MyPDO $pdo = null)
     {
+        /* @phpstan-ignore-next-line */
         return new static($pdo);
     }
 

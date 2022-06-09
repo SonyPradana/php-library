@@ -104,8 +104,6 @@ class Text
 
     /**
      * Get string history.
-     *
-     * @param array
      */
     public function logs()
     {
@@ -196,8 +194,6 @@ class Text
     /**
      * Convert string to lowercase.
      *
-     * @param string $text Input string
-     *
      * @return self
      */
     public function lower()
@@ -210,8 +206,6 @@ class Text
 
     /**
      * Convert string to lowercase.
-     *
-     * @param string $text Input string
      *
      * @return self
      */
@@ -317,8 +311,8 @@ class Text
     /**
      * Fill string (start) with string if length is less.
      *
-     * @param string $fill       String fill for miss length
-     * @param int    $max_length max length of output string
+     * @param string $fill   String fill for miss length
+     * @param int    $length Max length of output string
      *
      * @return self
      */
@@ -333,8 +327,8 @@ class Text
     /**
      * Fill string (end) with string if length is less.
      *
-     * @param string $fill       String fill for miss length
-     * @param int    $max_length max length of output string
+     * @param string $fill   String fill for miss length
+     * @param int    $length Max length of output string
      *
      * @return self
      */
@@ -378,7 +372,6 @@ class Text
     /**
      * Index of first occorrent of specified text with in string.
      *
-     * @param string $text String to search
      * @param string $find Find
      *
      * @return int|false
@@ -391,7 +384,6 @@ class Text
     /**
      * Last index of first occorrent of specified text with in string.
      *
-     * @param string $text String to search
      * @param string $find Find
      *
      * @return int|false

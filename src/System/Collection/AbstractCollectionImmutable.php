@@ -104,10 +104,6 @@ abstract class AbstractCollectionImmutable
 
     public function some(callable $condition): bool
     {
-        if (!is_callable($condition)) {
-            return $this;
-        }
-
         foreach ($this->collection as $key => $item) {
             $call = call_user_func($condition, $item, $key);
 
@@ -121,10 +117,6 @@ abstract class AbstractCollectionImmutable
 
     public function every(callable $condition): bool
     {
-        if (!is_callable($condition)) {
-            return $this;
-        }
-
         foreach ($this->collection as $key => $item) {
             $call = call_user_func($condition, $item, $key);
 

@@ -12,7 +12,7 @@ namespace System\File;
  */
 class UploadFile
 {
-    /** @var string Succes file upload status */
+    /** @var bool Succes file upload status */
     private $_success = false;
     /** @var bool Is set property */
     private $_isset = false;
@@ -41,6 +41,13 @@ class UploadFile
     private $upload_mime     = ['image/jpg', 'image/jpeg', 'image/png'];
     /** @var int Upload maksimal file size */
     private $upload_size_max = 50000;
+
+    /**
+     * Provide error message.
+     *
+     * @var string
+     */
+    private $_error_message = '';
 
     // setter
     /**

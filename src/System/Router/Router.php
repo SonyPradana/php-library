@@ -76,6 +76,7 @@ class Router
     {
         $routes = [];
         foreach (self::$routes as $route) {
+            // @phpstan-ignore-next-line
             $routes[] = $route->route();
         }
 
@@ -207,9 +208,9 @@ class Router
     /**
      * Function used to add a new route.
      *
-     * @param array|string          $method     Methods allow
-     * @param string                $expression Route string or expression
-     * @param callable|array|string $function   Function to call if route with allowed method is found
+     * @param array|string          $method   Methods allow
+     * @param string                $uri      Route string or expression
+     * @param callable|array|string $callback Function to call if route with allowed method is found
      */
     public static function match($method, string $uri, $callback)
     {
@@ -307,7 +308,7 @@ class Router
     /**
      * Result when route expression not register/found.
      *
-     * @param callable Function to be Call
+     * @param callable $function Function to be Call
      */
     public static function pathNotFound($function)
     {
@@ -317,7 +318,7 @@ class Router
     /**
      * Result when route method not match/allowed.
      *
-     * @param callable Function to be Call
+     * @param callable $function Function to be Call
      */
     public static function methodNotAllowed($function)
     {

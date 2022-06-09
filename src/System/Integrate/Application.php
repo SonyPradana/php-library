@@ -7,7 +7,7 @@ namespace System\Integrate;
 use System\Container\Container;
 use System\Integrate\Providers\IntegrateServiceProvider;
 
-class Application extends Container
+final class Application extends Container
 {
     private static $app;
 
@@ -23,6 +23,7 @@ class Application extends Container
     private $config_path;
     private $middleware_path;
     private $service_provider_path;
+    private $view_path;
 
     // property ------------------------------
 
@@ -198,7 +199,7 @@ class Application extends Container
     /**
      * Helper add define for legency API.
      *
-     * @param array<int, string> $configs Array configuration
+     * @param array<string, string> $configs Array configuration
      */
     private function defineder(array $configs)
     {

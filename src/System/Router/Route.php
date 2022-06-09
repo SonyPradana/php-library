@@ -40,7 +40,7 @@ class Route implements ArrayAccess
     /**
      * Add middleware this route.
      *
-     * @param array $route Route class-name
+     * @param class-string[] $middlewares Route class-name
      *
      * @return self
      */

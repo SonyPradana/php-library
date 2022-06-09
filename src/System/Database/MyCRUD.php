@@ -37,7 +37,7 @@ abstract class MyCRUD
 
     protected function setter(string $key, $val)
     {
-        if (key_exists($key, $this->COLUMNS) && !isset($key, $this->RESISTANT)) {
+        if (key_exists($key, $this->COLUMNS) && !isset($this->RESISTANT)) {
             $this->COLUMNS[$key] = $val;
         }
 
