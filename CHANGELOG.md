@@ -5,6 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Added `UploadFile::class` support test `UploadFile::markTest` with use `copy` instance of `move_uploaded_file`.
+- Added `UploadFile::get` for get file content of uploaded file.
+
+### Changed
+- Changed `UploadFile::folder_location` not provide `$_SERVER['root']`.
+- Changed `UploadFile::Success` to `UploadFile::success`.
+
+### Security
+- Folder location check `UploadFile::setFolderLocation`.
+- File extention check `UploadFile::validate`.
+
+### Fixed
+- File size check `UploadFile::validate` always passed.
 
 ## [0.7.1] - 2022-06-09
 ### Added

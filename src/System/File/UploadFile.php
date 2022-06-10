@@ -7,17 +7,33 @@ namespace System\File;
  * make with easy use and manitens, every one can use and modifi this class to improve performense.
  *
  * @author sonypradana@gmail.com
- *
- * @see https://gist.github.com/SonyPradana
  */
 class UploadFile
 {
-    /** @var bool Succes file upload status */
+    /**
+     *  File upload status.
+     *
+     * @var bool
+     */
     private $_success = false;
-    /** @var bool Is set property */
+
+    /**
+     * File has excute to upload.
+     *
+     * @var bool
+     */
     private $_isset = false;
-    // property file
-    /** @var string Original file name */
+
+    /**
+     * Detect test mode.
+     *
+     * @var bool
+     */
+    private $_test = false;
+
+    // property file --------------------------------------------
+
+    /** @var string */
     private $file_name;
     /** @var string Original file category */
     private $file_type;
@@ -30,11 +46,12 @@ class UploadFile
     /** @var string Original file extension */
     private $file_extension;
 
-    // property upload
+    // property upload ------------------------------------------
+
     /** @var string Upload file name (without extention) */
     private $upload_name;
     /** @var string Upload file to save location */
-    private $upload_location = '/public/data/img/';
+    private $upload_location = '/';
     /** @var array Upload allow file extention */
     private $upload_types    = ['jpg', 'jpeg', 'png'];
     /** @var array Upload allow file mime type */
@@ -49,7 +66,8 @@ class UploadFile
      */
     private $_error_message = '';
 
-    // setter
+    // setter ------------------------------------------------
+
     /**
      * Set file name (without extention).
      * File name will convert to allow string url.
@@ -73,6 +91,10 @@ class UploadFile
      */
     public function setFolderLocation(string $folder_location)
     {
+        if (!is_dir($folder_location)) {
+            throw new \Exception('Folder not founded');
+        }
+
         $this->upload_location = $folder_location;
 
         return $this;
@@ -114,13 +136,28 @@ class UploadFile
         return $this;
     }
 
-    // getter
+    /**
+     * If true, upload determinate using `copy` instance of `move_uploaded_file`.
+     *
+     * @param bool $mark_upload_test true use copy file
+     *
+     * @return self
+     */
+    public function markTest(bool $mark_upload_test)
+    {
+        $this->_test = $mark_upload_test;
+
+        return $this;
+    }
+
+    // getter --------------------------------------------------------------
+
     /**
      * File Upload status.
      *
      * @return bool True on file upload success
      */
-    public function Success(): bool
+    public function success(): bool
     {
         return $this->_success;
     }
@@ -194,12 +231,13 @@ class UploadFile
             return false;
         }
 
-        // // cek file type (upload_type must set)
-        // $extensio_error = in_array($this->file_extension, $this->upload_types) ? false : true;
-        // if( $extensio_error ){
-        //     $this->_error_message = "file type not support";
-        //     return false;
-        // }
+        // cek file type (upload_type must set)
+        $extensio_error = in_array($this->file_extension, $this->upload_types) ? false : true;
+        if ($extensio_error) {
+            $this->_error_message = 'file type not support';
+
+            return false;
+        }
 
         // cek mime type (upload_mime must set)
         $mime_error = in_array($this->file_type, $this->upload_mime) ? false : true;
@@ -210,8 +248,8 @@ class UploadFile
         }
 
         // cek file size
-        $size_error = ($this->file_size > $this->upload_size_max) && ($this->file_size < 1) ? true : false;
-        if ($size_error) {
+        $is_size_error = $this->file_size > $this->upload_size_max ? true : false;
+        if ($is_size_error) {
             $this->_error_message = 'file size too large';
 
             return false;
@@ -232,13 +270,22 @@ class UploadFile
         // isset property, enable when data has been validate
         $this->_isset = true;
 
-        if ($this->validate()) {
-            $destination =  $this->upload_location . $this->upload_name . '.' . $this->file_extension;
-            if (move_uploaded_file($this->file_tmp, $_SERVER['DOCUMENT_ROOT'] . $destination)) {
-                $this->_success = true;
+        if (!$this->validate()) {
+            return '';
+        }
 
-                return $destination;
-            }
+        $destination =  $this->upload_location . $this->upload_name . '.' . $this->file_extension;
+
+        if ($this->_test && copy($this->file_tmp, $destination)) {
+            $this->_success = true;
+
+            return $destination;
+        }
+
+        if (!$this->_test && move_uploaded_file($this->file_tmp, $destination)) {
+            $this->_success = true;
+
+            return $destination;
         }
 
         return '';
@@ -251,11 +298,9 @@ class UploadFile
      */
     public function delete(string $url): bool
     {
-        if (file_exists($_SERVER['DOCUMENT_ROOT'] . $url)) {
-            return unlink($_SERVER['DOCUMENT_ROOT'] . $url);
-        }
-
-        return false;
+        return file_exists($url)
+            ? unlink($url)
+            : false;
     }
 
     /**
@@ -265,11 +310,9 @@ class UploadFile
      */
     public function creatFolder(string $path): bool
     {
-        if (!file_exists($_SERVER['DOCUMENT_ROOT'] . $path)) {
-            return mkdir($_SERVER['DOCUMENT_ROOT'] . $path, 0777, true);
-        }
-
-        return false;
+        return !file_exists($path)
+            ? mkdir($path, 0777, true)
+            : false;
     }
 
     /**
@@ -278,5 +321,16 @@ class UploadFile
     public function __isset($name): bool
     {
         return $this->_isset;
+    }
+
+    public function get()
+    {
+        $destination =  $this->upload_location . $this->upload_name . '.' . $this->file_extension;
+
+        if (!$this->_success) {
+            throw new \Exception('File not uploaded');
+        }
+
+        return file_get_contents($destination);
     }
 }
