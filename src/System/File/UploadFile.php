@@ -136,6 +136,26 @@ class UploadFile
     }
 
     /**
+     * Get uploaded file name.
+     *
+     * @return string
+     */
+    public function getFileName()
+    {
+        return $this->file_name;
+    }
+
+    /**
+     * Get uploaded file types.
+     *
+     * @return array<int, string>
+     */
+    public function getFileTypes()
+    {
+        return $this->upload_types;
+    }
+
+    /**
      * Creat New file upload to sarver.
      *
      * @param array $file Super global FILE (single array)

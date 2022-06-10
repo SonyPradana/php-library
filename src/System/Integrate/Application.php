@@ -9,6 +9,7 @@ use System\Integrate\Providers\IntegrateServiceProvider;
 
 final class Application extends Container
 {
+    /** @var Application|null */
     private static $app;
 
     // path ----------------------------------
@@ -80,7 +81,7 @@ final class Application extends Container
     /**
      * Get intance Application container.
      *
-     * @return Application
+     * @return Application|null
      */
     public static function getIntance()
     {

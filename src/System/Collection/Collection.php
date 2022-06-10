@@ -168,7 +168,7 @@ class Collection extends AbstractCollectionImmutable
 
     public function split(int $count, bool $preserve_keys = true): self
     {
-        $lenght = ceil($this->lenght() / $count);
+        $lenght = (int) ceil($this->lenght() / $count);
 
         return $this->chunk($lenght);
     }
