@@ -199,11 +199,13 @@ final class Str
      * @param string $sparator Sparator
      * @param int    $limit    Limit array length
      *
-     * @return array<int, string>|false
+     * @return string[]|false
      */
-    public static function split(string $text, string $sparator = '', int $limit = PHP_INT_MAX)
+    public static function split(string $text, $sparator = '', $limit = PHP_INT_MAX)
     {
-        return explode($sparator, $text, $limit);
+        return '' === $sparator
+            ? \preg_split('//', $text, -1, PREG_SPLIT_NO_EMPTY)
+            : \explode($sparator, $text, $limit);
     }
 
     /**
@@ -475,7 +477,7 @@ final class Str
 
         $end = $start + $mask_length;
         $start--;
-        $arr_text =  preg_split('//', $text, -1, PREG_SPLIT_NO_EMPTY);
+        $arr_text = preg_split('//', $text, -1, PREG_SPLIT_NO_EMPTY);
         $new      = new Collection($arr_text);
         $new_text = $new->map(function ($string, $index) use ($mask, $start, $end) {
             if ($index > $start && $index < $end) {
