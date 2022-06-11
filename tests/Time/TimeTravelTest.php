@@ -13,10 +13,11 @@ final class TimeTravelTest extends TestCase
         $now = new Now();
 
         $this->assertEquals(
-      time(),
-      $now->timestamp,
-      'timestamp must equal'
-    );
+            time(),
+            $now->timestamp,
+            'timestamp must equal'
+        );
+        $now->age;
 
         $this->assertEquals(
       date('Y'),
@@ -146,5 +147,23 @@ final class TimeTravelTest extends TestCase
       $now->age,
       'the age must equal'
     );
+    }
+
+    /** @test */
+    public function itCanGetFromPrivateProperty()
+    {
+        $now = new Now();
+        $now->day(12);
+
+        $this->assertEquals(12, $now->day);
+    }
+
+    /** @test */
+    public function itCanSetFromProperty()
+    {
+        $now      = new Now();
+        $now->day = 12;
+
+        $this->assertEquals(12, $now->day);
     }
 }
