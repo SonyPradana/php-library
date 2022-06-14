@@ -2,6 +2,9 @@
 
 namespace System\Time;
 
+use System\Time\Exceptions\PropertyNotExist;
+use System\Time\Exceptions\PropertyNotSetAble;
+
 /**
  * @property int    $timestamp
  * @property int    $year
@@ -81,7 +84,7 @@ class Now
             return $this->{$name};
         }
 
-        return null;
+        throw new PropertyNotExist($name);
     }
 
     /**
@@ -96,9 +99,11 @@ class Now
     {
         if (method_exists($this, $name) && property_exists($this, $name)) {
             $this->{$name}($value);
+
+            return $this;
         }
 
-        return $this;
+        throw new PropertyNotSetAble($name);
     }
 
     /**

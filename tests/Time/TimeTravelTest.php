@@ -1,6 +1,8 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use System\Time\Exceptions\PropertyNotExist;
+use System\Time\Exceptions\PropertyNotSetAble;
 use System\Time\Now;
 
 final class TimeTravelTest extends TestCase
@@ -165,5 +167,65 @@ final class TimeTravelTest extends TestCase
         $now->day = 12;
 
         $this->assertEquals(12, $now->day);
+    }
+
+    /** @test */
+    public function itCanUsePrivatePropertyUsingSetterAndGetter()
+    {
+        $now = new Now(10000000000);
+
+        $now->year = 2022;
+        $this->assertEquals(2022, $now->year);
+
+        $now->month = 6;
+        $this->assertEquals(6, $now->month);
+
+        $now->day = 11;
+        $this->assertEquals(11, $now->day);
+
+        $now->hour = 1;
+        $this->assertEquals(1, $now->hour);
+
+        $now->minute = 27;
+        $this->assertEquals(27, $now->minute);
+
+        $now->second = 0;
+        $this->assertEquals(0, $now->second);
+
+        $this->assertEquals('June', $now->monthName);
+        $this->assertEquals('Saturday', $now->dayName);
+        $this->assertEquals('Asia/Jakarta', $now->timeZone);
+
+        $this->lessThan($now->age);
+    }
+
+    /** @test */
+    public function itThrowWhenSetPrivatePropertyAndNotSetable()
+    {
+        $now            = new Now();
+
+        $this->expectException(PropertyNotSetAble::class);
+        $now->timestamp = time();
+
+        $this->expectException(PropertyNotSetAble::class);
+        $now->monthName = 'June';
+
+        $this->expectException(PropertyNotSetAble::class);
+        $now->dayName = 'Tuesday';
+
+        $this->expectException(PropertyNotSetAble::class);
+        $now->timeZone = 'Asia/Jakarta';
+
+        $this->expectException(PropertyNotSetAble::class);
+        $now->age = 27;
+    }
+
+    /** @test */
+    public function itThrowWhenGetUndefineProperty()
+    {
+        $now = new Now();
+
+        $this->expectException(PropertyNotExist::class);
+        $get = $now->not_exist_property;
     }
 }
