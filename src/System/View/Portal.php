@@ -4,20 +4,44 @@ namespace System\View;
 
 class Portal
 {
-    private array $meta_info;
+    /**
+     * Item collection.
+     *
+     * @var array<string, mixed>
+     */
+    private array $items;
 
-    public function __construct(array $meta_info)
+    /**
+     * Set portal items.
+     *
+     * @param array<string, mixed> $items
+     */
+    public function __construct(array $items)
     {
-        $this->meta_info = $meta_info;
+        $this->items = $items;
     }
 
+    /**
+     * Get property value.
+     *
+     * @param string $name Property name
+     *
+     * @return mixed Property value, null if not found     *
+     */
     public function __get($name)
     {
-        return $this->meta_info[$name] ?? $name;
+        return $this->items[$name] ?? null;
     }
 
+    /**
+     * Check property has exists or not.
+     *
+     * @param string $name Property name
+     *
+     * @return bool True if property name exists
+     */
     public function has($name): bool
     {
-        return isset($name);
+        return isset($this->items[$name]);
     }
 }
