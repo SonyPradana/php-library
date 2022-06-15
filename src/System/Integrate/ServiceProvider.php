@@ -11,7 +11,7 @@ abstract class ServiceProvider
     /** @var Application */
     protected $app;
 
-    /** @var array Class register */
+    /** @var array<int|string, class-string> Class register */
     protected $register = [
         // register
     ];
@@ -28,12 +28,19 @@ abstract class ServiceProvider
 
     /**
      * Boot provider.
+     *
+     * @return void
      */
     public function boot()
     {
         // boot
     }
 
+    /**
+     * Register to application container before booted.
+     *
+     * @return void
+     */
     public function register()
     {
         // register application container

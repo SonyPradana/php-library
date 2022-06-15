@@ -2,13 +2,14 @@
 
 use PHPUnit\Framework\TestCase;
 use System\Integrate\Application;
+use System\Integrate\Exceptions\ApplicationNotAvailable;
 
 class ApplicationTest extends TestCase
 {
     /** @test */
     public function itThrowError()
     {
-        $this->expectExceptionMessage('Apllication not start yet!');
+        $this->expectException(ApplicationNotAvailable::class);
         app();
         app()->flush();
     }
@@ -19,7 +20,7 @@ class ApplicationTest extends TestCase
         $app = new Application('/');
         $app->flush();
 
-        $this->expectExceptionMessage('Apllication not start yet!');
+        $this->expectException(ApplicationNotAvailable::class);
         app();
         app()->flush();
     }
