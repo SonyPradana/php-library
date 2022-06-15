@@ -2,6 +2,8 @@
 
 // path aplication
 
+use System\Integrate\Exceptions\ApplicationNotAvailable;
+
 if (!function_exists('app_path')) {
     /**
      * Get full aplication path, base on config file.
@@ -12,7 +14,7 @@ if (!function_exists('app_path')) {
      */
     function app_path(string $folder_name): string
     {
-        $path = app()->app_path() ?? '';
+        $path = app()->app_path();
 
         return $path . DIRECTORY_SEPARATOR . $folder_name;
     }
@@ -234,7 +236,7 @@ if (!function_exists('app')) {
     {
         $app = System\Integrate\Application::getIntance();
         if (null === $app) {
-            throw new Exception('Apllication not start yet!');
+            throw new ApplicationNotAvailable();
         }
 
         return $app;

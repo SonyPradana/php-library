@@ -8,6 +8,9 @@ use System\Integrate\ServiceProvider;
 
 class IntegrateServiceProvider extends ServiceProvider
 {
+    /**
+     * {@inheritDoc}
+     */
     public function register()
     {
         // application

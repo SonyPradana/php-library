@@ -26,11 +26,15 @@ class Karnel
     /**
      * Handle input karnel.
      *
-     * @param string|array $input
+     * @param string|array<int, string> $input
+     *
+     * @return int Exit code
      */
     public function handle($input)
     {
         // hanlde
+
+        return $this->exit_code = 0;
     }
 
     /**

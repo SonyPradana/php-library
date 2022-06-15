@@ -13,11 +13,10 @@ class Karnel
     /** @var Container */
     protected $app;
 
-    /** @var array Global middleware */
-    protected $middleware = [
-    ];
+    /** @var array<int, class-string> Global middleware */
+    protected $middleware = [];
 
-    /** @var array Middleware has register */
+    /** @var array<int, class-string> Middleware has register */
     protected $middleware_used = [];
 
     /**
@@ -45,7 +44,7 @@ class Karnel
     /**
      * Handle middleware class.
      *
-     * @param array $middlewares Middleware array class-name
+     * @param array<int, class-string> $middlewares Middleware array class-name
      *
      * @return self
      */
@@ -67,9 +66,9 @@ class Karnel
     /**
      * Handle middleware and execute callback.
      *
-     * @param callable       $callable   Callable
-     * @param array          $params     Parameter to use
-     * @param class-string[] $middleware Middleware array class-name
+     * @param callable                  $callable   Callable
+     * @param array<int|string, string> $params     Parameter to use
+     * @param array<int, class-string>  $middleware Middleware array class-name
      *
      * @return mixed Callavle result
      */

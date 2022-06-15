@@ -9,21 +9,97 @@ use System\Integrate\Providers\IntegrateServiceProvider;
 
 final class Application extends Container
 {
-    /** @var Application|null */
+    /**
+     * Application instance.
+     *
+     * @var Application|null
+     */
     private static $app;
 
     // path ----------------------------------
+
+    /**
+     * Base path.
+     *
+     * @var string
+     */
     private $base_path;
+
+    /**
+     * App path.
+     *
+     * @var string
+     */
     private $app_path;
+
+    /**
+     * Model path.
+     *
+     * @var string
+     */
     private $model_path;
+
+    /**
+     * Controller path.
+     *
+     * @var string
+     */
     private $controller_path;
+
+    /**
+     * Service path.
+     *
+     * @var string
+     */
     private $services_path;
+
+    /**
+     * Compponent path.
+     *
+     * @var string
+     */
     private $component_path;
+
+    /**
+     * Command path.
+     *
+     * @var string
+     */
     private $command_path;
+
+    /**
+     * Cache path.
+     *
+     * @var string
+     */
     private $cache_path;
+
+    /**
+     * Config path.
+     *
+     * @var string
+     */
     private $config_path;
+
+    /**
+     * Middleware path.
+     *
+     * @var string
+     */
     private $middleware_path;
+
+    /**
+     * Service provider path.
+     *
+     * @var string
+     */
     private $service_provider_path;
+
+    /**
+     * View path.
+     *
+     * @var string
+     */
     private $view_path;
 
     // property ------------------------------
@@ -49,7 +125,11 @@ final class Application extends Container
      */
     private $looded_providers = [];
 
-    /** @var bool */
+    /**
+     * Detect appliaction has been booted.
+     *
+     * @var bool
+     */
     private $isBooted = false;
 
     /**
@@ -92,6 +172,8 @@ final class Application extends Container
      * Load and set Configuration to application.
      *
      * @param string $base_path Base path
+     *
+     * @return void
      */
     public function loadConfig(string $base_path)
     {
@@ -147,7 +229,7 @@ final class Application extends Container
     /**
      * Default config, prevent for empety config.
      *
-     * @return array Configs
+     * @return array<string, mixed> Configs
      */
     private function defaultConfigs()
     {
@@ -201,6 +283,8 @@ final class Application extends Container
      * Helper add define for legency API.
      *
      * @param array<string, string> $configs Array configuration
+     *
+     * @return void
      */
     private function defineder(array $configs)
     {
@@ -216,6 +300,13 @@ final class Application extends Container
 
     // setter region ---------------------------------------
 
+    /**
+     * Set Base path.
+     *
+     * @param string $path Base path
+     *
+     * @return self
+     */
     public function setBasePath(string $path)
     {
         $this->base_path = $path;
@@ -224,6 +315,13 @@ final class Application extends Container
         return $this;
     }
 
+    /**
+     * Set app path.
+     *
+     * @param string $path App path
+     *
+     * @return self
+     */
     public function setAppPath(string $path)
     {
         $this->app_path = $path . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR;
@@ -232,6 +330,13 @@ final class Application extends Container
         return $this;
     }
 
+    /**
+     * Set model path.
+     *
+     * @param string $path Model path
+     *
+     * @return self
+     */
     public function setModelPath(string $path)
     {
         $this->model_path = $this->base_path . $path;
@@ -240,6 +345,13 @@ final class Application extends Container
         return $this;
     }
 
+    /**
+     * Set view path.
+     *
+     * @param string $path View path
+     *
+     * @return self
+     */
     public function setViewPath(string $path)
     {
         $this->view_path = $this->base_path . $path;
@@ -248,6 +360,13 @@ final class Application extends Container
         return $this;
     }
 
+    /**
+     * Set controller path.
+     *
+     * @param string $path Controller path
+     *
+     * @return self
+     */
     public function setContollerPath(string $path)
     {
         $this->controller_path = $this->base_path . $path;
@@ -256,6 +375,13 @@ final class Application extends Container
         return $this;
     }
 
+    /**
+     * Set services path.
+     *
+     * @param string $path Services path
+     *
+     * @return self
+     */
     public function setServicesPath(string $path)
     {
         $this->services_path = $this->base_path . $path;
@@ -264,6 +390,13 @@ final class Application extends Container
         return $this;
     }
 
+    /**
+     * Set component path.
+     *
+     * @param string $path Component path
+     *
+     * @return self
+     */
     public function setComponentPath(string $path)
     {
         $this->component_path = $this->base_path . $path;
@@ -272,6 +405,13 @@ final class Application extends Container
         return $this;
     }
 
+    /**
+     * Set command path.
+     *
+     * @param string $path Command path
+     *
+     * @return self
+     */
     public function setCommandPath(string $path)
     {
         $this->command_path = $this->base_path . $path;
@@ -280,6 +420,13 @@ final class Application extends Container
         return $this;
     }
 
+    /**
+     * Set cache path.
+     *
+     * @param string $path Cache path
+     *
+     * @return self
+     */
     public function setCachePath(string $path)
     {
         $this->cache_path = $this->base_path . $path;
@@ -288,6 +435,13 @@ final class Application extends Container
         return $this;
     }
 
+    /**
+     * Set config path.
+     *
+     * @param string $path config path
+     *
+     * @return self
+     */
     public function setConfigPath(string $path)
     {
         $this->config_path = $this->base_path . $path;
@@ -296,6 +450,13 @@ final class Application extends Container
         return $this;
     }
 
+    /**
+     * Set middleware path.
+     *
+     * @param string $path middleware path
+     *
+     * @return self
+     */
     public function setMiddlewarePath(string $path)
     {
         $this->middleware_path = $this->base_path . $path;
@@ -304,6 +465,11 @@ final class Application extends Container
         return $this;
     }
 
+    /**
+     * Set serviece provider path.
+     *
+     * @return self
+     */
     public function setProviderPath(string $path)
     {
         $this->service_provider_path = $this->base_path . $path;
@@ -314,76 +480,151 @@ final class Application extends Container
 
     // getter region ---------------------------------------------
 
+    /**
+     * Get base path/dir.
+     *
+     * @return string
+     */
     public function base_path()
     {
         return $this->get('path.bash');
     }
 
+    /**
+     * Get app path.
+     *
+     * @return string
+     */
     public function app_path()
     {
         return $this->get('path.app');
     }
 
+    /**
+     * Get model path.
+     *
+     * @return string
+     */
     public function model_path()
     {
         return $this->get('path.model');
     }
 
+    /**
+     * Get view path.
+     *
+     * @return string
+     */
     public function view_path()
     {
         return $this->get('path.view');
     }
 
+    /**
+     * Get controller path.
+     *
+     * @return string
+     */
     public function controller_path()
     {
         return $this->get('path.controller');
     }
 
+    /**
+     * Get Services path.
+     *
+     * @return string
+     */
     public function services_path()
     {
         return $this->get('path.services');
     }
 
+    /**
+     * Get component path.
+     *
+     * @return string
+     */
     public function component_path()
     {
         return $this->get('path.component');
     }
 
+    /**
+     * Get command path.
+     *
+     * @return string
+     */
     public function command_path()
     {
         return $this->get('path.command');
     }
 
+    /**
+     * Get cache path.
+     *
+     * @return string
+     */
     public function cache_path()
     {
         return $this->get('path.cache');
     }
 
+    /**
+     * Get config path.
+     *
+     * @return string
+     */
     public function config_path()
     {
         return $this->get('path.config');
     }
 
+    /**
+     * Get middleware path.
+     *
+     * @return string
+     */
     public function middleware_path()
     {
         return $this->get('path.middleware');
     }
 
+    /**
+     * Get provider path.
+     *
+     * @return string
+     */
     public function provider_path()
     {
         return $this->get('path.provider');
     }
 
+    /**
+     * Detect application environment.
+     *
+     * @return string
+     */
     public function environment()
     {
         return $this->get('environment');
     }
 
+    /**
+     * Detect application prodaction mode.
+     *
+     * @return bool
+     */
     public function isProduction()
     {
         return $this->environment() === 'prod';
     }
 
+    /**
+     * Detect application development mode.
+     *
+     * @return bool
+     */
     public function isDev()
     {
         return $this->environment() === 'dev';
@@ -414,6 +655,11 @@ final class Application extends Container
         $this->isBooted = true;
     }
 
+    /**
+     * Register service providers.
+     *
+     * @return void
+     */
     public function registerProvider()
     {
         if (!$this->isBooted) {
