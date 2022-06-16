@@ -5,9 +5,16 @@ declare(strict_types=1);
 namespace System\Text;
 
 use System\Collection\Collection;
+use System\Text\Exceptions\MacroNotFound;
+use System\Text\Exceptions\NoReturn;
 
 final class Str
 {
+    /**
+     * List registered macro.
+     *
+     * @var string[]
+     */
     private static $macros = [];
 
     /**
@@ -26,15 +33,16 @@ final class Str
     /**
      * Call macro.
      *
-     * @param string $method     Method name
-     * @param array  $parameters Parameters
+     * @param string             $method     Method name
+     * @param array<int, string> $parameters Parameters
      *
      * @return mixed
+     * @throw MacroNotFound
      */
     public static function __callStatic(string $method, array $parameters)
     {
         if (!array_key_exists($method, self::$macros)) {
-            throw new \Exception('Macro ' . $method . ' is not macro able.');
+            throw new MacroNotFound($method);
         }
 
         return call_user_func_array(self::$macros[$method], $parameters);
@@ -139,7 +147,7 @@ final class Str
      * @param string $text    String
      * @param string $pattern String leguler expresstion
      *
-     * @return array|null Null if not match found
+     * @return array<int, string>|null Null if not match found
      */
     public static function match(string $text, string $pattern)
     {
@@ -156,9 +164,11 @@ final class Str
     /**
      * Find and replace specified text in string.
      *
-     * @param string       $original The subject text
-     * @param string|array $find     find
-     * @param string|array $replace  replace
+     * @param string                    $original The subject text
+     * @param string|array<int, string> $find     find
+     * @param string|array<int, string> $replace  replace
+     *
+     * @return string
      */
     public static function replace(string $original, $find, $replace)
     {
@@ -330,6 +340,7 @@ final class Str
      * @param string $text inpu text
      *
      * @return string
+     * @throw NoReturn
      */
     public static function slug(string $text)
     {
@@ -353,7 +364,7 @@ final class Str
         $text = \strtolower($text);
 
         if (empty($text)) {
-            throw new \Exception($original . ' doest return anythink.');
+            throw new NoReturn(__FUNCTION__, $original);
         }
 
         return $text;
@@ -364,6 +375,8 @@ final class Str
      *
      * @param string $text     Text
      * @param int    $multiple Number reapet (less that 0 will return empty)
+     *
+     * @return string
      */
     public static function repeat(string $text, int $multiple)
     {
@@ -495,6 +508,8 @@ final class Str
     /**
      * Check determinate input is string.
      *
+     * @param string $text Text
+     *
      * @return bool
      */
     public static function isString($text)
@@ -600,5 +615,19 @@ final class Str
         $needleLength = \strlen($start_with);
 
         return $needleLength <= \strlen($text) && 0 === \substr_compare($text, $start_with, -$needleLength);
+    }
+
+    /**
+     * Truncate text to limited length.
+     *
+     * @param string $text              Text
+     * @param int    $length            Maximum text length
+     * @param string $truncate_caracter Truncate caracter
+     *
+     * @return string
+     */
+    public static function limit(string $text, int $length, string $truncate_caracter = '...')
+    {
+        return self::slice($text, 0, $length) . $truncate_caracter;
     }
 }

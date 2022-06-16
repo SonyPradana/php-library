@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace System\Text;
 
+use System\Text\Exceptions\NoReturn;
+
 class Text
 {
     /**
@@ -48,8 +50,8 @@ class Text
     /**
      * Basicly is history for text modify.
      *
-     * @param string|bool|array $text          new incoming text
-     * @param string            $function_name Method to call (Str::class)
+     * @param string|bool|array<int|string, string> $text          new incoming text
+     * @param string                                $function_name Method to call (Str::class)
      *
      * @return string
      */
@@ -104,6 +106,8 @@ class Text
 
     /**
      * Get string history.
+     *
+     * @return array<string, array<string, string>>
      */
     public function logs()
     {
@@ -183,7 +187,7 @@ class Text
         $text = Str::slice($this->_current, $start, $length);
 
         if ($this->_throw_on_failure && false === $text) {
-            throw new \Exception('Error slice - ' . $this->_current);
+            throw new NoReturn(__FUNCTION__, $this->_current);
         }
 
         $this->execute($text, __FUNCTION__);
@@ -352,6 +356,22 @@ class Text
     public function mask(string $mask, int $start, int $mask_length = 9999)
     {
         $text = Str::mask($this->_current, $mask, $start, $mask_length);
+        $this->execute($text, __FUNCTION__);
+
+        return $this;
+    }
+
+    /**
+     * Truncate text to limited length.
+     *
+     * @param int    $length            Length text
+     * @param string $truncate_caracter Truncate caracter
+     *
+     * @return self
+     */
+    public function limit(int $length, string $truncate_caracter = '...')
+    {
+        $text = Str::limit($this->_current, $length, $truncate_caracter);
         $this->execute($text, __FUNCTION__);
 
         return $this;

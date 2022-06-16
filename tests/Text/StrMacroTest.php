@@ -1,6 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use System\Text\Exceptions\MacroNotFound;
 use System\Text\Str;
 
 final class StrMacroTest extends TestCase
@@ -18,7 +19,7 @@ final class StrMacroTest extends TestCase
     /** @test */
     public function itCanThrowErrorWhenMacroNotFound()
     {
-        $this->expectExceptionMessage('Macro hay is not macro able.');
+        $this->expectException(MacroNotFound::class);
         Str::hay();
     }
 
@@ -27,9 +28,11 @@ final class StrMacroTest extends TestCase
     {
         Str::macro('add_prefix', fn ($text, $prefix) => $prefix . $text);
 
+        $add_prefix = Str::add_prefix('a', 'b');
+        $this->assertEquals('ba', $add_prefix);
         Str::resetMacro();
 
-        $this->expectExceptionMessage('Macro add_prefix is not macro able.');
+        $this->expectException(MacroNotFound::class);
 
         Str::add_prefix('a', 'b');
         Str::resetMacro();

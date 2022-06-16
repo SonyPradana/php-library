@@ -30,10 +30,6 @@ class TextAPITest extends TestCase
     /** @test */
     public function itCanReturnSlice()
     {
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-
         $this->assertEquals('symfony', $this->text->slice(7));
     }
 
@@ -174,5 +170,10 @@ class TextAPITest extends TestCase
 
         $this->text->text('laravel');
         $this->assertEquals('lara***', $this->text->mask('*', -3));
+    }
+
+    public function itCanReturnLimit()
+    {
+        $this->assertEquals('laravel...', $this->text->limit(7));
     }
 }
