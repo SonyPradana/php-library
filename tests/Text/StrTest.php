@@ -321,4 +321,10 @@ final class StrTest extends TestCase
         $this->assertEquals('lara*el', Str::mask('laravel', '*', -3, 1));
         $this->assertEquals('lara***', Str::mask('laravel', '*', -3));
     }
+
+    /** @test */
+    public function itCanMakeLimit()
+    {
+        $this->assertEquals('laravel best...', Str::limit('laravel best framework', 12));
+    }
 }
