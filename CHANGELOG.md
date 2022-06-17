@@ -5,13 +5,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.8.0] - 2022-06-17
 ### Added
+- Added `Str::limit` for trucate text.
+- Added `FileMultyUpload::class` for handle multy files upload.
 - Added `UploadFile::class` support test `UploadFile::markTest` with use `copy` instance of `move_uploaded_file`.
 - Added `UploadFile::get` for get file content of uploaded file.
 
 ### Changed
 - Changed `UploadFile::folder_location` not provide `$_SERVER['root']`.
 - Changed `UploadFile::Success` to `UploadFile::success`.
+- Changed visibility `Time::class` to prevent ilegal changes property witch make property not sync.
 
 ### Security
 - Folder location check `UploadFile::setFolderLocation`.
