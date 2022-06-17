@@ -197,9 +197,11 @@ final class Str
      *
      * @return string|false
      */
-    public static function slice(string $text, int $start, ?int $length = null)
+    public static function slice(string $text, int $start, ?int $length)
     {
-        return substr($text, $start, $length);
+        $text_length = $length ?? self::length($text);
+
+        return substr($text, $start, $text_length);
     }
 
     /**
