@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\File;
 
 /** {@inheritDoc} */
-final class UploadFile extends AbstarctUpload
+final class UploadMultyFile extends AbstarctUpload
 {
     /**
      * {@inheritDoc}
@@ -79,42 +81,63 @@ final class UploadFile extends AbstarctUpload
         parent::__construct($files);
 
         if (is_array($files['name'])) {
-            throw new \Exception('Single files detected use `UploadMultyFile` instances of `UploadFile`');
+            $this->file_name  = $files['name'];
+            $this->file_type  = $files['type'];
+            $this->file_tmp   = $files['tmp_name'];
+            $this->file_error = $files['error'];
+            $this->file_size  = $files['size'];
+            // parse file extention
+            foreach ($files['name'] as $name) {
+                $extension              = explode('.', $name);
+                $this->file_extension[] = strtolower(end($extension));
+            }
+        } else {
+            $this->file_name[]  = $files['name'];
+            $this->file_type[]  = $files['type'];
+            $this->file_tmp[]   = $files['tmp_name'];
+            $this->file_error[] = $files['error'];
+            $this->file_size[]  = $files['size'];
+            // parse files extention
+            $extension              = explode('.', $files['name']);
+            $this->file_extension[] = strtolower(end($extension));
         }
 
-        $this->file_name[]  = $files['name'];
-        $this->file_type[]  = $files['type'];
-        $this->file_tmp[]   = $files['tmp_name'];
-        $this->file_error[] = $files['error'];
-        $this->file_size[]  = $files['size'];
-        // parse files extention
-        $extension              = explode('.', $files['name']);
-        $this->file_extension[] = strtolower(end($extension));
+        $this->_is_multy = true;
     }
 
     /**
      * Upload file to server using move_uploaded_file.
      *
-     * @return string File location on success upload file, sting empety when unsuccess upload
+     * @return string[] File location on success upload file, sting empety when unsuccess upload
      */
-    public function upload()
+    public function uploads()
     {
-        return $this->stream()[0] ?? '';
+        return $this->stream();
     }
 
     /**
      * Get all uploaded files content.
      *
-     * @return string
+     * @return string[]
      */
-    public function get()
+    public function getAll()
     {
-        $destination =  $this->upload_location . $this->upload_name . '.' . $this->file_extension[0];
-
         if (!$this->_success) {
             throw new \Exception('File not uploaded');
         }
 
-        return file_get_contents($destination);
+        $files = [];
+
+        foreach ($this->file_extension as $key => $extension) {
+            $destination =  $this->upload_location . $this->upload_name . $key . '.' . $extension;
+            $file        = file_get_contents($destination);
+
+            if ($file === false) {
+                throw new \Exception('File not avilabe');
+            }
+            $files[] = $file;
+        }
+
+        return $files;
     }
 }

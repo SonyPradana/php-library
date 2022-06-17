@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use System\File\UploadFile;
+use System\File\UploadMultyFile;
 
 final class UploadFileTest extends TestCase
 {
@@ -14,6 +15,16 @@ final class UploadFileTest extends TestCase
             'tmp_name'  => __DIR__ . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'test123.tmp',
             'error'     => 0,
             'size'      => 1,
+        ],
+        'file_2' => [
+            'name'      => ['test123.txt', 'test234.txt'],
+            'type'      => ['file', 'file'],
+            'tmp_name'  => [
+                __DIR__ . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'test123.tmp',
+                __DIR__ . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'test234.tmp',
+            ],
+            'error'     => [0, 0],
+            'size'      => [1, 1],
         ],
     ];
 
@@ -109,5 +120,46 @@ final class UploadFileTest extends TestCase
 
         // reset
         $this->files['file_1']['error'] = 0;
+    }
+
+    /** @test */
+    public function itCanMultyUploadFileButSingleFile()
+    {
+        $upload = new UploadMultyFile($this->files['file_2']);
+        $upload
+            ->markTest(true)
+            ->setFileName('multy_file_')
+            ->setFileTypes(['txt', 'md'])
+            ->setFolderLocation(__DIR__ . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR)
+            ->setMaxFileSize(91)
+            ->setMimeTypes(['file'])
+            ->uploads();
+
+        $this->assertTrue($upload->success());
+        $this->assertFileExists(__DIR__ . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'multy_file_0.txt');
+        $this->assertFileExists(__DIR__ . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'multy_file_1.txt');
+
+        unlink(__DIR__ . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'multy_file_0.txt');
+        unlink(__DIR__ . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'multy_file_1.txt');
+    }
+
+    // /** @test */
+    public function itCanMultyUploadFile()
+    {
+        $upload = new UploadMultyFile($this->files['file_2']);
+        $upload
+            ->markTest(true)
+            ->setFileName('multy_file')
+            ->setFileTypes(['txt', 'md'])
+            ->setFolderLocation(__DIR__ . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR)
+            ->setMaxFileSize(91)
+            ->setMimeTypes(['file'])
+            ->uploads();
+
+        $this->assertTrue($upload->success());
+        $this->assertFileExists(__DIR__ . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'multy_file_0.txt');
+        $this->assertFileExists(__DIR__ . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'multy_file_1.txt');
+
+        unlink(__DIR__ . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'multy_file.txt');
     }
 }
