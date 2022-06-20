@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Database\MyQuery;
 
 use System\Database\MyPDO;
@@ -8,39 +10,78 @@ abstract class Query
 {
     /** @var MyPDO PDO property */
     protected $PDO;
+
     /** @var string Main query */
     protected $_query;
+
     /** @var string Table Name */
     protected $_table = '';
-    /** @var array Columns name */
+
+    /** @var string[] Columns name */
     protected $_column = ['*'];
-    /** @var array Binder for PDO bind */
-    protected $_binder = [];  // array(['key', 'val'])
+
+    /**
+     * Binder array(['key', 'val']).
+     *
+     * @var array<string, string> Binder for PDO bind */
+    protected $_binder = [];
+
     /** @var int Limit start from */
     protected $_limit_start = 0;
+
     /** @var int Limit end to */
     protected $_limit_end = 0;
+
     /** @var string Sort result ASC|DESC */
     protected $_sort_order  = '';
+
     public const ORDER_ASC  = 0;
     public const ORDER_DESC = 1;
 
-    // final where statmnet
+    /**
+     * Final where statmnet.
+     *
+     * @var string[]
+     */
     protected $_where = [];
-    // Grouping
+
+    /**
+     * Grouping.
+     *
+     * @var string|null
+     */
     protected $_group_by = null;
 
-    // multy filter with strict mode
+    /**
+     * Multy filter with strict mode.
+     *
+     * @var array<int, array<string, array<string, array<string, string>>>>
+     */
     protected $_group_filters = [];
-    // single filter and single strict mode
-    protected $_filters     = [];
+
+    /**
+     * Single filter and single strict mode.
+     *
+     * @var array<string, string>
+     */
+    protected $_filters = [];
+
+    /**
+     * Strict mode.
+     *
+     * @var bool True if use AND instance of OR
+     */
     protected $_strict_mode = true;
 
-    // join
+    /**
+     * @var string[]
+     */
     protected $_join = [];
 
     /**
      * reset all property.
+     *
+     * @return self
      */
     public function reset()
     {
@@ -66,15 +107,17 @@ abstract class Query
      * @param string $bind        Key atau nama column
      * @param string $comparation tanda hubung yang akan digunakan (AND|OR|>|<|=|LIKE)
      * @param string $value       Value atau nilai dari key atau nama column
+     *
+     * @return self
      */
     public function compare(string $bind, string $comparation, string $value, bool $bindValue = false)
     {
         $this->_binder[]       = [$bind, $value];
         $this->_filters[$bind] = [
-      'value'       => $value,
-      'comparation' => $comparation,
-      $bindValue,
-    ];
+            'value'       => $value,
+            'comparation' => $comparation,
+            $bindValue,
+        ];
 
         return $this;
     }
@@ -91,17 +134,17 @@ abstract class Query
         $glue         = $this->_strict_mode ? ' AND ' : ' OR ';
         $whereCostume = implode($glue, $this->_where);
 
-        if ($where != '' && $whereCostume != '') {
+        if ($where !== '' && $whereCostume !== '') {
             // menggabungkan basic where dengan costume where
             $whereString = $this->_strict_mode ? "AND $whereCostume" : "OR $whereCostume";
 
             return "WHERE $where $whereString";
-        } elseif ($where == '' && $whereCostume != '') {
+        } elseif ($where === '' && $whereCostume !== '') {
             // hanya menggunkan costume where
             $whereString = $this->_strict_mode ? "$whereCostume" : "$whereCostume";
 
             return "WHERE $whereString";
-        } elseif ($where != '') {
+        } elseif ($where !== '') {
             // hanya mengunakan basic where
             return "WHERE $where";
         }
@@ -109,20 +152,26 @@ abstract class Query
         return $where;
     }
 
+    /**
+     * @return array<int, array<string, array<string, array<string, string>>>>
+     */
     protected function mergeFilters(): array
     {
         $new_group_filters = $this->_group_filters;
         if (!empty($this->_filters)) {
             // merge group filter and main filter (condition)
             $new_group_filters[] = [
-        'filters' => $this->_filters,
-        'strict'  => $this->_strict_mode,
-      ];
+                'filters' => $this->_filters,
+                'strict'  => $this->_strict_mode,
+            ];
         }
         // hasil penggabungan
         return $new_group_filters;
     }
 
+    /**
+     * @param array<int, array<string, array<string, array<string, string>>>> $group_filters Groups of filters
+     */
     protected function splitGrupsFilters(array $group_filters): string
     {
         // mengabungkan query-queery kecil menjadi satu
@@ -135,6 +184,9 @@ abstract class Query
         return implode(' AND ', $whereStatment);
     }
 
+    /**
+     * @param array<string, array<string, array<string, string>>> $filters Filters
+     */
     protected function splitFilters(array $filters): string
     {
         // mengconvert array ke string query
@@ -142,7 +194,7 @@ abstract class Query
         foreach ($filters['filters'] as $fieldName => $fieldValue) {
             $value        = $fieldValue['value'];
             $comparation  = $fieldValue['comparation'];
-            if ($value != null || $value != '') {
+            if ($value !== '') {
                 $query[] = "($this->_table.$fieldName $comparation :$fieldName)";
             }
         }

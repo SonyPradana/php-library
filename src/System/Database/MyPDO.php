@@ -20,6 +20,9 @@ class MyPDO
      */
     private $configs;
 
+    /**
+     * @param array<string, string> $configs
+     */
     public function __construct(array $configs)
     {
         $database_name    = $configs['database_name'];
@@ -47,7 +50,13 @@ class MyPDO
         static::$Instance = $this;
     }
 
-    /** Create connaction using static */
+    /**
+     * Create connaction using static.
+     *
+     * @param array<string, string> $configs
+     *
+     * @return MyPDO
+     * */
     public static function conn(array $configs)
     {
         return new self($configs);
@@ -87,7 +96,11 @@ class MyPDO
     }
 
     /**
-     * menggantikan paramater input dari user dengan sebuah placeholder.
+     * Menggantikan paramater input dari user dengan sebuah placeholder.
+     *
+     * @param int|string $param
+     * @param mixed      $value
+     * @param int|null   $type
      */
     public function bind($param, $value, $type = null): self
     {
@@ -128,6 +141,8 @@ class MyPDO
 
     /**
      * mengembalikan hasil dari query yang dijalankan berupa array.
+     *
+     * @return mixed[]|false
      */
     public function resultset()
     {
@@ -137,7 +152,9 @@ class MyPDO
     }
 
     /**
-     * mengembalikan hasil dari query, ditampilkan hanya satu baris data saja.
+     * Mengembalikan hasil dari query, ditampilkan hanya satu baris data saja.
+     *
+     * @return mixed
      */
     public function single()
     {
@@ -166,6 +183,9 @@ class MyPDO
         return $this->dbh->lastInsertId();
     }
 
+    /**
+     * @return bool Transaction status
+     */
     public function transaction(callable $callable)
     {
         if (false === $this->beginTransaction()) {

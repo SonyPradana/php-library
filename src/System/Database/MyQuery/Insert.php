@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Database\MyQuery;
 
 use System\Database\MyPDO;
@@ -17,6 +19,13 @@ class Insert extends Execute
         return $this->builder();
     }
 
+    /**
+     *  Value query builder (key => value).
+     *
+     * @param array<string, string> $values Insert values
+     *
+     * @return self
+     */
     public function values(array $values)
     {
         foreach ($values as $key => $value) {
@@ -26,6 +35,9 @@ class Insert extends Execute
         return $this;
     }
 
+    /**
+     * @return self
+     */
     public function value(string $bind, string $value)
     {
         $this->_binder[] = [$bind, $value, true];
@@ -37,9 +49,9 @@ class Insert extends Execute
     {
         $arraycolumns = array_column($this->_binder, 0);
         $arrayBinds   = array_map(
-      fn ($e) => ":val_$e",
-      array_column($this->_binder, 0)
-    );
+            fn ($e) => ":val_$e",
+            array_column($this->_binder, 0)
+        );
         $arraycolumns = array_filter($arraycolumns);
         $arrayBinds   = array_filter($arrayBinds);
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Database\MyQuery;
 
 use System\Collection\Collection;
@@ -11,7 +13,10 @@ abstract class Fetch extends Query
         return new Collection($this->all());
     }
 
-    public function single(): array
+    /**
+     * @return string[]|mixed
+     */
+    public function single()
     {
         $this->builder();
 
@@ -21,10 +26,11 @@ abstract class Fetch extends Query
         }
         $result = $this->PDO->single();
 
-        return $result == false ? [] : $this->PDO->single();
+        return $result === false ? [] : $this->PDO->single();
     }
 
-    public function all(): array
+    /** @return array<string|int, mixed>|false */
+    public function all()
     {
         $this->builder();
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Database\MyQuery;
 
 use System\Database\MyPDO;
@@ -11,6 +13,14 @@ final class Select extends Fetch
 {
     use ConditionTrait;
 
+    /**
+     * @param string   $table_name   Table name
+     * @param string[] $columns_name Selected cloumn
+     * @param MyPDO    $PDO          MyPDO class
+     * @param string[] $options      Add costume option (eg: query)
+     *
+     * @return void
+     */
     public function __construct(string $table_name, array $columns_name, MyPDO $PDO = null, array $options = null)
     {
         $this->_table  = $table_name;
@@ -31,6 +41,14 @@ final class Select extends Fetch
         return $this->builder();
     }
 
+    /**
+     * Instance of `Select::class`.
+     *
+     * @param string   $table_name  Table name
+     * @param string[] $column_name Selected column
+     *
+     * @return Select
+     */
     public static function from(string $table_name, array $column_name = ['*'])
     {
         return new static($table_name, $column_name);
@@ -44,6 +62,8 @@ final class Select extends Fetch
      *  - full join.
      *
      * @param AbstractJoin $ref_table Configure type of join
+     *
+     * @return self
      */
     public function join(AbstractJoin $ref_table)
     {
@@ -62,6 +82,8 @@ final class Select extends Fetch
      *
      * @param int $limit_start limit start
      * @param int $limit_end   limit end
+     *
+     * @return self
      */
     public function limit(int $limit_start, int $limit_end)
     {
@@ -75,6 +97,8 @@ final class Select extends Fetch
      * Set data start for feact all data.
      *
      * @param int $val limit start default is 0
+     *
+     * @return self
      */
     public function limitStart(int $val)
     {
@@ -88,6 +112,8 @@ final class Select extends Fetch
      * zero value meaning no data show.
      *
      * @param int $val limit start default
+     *
+     * @return self
      */
     public function limitEnd(int $val)
     {
@@ -99,6 +125,8 @@ final class Select extends Fetch
     /**
      * Set sort column and order
      * column name must register.
+     *
+     * @return self
      */
     public function order(string $column_name, int $order_using = MyQuery::ORDER_ASC, string $belong_to = null)
     {
@@ -116,6 +144,8 @@ final class Select extends Fetch
      * False = operator using OR
      *
      * @param bool $value True where statment operation using AND
+     *
+     * @return self
      */
     public function strictMode(bool $value)
     {
@@ -133,29 +163,28 @@ final class Select extends Fetch
 
         // join
         $join = count($this->_join) == 0
-      ? ''
-      : implode(' ', $this->_join)
-    ;
+            ? ''
+            : implode(' ', $this->_join);
+
         // where
         $where  = $this->getWhere();
         $where  = $where == '' && count($this->_join) > 0
-      ? ''
-      : $where
-    ;
+            ? ''
+            : $where;
+
         // sort order
         $sort_order = $this->_sort_order == ''
-      ? ''
-      : " $this->_sort_order"
-    ;
+            ? ''
+            : " $this->_sort_order";
+
         // limit
         $limit = $this->_limit_start < 0
-      ? " LIMIT $this->_limit_end"
-      : " LIMIT $this->_limit_start, $this->_limit_end"
-    ;
+            ? " LIMIT $this->_limit_end"
+            : " LIMIT $this->_limit_start, $this->_limit_end";
+
         $limit = $this->_limit_end == 0
-      ? ''
-      : $limit
-    ;
+            ? ''
+            : $limit;
 
         $condition = $join . $where . $sort_order . $limit;
 

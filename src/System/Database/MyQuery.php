@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Database;
 
 use System\Database\MyQuery\Table;
@@ -28,6 +30,8 @@ class MyQuery
      * Create builder using invoke.
      *
      * @param string $table_name Table name
+     *
+     * @return Table
      */
     public function __invoke(string $table_name)
     {
@@ -38,6 +42,8 @@ class MyQuery
      * Create builder and set table name.
      *
      * @param string $table_name Table name
+     *
+     * @return Table
      */
     public function table(string $table_name)
     {
@@ -49,6 +55,8 @@ class MyQuery
      *
      * @param string $table_name Table name
      * @param MyPDO  $PDO        The PDO connection, null give global instance
+     *
+     * @return Table
      */
     public static function from(string $table_name, MyPDO $PDO = null)
     {
