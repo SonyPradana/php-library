@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace System\File;
 
+use System\File\Exceptions\FileNotExists;
+use System\File\Exceptions\FileNotUploaded;
+use System\File\Exceptions\FolderNotExists;
+
 /** {@inheritDoc} */
 final class UploadMultyFile extends AbstarctUpload
 {
@@ -25,7 +29,7 @@ final class UploadMultyFile extends AbstarctUpload
     public function setFolderLocation(string $folder_location): self
     {
         if (!is_dir($folder_location)) {
-            throw new \Exception('Folder not founded');
+            throw new FolderNotExists($folder_location);
         }
 
         $this->upload_location = $folder_location;
@@ -123,21 +127,21 @@ final class UploadMultyFile extends AbstarctUpload
     public function getAll()
     {
         if (!$this->_success) {
-            throw new \Exception('File not uploaded');
+            throw new FileNotUploaded();
         }
 
-        $files = [];
+        $contents = [];
 
         foreach ($this->file_extension as $key => $extension) {
-            $destination =  $this->upload_location . $this->upload_name . $key . '.' . $extension;
-            $file        = file_get_contents($destination);
+            $destination    =  $this->upload_location . $this->upload_name . $key . '.' . $extension;
+            $content        = file_get_contents($destination);
 
-            if ($file === false) {
-                throw new \Exception('File not avilabe');
+            if (false === $content) {
+                throw new FileNotExists($destination);
             }
-            $files[] = $file;
+            $contents[] = $content;
         }
 
-        return $files;
+        return $contents;
     }
 }
