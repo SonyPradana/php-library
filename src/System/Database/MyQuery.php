@@ -14,16 +14,16 @@ class MyQuery
     public const ORDER_ASC   = 0;
     public const ORDER_DESC  = 1;
     /** @var MyPDO */
-    protected $PDO    = null;
+    protected $PDO;
 
     /**
      * Create new Builder.
      *
-     * @param MyPDO $PDO The PDO connection, null give global instance
+     * @param MyPDO $PDO the PDO connection
      */
-    public function __construct(MyPDO $PDO = null)
+    public function __construct(MyPDO $PDO)
     {
-        $this->PDO = $PDO ?? MyPDO::getInstance();
+        $this->PDO = $PDO;
     }
 
     /**
@@ -58,7 +58,7 @@ class MyQuery
      *
      * @return Table
      */
-    public static function from(string $table_name, MyPDO $PDO = null)
+    public static function from(string $table_name, MyPDO $PDO)
     {
         $conn = new MyQuery($PDO);
 

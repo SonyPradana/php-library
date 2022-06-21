@@ -79,6 +79,8 @@ class MyPDO
      * Singleton pattern implemnt for Databese connation.
      *
      * @return MyPDO MyPDO with singleton
+     *
+     * @deprecated
      */
     public static function getInstance(): self
     {

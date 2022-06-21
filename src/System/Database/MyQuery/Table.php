@@ -22,10 +22,10 @@ class Table
      */
     protected $table_name;
 
-    public function __construct(string $table_name, MyPDO $PDO = null)
+    public function __construct(string $table_name, MyPDO $PDO)
     {
         $this->table_name = $table_name;
-        $this->PDO        = $PDO ?? MyPDO::getInstance();
+        $this->PDO        = $PDO;
     }
 
     /**
