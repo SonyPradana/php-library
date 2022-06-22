@@ -63,9 +63,9 @@ trait ConditionTrait
     /**
      * Insert 'between' condition in (query bulider).
      *
-     * @param string     $column_name Spesific column name
-     * @param string|int $value_1     Between start
-     * @param string|int $value_2     Between end
+     * @param string $column_name Spesific column name
+     * @param int    $value_1     Between start
+     * @param int    $value_2     Between end
      *
      * @return self
      */
