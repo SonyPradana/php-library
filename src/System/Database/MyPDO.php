@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Database;
 
 use Exception;
@@ -48,6 +50,16 @@ class MyPDO
 
         // set instance @phpstan-ignore-next-line
         static::$Instance = $this;
+    }
+
+    /**
+     * Singleton pattern implemnt for Databese connation.
+     *
+     * @return self
+     */
+    public function instance()
+    {
+        return $this;
     }
 
     /**
