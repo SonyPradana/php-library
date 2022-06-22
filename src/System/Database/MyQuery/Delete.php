@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Database\MyQuery;
 
 use System\Database\MyPDO;

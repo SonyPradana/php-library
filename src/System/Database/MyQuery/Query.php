@@ -104,13 +104,13 @@ abstract class Query
      * Where statment setter,
      * menambahakan syarat pada query builder.
      *
-     * @param string $bind        Key atau nama column
-     * @param string $comparation tanda hubung yang akan digunakan (AND|OR|>|<|=|LIKE)
-     * @param string $value       Value atau nilai dari key atau nama column
+     * @param string     $bind        Key atau nama column
+     * @param string     $comparation tanda hubung yang akan digunakan (AND|OR|>|<|=|LIKE)
+     * @param string|int $value       Value atau nilai dari key atau nama column
      *
      * @return self
      */
-    public function compare(string $bind, string $comparation, string $value, bool $bindValue = false)
+    public function compare(string $bind, string $comparation, $value, bool $bindValue = false)
     {
         $this->_binder[]       = [$bind, $value];
         $this->_filters[$bind] = [

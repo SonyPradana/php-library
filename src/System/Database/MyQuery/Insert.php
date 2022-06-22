@@ -22,11 +22,11 @@ class Insert extends Execute
     /**
      *  Value query builder (key => value).
      *
-     * @param array<string, string> $values Insert values
+     * @param array<string, string|int|bool|null> $values Insert values
      *
      * @return self
      */
-    public function values(array $values)
+    public function values($values)
     {
         foreach ($values as $key => $value) {
             $this->_binder[] = [$key, $value, true];
@@ -36,9 +36,11 @@ class Insert extends Execute
     }
 
     /**
+     * @param string|int|bool|null $value
+     *
      * @return self
      */
-    public function value(string $bind, string $value)
+    public function value(string $bind, $value)
     {
         $this->_binder[] = [$bind, $value, true];
 

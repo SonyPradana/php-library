@@ -25,11 +25,11 @@ class Update extends Execute
     /**
      * Insert set value (single).
      *
-     * @param string[] $values Array of bing and value
+     * @param array<string, string|int|bool|null> $values Array of bing and value
      *
      * @return self
      */
-    public function values(array $values)
+    public function values($values)
     {
         foreach ($values as $key => $value) {
             $this->_binder[] = [$key, $value, true];
@@ -41,12 +41,12 @@ class Update extends Execute
     /**
      * Insert set value (single).
      *
-     * @param string $bind  Pdo bind
-     * @param string $value Value of the bind
+     * @param string               $bind  Pdo bind
+     * @param string|int|bool|null $value Value of the bind
      *
      * @return self
      */
-    public function value(string $bind, string $value)
+    public function value(string $bind, $value)
     {
         $this->_binder[] = [$bind, $value, true];
 

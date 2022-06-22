@@ -14,12 +14,12 @@ trait ConditionTrait
     /**
      * Insert 'equal' condition in (query bulider).
      *
-     * @param string $bind  Bind
-     * @param string $value Value of bind
+     * @param string               $bind  Bind
+     * @param string|int|bool|null $value Value of bind
      *
      * @return self
      */
-    public function equal(string $bind, string $value)
+    public function equal(string $bind, $value)
     {
         $this->compare($bind, '=', $value, false);
 
@@ -29,12 +29,12 @@ trait ConditionTrait
     /**
      * Insert 'like' condition in (query bulider).
      *
-     * @param string $bind  Bind
-     * @param string $value Value of bind
+     * @param string               $bind  Bind
+     * @param string|int|bool|null $value Value of bind
      *
      * @return self
      */
-    public function like(string $bind, string $value)
+    public function like(string $bind, $value)
     {
         $this->compare($bind, 'LIKE', $value, false);
 
@@ -44,8 +44,8 @@ trait ConditionTrait
     /**
      * Insert 'where' condition in (query bulider).
      *
-     * @param string                         $where_condition Spesific column name
-     * @param array<int, array<int, string>> $binder          Bind and value (use for 'in')
+     * @param string                             $where_condition Spesific column name
+     * @param array<int, array<int, string|int>> $binder          Bind and value (use for 'in')
      *
      * @return self
      */
@@ -63,19 +63,19 @@ trait ConditionTrait
     /**
      * Insert 'between' condition in (query bulider).
      *
-     * @param string $column_name Spesific column name
-     * @param string $val_1       Between
-     * @param string $val_2       Between
+     * @param string     $column_name Spesific column name
+     * @param string|int $value_1     Between start
+     * @param string|int $value_2     Between end
      *
      * @return self
      */
-    public function between(string $column_name, string $val_1, string $val_2)
+    public function between(string $column_name, $value_1, $value_2)
     {
         $this->where(
             "(`$this->_table`.`$column_name` BETWEEN :b_start AND :b_end)",
             [
-                [':b_start', $val_1],
-                [':b_end', $val_2],
+                [':b_start', $value_1],
+                [':b_end', $value_2],
             ]
         );
 
@@ -85,16 +85,16 @@ trait ConditionTrait
     /**
      * Insert 'in' condition (query bulider).
      *
-     * @param string   $column_name Spesific column name
-     * @param string[] $val         Bind and value (use for 'in')
+     * @param string                                  $column_name Spesific column name
+     * @param array<int|string, string|int|bool|null> $value       Bind and value (use for 'in')
      *
      * @return self
      */
-    public function in(string $column_name, array $val)
+    public function in(string $column_name, $value)
     {
         $binds  = [];
         $binder = [];
-        foreach ($val as $key => $bind) {
+        foreach ($value as $key => $bind) {
             $binds[]  = ":in_$key";
             $binder[] = [":in_$key", $bind];
         }

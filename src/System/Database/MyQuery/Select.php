@@ -97,13 +97,13 @@ final class Select extends Fetch
     /**
      * Set data start for feact all data.
      *
-     * @param int $val limit start default is 0
+     * @param int $value limit start default is 0
      *
      * @return self
      */
-    public function limitStart(int $val)
+    public function limitStart(int $value)
     {
-        $this->_limit_start = $val;
+        $this->_limit_start = $value;
 
         return $this;
     }
@@ -112,13 +112,13 @@ final class Select extends Fetch
      * Set data end for feact all data
      * zero value meaning no data show.
      *
-     * @param int $val limit start default
+     * @param int $value limit start default
      *
      * @return self
      */
-    public function limitEnd(int $val)
+    public function limitEnd(int $value)
     {
-        $this->_limit_end = $val;
+        $this->_limit_end = $value;
 
         return $this;
     }
