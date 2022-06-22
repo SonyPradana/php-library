@@ -8,8 +8,8 @@ use System\Support\Facedes\Facede;
  */
 final class FacedesTestClass extends Facede
 {
-    protected static function setAccessor()
+    protected static function getAccessor()
     {
-        static::$accessor = static::$app->get(System\Time\Now::class);
+        return System\Time\Now::class;
     }
 }

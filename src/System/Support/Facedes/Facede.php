@@ -16,11 +16,11 @@ abstract class Facede
     protected static $app;
 
     /**
-     * Accessor.
+     * Instance accessor.
      *
      * @var mixed
      */
-    protected static $accessor;
+    protected static $instance;
 
     /**
      * Set Accessor.
@@ -33,28 +33,41 @@ abstract class Facede
     }
 
     /**
-     * Set accessor from application.
+     * Get accessor from application.
      *
-     * @return void
+     * @return string|class-string
      *
      * @throws \RuntimeException
      */
-    protected static function setAccessor()
+    protected static function getAccessor()
     {
         throw new \RuntimeException('Application not found');
-        // static::$accessor = static::$app->get('class-name');
     }
 
     /**
-     * Get accessor.
+     * Faced.
      *
      * @return mixed
      */
-    protected static function getAccessor()
+    protected static function getFacede()
     {
-        static::setAccessor();
+        return static::getFacedeBase(static::getAccessor());
+    }
 
-        return static::$accessor;
+    /**
+     * Faced.
+     *
+     * @param string|class-string $name Entry name or a class name
+     *
+     * @return mixed
+     */
+    protected static function getFacedeBase(string $name)
+    {
+        if (isset(static::$instance[$name])) {
+            return static::$instance[$name];
+        }
+
+        return static::$instance[$name] = static::$app->get($name);
     }
 
     /**
@@ -69,7 +82,7 @@ abstract class Facede
      */
     public static function __callStatic($name, $arguments)
     {
-        $instance = static::getAccessor();
+        $instance = static::getFacede();
 
         if (!$instance) {
             throw new \RuntimeException('A facade root has not been set.');
