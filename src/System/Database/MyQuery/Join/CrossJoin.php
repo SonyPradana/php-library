@@ -1,0 +1,14 @@
+<?php
+
+namespace System\Database\MyQuery\Join;
+
+class CrossJoin extends AbstractJoin
+{
+    /**
+     * Create cross join table query.
+     */
+    protected function joinBuilder(): string
+    {
+        return "CROSS JOIN $this->_tableName";
+    }
+}
