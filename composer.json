@@ -39,8 +39,8 @@
         "test:unit": "phpunit",
         "test": [
             "@test:lint",
-            "@test:unit",
-            "@test:types"
+            "@test:types",
+            "@test:unit"
         ]
     }
 }
