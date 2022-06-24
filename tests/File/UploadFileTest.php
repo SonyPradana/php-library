@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
+use System\File\Exceptions\FolderNotExists;
+use System\File\Exceptions\FolederNotExists;
 use System\File\UploadFile;
 use System\File\UploadMultyFile;
 
@@ -79,9 +81,10 @@ final class UploadFileTest extends TestCase
     }
 
     /** @test */
-    public function itCanUploadFileInvalidFileFolder()
+    public function itCantUploadFileInvalidFileFolder()
     {
-        $this->expectErrorMessage('Folder not founded');
+        // $this->expectException(FolederNotExists::class);
+        $this->expectException(FolderNotExists::class);
 
         $this->upload->setFolderLocation('/unkow');
     }

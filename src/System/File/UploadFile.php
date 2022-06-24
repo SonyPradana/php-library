@@ -2,6 +2,11 @@
 
 namespace System\File;
 
+use System\File\Exceptions\FileNotExists;
+use System\File\Exceptions\FileNotUploaded;
+use System\File\Exceptions\FolderNotExists;
+use System\File\Exceptions\MutyFileUploadDetect;
+
 /** {@inheritDoc} */
 final class UploadFile extends AbstarctUpload
 {
@@ -23,7 +28,7 @@ final class UploadFile extends AbstarctUpload
     public function setFolderLocation(string $folder_location): self
     {
         if (!is_dir($folder_location)) {
-            throw new \Exception('Folder not founded');
+            throw new FolderNotExists($folder_location);
         }
 
         $this->upload_location = $folder_location;
@@ -79,7 +84,7 @@ final class UploadFile extends AbstarctUpload
         parent::__construct($files);
 
         if (is_array($files['name'])) {
-            throw new \Exception('Single files detected use `UploadMultyFile` instances of `UploadFile`');
+            throw new MutyFileUploadDetect();
         }
 
         $this->file_name[]  = $files['name'];
@@ -112,9 +117,14 @@ final class UploadFile extends AbstarctUpload
         $destination =  $this->upload_location . $this->upload_name . '.' . $this->file_extension[0];
 
         if (!$this->_success) {
-            throw new \Exception('File not uploaded');
+            throw new FileNotUploaded();
         }
 
-        return file_get_contents($destination);
+        $content = file_get_contents($destination);
+        if (false === $content) {
+            throw new FileNotExists($destination);
+        }
+
+        return $content;
     }
 }
