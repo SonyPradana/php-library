@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Database;
 
 use System\Collection\Collection;
@@ -8,26 +10,40 @@ use System\Database\MyQuery\Join\InnerJoin;
 
 abstract class MyCRUD
 {
-    /** @var MyPDO|null */
-    protected $PDO = null;
+    /** @var MyPDO */
+    protected $PDO;
+
     /** @var string */
     protected $TABLE_NAME;
-    /** @var array */
+
+    /** @var array<string, mixed> */
     protected $COLUMNS = [];
+
     /** @var string */
     protected $PRIMERY_KEY = 'id';
+
     /** @var string|int */
     protected $IDENTIFER = '';
-    /** @var array set Column cant be modify */
+
+    /** @var string[] set Column cant be modify */
     protected $RESISTANT;
-    /** @var array orginal data from database */
+
+    /** @var array<string, mixed> orginal data from database */
     protected $FRESH;
 
+    /**
+     * @return string|int
+     */
     public function getID()
     {
         return $this->IDENTIFER;
     }
 
+    /**
+     * @param string|int $val
+     *
+     * @return self
+     */
     public function setID($val)
     {
         $this->IDENTIFER = $val;
@@ -35,6 +51,13 @@ abstract class MyCRUD
         return $this;
     }
 
+    /**
+     * Setter.
+     *
+     * @param mixed $val
+     *
+     * @return self
+     */
     protected function setter(string $key, $val)
     {
         if (key_exists($key, $this->COLUMNS) && !isset($this->RESISTANT[$key])) {
@@ -44,19 +67,42 @@ abstract class MyCRUD
         return $this;
     }
 
+    /**
+     * Getter.
+     *
+     * @param string     $key
+     * @param mixed|null $defaul
+     *
+     * @return mixed
+     */
     protected function getter($key, $defaul = null)
     {
         return $this->COLUMNS[$key] ?? $defaul;
     }
 
+    /**
+     * Getter.
+     *
+     * @param string $name
+     *
+     * @return mixed
+     */
     public function __get($name)
     {
         return $this->getter($name);
     }
 
+    /**
+     * Setter.
+     *
+     * @param string $name
+     * @param mixed  $value
+     *
+     * @return self
+     */
     public function __set($name, $value)
     {
-        $this->setter($name, $value);
+        return $this->setter($name, $value);
     }
 
     public function read(): bool
@@ -140,6 +186,13 @@ abstract class MyCRUD
         return $id === false ? '' : $id;
     }
 
+    /**
+     * Convert array to class property.
+     *
+     * @param array<string, mixed> $arr_column
+     *
+     * @return self
+     */
     public function convertFromArray(array $arr_column)
     {
         foreach ($arr_column as $key => $value) {
@@ -149,6 +202,11 @@ abstract class MyCRUD
         return $this;
     }
 
+    /**
+     * Convert class property to array.
+     *
+     * @return array<string, mixed>
+     */
     public function convertToArray(): array
     {
         return $this->COLUMNS;
@@ -159,7 +217,10 @@ abstract class MyCRUD
         return new Collection($this->COLUMNS);
     }
 
-    protected function column_names(): array
+    /**
+     * @return string[]
+     */
+    protected function column_names()
     {
         $table_info = MyQuery::from($this->TABLE_NAME, $this->PDO)
             ->info()
@@ -168,11 +229,17 @@ abstract class MyCRUD
         return array_values(array_column($table_info, 'COLUMN_NAME'));
     }
 
+    /**
+     * @param string $name Column name
+     */
     public function __isset($name)
     {
         return isset($this->COLUMNS[$name]);
     }
 
+    /**
+     * @return CollectionImmutable
+     */
     protected function hasOne(string $table, string $ref = 'id')
     {
         $ref = MyQuery::from($this->TABLE_NAME, $this->PDO)
@@ -186,6 +253,9 @@ abstract class MyCRUD
         return new CollectionImmutable($ref);
     }
 
+    /**
+     * @return CollectionImmutable
+     */
     protected function hasMany(string $table, string $ref = 'id')
     {
         $ref = MyQuery::from($this->TABLE_NAME, $this->PDO)

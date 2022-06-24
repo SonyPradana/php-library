@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Database\MyQuery;
 
 use System\Database\MyPDO;
@@ -9,10 +11,10 @@ class Delete extends Execute
 {
     use ConditionTrait;
 
-    public function __construct(string $table_name, MyPDO $PDO = null)
+    public function __construct(string $table_name, MyPDO $PDO)
     {
         $this->_table = $table_name;
-        $this->PDO    = $PDO ?? MyPDO::getInstance();
+        $this->PDO    = $PDO;
     }
 
     public function __toString()

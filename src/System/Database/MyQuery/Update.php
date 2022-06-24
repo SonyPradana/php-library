@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Database\MyQuery;
 
 use System\Database\MyPDO;
@@ -9,10 +11,10 @@ class Update extends Execute
 {
     use ConditionTrait;
 
-    public function __construct(string $table_name, MyPDO $PDO = null)
+    public function __construct(string $table_name, MyPDO $PDO)
     {
         $this->_table = $table_name;
-        $this->PDO    = $PDO ?? MyPDO::getInstance();
+        $this->PDO    = $PDO;
     }
 
     public function __toString()
@@ -20,7 +22,14 @@ class Update extends Execute
         return $this->builder();
     }
 
-    public function values(array $values)
+    /**
+     * Insert set value (single).
+     *
+     * @param array<string, string|int|bool|null> $values Array of bing and value
+     *
+     * @return self
+     */
+    public function values($values)
     {
         foreach ($values as $key => $value) {
             $this->_binder[] = [$key, $value, true];
@@ -29,7 +38,15 @@ class Update extends Execute
         return $this;
     }
 
-    public function value(string $bind, string $value)
+    /**
+     * Insert set value (single).
+     *
+     * @param string               $bind  Pdo bind
+     * @param string|int|bool|null $value Value of the bind
+     *
+     * @return self
+     */
+    public function value(string $bind, $value)
     {
         $this->_binder[] = [$bind, $value, true];
 
@@ -41,14 +58,14 @@ class Update extends Execute
         $where = $this->getWhere();
 
         $setArray = array_map(
-      fn ($e, $c) => $c == true ? "`$e` = :val_$e" : null,
-      array_column($this->_binder, 0),
-      array_column($this->_binder, 2)
-    );
+            fn ($e, $c) => $c == true ? "`$e` = :val_$e" : null,
+            array_column($this->_binder, 0),
+            array_column($this->_binder, 2)
+        );
         $setArray   = array_filter($setArray);  // remove empety items
-    $setString      = implode(', ', $setArray); // concvert to string
+        $setString  = implode(', ', $setArray); // concvert to string
 
-    $this->_query = "UPDATE `$this->_table` SET $setString $where";
+        $this->_query = "UPDATE `$this->_table` SET $setString $where";
 
         return $this->_query;
     }

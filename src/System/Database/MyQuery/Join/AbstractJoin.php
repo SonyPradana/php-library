@@ -1,15 +1,39 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Database\MyQuery\Join;
 
 abstract class AbstractJoin
 {
+    /**
+     * @var string
+     */
     protected $_mainTable     = '';
+
+    /**
+     * @var string
+     */
     protected $_tableName     = '';
+
+    /**
+     * @var string
+     */
     protected $_colomnName    = '';
+
+    /**
+     * @var string[]
+     */
     protected $_compereColumn = [];
+
+    /**
+     * @var string
+     */
     protected $_stringJoin    = '';
 
+    /**
+     * @return self
+     */
     public function __invoke(string $main_table)
     {
         $this->_mainTable = $main_table;
@@ -28,6 +52,8 @@ abstract class AbstractJoin
      * @param string      $ref_table Name of the table want to join
      * @param string      $id        Main id of the table
      * @param string|null $ref_id    Id of the table want to join, null mean same with main id
+     *
+     * @return AbstractJoin
      */
     public static function ref(string $ref_table, string $id, ?string $ref_id = null)
     {
@@ -43,6 +69,8 @@ abstract class AbstractJoin
      * set main table / master table.
      *
      * @param string $main_table Name of the master table
+     *
+     * @return self
      */
     public function table(string $main_table)
     {
@@ -55,6 +83,8 @@ abstract class AbstractJoin
      * Set table reference.
      *
      * @param string $ref_table Name of the ref table
+     *
+     * @return self
      */
     public function tableRef(string $ref_table)
     {
@@ -68,6 +98,8 @@ abstract class AbstractJoin
      *
      * @param string $main_table Name of the master table
      * @param string $ref_table  Name of the ref table
+     *
+     * @return self
      */
     public function tableRelation(string $main_table, string $ref_table)
     {
@@ -82,14 +114,16 @@ abstract class AbstractJoin
      *
      * @param string $main_column    Identical of the main table column
      * @param string $compire_column Identical of the ref table column
+     *
+     * @return self
      */
     public function compare(string $main_column, string $compire_column = null)
     {
         $compire_column = $compire_column ?? $main_column;
 
         $this->_compereColumn[] = [
-      $main_column, $compire_column,
-    ];
+            $main_column, $compire_column,
+        ];
 
         return $this;
     }
