@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace System\Database;
 
-use Exception;
-use PDO;
-use PDOException;
-
 class MyPDO
 {
     /** @var \PDO PDO */
@@ -37,19 +33,16 @@ class MyPDO
         // konfigurasi driver
         $dsn    = "mysql:host=$host;dbname=$database_name";
         $option = [
-            PDO::ATTR_PERSISTENT => true,
-            PDO::ATTR_ERRMODE    => PDO::ERRMODE_EXCEPTION,
+            \PDO::ATTR_PERSISTENT => true,
+            \PDO::ATTR_ERRMODE    => \PDO::ERRMODE_EXCEPTION,
         ];
 
         // menjalankan koneksi daabase
         try {
-            $this->dbh = new PDO($dsn, $user, $pass, $option);
-        } catch (PDOException $e) {
-            throw new Exception($e->getMessage());
+            $this->dbh = new \PDO($dsn, $user, $pass, $option);
+        } catch (\PDOException $e) {
+            throw new \Exception($e->getMessage());
         }
-
-        // set instance @phpstan-ignore-next-line
-        static::$Instance = $this;
     }
 
     /**
@@ -84,21 +77,6 @@ class MyPDO
         return $this->configs;
     }
 
-    /** @var self */
-    private static $Instance;
-
-    /**
-     * Singleton pattern implemnt for Databese connation.
-     *
-     * @return MyPDO MyPDO with singleton
-     *
-     * @deprecated
-     */
-    public static function getInstance(): self
-    {
-        return self::$Instance;
-    }
-
     /**
      *  mempersiapkan statement pada query.
      */
@@ -121,19 +99,19 @@ class MyPDO
         if (is_null($type)) {
             switch (true) {
                 case is_int($value):
-                    $type = PDO::PARAM_INT;
+                    $type = \PDO::PARAM_INT;
                     break;
 
                 case is_bool($value):
-                    $type = PDO::PARAM_BOOL;
+                    $type = \PDO::PARAM_BOOL;
                     break;
 
                 case is_null($value):
-                    $type = PDO::PARAM_NULL;
+                    $type = \PDO::PARAM_NULL;
                     break;
 
                 default:
-                    $type = PDO::PARAM_STR;
+                    $type = \PDO::PARAM_STR;
             }
         }
         $this->stmt->bindValue($param, $value, $type);
@@ -162,7 +140,7 @@ class MyPDO
     {
         $this->execute();
 
-        return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $this->stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /**
@@ -174,7 +152,7 @@ class MyPDO
     {
         $this->execute();
 
-        return $this->stmt->fetch(PDO::FETCH_ASSOC);
+        return $this->stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
     /**
