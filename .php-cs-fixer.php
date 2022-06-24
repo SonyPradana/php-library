@@ -19,9 +19,9 @@ $rules = [
     ],
     'concat_space'            => ['spacing' => 'one'],
     'not_operator_with_space' => false,
+    'increment_style'         => ['style' => 'post'],
+    'no_unused_imports'       => true,
 ];
-
-$rules['increment_style'] = ['style' => 'post'];
 
 return (new PhpCsFixer\Config())
     ->setUsingCache(true)
