@@ -8,6 +8,7 @@ Php mvc with minum mvc framework. is simple and easy to use
 
 ## Feature
 - MVC base 
+- Container (dependency injection)
 - Route
 - Model (database class relation)
 - View and Controller
@@ -18,13 +19,14 @@ Php mvc with minum mvc framework. is simple and easy to use
 - Cron
 - Now (time managing)
 - Http request and responese
+- [Str](#Str) (string manipulation)
 
 ## **Built in Query Builder**
 of cource we are support CRUD data base, this a sample
 
 ### Select data 
 ```php
-MyQuery::from('table_name')
+DB::from('table_name')
   ->select(['column_1'])
   ->equal('column_2', 'fast_mvc')
   ->order("column_1", MyQuery::ORDER_ASC)
@@ -41,7 +43,7 @@ SELECT `column_1` FROM `table_name` WHERE (`column_2` = 'fast_mvc') ORDER BY `ta
 
 ### Update data 
 ```php
-MyQuery::from('table_name')
+DB::from('table_name')
   ->update()
   ->values([
     'column_1' => 'simple_mvc',
@@ -62,7 +64,7 @@ UPDATE `table_name` SET `column_1` = 'simple_mvc', `column_2` = 'fast_mvc', 'col
 ### Insert and Delete
 ```php
 // insert
-MyQuery::from('table_name')
+DB::from('table_name')
   ->insert()
   ->values([
     'column_1'  => '',
@@ -72,13 +74,31 @@ MyQuery::from('table_name')
   ->execute()
 ;
 // delete
-MyQuery::from('table_name')
+DB::from('table_name')
   ->delete()
   ->equal('column_3', 'slow_mvc')
   ->execute()
 ;
 ```
 its supported cancel transation if you needed
+```php
+use System\Support\Facedes;
+
+PDO::transaction(function() {
+    DB::from('table_name')
+        ->insert()
+        ->value('age', 22)
+        ->execute()
+    ;
+
+    // some condition
+    if (false === $statment) {
+        return false;
+    }
+
+    return true;
+});
+```
 
 [🔝 Back to contents](#Feature)
 
@@ -178,3 +198,95 @@ php cli greate --name php_mvc
 # Great console application
 # hay my name is php_mvc
 ```
+[🔝 Back to contents](#Feature)
+
+## Str
+
+Make string manipulation.
+
+```php
+Str::chartAt('i love php', 3); // o
+Str::concat(['i', 'love', 'php']); // i love php
+Str::indexOf('i love php', 'p'); // 8
+Str::lastIndexOf('i love php', 'p'); // 10
+Str::match('i love php', '/love/'); // love
+// ...
+// and many more
+```
+- chartAt
+- concat
+- indexOf
+- lastIndexOf
+- match
+- slice
+- split
+- replace
+- toUpperCase
+- toLowerCase
+- firstUpper
+- firstUpperAll
+- toSnackCase
+- toKebabCase
+- toPascalCase
+- toCamelCase
+- contains
+- startsWith
+- endsWith
+- slug
+- template
+- length
+- repeat
+- isString
+- isEmpty
+- fill
+- fillEnd
+- limit
+
+### Costume macro
+
+costume macro string;
+
+```php
+Str::macro('prefix', fn($text, $prefix) => $prefix.$test);
+
+echo Str::prefix('cool', 'its '); // its cool
+```
+
+### String class
+
+use chain string class.
+
+```php
+$string = new Text('I Love rust');
+
+echo $string->replace('rust', 'php')->lower()->slug();
+// i-love-php
+
+echo $string->length(); // 10
+echo $string->isEmpty(); // false
+```
+
+### String Regex
+
+```php
+Str::is('some@email.com', Regex::EMAIL); // true
+```
+
+avlilable regex
+- email
+- user
+- plain_text
+- slug
+- html_tag
+- js_inline
+- password_complex
+- password_moderate
+- date_yyyymmdd
+- date_ddmmyyyy
+- date_ddmmmyyyy
+- ip4
+- ip6
+- ip4_6
+- url
+
+[🔝 Back to contents](#Feature)
