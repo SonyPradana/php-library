@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace System\Support\Facedes;
 
-use System\Support\Facedes\Facede;
-
 /**
  *  @method static \System\Database\MyPDO instance()
  */
