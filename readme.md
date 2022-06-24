@@ -26,7 +26,7 @@ of cource we are support CRUD data base, this a sample
 
 ### Select data 
 ```php
-DB::from('table_name')
+DB::table('table_name')
   ->select(['column_1'])
   ->equal('column_2', 'fast_mvc')
   ->order("column_1", MyQuery::ORDER_ASC)
@@ -43,7 +43,7 @@ SELECT `column_1` FROM `table_name` WHERE (`column_2` = 'fast_mvc') ORDER BY `ta
 
 ### Update data 
 ```php
-DB::from('table_name')
+DB::table('table_name')
   ->update()
   ->values([
     'column_1' => 'simple_mvc',
@@ -64,7 +64,7 @@ UPDATE `table_name` SET `column_1` = 'simple_mvc', `column_2` = 'fast_mvc', 'col
 ### Insert and Delete
 ```php
 // insert
-DB::from('table_name')
+DB::table('table_name')
   ->insert()
   ->values([
     'column_1'  => '',
@@ -73,8 +73,9 @@ DB::from('table_name')
     ])
   ->execute()
 ;
+
 // delete
-DB::from('table_name')
+DB::table('table_name')
   ->delete()
   ->equal('column_3', 'slow_mvc')
   ->execute()
@@ -85,7 +86,7 @@ its supported cancel transation if you needed
 use System\Support\Facedes;
 
 PDO::transaction(function() {
-    DB::from('table_name')
+    DB::table('table_name')
         ->insert()
         ->value('age', 22)
         ->execute()
@@ -213,34 +214,34 @@ Str::match('i love php', '/love/'); // love
 // ...
 // and many more
 ```
-- chartAt
-- concat
-- indexOf
-- lastIndexOf
-- match
-- slice
-- split
-- replace
-- toUpperCase
-- toLowerCase
-- firstUpper
-- firstUpperAll
-- toSnackCase
-- toKebabCase
-- toPascalCase
-- toCamelCase
-- contains
-- startsWith
-- endsWith
-- slug
-- template
-- length
-- repeat
-- isString
-- isEmpty
-- fill
-- fillEnd
-- limit
+- `chartAt`
+- `concat`
+- `indexOf`
+- `lastIndexOf`
+- `match`
+- `slice`
+- `split`
+- `replace`
+- `toUpperCase`
+- `toLowerCase`
+- `firstUpper`
+- `firstUpperAll`
+- `toSnackCase`
+- `toKebabCase`
+- `toPascalCase`
+- `toCamelCase`
+- `contains`
+- `startsWith`
+- `endsWith`
+- `slug`
+- `template`
+- `length`
+- `repeat`
+- `isString`
+- `isEmpty`
+- `fill`
+- `fillEnd`
+- `limit`
 
 ### Costume macro
 
@@ -273,20 +274,20 @@ Str::is('some@email.com', Regex::EMAIL); // true
 ```
 
 avlilable regex
-- email
-- user
-- plain_text
-- slug
-- html_tag
-- js_inline
-- password_complex
-- password_moderate
-- date_yyyymmdd
-- date_ddmmyyyy
-- date_ddmmmyyyy
-- ip4
-- ip6
-- ip4_6
-- url
+- `email`
+- `user`
+- `plain_text`
+- `slug`
+- `html_tag`
+- `js_inline`
+- `password_complex`
+- `password_moderate`
+- `date_yyyymmdd`
+- `date_ddmmyyyy`
+- `date_ddmmmyyyy`
+- `ip4`
+- `ip6`
+- `ip4_6`
+- `url`
 
 [🔝 Back to contents](#Feature)
