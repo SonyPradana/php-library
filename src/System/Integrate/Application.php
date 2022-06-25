@@ -139,7 +139,18 @@ final class Application extends Container
      */
     public function __construct(string $base_path)
     {
-        parent::__construct();
+        $source = $this->source([], false, __DIR__);
+        $proxy  = $this->proxy(
+            $source,
+            true,
+
+            null,
+            Application::class,
+
+            null,
+            Application::class
+        );
+        parent::__construct($source, $proxy);
 
         // base binding
         static::$app = $this;
@@ -671,7 +682,7 @@ final class Application extends Container
                 continue;
             }
 
-            $this->call([$provider, 'register']);
+            $this->call([$provider, 'register'], ['app' => $this]);
 
             $this->looded_providers[] = $provider;
         }
@@ -700,19 +711,18 @@ final class Application extends Container
      */
     public function register($provider)
     {
-        $provider_class_name = $provider;
-        $provider            = new $provider($this);
+        $this->set($provider, fn () => new $provider($this));
 
-        $provider->register();
-        $this->looded_providers[] = $provider_class_name;
+        $this->call([$provider, 'register'], ['app' => $this]);
+        $this->looded_providers[] = $provider;
 
-        if ($this->isBooted) {
-            $provider->boot();
-            $this->booted_providers[] = $provider_class_name;
+        if (!$this->isBooted) {
+            $this->call([$provider, 'boot'], ['app' => $this]);
+            $this->booted_providers[] = $provider;
         }
 
-        $this->providers[] = $provider_class_name;
+        $this->providers[] = $this->get($provider);
 
-        return $provider;
+        return $this->get($provider);
     }
 }
