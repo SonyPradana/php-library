@@ -716,7 +716,7 @@ final class Application extends Container
         $this->call([$provider, 'register'], ['app' => $this]);
         $this->looded_providers[] = $provider;
 
-        if (!$this->isBooted) {
+        if ($this->isBooted) {
             $this->call([$provider, 'boot'], ['app' => $this]);
             $this->booted_providers[] = $provider;
         }
