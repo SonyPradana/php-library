@@ -11,6 +11,7 @@
     ],
     "require": {
         "php": "^7.4 || ^8.0",
+        "ext-mbstring": "*",
         "php-di/php-di": "^6.4"
     },
     "require-dev": {
