@@ -92,7 +92,7 @@ final class Str
      */
     public static function chartAt(string $text, int $index)
     {
-        return substr($text, $index, 1);
+        return mb_substr($text, $index, 1);
     }
 
     /**
@@ -125,7 +125,7 @@ final class Str
      */
     public static function indexOf(string $text, string $find)
     {
-        return strpos($text, $find, 1);
+        return mb_strpos($text, $find, 1);
     }
 
     /**
@@ -138,7 +138,7 @@ final class Str
      */
     public static function lastIndexOf(string $text, string $find)
     {
-        return strpos($text, $find, -1);
+        return mb_strpos($text, $find, -1);
     }
 
     /**
@@ -152,7 +152,7 @@ final class Str
     public static function match(string $text, string $pattern)
     {
         $matches    = [];
-        $has_result = preg_match($pattern, $text, $matches);
+        $has_result = \preg_match($pattern, $text, $matches);
 
         if (1 === $has_result) {
             return $matches;
@@ -172,7 +172,7 @@ final class Str
      */
     public static function replace(string $original, $find, $replace)
     {
-        return str_replace($find, $replace, $original);
+        return \str_replace($find, $replace, $original);
     }
 
     /**
@@ -185,7 +185,7 @@ final class Str
      */
     public static function search(string $text, string $find)
     {
-        return strpos($text, $find);
+        return mb_strpos($text, $find);
     }
 
     /**
@@ -201,7 +201,7 @@ final class Str
     {
         $text_length = $length ?? self::length($text);
 
-        return substr($text, $start, $text_length);
+        return mb_substr($text, $start, $text_length);
     }
 
     /**
@@ -229,7 +229,7 @@ final class Str
      */
     public static function toLowerCase(string $text)
     {
-        return strtolower($text);
+        return mb_strtolower($text);
     }
 
     /**
@@ -241,7 +241,7 @@ final class Str
      */
     public static function toUpperCase(string $text)
     {
-        return strtoupper($text);
+        return mb_strtoupper($text);
     }
 
     // additional ------------------------------
@@ -279,7 +279,7 @@ final class Str
      */
     public static function toSnackCase(string $text)
     {
-        return str_replace([' ', '-', '_', '+'], '_', $text);
+        return \str_replace([' ', '-', '_', '+'], '_', $text);
     }
 
     /**
@@ -291,7 +291,7 @@ final class Str
      */
     public static function toKebabCase(string $text)
     {
-        return str_replace([' ', '-', '_', '+'], '-', $text);
+        return \str_replace([' ', '-', '_', '+'], '-', $text);
     }
 
     /**
@@ -303,7 +303,7 @@ final class Str
      */
     public static function toPascalCase(string $text)
     {
-        $space_case  = str_replace(['-', '_', '+'], ' ', $text);
+        $space_case  = \str_replace(['-', '_', '+'], ' ', $text);
         $first_upper = static::firstUpperAll($space_case);
 
         return str_replace(' ', '', $first_upper);
@@ -318,14 +318,14 @@ final class Str
      */
     public static function toCamelCase(string $text)
     {
-        $space_case  = str_replace(['-', '_', '+'], ' ', $text);
+        $space_case  = \str_replace(['-', '_', '+'], ' ', $text);
         $arr_text    = explode(' ', $space_case);
         $result      = [];
         $first_text  = true;
 
         foreach ($arr_text as $text) {
             if ($first_text) {
-                $result[]   = strtolower($text);
+                $result[]   = mb_strtolower($text);
                 $first_text = false;
                 continue;
             }
@@ -363,7 +363,7 @@ final class Str
         $text = \preg_replace('~-+~', '-', $text);
 
         // lowercase
-        $text = \strtolower($text);
+        $text = mb_strtolower($text);
 
         if (empty($text)) {
             throw new NoReturn(__FUNCTION__, $original);
@@ -492,7 +492,7 @@ final class Str
 
         $end = $start + $mask_length;
         $start--;
-        $arr_text = preg_split('//', $text, -1, PREG_SPLIT_NO_EMPTY);
+        $arr_text = \preg_split('//', $text, -1, PREG_SPLIT_NO_EMPTY);
         $new      = new Collection($arr_text);
         $new_text = $new->map(function ($string, $index) use ($mask, $start, $end) {
             if ($index > $start && $index < $end) {
@@ -539,7 +539,7 @@ final class Str
      */
     public static function isMatch(string $text, string $pattern)
     {
-        $has_result = preg_match($pattern, $text);
+        $has_result = \preg_match($pattern, $text);
 
         if (1 === $has_result) {
             return true;
@@ -576,7 +576,7 @@ final class Str
      */
     public static function contains(string $text, string $find)
     {
-        return '' === $find || false !== strpos($text, $find);
+        return '' === $find || false !== mb_strpos($text, $find);
     }
 
     /**
