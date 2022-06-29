@@ -5,11 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.9.1] - 2022-06-30
+### Changed
+- Rename NameSpace `System\Support\Facedes` to `System\Support\Facades`.
+- Rename class from `Facede::class` to `Facade::class`.
+- Changed `mb_string` instance of string function in `Str::class`.
+- Changed doc block `MyCRUD::SetID()` return as `static` instance of `self`.
 
 ## [0.9.0] - 2022-06-24
 ### Added
-- Added `Facede::class` abstract class.
-- Added `System\Support\Facedes\DB::class` and `System\Support\Facedes\PDO::class`
+- Added `Facade::class` abstract class.
+- Added `System\Support\Facades\DB::class` and `System\Support\Facades\PDO::class`
 - Added `MyPDO::instance`.
 - Added `CrossJoin::class` query builder for join table query.
 
