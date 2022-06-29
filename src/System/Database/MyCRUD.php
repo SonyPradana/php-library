@@ -42,7 +42,7 @@ abstract class MyCRUD
     /**
      * @param string|int $val
      *
-     * @return self
+     * @return static
      */
     public function setID($val)
     {
