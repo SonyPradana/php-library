@@ -11,11 +11,11 @@ final class FacedeTest extends TestCase
         $app = new Application(__DIR__);
         $app->set(System\Time\Now::class, fn () => new System\Time\Now());
 
-        require_once __DIR__ . DIRECTORY_SEPARATOR . 'Sample' . DIRECTORY_SEPARATOR . 'FacedesTestClass.php';
-        (new FacedesTestClass($app));
+        require_once __DIR__ . DIRECTORY_SEPARATOR . 'Sample' . DIRECTORY_SEPARATOR . 'FacadesTestClass.php';
+        (new FacadesTestClass($app));
 
-        FacedesTestClass::year(2023);
-        $year = FacedesTestClass::isNextYear();
+        FacadesTestClass::year(2023);
+        $year = FacadesTestClass::isNextYear();
 
         $this->assertTrue($year);
     }

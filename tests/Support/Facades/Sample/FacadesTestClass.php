@@ -1,12 +1,12 @@
 <?php
 
-use System\Support\Facedes\Facede;
+use System\Support\Facades\Facade;
 
 /**
  * @method static \System\Time\Now year(int $year)
  * @method static bool isNextYear()
  */
-final class FacedesTestClass extends Facede
+final class FacadesTestClass extends Facade
 {
     protected static function getAccessor()
     {

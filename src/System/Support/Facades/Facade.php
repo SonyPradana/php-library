@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace System\Support\Facedes;
+namespace System\Support\Facades;
 
 use System\Integrate\Application;
 
-abstract class Facede
+abstract class Facade
 {
     /**
      * Application accessor.
