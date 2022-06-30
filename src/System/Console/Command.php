@@ -141,7 +141,7 @@ class Command
      *
      * @return void
      */
-    public function println()
+    public function main()
     {
         echo $this->textGreen('Command') . "\n";
     }

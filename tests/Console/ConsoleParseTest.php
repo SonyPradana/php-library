@@ -69,4 +69,16 @@ class ConsoleParseTest extends TestCase
     }
 
     // TODO: it_can_parse_normal_command_with_groub_param
+
+    /** @test */
+    public function itCanRunMainMethod()
+    {
+        $console = new Command(['test', '--say', 'hay']);
+
+        ob_start();
+        $console->main();
+        $out = ob_get_clean();
+
+        $this->assertEquals("\e[32mCommand\e[0m\n", $out);
+    }
 }
