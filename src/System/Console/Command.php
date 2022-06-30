@@ -37,9 +37,12 @@ class Command
     /**
      * Parse commandline.
      *
-     * @param array<int, string> $argv
+     * @param array<int, string>                  $argv
+     * @param array<string, string|bool|int|null> $default_option
+     *
+     * @return void
      */
-    public function __construct(array $argv)
+    public function __construct(array $argv, $default_option = [])
     {
         // catch input argument from command line
         array_shift($argv); // remove index 0
@@ -48,8 +51,10 @@ class Command
         $this->OPTION     = $argv;
 
         // parse the option
-        // TODO: add default option
-        $this->option_mapper = $this->option_mapper($argv);
+        $this->option_mapper = $default_option;
+        foreach ($this->option_mapper($argv) as $key => $value) {
+            $this->option_mapper[$key] = $value;
+        }
     }
 
     /**

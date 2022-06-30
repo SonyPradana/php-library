@@ -10,7 +10,7 @@ class ConsoleParseTest extends TestCase
     {
         $command = 'php cli test --nick=jhoni -t';
         $argv    = explode(' ', $command);
-        $cli     = new Command($argv);
+        $cli     = new Command($argv, ['default' => true]);
 
         // parse name
         $this->assertEquals(
@@ -26,6 +26,9 @@ class ConsoleParseTest extends TestCase
             'valid parse from long param'
         );
         $this->assertNull($cli->whois, 'long param not valid');
+
+        // parse null but have default
+        $this->assertTrue($cli->default);
 
         // parse short param
         $this->assertTrue($cli->t, 'valid paser from short param');
