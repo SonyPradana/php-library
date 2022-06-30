@@ -6,20 +6,46 @@ class Command
 {
     use TraitCommand;
 
-    // inheritance
+    /**
+     * Commandline input.
+     *
+     * @var string|array<int, string>
+     */
     protected $CMD;
+
+    /**
+     * Commandline input.
+     *
+     * @var array<int, string>
+     */
     protected $OPTION;
+
+    /**
+     * Base dir.
+     *
+     * @var string
+     */
     protected $BASE_DIR;
-    /** @var string[] Option object mapper */
+
+    /**
+     * Option object mapper.
+     *
+     * @var array<string, string|bool|int|null>
+     */
     protected $option_mapper;
 
+    /**
+     * Parse commandline.
+     *
+     * @param array<int, string> $argv
+     */
     public function __construct(array $argv)
     {
         // catch input argument from command line
-    array_shift($argv); // remove index 0
+        array_shift($argv); // remove index 0
 
-    $this->CMD        = array_shift($argv) ?? '';
-        $this->OPTION = $argv;
+        $this->CMD        = array_shift($argv) ?? '';
+        $this->OPTION     = $argv;
 
         // parse the option
         // TODO: add default option
@@ -29,7 +55,9 @@ class Command
     /**
      * parse option to readable array option.
      *
-     * @param array $argv Option to parse
+     * @param array<int, string|bool|int|null> $argv Option to parse
+     *
+     * @return array<string, string|bool|int|null>
      */
     private function option_mapper(array $argv): array
     {
@@ -65,11 +93,25 @@ class Command
         return substr($command, 0, 1) == '-' || substr($command, 0, 2) == '--';
     }
 
+    /**
+     * Get parse commandline parameters (name, value).
+     *
+     * @param string|null $default Default if parameter not found
+     *
+     * @return string|bool|int|null
+     */
     protected function option(string $name, $default = null)
     {
         return $this->option_mapper[$name] ?? $default;
     }
 
+    /**
+     * Get parse commandline parameters (name, value).
+     *
+     * @param string $name
+     *
+     * @return string|bool|int|null
+     */
     public function __get($name)
     {
         return $this->option($name);
@@ -91,6 +133,8 @@ class Command
 
     /**
      * Default class to run some code.
+     *
+     * @return void
      */
     public function println()
     {
@@ -98,14 +142,13 @@ class Command
     }
 
     /**
-     * @return string|array
-     *                      Text or array of text to be echo
+     * @return string|array<string, array<int, string>> Text or array of text to be echo<
      */
     public function printHelp()
     {
         return [
-     'option'   => [],
-     'argument' => [],
-   ];
+            'option'   => [],
+            'argument' => [],
+        ];
     }
 }

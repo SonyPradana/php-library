@@ -14,17 +14,17 @@ class ConsoleParseTest extends TestCase
 
         // parse name
         $this->assertEquals(
-      'test',
-      $cli->name,
-      'valid parse name'
-    );
+            'test',
+            $cli->name,
+            'valid parse name'
+        );
 
         // parse long param
         $this->assertEquals(
-      'jhoni',
-      $cli->nick,
-      'valid parse from long param'
-    );
+            'jhoni',
+            $cli->nick,
+            'valid parse from long param'
+        );
         $this->assertNull($cli->whois, 'long param not valid');
 
         // parse short param
@@ -41,17 +41,17 @@ class ConsoleParseTest extends TestCase
 
         // parse name
         $this->assertEquals(
-      'test',
-      $cli->name,
-      'valid parse name: test'
-    );
+            'test',
+            $cli->name,
+            'valid parse name: test'
+        );
 
         // parse short param
         $this->assertEquals(
-      'jhoni',
-      $cli->n,
-      'valid parse from short param with sparte space: --n'
-    );
+            'jhoni',
+            $cli->n,
+            'valid parse from short param with sparte space: --n'
+        );
 
         // parse short param
         $this->assertTrue($cli->t, 'valid paser from short param: -t');
@@ -59,10 +59,10 @@ class ConsoleParseTest extends TestCase
 
         // parse long param
         $this->assertEquals(
-      'children',
-      $cli->whois,
-      'valid parse from long param: --who-is'
-    );
+            'children',
+            $cli->whois,
+            'valid parse from long param: --who-is'
+        );
     }
 
     // TODO: it_can_parse_normal_command_with_groub_param

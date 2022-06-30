@@ -4,14 +4,24 @@ namespace System\Console;
 
 trait TraitCommand
 {
-    protected function rules(array $rule, string $text, bool $reset = true): string
+    /**
+     * Run commandline text rule.
+     *
+     * @param array<int, string> $rule
+     */
+    protected function rules(array $rule, string $text, bool $reset_rule = true): string
     {
         $toString = implode(';', $rule);
         $string   = "\e[$toString" . "m$text";
 
-        return $reset ? $string . "\e[0m" : $string;
+        return $reset_rule ? $string . "\e[0m" : $string;
     }
 
+    /**
+     * Echo array of string.
+     *
+     * @param array<int, string> $string
+     */
     protected function prints(array $string): void
     {
         foreach ($string as $print) {
@@ -21,38 +31,29 @@ trait TraitCommand
 
     protected function print_n(int $count = 1): void
     {
-        for ($i = 0; $i < $count; $i++) {
-            echo "\n";
-        }
+        echo str_repeat("\n", $count);
     }
 
     protected function print_t(int $count = 1): void
     {
-        for ($i = 0; $i < $count; $i++) {
-            echo "\t";
-        }
+        echo str_repeat("\t", $count);
     }
 
     protected function newLine(int $count = 1): string
     {
-        $res = '';
-        for ($i = 0; $i < $count; $i++) {
-            $res .= "\n";
-        }
-
-        return $res;
+        return str_repeat("\n", $count);
     }
 
     protected function tabs(int $count = 1): string
     {
-        $res = '';
-        for ($i = 0; $i < $count; $i++) {
-            $res .= "\t";
-        }
-
-        return $res;
+        return str_repeat("\t", $count);
     }
 
+    /**
+     * Echo clear format commandline.
+     *
+     * @return void
+     */
     protected function clear_line()
     {
         echo "\033[1K";
