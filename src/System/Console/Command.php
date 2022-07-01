@@ -124,10 +124,10 @@ class Command
 
     // asset
     public const TEXT_DIM    = 2;
-    public const TEXT_RED    = 32;
-    public const TEXT_GREEN  = 33;
-    public const TEXT_YELLOW = 34;
-    public const TEXT_BLUE   = 35;
+    public const TEXT_RED    = 31;
+    public const TEXT_GREEN  = 32;
+    public const TEXT_YELLOW = 33;
+    public const TEXT_BLUE   = 34;
     public const TEXT_WHITE  = 97;
     public const BG_RED      = 41;
     public const BG_GREEN    = 42;
