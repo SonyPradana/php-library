@@ -107,7 +107,7 @@ trait TraitCommand
     }
 
     /** code (bash): 35 */
-    protected function textMageta(string $text): string
+    protected function textMagenta(string $text): string
     {
         return $this->rule(Command::TEXT_MAGENTA, $text);
     }
@@ -215,7 +215,7 @@ trait TraitCommand
     }
 
     /** code (bash): 100 */
-    protected function bgDrakGray(string $text): string
+    protected function bgDarkGray(string $text): string
     {
         return $this->rule(Command::BG_DARK_GRAY, $text);
     }
@@ -279,7 +279,7 @@ trait TraitCommand
     }
 
     /**
-     * Just in time bachgroud color.
+     * Just in time background color.
      *
      * @param int $color Color code 0-256
      */
