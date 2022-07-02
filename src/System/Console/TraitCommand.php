@@ -8,12 +8,14 @@ trait TraitCommand
      * Run commandline text rule.
      *
      * @param array<int, string|int> $rule
+     * @param array<int, string|int> $reset_rule
      */
-    protected function rules(array $rule, string $text, bool $reset_rule = true): string
+    protected function rules(array $rule, string $text, bool $reset = true, array $reset_rule = [Command::RESET]): string
     {
-        $string_rules = implode(';', $rule);
+        $string_rules       = implode(';', $rule);
+        $string_reset_rules = implode(';', $reset_rule);
 
-        return $this->rule($string_rules, $text, $reset_rule);
+        return $this->rule($string_rules, $text, $reset, $string_reset_rules);
     }
 
     /**
@@ -22,15 +24,17 @@ trait TraitCommand
      * @param int|string $rule
      * @param string     $text
      * @param bool       $reset
+     * @param int|string $reset_rule
      *
      * @return string
      */
-    protected function rule($rule, $text, $reset = true)
+    protected function rule($rule, $text, $reset = true, $reset_rule = Command::RESET)
     {
-        $rule = "\e[" . $rule . 'm' . $text;
+        $rule       = "\e[" . $rule . 'm' . $text;
+        $reset_rule = "\e[" . $reset_rule . 'm';
 
         return $reset
-            ? $rule . "\e[0m"
+            ? $rule . $reset_rule
             : $rule;
     }
 
@@ -67,13 +71,23 @@ trait TraitCommand
     }
 
     /**
-     * Echo clear format commandline.
+     * Clear from the cursor position to the beginning of the line.
+     *
+     * @return void
+     */
+    protected function clear_cursor()
+    {
+        echo "\e[1K";
+    }
+
+    /**
+     * Clear everything on the line.
      *
      * @return void
      */
     protected function clear_line()
     {
-        echo "\e[1K";
+        echo "\e[2K";
     }
 
     /** code (bash): 31 */
@@ -294,26 +308,26 @@ trait TraitCommand
 
     protected function textBold(string $text): string
     {
-        return "\e[1m" . $text . "\e[21m";
+        return $this->rule(Command::BOLD, $text, true, Command::RESET_BOLD);
     }
 
     protected function textUnderline(string $text): string
     {
-        return "\e[4m" . $text . "\e[24m";
+        return $this->rule(Command::UNDERLINE, $text, true, Command::RESET_UNDERLINE);
     }
 
     protected function textBlink(string $text): string
     {
-        return "\e[5m" . $text . "\e[25m";
+        return $this->rule(Command::BLINK, $text, true, Command::RESET_BLINK);
     }
 
     protected function textReverse(string $text): string
     {
-        return "\e[7m" . $text . "\e[27m";
+        return $this->rule(Command::REVERSE, $text, true, Command::RESET_REVERSE);
     }
 
     protected function textHidden(string $text): string
     {
-        return "\e[8m" . $text . "\e[28m";
+        return $this->rule(Command::HIDDEN, $text, true, Command::RESET_HIDDEN);
     }
 }
