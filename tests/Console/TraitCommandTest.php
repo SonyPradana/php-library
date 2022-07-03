@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use System\Console\Command;
+use System\Console\TraitCommand;
 
 final class TraitCommandTest extends TestCase
 {
@@ -13,6 +14,8 @@ final class TraitCommandTest extends TestCase
     protected function setUp(): void
     {
         $this->command = new class(['cli', '--test']) extends Command {
+            use TraitCommand;
+
             public function __call($name, $arguments)
             {
                 if ($name === 'echoTextRed') {

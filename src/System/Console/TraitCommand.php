@@ -10,7 +10,7 @@ trait TraitCommand
      * @param array<int, string|int> $rule
      * @param array<int, string|int> $reset_rule
      */
-    protected function rules(array $rule, string $text, bool $reset = true, array $reset_rule = [Command::RESET]): string
+    protected function rules(array $rule, string $text, bool $reset = true, array $reset_rule = [Decorate::RESET]): string
     {
         $string_rules       = implode(';', $rule);
         $string_reset_rules = implode(';', $reset_rule);
@@ -28,7 +28,7 @@ trait TraitCommand
      *
      * @return string
      */
-    protected function rule($rule, $text, $reset = true, $reset_rule = Command::RESET)
+    protected function rule($rule, $text, $reset = true, $reset_rule = Decorate::RESET)
     {
         $rule       = "\e[" . $rule . 'm' . $text;
         $reset_rule = "\e[" . $reset_rule . 'm';
@@ -93,187 +93,187 @@ trait TraitCommand
     /** code (bash): 31 */
     protected function textRed(string $text): string
     {
-        return $this->rule(Command::TEXT_RED, $text);
+        return $this->rule(Decorate::TEXT_RED, $text);
     }
 
     /** code (bash): 33 */
     protected function textYellow(string $text): string
     {
-        return $this->rule(Command::TEXT_YELLOW, $text);
+        return $this->rule(Decorate::TEXT_YELLOW, $text);
     }
 
     /** code (bash): 32 */
     protected function textGreen(string $text): string
     {
-        return $this->rule(Command::TEXT_GREEN, $text);
+        return $this->rule(Decorate::TEXT_GREEN, $text);
     }
 
     /** code (bash): 34 */
     protected function textBlue(string $text): string
     {
-        return $this->rule(Command::TEXT_BLUE, $text);
+        return $this->rule(Decorate::TEXT_BLUE, $text);
     }
 
     /** code (bash): 2 */
     protected function textDim(string $text): string
     {
-        return $this->rule(Command::TEXT_DIM, $text);
+        return $this->rule(Decorate::TEXT_DIM, $text);
     }
 
     /** code (bash): 35 */
     protected function textMagenta(string $text): string
     {
-        return $this->rule(Command::TEXT_MAGENTA, $text);
+        return $this->rule(Decorate::TEXT_MAGENTA, $text);
     }
 
     /** code (bash): 36 */
     protected function textCyan(string $text): string
     {
-        return $this->rule(Command::TEXT_CYAN, $text);
+        return $this->rule(Decorate::TEXT_CYAN, $text);
     }
 
     /** code (bash): 37 */
     protected function textLightGray(string $text): string
     {
-        return $this->rule(Command::TEXT_LIGHT_GRAY, $text);
+        return $this->rule(Decorate::TEXT_LIGHT_GRAY, $text);
     }
 
     /** code (bash): 90 */
     protected function textDarkGray(string $text): string
     {
-        return $this->rule(Command::TEXT_DARK_GRAY, $text);
+        return $this->rule(Decorate::TEXT_DARK_GRAY, $text);
     }
 
     /** code (bash): 91 */
     protected function textLightRed(string $text): string
     {
-        return $this->rule(Command::TEXT_LIGHT_RED, $text);
+        return $this->rule(Decorate::TEXT_LIGHT_RED, $text);
     }
 
     /** code (bash): 92 */
     protected function textLightGreen(string $text): string
     {
-        return $this->rule(Command::TEXT_LIGHT_GREEN, $text);
+        return $this->rule(Decorate::TEXT_LIGHT_GREEN, $text);
     }
 
     /** code (bash): 93 */
     protected function textLightYellow(string $text): string
     {
-        return $this->rule(Command::TEXT_LIGHT_YELLOW, $text);
+        return $this->rule(Decorate::TEXT_LIGHT_YELLOW, $text);
     }
 
     /** code (bash): 94 */
     protected function textLightBlue(string $text): string
     {
-        return $this->rule(Command::TEXT_LIGHT_BLUE, $text);
+        return $this->rule(Decorate::TEXT_LIGHT_BLUE, $text);
     }
 
     /** code (bash): 95 */
     protected function textLightMagenta(string $text): string
     {
-        return $this->rule(Command::TEXT_LIGHT_MAGENTA, $text);
+        return $this->rule(Decorate::TEXT_LIGHT_MAGENTA, $text);
     }
 
     /** code (bash): 96 */
     protected function textLightCyan(string $text): string
     {
-        return $this->rule(Command::TEXT_LIGHT_CYAN, $text);
+        return $this->rule(Decorate::TEXT_LIGHT_CYAN, $text);
     }
 
     /** code (bash): 97 */
     protected function textWhite(string $text): string
     {
-        return $this->rule(Command::TEXT_WHITE, $text);
+        return $this->rule(Decorate::TEXT_WHITE, $text);
     }
 
     /** code (bash): 41 */
     protected function bgRed(string $text): string
     {
-        return $this->rule(Command::BG_RED, $text);
+        return $this->rule(Decorate::BG_RED, $text);
     }
 
     /** code (bash): 43 */
     protected function bgYellow(string $text): string
     {
-        return $this->rule(Command::BG_YELLOW, $text);
+        return $this->rule(Decorate::BG_YELLOW, $text);
     }
 
     /** code (bash): 42 */
     protected function bgGreen(string $text): string
     {
-        return $this->rule(Command::BG_GREEN, $text);
+        return $this->rule(Decorate::BG_GREEN, $text);
     }
 
     /** code (bash): 44 */
     protected function bgBlue(string $text): string
     {
-        return $this->rule(Command::BG_BLUE, $text);
+        return $this->rule(Decorate::BG_BLUE, $text);
     }
 
     /** code (bash): 45 */
     protected function bgMagenta(string $text): string
     {
-        return $this->rule(Command::BG_MAGENTA, $text);
+        return $this->rule(Decorate::BG_MAGENTA, $text);
     }
 
     /** code (bash): 46 */
     protected function bgCyan(string $text): string
     {
-        return $this->rule(Command::BG_CYAN, $text);
+        return $this->rule(Decorate::BG_CYAN, $text);
     }
 
     /** code (bash): 47 */
     protected function bgLightGray(string $text): string
     {
-        return $this->rule(Command::BG_LIGHT_GRAY, $text);
+        return $this->rule(Decorate::BG_LIGHT_GRAY, $text);
     }
 
     /** code (bash): 100 */
     protected function bgDarkGray(string $text): string
     {
-        return $this->rule(Command::BG_DARK_GRAY, $text);
+        return $this->rule(Decorate::BG_DARK_GRAY, $text);
     }
 
     /** code (bash): 101 */
     protected function bgLightRed(string $text): string
     {
-        return $this->rule(Command::BG_LIGHT_RED, $text);
+        return $this->rule(Decorate::BG_LIGHT_RED, $text);
     }
 
     /** code (bash): 102 */
     protected function bgLightGreen(string $text): string
     {
-        return $this->rule(Command::BG_LIGHT_GREEN, $text);
+        return $this->rule(Decorate::BG_LIGHT_GREEN, $text);
     }
 
     /** code (bash): 103 */
     protected function bgLightYellow(string $text): string
     {
-        return $this->rule(Command::BG_LIGHT_YELLOW, $text);
+        return $this->rule(Decorate::BG_LIGHT_YELLOW, $text);
     }
 
     /** code (bash): 104 */
     protected function bgLightBlue(string $text): string
     {
-        return $this->rule(Command::BG_LIGHT_BLUE, $text);
+        return $this->rule(Decorate::BG_LIGHT_BLUE, $text);
     }
 
     /** code (bash): 105 */
     protected function bgLightMagenta(string $text): string
     {
-        return $this->rule(Command::BG_LIGHT_MAGENTA, $text);
+        return $this->rule(Decorate::BG_LIGHT_MAGENTA, $text);
     }
 
     /** code (bash): 106 */
     protected function bgLightCyan(string $text): string
     {
-        return $this->rule(Command::BG_LIGHT_CYAN, $text);
+        return $this->rule(Decorate::BG_LIGHT_CYAN, $text);
     }
 
     /** code (bash): 107 */
     protected function bgWhite(string $text): string
     {
-        return $this->rule(Command::BG_WHITE, $text);
+        return $this->rule(Decorate::BG_WHITE, $text);
     }
 
     // JIT color
@@ -308,26 +308,26 @@ trait TraitCommand
 
     protected function textBold(string $text): string
     {
-        return $this->rule(Command::BOLD, $text, true, Command::RESET_BOLD);
+        return $this->rule(Decorate::BOLD, $text, true, Decorate::RESET_BOLD);
     }
 
     protected function textUnderline(string $text): string
     {
-        return $this->rule(Command::UNDERLINE, $text, true, Command::RESET_UNDERLINE);
+        return $this->rule(Decorate::UNDERLINE, $text, true, Decorate::RESET_UNDERLINE);
     }
 
     protected function textBlink(string $text): string
     {
-        return $this->rule(Command::BLINK, $text, true, Command::RESET_BLINK);
+        return $this->rule(Decorate::BLINK, $text, true, Decorate::RESET_BLINK);
     }
 
     protected function textReverse(string $text): string
     {
-        return $this->rule(Command::REVERSE, $text, true, Command::RESET_REVERSE);
+        return $this->rule(Decorate::REVERSE, $text, true, Decorate::RESET_REVERSE);
     }
 
     protected function textHidden(string $text): string
     {
-        return $this->rule(Command::HIDDEN, $text, true, Command::RESET_HIDDEN);
+        return $this->rule(Decorate::HIDDEN, $text, true, Decorate::RESET_HIDDEN);
     }
 }
