@@ -266,4 +266,32 @@ class Colors
 
         return self::$hex_colors_map[$hex_code];
     }
+
+    /**
+     * Convert hex color to teminal color raw (text).
+     *
+     * @param string $hex_code Hex code (start with #)
+     *
+     * @return string Terminal color
+     */
+    public static function hexRawText(string $hex_code): string
+    {
+        $color = self::hex($hex_code);
+
+        return '38;5;' . $color;
+    }
+
+    /**
+     * Convert hex color to teminal color raw (background).
+     *
+     * @param string $hex_code Hex code (start with #)
+     *
+     * @return string Terminal color
+     */
+    public static function hexRawBg(string $hex_code): string
+    {
+        $color = self::hex($hex_code);
+
+        return '48;5;' . $color;
+    }
 }
