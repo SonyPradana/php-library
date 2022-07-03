@@ -250,12 +250,18 @@ class Colors
     ];
 
     /**
-     * Convert hex color ro teminal color.
+     * Convert hex color to teminal color.
+     *
+     * @param string $hex_code Hex code (start with #)
+     *
+     * @return int Terminal color code
      */
     public static function hex(string $hex_code): int
     {
+        $hex_code = \strtolower($hex_code);
+
         if (!isset(self::$hex_colors_map[$hex_code])) {
-            throw new \InvalidArgumentException('Hex code not found');
+            throw new \InvalidArgumentException('Hex code not found.');
         }
 
         return self::$hex_colors_map[$hex_code];
