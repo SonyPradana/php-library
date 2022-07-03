@@ -2,9 +2,14 @@
 
 namespace System\Console;
 
+/**
+ * Add costumize terminal style by adding trits:
+ * - TraitCommand (optional).
+ *
+ * @property string $name Get argument name
+ */
 class Command
 {
-    use TraitCommand;
     /**
      * Commandline input.
      *
@@ -128,7 +133,7 @@ class Command
      */
     public function main()
     {
-        echo $this->textGreen('Command') . "\n";
+        // print welcome screen or what ever you want
     }
 
     /**

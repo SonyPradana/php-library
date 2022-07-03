@@ -2,6 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use System\Console\Command;
+use System\Console\TraitCommand;
 
 class ConsoleParseTest extends TestCase
 {
@@ -73,12 +74,19 @@ class ConsoleParseTest extends TestCase
     /** @test */
     public function itCanRunMainMethod()
     {
-        $console = new Command(['test', '--say', 'hay']);
+        $console = new class(['test', '--test', 'Oke']) extends Command {
+            use TraitCommand;
+
+            public function main()
+            {
+                echo $this->textGreen($this->name);
+            }
+        };
 
         ob_start();
         $console->main();
         $out = ob_get_clean();
 
-        $this->assertEquals("\e[32mCommand\e[0m\n", $out);
+        $this->assertEquals("\e[32mOke\e[0m", $out);
     }
 }
