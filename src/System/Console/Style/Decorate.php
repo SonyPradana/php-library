@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Console;
+namespace System\Console\Style;
 
 class Decorate
 {

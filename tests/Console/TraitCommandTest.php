@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use System\Console\Command;
-use System\Console\TraitCommand;
+use System\Console\Traits\CommandTrait;
 
 final class TraitCommandTest extends TestCase
 {
@@ -14,7 +14,7 @@ final class TraitCommandTest extends TestCase
     protected function setUp(): void
     {
         $this->command = new class(['cli', '--test']) extends Command {
-            use TraitCommand;
+            use CommandTrait;
 
             public function __call($name, $arguments)
             {

@@ -1,84 +1,12 @@
 <?php
 
-namespace System\Console;
+namespace System\Console\Traits;
 
-trait TraitCommand
+use System\Console\Style\Decorate;
+
+trait CommandTrait
 {
-    /**
-     * Run commandline text rule.
-     *
-     * @param array<int, string|int> $rule
-     * @param array<int, string|int> $reset_rule
-     */
-    protected function rules(array $rule, string $text, bool $reset = true, array $reset_rule = [Decorate::RESET]): string
-    {
-        $string_rules       = implode(';', $rule);
-        $string_reset_rules = implode(';', $reset_rule);
-
-        return $this->rule($string_rules, $text, $reset, $string_reset_rules);
-    }
-
-    /**
-     * Run color code.
-     *
-     * @param int|string $rule
-     * @param string     $text
-     * @param bool       $reset
-     * @param int|string $reset_rule
-     *
-     * @return string
-     */
-    protected function rule($rule, $text, $reset = true, $reset_rule = Decorate::RESET)
-    {
-        $rule       = "\e[" . $rule . 'm' . $text;
-        $reset_rule = "\e[" . $reset_rule . 'm';
-
-        return $reset
-            ? $rule . $reset_rule
-            : $rule;
-    }
-
-    /**
-     * Echo array of string.
-     *
-     * @param array<int, string> $string
-     */
-    protected function prints(array $string): void
-    {
-        foreach ($string as $print) {
-            echo $print;
-        }
-    }
-
-    protected function print_n(int $count = 1): void
-    {
-        echo str_repeat("\n", $count);
-    }
-
-    protected function print_t(int $count = 1): void
-    {
-        echo str_repeat("\t", $count);
-    }
-
-    protected function newLine(int $count = 1): string
-    {
-        return str_repeat("\n", $count);
-    }
-
-    protected function tabs(int $count = 1): string
-    {
-        return str_repeat("\t", $count);
-    }
-
-    /**
-     * Clear from the cursor position to the beginning of the line.
-     *
-     * @return void
-     */
-    protected function clear_cursor()
-    {
-        echo "\e[1K";
-    }
+    use PrinterTrait;
 
     /**
      * Clear everything on the line.
