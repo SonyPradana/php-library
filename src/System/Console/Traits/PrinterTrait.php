@@ -71,4 +71,14 @@ trait PrinterTrait
     {
         echo "\e[1K";
     }
+
+    /**
+     * Clear everything on the line.
+     *
+     * @return void
+     */
+    protected function clear_line()
+    {
+        echo "\e[2K";
+    }
 }

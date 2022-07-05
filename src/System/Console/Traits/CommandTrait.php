@@ -8,16 +8,6 @@ trait CommandTrait
 {
     use PrinterTrait;
 
-    /**
-     * Clear everything on the line.
-     *
-     * @return void
-     */
-    protected function clear_line()
-    {
-        echo "\e[2K";
-    }
-
     /** code (bash): 31 */
     protected function textRed(string $text): string
     {
