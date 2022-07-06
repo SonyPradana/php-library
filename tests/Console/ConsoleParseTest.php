@@ -89,4 +89,44 @@ class ConsoleParseTest extends TestCase
 
         $this->assertEquals("\e[32mOke\e[0m", $out);
     }
+
+    /** @test */
+    public function itCanParseNormalCommandWithQuote()
+    {
+        $command = 'php cli test --nick="jhoni" -last=\'jhoni\'';
+        $argv    = explode(' ', $command);
+        $cli     = new Command($argv, ['default' => true]);
+
+        $this->assertEquals(
+            'jhoni',
+            $cli->nick,
+            'valid parse from long param with double quote'
+        );
+
+        $this->assertEquals(
+            'jhoni',
+            $cli->nick,
+            'valid parse from long param with quote'
+        );
+    }
+
+    /** @test */
+    public function itCanParseNormalCommandWithSpaceAndQuote()
+    {
+        $command = 'php cli test --n "jhoni" --l \'jhoni\'';
+        $argv    = explode(' ', $command);
+        $cli     = new Command($argv);
+
+        // parse short param
+        $this->assertEquals(
+            'jhoni',
+            $cli->n,
+            'valid parse from short param with sparte space: --n and single quote'
+        );
+        $this->assertEquals(
+            'jhoni',
+            $cli->l,
+            'valid parse from short param with sparte space: --n and double quote'
+        );
+    }
 }
