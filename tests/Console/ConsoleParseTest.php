@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use System\Console\Command;
-use System\Console\TraitCommand;
+use System\Console\Traits\CommandTrait;
 
 class ConsoleParseTest extends TestCase
 {
@@ -75,7 +75,7 @@ class ConsoleParseTest extends TestCase
     public function itCanRunMainMethod()
     {
         $console = new class(['test', '--test', 'Oke']) extends Command {
-            use TraitCommand;
+            use CommandTrait;
 
             public function main()
             {
