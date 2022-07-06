@@ -104,12 +104,18 @@ class Command
         return $options;
     }
 
+    /**
+     * Detect string is command or value.
+     */
     private function isCommmadParam(string $command): bool
     {
         return Str::startsWith($command, '-') || Str::startsWith($command, '--');
     }
 
-    private function removeQuote(string $value)
+    /**
+     * Remove quote single or double.
+     */
+    private function removeQuote(string $value): string
     {
         return Str::match($value, '/(["\'])(.*?)\1/')[2] ?? $value;
     }
