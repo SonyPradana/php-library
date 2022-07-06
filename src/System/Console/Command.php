@@ -2,6 +2,8 @@
 
 namespace System\Console;
 
+use System\Text\Str;
+
 /**
  * Add costumize terminal style by adding trits:
  * - TraitCommand (optional).
@@ -80,17 +82,22 @@ class Command
 
                 // param have value
                 if (isset($key_value[1])) {
-                    $options[$name] = $key_value[1];
+                    $options[$name] = $this->removeQuote($key_value[1]);
                     continue;
                 }
 
-                // search value in next param
-
+                // check value in next param
                 $next_key = $key + 1;
-                $default  = true;
 
-                $next           = $argv[$next_key] ?? $default;
-                $options[$name] = $this->isCommmadParam($next) ? $default : $next;
+                if (!isset($argv[$next_key])) {
+                    $options[$name] = true;
+                    continue;
+                }
+
+                $next           = $argv[$next_key];
+                $options[$name] = $this->isCommmadParam($next)
+                    ? true
+                    : $this->removeQuote($next);
             }
         }
 
@@ -99,7 +106,12 @@ class Command
 
     private function isCommmadParam(string $command): bool
     {
-        return substr($command, 0, 1) == '-' || substr($command, 0, 2) == '--';
+        return Str::startsWith($command, '-') || Str::startsWith($command, '--');
+    }
+
+    private function removeQuote(string $value)
+    {
+        return Str::match($value, '/(["\'])(.*?)\1/')[2] ?? $value;
     }
 
     /**
