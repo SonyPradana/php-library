@@ -55,4 +55,16 @@ class Decorate
     public const RESET_REVERSE   = 27;
     public const RESET_HIDDEN    = 28;
     // more code see https://misc.flogisoft.com/bash/tip_colors_and_formatting
+
+    /**
+     * Get contant from string.
+     *
+     * @param string $name
+     *
+     * @return int
+     */
+    public static function getConst($name)
+    {
+        return constant("self::{$name}");
+    }
 }
