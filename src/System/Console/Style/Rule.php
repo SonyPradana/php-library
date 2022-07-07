@@ -107,14 +107,9 @@ class Rule
      */
     public function __invoke($text)
     {
-        $this->text            = $text;
-        $this->text_color_rule = Decorate::TEXT_DEFAULT;
-        $this->bg_color_rule   = Decorate::BG_DEFAULT;
-        $this->decorate_rules  = [];
-        $this->reset_rules     = [Decorate::RESET];
-        $this->raw_rules       = '';
+        $this->text = $text;
 
-        return $this;
+        return $this->flush();
     }
 
     /**
@@ -167,13 +162,29 @@ class Rule
     }
 
     /**
+     * Flush class.
+     *
+     * @return self
+     */
+    public function flush()
+    {
+        $this->text_color_rule = Decorate::TEXT_DEFAULT;
+        $this->bg_color_rule   = Decorate::BG_DEFAULT;
+        $this->decorate_rules  = [];
+        $this->reset_rules     = [Decorate::RESET];
+        $this->raw_rules       = '';
+
+        return $this;
+    }
+
+    /**
      * Chain code (continue with other text).
      *
      * @param string $text text
      *
      * @return self
      */
-    public function and($text)
+    public function push($text)
     {
         $this->out(false);
 
