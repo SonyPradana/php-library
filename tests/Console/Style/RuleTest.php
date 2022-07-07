@@ -56,9 +56,9 @@ final class RuleTest extends TestCase
             ->textRed()
             ->push('php')
             ->textBlue()
-            ->out();
+            ->out(false);
         $text = ob_get_clean();
 
-        $this->assertEquals("\e[2;49mi\e[0m\e[31;49mlove\e[0m\e[34;49mphp\e[0m\r\n", $text, 'text must return blue text terminal code');
+        $this->assertEquals("\e[2;49mi\e[0m\e[31;49mlove\e[0m\e[34;49mphp\e[0m", $text, 'text must return blue text terminal code');
     }
 }
