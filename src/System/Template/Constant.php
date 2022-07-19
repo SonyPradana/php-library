@@ -42,7 +42,7 @@ class Constant
     public function generate(): string
     {
         $tempalate = $this->planTemplate();
-        $tab_dept  = fn (int $dept) => str_repeat($this->tab_indent, ($dept * $this->tab_size));
+        $tab_dept  = fn (int $dept) => str_repeat($this->tab_indent, $dept * $this->tab_size);
 
         $comment = $this->generateComment(1, $this->tab_indent);
         $comment = count($this->comments) > 0
@@ -52,18 +52,18 @@ class Constant
         // generate visibility
         $visibility = '';
         switch ($this->visibility) {
-      case self::PUBLIC_:
-        $visibility = 'public ';
-        break;
+            case self::PUBLIC_:
+                $visibility = 'public ';
+                break;
 
-      case self::PROTECTED_:
-        $visibility = 'protected ';
-        break;
+            case self::PROTECTED_:
+                $visibility = 'protected ';
+                break;
 
-      case self::PRIVATE_:
-        $visibility = 'private ';
-        break;
-    }
+            case self::PRIVATE_:
+                $visibility = 'private ';
+                break;
+        }
 
         // generate value or expecting
         $expecting = $this->expecting == null
@@ -72,10 +72,10 @@ class Constant
 
         // final
         return str_replace(
-      ['{{comment}}', '{{visibility}}', '{{name}}', '{{expecting}}'],
-      [$comment, $visibility, $this->name, $expecting],
-      $tempalate
-    );
+            ['{{comment}}', '{{visibility}}', '{{name}}', '{{expecting}}'],
+            [$comment, $visibility, $this->name, $expecting],
+            $tempalate
+        );
     }
 
     // setter

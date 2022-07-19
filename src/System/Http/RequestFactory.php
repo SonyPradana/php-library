@@ -7,25 +7,25 @@ class RequestFactory
     public function getFromGloball(): Request
     {
         return new Request(
-      $_SERVER['REQUEST_URI'] ?? '',
-      $_GET,
-      $_POST,
-      [],
-      $_COOKIE,
-      $_FILES,
-      $this->getHeaders(),
-      $this->getMethod(),
-      $this->getClient(),
-      fn (): string => file_get_contents('php://input')
-    );
+            $_SERVER['REQUEST_URI'] ?? '',
+            $_GET,
+            $_POST,
+            [],
+            $_COOKIE,
+            $_FILES,
+            $this->getHeaders(),
+            $this->getMethod(),
+            $this->getClient(),
+            fn (): string => file_get_contents('php://input')
+        );
     }
 
     private function getHeaders(): array
     {
         if (!function_exists('apache_request_headers')) {
             return array_change_key_case(
-        apache_request_headers()
-      );
+                apache_request_headers()
+            );
         }
 
         $headers = [];

@@ -33,10 +33,10 @@ class BasicTemplateTest extends TestCase
       ->setEndWithNewLine();
 
         $this->assertEquals(
-      $this->getExpected('basic_class'),
-      $class,
-      'this class have perent and interface'
-    );
+            $this->getExpected('basic_class'),
+            $class,
+            'this class have perent and interface'
+        );
     }
 
     /** @test */
@@ -58,10 +58,10 @@ class BasicTemplateTest extends TestCase
       ->setEndWithNewLine();
 
         $this->assertEquals(
-      $this->getExpected('class_with_trait_property_method'),
-      $class->generate(),
-      'this class have traits propety and method'
-    );
+            $this->getExpected('class_with_trait_property_method'),
+            $class->generate(),
+            'this class have traits propety and method'
+        );
     }
 
     /** @test */
@@ -84,16 +84,16 @@ class BasicTemplateTest extends TestCase
       ->consts(NewConst::name('TEST'))
       ->propertys(NewProperty::name('test'))
       ->methods(
-        NewFunction::name('test')
-          ->customizeTemplate('{{comment}}{{before}}function {{name}}({{params}}){{return type}} {{{new line}}{{body}}{{new line}}}')
+          NewFunction::name('test')
+            ->customizeTemplate('{{comment}}{{before}}function {{name}}({{params}}){{return type}} {{{new line}}{{body}}{{new line}}}')
       )
       ->setEndWithNewLine();
 
         $this->assertEquals(
-      $this->getExpected('class_wtih_custume_template'),
-      $class->generate(),
-      'this class have trait property and method from template'
-    );
+            $this->getExpected('class_wtih_custume_template'),
+            $class->generate(),
+            'this class have trait property and method from template'
+        );
     }
 
     /** @test */
@@ -103,12 +103,12 @@ class BasicTemplateTest extends TestCase
 
         $class
     ->propertys(
-      NewProperty::name('test')
-        ->visibility(Property::PRIVATE_)
-        ->addComment('Test')
-        ->addLineComment()
-        ->addVaribaleComment('string')
-        ->expecting('= "works"')
+        NewProperty::name('test')
+          ->visibility(Property::PRIVATE_)
+          ->addComment('Test')
+          ->addLineComment()
+          ->addVaribaleComment('string')
+          ->expecting('= "works"')
     )
     ->propertys(function (PropertyPool $property) {
         // multype property
@@ -124,14 +124,14 @@ class BasicTemplateTest extends TestCase
       ->visibility(Property::PUBLIC_)
       ->dataType('array')
       ->expecting(
-        [
-          '= array(',
-          '  \'one\'    => 1,',
-          '  \'two\'    => 2,',
-          '  \'bool\'   => false,',
-          '  \'string\' => \'string\'',
-          ')',
-        ]
+          [
+            '= array(',
+            '  \'one\'    => 1,',
+            '  \'two\'    => 2,',
+            '  \'bool\'   => false,',
+            '  \'string\' => \'string\'',
+            ')',
+          ]
       )
       ->addVaribaleComment('array');
 
@@ -144,15 +144,15 @@ class BasicTemplateTest extends TestCase
         ->dataType('string')
         ->expecting('= \'pools_' . $i . '\'')
         ->addVaribaleComment('string')
-      ;
+            ;
         }
         $class->propertys($pool);
 
         $this->assertEquals(
-      $this->getExpected('class_with_complex_property'),
-      $class->generate(),
-      'this class have complex property'
-      );
+            $this->getExpected('class_with_complex_property'),
+            $class->generate(),
+            'this class have complex property'
+        );
     }
 
     /** @test */
@@ -162,13 +162,13 @@ class BasicTemplateTest extends TestCase
 
         $class
     ->methods(
-      NewFunction::name('test')
-        ->addComment('A method')
-        ->addLineComment()
-        ->addReturnComment('string', '$name', 'Test')
-        ->params(['string $name = "test"'])
-        ->setReturnType('string')
-        ->body(['return $name;'])
+        NewFunction::name('test')
+          ->addComment('A method')
+          ->addLineComment()
+          ->addReturnComment('string', '$name', 'Test')
+          ->params(['string $name = "test"'])
+          ->setReturnType('string')
+          ->body(['return $name;'])
     )
     ->methods(function (MethodPool $method) {
         // multy funtion
@@ -209,15 +209,15 @@ class BasicTemplateTest extends TestCase
           ])
           ->addParamComment('string', '$param', 'String param')
           ->addReturnComment('string', 'Same as param')
-        ;
+            ;
         }
         $class->methods($pool);
 
         $this->assertEquals(
-      $this->getExpected('class_with_complex_methods'),
-      $class->generate(),
-      'this class have complex methods'
-    );
+            $this->getExpected('class_with_complex_methods'),
+            $class->generate(),
+            'this class have complex methods'
+        );
     }
 
     /** @test */
@@ -227,8 +227,8 @@ class BasicTemplateTest extends TestCase
 
         $class
     ->consts(
-      Constant::new('COMMENT')
-        ->addComment('a const with Comment')
+        Constant::new('COMMENT')
+          ->addComment('a const with Comment')
     )
     ->consts(function (ConstPool $const) {
         for ($i=0; $i < 10; $i++) {
@@ -250,15 +250,15 @@ class BasicTemplateTest extends TestCase
             $pool
         ->name('CONSTPOOL_' . $i)
         ->expecting('= true')
-      ;
+            ;
         }
         $class->consts($pool);
 
         $this->assertEquals(
-      $this->getExpected('class_with_complex_const'),
-      $class->generate(),
-      'this class have complex methods'
-    );
+            $this->getExpected('class_with_complex_const'),
+            $class->generate(),
+            'this class have complex methods'
+        );
     }
 
     /** @test */
@@ -271,28 +271,28 @@ class BasicTemplateTest extends TestCase
     ->addLineComment()
     ->addComment('@auth sonypradana@gmail.com')
     ->consts(
-      Constant::new('COMMENT')
-        ->addComment('a const with Comment')
+        Constant::new('COMMENT')
+          ->addComment('a const with Comment')
     )
     ->propertys(
-      Property::new('_property')
-        ->addVaribaleComment('string', 'String property')
+        Property::new('_property')
+          ->addVaribaleComment('string', 'String property')
     )
     ->methods(
-      Method::new('someTest')
-        ->addComment('a funtion with commnet')
-        ->addLineComment()
-        ->addVaribaleComment('string', 'sample')
-        ->addParamComment('string', '$test', 'Test')
-        ->addReturnComment('bool', 'true if true')
+        Method::new('someTest')
+          ->addComment('a funtion with commnet')
+          ->addLineComment()
+          ->addVaribaleComment('string', 'sample')
+          ->addParamComment('string', '$test', 'Test')
+          ->addReturnComment('bool', 'true if true')
     )
     ->setEndWithNewLine();
 
         $this->assertEquals(
-      $this->getExpected('class_with_complex_comment'),
-      $class->generate(),
-      'this class have complex methods'
-    );
+            $this->getExpected('class_with_complex_comment'),
+            $class->generate(),
+            'this class have complex methods'
+        );
     }
 
     /**
@@ -306,16 +306,16 @@ class BasicTemplateTest extends TestCase
         $class->preReplace('class', 'trait');
 
         $this->assertEquals(
-      "<?php\n\ntrait old_class\n{\n\n}",
-      $class->generate()
-    );
+            "<?php\n\ntrait old_class\n{\n\n}",
+            $class->generate()
+        );
 
         // replace
         $class->replace(['old_class'], ['new_class']);
 
         $this->assertEquals(
-      "<?php\n\ntrait new_class\n{\n\n}",
-      $class->generate()
-    );
+            "<?php\n\ntrait new_class\n{\n\n}",
+            $class->generate()
+        );
     }
 }

@@ -12,7 +12,7 @@ final class FacedeTest extends TestCase
         $app->set(System\Time\Now::class, fn () => new System\Time\Now());
 
         require_once __DIR__ . DIRECTORY_SEPARATOR . 'Sample' . DIRECTORY_SEPARATOR . 'FacadesTestClass.php';
-        (new FacadesTestClass($app));
+        new FacadesTestClass($app);
 
         FacadesTestClass::year(2023);
         $year = FacadesTestClass::isNextYear();

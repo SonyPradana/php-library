@@ -37,9 +37,9 @@ class ResponseTest extends TestCase
         $html = ob_get_clean();
 
         $this->assertEquals(
-      '<html><head></head><body></body></html>',
-      $html
-    );
+            '<html><head></head><body></body></html>',
+            $html
+        );
     }
 
     /**
@@ -53,13 +53,13 @@ class ResponseTest extends TestCase
 
         $this->assertJson($json);
         $this->assertEquals(
-      [
-        'status'  => 'ok',
-        'code'    => 200,
-        'data'    => null,
-      ],
-      json_decode($json, true)
-    );
+            [
+              'status'  => 'ok',
+              'code'    => 200,
+              'data'    => null,
+            ],
+            json_decode($json, true)
+        );
     }
 
     /** @test */
@@ -72,8 +72,8 @@ class ResponseTest extends TestCase
         $html = ob_get_clean();
 
         $this->assertEquals(
-      'edited',
-      $html
-    );
+            'edited',
+            $html
+        );
     }
 }

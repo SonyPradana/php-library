@@ -17,17 +17,17 @@ class Request
     private $rawBodyCallback;
 
     public function __construct(
-    string $url,
-    array $query = null,
-    array $post = null,
-    array $attributes = null,
+        string $url,
+        array $query = null,
+        array $post = null,
+        array $attributes = null,
         array $cookies = null,
         array $files = null,
         array $headers = null,
         string $method = null,
         string $remoteAddress = null,
         callable $rawBodyCallback = null
-  ) {
+    ) {
         $this->url             = $url;
         $this->query           = $query;
         $this->post            = $post;
@@ -166,18 +166,18 @@ class Request
     public function all()
     {
         return array_merge(
-      $this->headers,
-      $this->query,
-      $this->post,
-      $this->attributes,
-      $this->cookies,
-      ['files' => $this->files],
-      [
-        'x-raw'     => $this->rawBodyCallback ? ($this->rawBodyCallback)() : null,
-        'x-method'  => $this->method,
-      ],
-      $this->getJsonBody() ?? []
-    );
+            $this->headers,
+            $this->query,
+            $this->post,
+            $this->attributes,
+            $this->cookies,
+            ['files' => $this->files],
+            [
+              'x-raw'     => $this->rawBodyCallback ? ($this->rawBodyCallback)() : null,
+              'x-method'  => $this->method,
+            ],
+            $this->getJsonBody() ?? []
+        );
     }
 
     /**
