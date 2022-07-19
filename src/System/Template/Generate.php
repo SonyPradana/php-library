@@ -65,12 +65,12 @@ class Generate
     {
         // pre replace
         $class = str_replace(
-      $this->pre_replace[0],
-      $this->pre_replace[1],
-      $this->planTemplate()
-    );
+            $this->pre_replace[0],
+            $this->pre_replace[1],
+            $this->planTemplate()
+        );
 
-        $tab_dept = fn (int $dept) => str_repeat($this->tab_indent, ($dept * $this->tab_size));
+        $tab_dept = fn (int $dept) => str_repeat($this->tab_indent, $dept * $this->tab_size);
 
         // scope: before
         $before = [];
@@ -195,10 +195,10 @@ class Generate
         $replace = $this->replace[1] ?? null;
 
         return str_replace(
-      ['{{before}}', '{{comment}}', '{{rule}}', '{{head}}', '{{body}}', '{{end}}', ...$search],
-      [$before, $comment, $rule, $head, $body, $end, ...$replace],
-      $class
-    );
+            ['{{before}}', '{{comment}}', '{{rule}}', '{{head}}', '{{body}}', '{{end}}', ...$search],
+            [$before, $comment, $rule, $head, $body, $end, ...$replace],
+            $class
+        );
     }
 
     private function ruleText(): string

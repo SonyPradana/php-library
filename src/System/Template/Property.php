@@ -43,7 +43,7 @@ class Property
     public function generate(): string
     {
         $tempalate = $this->planTemplate();
-        $tab_dept  = fn (int $dept) => str_repeat($this->tab_indent, ($dept * $this->tab_size));
+        $tab_dept  = fn (int $dept) => str_repeat($this->tab_indent, $dept * $this->tab_size);
 
         $comment = $this->generateComment(1);
         $comment = count($this->comments) > 0
@@ -53,18 +53,18 @@ class Property
         // generate visibility
         $visibility = '';
         switch ($this->visibility) {
-      case self::PUBLIC_:
-        $visibility = 'public ';
-        break;
+            case self::PUBLIC_:
+                $visibility = 'public ';
+                break;
 
-      case self::PROTECTED_:
-        $visibility = 'protected ';
-        break;
+            case self::PROTECTED_:
+                $visibility = 'protected ';
+                break;
 
-      case self::PRIVATE_:
-        $visibility = 'private ';
-        break;
-    }
+            case self::PRIVATE_:
+                $visibility = 'private ';
+                break;
+        }
 
         // generate static
         $static = $this->is_static ? 'static ' : '';
@@ -80,9 +80,9 @@ class Property
         if ($this->expecting != null) {
             $single_line  = $this->expecting[0] ?? '';
             $multy_line   = implode(
-        "\n" . $tab_dept(1),
-        array_filter($this->expecting, fn ($key) => $key > 0, ARRAY_FILTER_USE_KEY)
-      );
+                "\n" . $tab_dept(1),
+                array_filter($this->expecting, fn ($key) => $key > 0, ARRAY_FILTER_USE_KEY)
+            );
             $expecting = count($this->expecting) > 1
         ? ' ' . $single_line . "\n" . $tab_dept(1) . $multy_line
         : ' ' . $single_line;
@@ -90,10 +90,10 @@ class Property
 
         // final
         return str_replace(
-      ['{{comment}}', '{{visibility}}', '{{static}}', '{{data type}}', '{{name}}', '{{expecting}}'],
-      [$comment, $visibility, $static, $data_type, $name, $expecting],
-      $tempalate
-    );
+            ['{{comment}}', '{{visibility}}', '{{static}}', '{{data type}}', '{{name}}', '{{expecting}}'],
+            [$comment, $visibility, $static, $data_type, $name, $expecting],
+            $tempalate
+        );
     }
 
     // setter

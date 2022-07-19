@@ -6,6 +6,7 @@ namespace System\Console\Style;
 
 use System\Console\Traits\CommandTrait;
 use System\Text\Str;
+
 use function System\Text\text;
 
 /**

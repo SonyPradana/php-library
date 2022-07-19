@@ -64,8 +64,7 @@ if (!function_exists('controllers_path')) {
     {
         $path = app()->controller_path() . $surfix_path;
 
-        return $path
-    ;
+        return $path;
     }
 }
 

@@ -11,23 +11,23 @@ class RequestTest extends TestCase
     protected function setUp(): void
     {
         $this->request = new Request(
-      'http://localhost/',
-      ['query_1' => 'query'],
-      ['post_1'  => 'post'],
-      ['costume' => 'costume'],
-      ['cookies' => 'cookies'],
-      [[
-        'name'      => 'file_name',
-        'type'      => 'text',
-        'tmp_name'  => 'tmp_name',
-        'error'     => 0,
-        'size'      => 0,
-      ]],
-      ['header_1'  => 'header', 'header_2' => 123, 'foo' => 'bar'],
-      'POST',
-      '127:0:0:1',
-      fn () => '{"respone":"ok"}'
-    );
+            'http://localhost/',
+            ['query_1' => 'query'],
+            ['post_1'  => 'post'],
+            ['costume' => 'costume'],
+            ['cookies' => 'cookies'],
+            [[
+              'name'      => 'file_name',
+              'type'      => 'text',
+              'tmp_name'  => 'tmp_name',
+              'error'     => 0,
+              'size'      => 0,
+            ]],
+            ['header_1'  => 'header', 'header_2' => 123, 'foo' => 'bar'],
+            'POST',
+            '127:0:0:1',
+            fn () => '{"respone":"ok"}'
+        );
     }
 
     /**
@@ -69,25 +69,25 @@ class RequestTest extends TestCase
     {
         $file = $this->request->getFile(0);
         $this->assertEquals(
-      'file_name',
-      $file['name']
-    );
+            'file_name',
+            $file['name']
+        );
         $this->assertEquals(
-      'text',
-      $file['type']
-    );
+            'text',
+            $file['type']
+        );
         $this->assertEquals(
-      'tmp_name',
-      $file['tmp_name']
-    );
+            'tmp_name',
+            $file['tmp_name']
+        );
         $this->assertEquals(
-      0,
-      $file['error']
-    );
+            0,
+            $file['error']
+        );
         $this->assertEquals(
-      0,
-      $file['size']
-    );
+            0,
+            $file['size']
+        );
     }
 
     /**
@@ -128,8 +128,8 @@ class RequestTest extends TestCase
     public function hasSameBodyJson()
     {
         $this->assertEquals(
-      ['respone' => 'ok'],
-      $this->request->getJsonBody());
+            ['respone' => 'ok'],
+            $this->request->getJsonBody());
     }
 
     /**

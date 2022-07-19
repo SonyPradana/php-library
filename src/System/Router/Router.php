@@ -118,15 +118,15 @@ class Router
     public static function prefix(string $prefix)
     {
         return new RouteGroup(
-      // set up
-      function () use ($prefix) {
-          Router::$group['prefix'] = $prefix;
-      },
-      // reset
-      function () {
-          Router::$group['prefix'] = '';
-      }
-    );
+            // set up
+            function () use ($prefix) {
+                Router::$group['prefix'] = $prefix;
+            },
+            // reset
+            function () {
+                Router::$group['prefix'] = '';
+            }
+        );
     }
 
     /**
@@ -139,29 +139,29 @@ class Router
         $reset_group = self::$group;
 
         return new RouteGroup(
-      // load midleware
-      function () use ($middlewares) {
-          self::$group['middleware'] = $middlewares;
-      },
-      // close midleware
-      function () use ($reset_group) {
-          self::$group = $reset_group;
-      }
-    );
+            // load midleware
+            function () use ($middlewares) {
+                self::$group['middleware'] = $middlewares;
+            },
+            // close midleware
+            function () use ($reset_group) {
+                self::$group = $reset_group;
+            }
+        );
     }
 
     public static function name(string $name)
     {
         return new RouteGroup(
-      // setup
-      function () use ($name) {
-          Router::$group['as'] = $name;
-      },
-      // reset
-      function () {
-          Router::$group['as'] = '';
-      }
-    );
+            // setup
+            function () use ($name) {
+                Router::$group['as'] = $name;
+            },
+            // reset
+            function () {
+                Router::$group['as'] = '';
+            }
+        );
     }
 
     public static function controller(string $class_name)
@@ -170,15 +170,15 @@ class Router
         $reset_group = self::$group;
 
         $route_group = new RouteGroup(
-      // setup
-      function () use ($class_name) {
-          self::$group['controller'] = $class_name;
-      },
-      // reset
-      function () use ($reset_group) {
-          self::$group = $reset_group;
-      }
-    );
+            // setup
+            function () use ($class_name) {
+                self::$group['controller'] = $class_name;
+            },
+            // reset
+            function () use ($reset_group) {
+                self::$group = $reset_group;
+            }
+        );
 
         return $route_group;
     }
@@ -189,18 +189,18 @@ class Router
         $reset_group = self::$group;
 
         $route_group = new RouteGroup(
-      // setup
-      function () use ($setup_group) {
-          foreach ((array) self::$group['middleware'] as $middleware) {
-              $setup_group['middleware'][] = $middleware;
-          }
-          self::$group = $setup_group;
-      },
-      // reset
-      function () use ($reset_group) {
-          self::$group = $reset_group;
-      }
-    );
+            // setup
+            function () use ($setup_group) {
+                foreach ((array) self::$group['middleware'] as $middleware) {
+                    $setup_group['middleware'][] = $middleware;
+                }
+                self::$group = $setup_group;
+            },
+            // reset
+            function () use ($reset_group) {
+                self::$group = $reset_group;
+            }
+        );
 
         $route_group->group($group);
     }

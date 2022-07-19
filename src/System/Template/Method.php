@@ -46,7 +46,7 @@ class Method
     public function generate(): string
     {
         $tempalate = $this->planTemplate();
-        $tab_dept  = fn (int $dept) => str_repeat($this->tab_indent, ($dept * $this->tab_size));
+        $tab_dept  = fn (int $dept) => str_repeat($this->tab_indent, $dept * $this->tab_size);
         // new line
         $new_line = "\n" . $tab_dept(1);
 
@@ -65,22 +65,22 @@ class Method
 
         // visibility
         switch ($this->visibility) {
-      case self::PUBLIC_:
-        $pre[] = 'public';
-        break;
+            case self::PUBLIC_:
+                $pre[] = 'public';
+                break;
 
-      case self::PRIVATE_:
-        $pre[] = 'private';
-        break;
+            case self::PRIVATE_:
+                $pre[] = 'private';
+                break;
 
-      case self::PROTECTED_:
-        $pre[] = 'protected';
-        break;
+            case self::PROTECTED_:
+                $pre[] = 'protected';
+                break;
 
-      default:
-        $pre[] = '';
-        break;
-    }
+            default:
+                $pre[] = '';
+                break;
+        }
 
         // {{final}}{{visibility}}{{static}}
         $pre    = array_filter($pre);
@@ -99,13 +99,13 @@ class Method
 
         // body
         $bodys = array_map(fn ($x) => $tab_dept(2) . $x, $this->body);
-        $body = implode("\n", $bodys);
+        $body  = implode("\n", $bodys);
 
         return str_replace(
-      ['{{comment}}', '{{before}}', '{{name}}', '{{params}}', '{{new line}}', '{{body}}', '{{return type}}'],
-      [$comment, $before, $name, $params, $new_line, $body, $return],
-      $tempalate
-    );
+            ['{{comment}}', '{{before}}', '{{name}}', '{{params}}', '{{new line}}', '{{body}}', '{{return type}}'],
+            [$comment, $before, $name, $params, $new_line, $body, $return],
+            $tempalate
+        );
     }
 
     public function name(string $name)

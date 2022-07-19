@@ -131,25 +131,25 @@ class BasicCollectionTest extends TestCase
         // collection reverse
         $copy_origin = $original;
         $this->assertEquals(
-      $test->reverse()->all(),
-      array_reverse($copy_origin),
-      'test reverse collection'
-    );
+            $test->reverse()->all(),
+            array_reverse($copy_origin),
+            'test reverse collection'
+        );
         $test->replace($original);
 
         // sort collection
         // sort asc
         $this->assertEquals(
-      $test->sort()->first(),
-      'apel',
-      'testing sort asc collection'
-    );
+            $test->sort()->first(),
+            'apel',
+            'testing sort asc collection'
+        );
         // sort desc
         $this->assertEquals(
-      $test->sortDesc()->first(),
-      'rambutan',
-      'testing sort desc collection'
-    );
+            $test->sortDesc()->first(),
+            'rambutan',
+            'testing sort desc collection'
+        );
         // sort using collback
         $test->sortBy(function ($a, $b) {
             if ($a == $b) {
@@ -159,10 +159,10 @@ class BasicCollectionTest extends TestCase
             return ($a < $b) ? -1 : 1;
         });
         $this->assertEquals(
-      $test->first(),
-      'apel',
-      'sort using user define asceding'
-    );
+            $test->first(),
+            'apel',
+            'sort using user define asceding'
+        );
         $test->sortByDecs(function ($a, $b) {
             if ($a == $b) {
                 return 0;
@@ -171,76 +171,76 @@ class BasicCollectionTest extends TestCase
             return ($a < $b) ? -1 : 1;
         });
         $this->assertEquals(
-      $test->first(),
-      'rambutan',
-      'sort using user define decsending'
-    );
+            $test->first(),
+            'rambutan',
+            'sort using user define decsending'
+        );
 
         // sort colection by key
         $this->assertEquals(
-      $test->sortKey()->first(),
-      'mangga',
-      'sort collection asc with key'
-    );
+            $test->sortKey()->first(),
+            'mangga',
+            'sort collection asc with key'
+        );
         $this->assertEquals(
-      $test->sortKeyDesc()->first(),
-      'peer',
-      'sort collection desc with key'
-    );
+            $test->sortKeyDesc()->first(),
+            'peer',
+            'sort collection desc with key'
+        );
         $test->replace($original);
 
         // clone collection
         $this->assertEquals(
-      $test->clone()->reverse()->first(),
-      $test->last(),
-      'clone collection without interupt original'
-    );
+            $test->clone()->reverse()->first(),
+            $test->last(),
+            'clone collection without interupt original'
+        );
 
         // reject
         $copy_origin = $original;
         unset($copy_origin['buah_2']);
         $this->assertEquals(
-      $test->reject(fn ($item) => $item == 'jeruk')->all(),
-      $copy_origin,
-      'its like filter but the oposite'
-    );
+            $test->reject(fn ($item) => $item == 'jeruk')->all(),
+            $copy_origin,
+            'its like filter but the oposite'
+        );
 
         // chunk
         $chunk = $test->clone()->chunk(3)->all();
         $this->assertEquals(
-      [
-        ['buah_1' => 'mangga', 'buah_3' => 'apel', 'buah_4' => 'melon'],
-        ['buah_5' => 'rambutan', 'buah_6' => 'peer'],
-      ],
-      $chunk,
-      'chunk to 3'
-    );
+            [
+              ['buah_1' => 'mangga', 'buah_3' => 'apel', 'buah_4' => 'melon'],
+              ['buah_5' => 'rambutan', 'buah_6' => 'peer'],
+            ],
+            $chunk,
+            'chunk to 3'
+        );
 
         // split
         $split = $test->clone()->split(3)->all();
         $this->assertEquals(
-        [
-          ['buah_1' => 'mangga', 'buah_3' => 'apel'],
-          ['buah_4' => 'melon', 'buah_5' => 'rambutan'],
-          ['buah_6' => 'peer'],
-        ],
-      $split,
-      'split to 2'
-    );
+            [
+              ['buah_1' => 'mangga', 'buah_3' => 'apel'],
+              ['buah_4' => 'melon', 'buah_5' => 'rambutan'],
+              ['buah_6' => 'peer'],
+            ],
+            $split,
+            'split to 2'
+        );
 
         $only = $test->clone()->only(['buah_1', 'buah_5']);
         $this->assertEquals(
-      ['buah_1' => 'mangga', 'buah_5' => 'rambutan'],
-      $only->all(),
-      'show only some'
-    );
+            ['buah_1' => 'mangga', 'buah_5' => 'rambutan'],
+            $only->all(),
+            'show only some'
+        );
 
         $except = $test->clone()->except(['buah_3', 'buah_4', 'buah_6']);
         $this->assertEquals(
-      ['buah_1' => 'mangga', 'buah_5' => 'rambutan'],
-      $except->all(),
-      'show list with except'
-    );
+            ['buah_1' => 'mangga', 'buah_5' => 'rambutan'],
+            $except->all(),
+            'show list with except'
+        );
 
         // fletten
         $array_nesting = [
@@ -250,10 +250,10 @@ class BasicCollectionTest extends TestCase
     ];
         $flatten = new Collection($array_nesting);
         $this->assertEquals(
-      $original,
-      $flatten->flatten()->all(),
-      'flatten nesting array'
-    );
+            $original,
+            $flatten->flatten()->all(),
+            'flatten nesting array'
+        );
     }
 
     /** @test */
@@ -364,7 +364,7 @@ class BasicCollectionTest extends TestCase
           return ($b < $a) ? -1 : 1;
       })
       ->all()
-    ;
+        ;
         $this->assertEquals($chain, $origin, 'all collection with chain is wotk');
     }
 }
