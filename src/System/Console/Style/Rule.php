@@ -12,6 +12,7 @@ use function System\Text\text;
  * @method self textRed()
  * @method self textYellow()
  * @method self textBlue()
+ * @method self textGreen()
  * @method self textDim()
  * @method self textMagenta()
  * @method self textCyan()
@@ -26,6 +27,7 @@ use function System\Text\text;
  * @method self bgRed()
  * @method self bgYellow()
  * @method self bgBlue()
+ * @method self bgGreen()
  * @method self bgMagenta()
  * @method self bgCyan()
  * @method self bgLightGray()
@@ -91,11 +93,18 @@ class Rule
     private $text;
 
     /**
+     * Log output (string conosole code).
+     *
+     * @var array<int, string>
+     */
+    private $outs = [];
+
+    /**
      * @param string $text set text to decorate
      */
     public function __construct($text)
     {
-        $this->text = $text;
+        $this->text($text);
     }
 
     /**
@@ -107,7 +116,8 @@ class Rule
      */
     public function __invoke($text)
     {
-        $this->text = $text;
+        $this->text($text);
+        $this->outs = [];
 
         return $this->flush();
     }
@@ -162,6 +172,36 @@ class Rule
     }
 
     /**
+     * Debug information (rule, text, reset rule, log ouput).
+     *
+     * @return array<string, array<int, int|string>|string>
+     */
+    public function __debugInfo()
+    {
+        return [
+            'out'   => $this->out(false),
+            'text'  => $this->text,
+            'rule'  => $this->rules,
+            'reset' => $this->reset_rules,
+            'log'   => $this->outs,
+        ];
+    }
+
+    /**
+     * Set current text.
+     *
+     * @param string $text
+     *
+     * @return self
+     */
+    public function text($text)
+    {
+        $this->text = $text;
+
+        return $this;
+    }
+
+    /**
      * Flush class.
      *
      * @return self
@@ -186,9 +226,9 @@ class Rule
      */
     public function push($text)
     {
-        $this->out(false);
+        $this->outs[] = $this->out(false, true);
 
-        return new self($text);
+        return $this->flush()->text($text);
     }
 
     // method ------------------------------------------------
@@ -198,11 +238,20 @@ class Rule
      *
      * @param bool $new_line True if print with new line in end line
      *
-     * @return void
+     * @return string
      */
-    public function out($new_line = true)
+    public function out($new_line = true, bool $pending = false)
     {
-        echo $this->__toString() . ($new_line ? PHP_EOL : null);
+        $previews = count($this->outs) > 1
+            ? implode('', $this->outs)
+            : '';
+
+        $out = $previews . $this->__toString() . ($new_line ? PHP_EOL : null);
+        if (!$pending) {
+            echo $out;
+        }
+
+        return $out;
     }
 
     /**
