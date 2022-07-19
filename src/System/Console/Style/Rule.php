@@ -191,7 +191,9 @@ class Rule
     {
         $this->out(false);
 
-        return new self($text);
+        $this->text = $text;
+
+        return $this->flush();
     }
 
     // method ------------------------------------------------
@@ -201,11 +203,14 @@ class Rule
      *
      * @param bool $new_line True if print with new line in end line
      *
-     * @return void
+     * @return string
      */
     public function out($new_line = true)
     {
-        echo $this->__toString() . ($new_line ? PHP_EOL : null);
+        $out = $this->__toString() . ($new_line ? PHP_EOL : null);
+        echo $out;
+
+        return $out;
     }
 
     /**
