@@ -203,14 +203,13 @@ class Rule
      *
      * @param bool $new_line True if print with new line in end line
      *
-     * @return string
+     * @return void
      */
     public function out($new_line = true)
     {
-        $out = $this->__toString() . ($new_line ? PHP_EOL : null);
-        echo $out;
+        $out = $this . ($new_line ? PHP_EOL : null);
 
-        return $out;
+        echo $out;
     }
 
     /**
