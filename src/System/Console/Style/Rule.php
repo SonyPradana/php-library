@@ -94,6 +94,13 @@ class Rule
     private $text;
 
     /**
+     * Reference from preview text (like prefix).
+     *
+     * @var string
+     */
+    private $ref = '';
+
+    /**
      * @param string $text set text to decorate
      */
     public function __construct($text)
@@ -134,7 +141,7 @@ class Rule
             $this->rules[] = $this->raw_rules;
         }
 
-        return $this->rules($this->rules, $this->text, true, $this->reset_rules);
+        return $this->ref . $this->rules($this->rules, $this->text, true, $this->reset_rules);
     }
 
     /**
@@ -176,6 +183,21 @@ class Rule
         $this->decorate_rules  = [];
         $this->reset_rules     = [Decorate::RESET];
         $this->raw_rules       = '';
+        $this->ref             = '';
+
+        return $this;
+    }
+
+    /**
+     * Set reference (add before main text).
+     *
+     * @param string $text_reference
+     *
+     * @return self
+     */
+    private function ref($text_reference)
+    {
+        $this->ref = $text_reference;
 
         return $this;
     }
@@ -189,11 +211,12 @@ class Rule
      */
     public function push($text)
     {
-        $this->out(false);
+        $this->out(false, true);
 
+        $ref        = $this->__toString();
         $this->text = $text;
 
-        return $this->flush();
+        return $this->flush()->ref($ref);
     }
 
     // method ------------------------------------------------
@@ -202,14 +225,17 @@ class Rule
      * Print terminal style.
      *
      * @param bool $new_line True if print with new line in end line
+     * @param bool $pending  Pending print formated text
      *
      * @return void
      */
-    public function out($new_line = true)
+    public function out($new_line = true, $pending = false)
     {
         $out = $this . ($new_line ? PHP_EOL : null);
 
-        echo $out;
+        if ($pending === false) {
+            echo $out;
+        }
     }
 
     /**

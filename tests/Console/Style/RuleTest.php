@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
+
+use function System\Console\style;
+
 use System\Console\Style\Colors;
 use System\Console\Style\Rule;
 
@@ -60,5 +63,28 @@ final class RuleTest extends TestCase
         $text = ob_get_clean();
 
         $this->assertEquals("\e[2;49mi\e[0m\e[31;49mlove\e[0m\e[34;49mphp\e[0m", $text, 'text must return blue text terminal code');
+    }
+
+    /** @test */
+    public function itCanPostRenderStyle()
+    {
+        $printer = [
+            style('i')->bgBlue(),
+            style(' love ')->bgBlue(),
+            style('php')->bgBlue(),
+        ];
+
+        ob_start();
+        echo 'start ';
+        foreach ($printer as $print) {
+            echo $print;
+        }
+        echo ' end';
+        $out = ob_get_clean();
+
+        $this->assertEquals(
+            "start \e[39;44mi\e[0m\e[39;44m love \e[0m\e[39;44mphp\e[0m end",
+            $out
+        );
     }
 }
