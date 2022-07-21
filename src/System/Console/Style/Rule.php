@@ -211,8 +211,6 @@ class Rule
      */
     public function push($text)
     {
-        $this->out(false, true);
-
         $ref        = $this->__toString();
         $this->text = $text;
 
@@ -225,17 +223,14 @@ class Rule
      * Print terminal style.
      *
      * @param bool $new_line True if print with new line in end line
-     * @param bool $pending  Pending print formated text
      *
      * @return void
      */
-    public function out($new_line = true, $pending = false)
+    public function out($new_line = true)
     {
         $out = $this . ($new_line ? PHP_EOL : null);
 
-        if ($pending === false) {
-            echo $out;
-        }
+        echo $out;
     }
 
     /**
