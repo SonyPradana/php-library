@@ -7,14 +7,14 @@ use PHPUnit\Framework\TestCase;
 use function System\Console\style;
 
 use System\Console\Style\Colors;
-use System\Console\Style\Rule;
+use System\Console\Style\Style;
 
-final class RuleTest extends TestCase
+final class StyleTest extends TestCase
 {
     /** @test */
     public function itCanRenderTextColorTerminalCode()
     {
-        $cmd  = new Rule('text');
+        $cmd  = new Style('text');
         $text =  $cmd->textBlue();
 
         $this->assertEquals("\e[34;49mtext\e[0m", $text, 'text must return blue text terminal code');
@@ -23,7 +23,7 @@ final class RuleTest extends TestCase
     /** @test */
     public function itCanRenderBgColorTerminalCode()
     {
-        $cmd  = new Rule('text');
+        $cmd  = new Style('text');
         $text =  $cmd->bgBlue();
 
         $this->assertEquals("\e[39;44mtext\e[0m", $text, 'text must return blue bankground terminal code');
@@ -32,25 +32,39 @@ final class RuleTest extends TestCase
     /** @test */
     public function itCanRenderTextAndBgColorTerminalCode()
     {
-        $cmd  = new Rule('text');
+        $cmd  = new Style('text');
         $text =  $cmd->textRed()->bgBlue();
 
         $this->assertEquals("\e[31;44mtext\e[0m", $text, 'text must return red text and blue text terminal code');
     }
 
     /** @test */
-    public function itCanRenderColorUsingRawTerminalCode()
+    public function itCanRenderColorUsingRawColorInterface()
     {
-        $cmd  = new Rule('text');
+        $cmd  = new Style('text');
         $text =  $cmd->raw(Colors::hexRawText('#ffd787'));
 
         $this->assertEquals("\e[39;49;38;5;222mtext\e[0m", $text, 'text must return raw color terminal code');
+
+        $cmd  = new Style('text');
+        $text = $cmd->raw(Colors::rgbText(0, 0, 0));
+
+        $this->assertEquals("\e[39;49;38;2;0;0;0mtext\e[0m", $text);
+    }
+
+    /** @test */
+    public function itCanRenderColorRaw()
+    {
+        $cmd  = new Style('text');
+        $text = $cmd->raw('38;2;0;0;0');
+
+        $this->assertEquals("\e[39;49;38;2;0;0;0mtext\e[0m", $text);
     }
 
     /** @test */
     public function itCanRenderChainCode()
     {
-        $cmd = new Rule('text');
+        $cmd = new Style('text');
 
         ob_start();
         $cmd('i')

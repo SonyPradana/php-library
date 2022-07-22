@@ -10,10 +10,6 @@ final class ColorsTest extends TestCase
     /** @test */
     public function itCanConvertHexToTermnialColorCode()
     {
-        $this->assertEquals(231, Colors::hex('#ffffff'));
-        $this->assertEquals(231, Colors::hex('#FFFFFF'));
-        $this->assertEquals(231, Colors::Grey100);
-
         $this->expectErrorMessage('Hex code not found.');
         $this->assertEquals(231, Colors::hex('#Badas'));
 
@@ -50,7 +46,7 @@ final class ColorsTest extends TestCase
     /** @test */
     public function itCanConvertRGBToTermnialColorCode()
     {
-        $this->assertEquals('38;2;0;0;0', Colors::rgbRawText(0, 0, 0), 'rgb text color white');
-        $this->assertEquals('48;2;0;0;0', Colors::rgbRawBg(0, 0, 0), 'rgb bg color white');
+        $this->assertEquals([38, 2, 0, 0, 0], Colors::rgbText(0, 0, 0)->get(), 'rgb text color white');
+        $this->assertEquals([48, 2, 0, 0, 0], Colors::rgbBg(0, 0, 0)->get(), 'rgb bg color white');
     }
 }

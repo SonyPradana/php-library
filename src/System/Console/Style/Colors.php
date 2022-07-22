@@ -4,195 +4,11 @@ declare(strict_types=1);
 
 namespace System\Console\Style;
 
+use System\Console\Style\Color\BackgroundColor;
+use System\Console\Style\Color\ForegroundColor;
+
 class Colors
 {
-    public const Black              = 0;
-    public const Maroon             = 1;
-    public const Green              = 2;
-    public const Olive              = 3;
-    public const Navy               = 4;
-    public const Purple             = 5;
-    public const Teal               = 6;
-    public const Silver             = 7;
-    public const Grey               = 8;
-    public const Red                = 9;
-    public const Lime               = 10;
-    public const Yellow             = 11;
-    public const Blue               = 12;
-    public const Fuchsia            = 13;
-    public const Aqua               = 14;
-    public const White              = 15;
-    public const Grey0              = 16;
-    public const NavyBlue           = 17;
-    public const DarkBlue           = 18;
-    public const Blue1              = 21;
-    public const DarkGreen          = 22;
-    public const DodgerBlue3        = 26;
-    public const DodgerBlue2        = 27;
-    public const Green4             = 28;
-    public const SpringGreen4       = 29;
-    public const Turquoise4         = 30;
-    public const DodgerBlue1        = 33;
-    public const Green3             = 34;
-    public const SpringGreen3       = 35;
-    public const DarkCyan           = 36;
-    public const LightSeaGreen      = 37;
-    public const DeepSkyBlue2       = 38;
-    public const DeepSkyBlue1       = 39;
-    public const SpringGreen2       = 42;
-    public const Cyan3              = 43;
-    public const DarkTurquoise      = 44;
-    public const Turquoise2         = 45;
-    public const Green1             = 46;
-    public const SpringGreen1       = 48;
-    public const MediumSpringGreen  = 49;
-    public const Cyan2              = 50;
-    public const Cyan1              = 51;
-    public const DarkRed            = 52;
-    public const DeepPink4          = 53;
-    public const Purple3            = 56;
-    public const BlueViolet         = 57;
-    public const Orange4            = 58;
-    public const Grey37             = 59;
-    public const MediumPurple4      = 60;
-    public const RoyalBlue1         = 63;
-    public const Chartreuse4        = 64;
-    public const DarkSeaGreen4      = 65;
-    public const PaleTurquoise4     = 66;
-    public const SteelBlue          = 67;
-    public const SteelBlue3         = 68;
-    public const CornflowerBlue     = 69;
-    public const Chartreuse3        = 70;
-    public const SkyBlue3           = 74;
-    public const SteelBlue1         = 75;
-    public const PaleGreen3         = 77;
-    public const SeaGreen3          = 78;
-    public const Aquamarine3        = 79;
-    public const MediumTurquoise    = 80;
-    public const Chartreuse2        = 82;
-    public const SeaGreen2          = 83;
-    public const Aquamarine1        = 86;
-    public const DarkSlateGray2     = 87;
-    public const DarkViolet         = 92;
-    public const LightPink4         = 95;
-    public const Plum4              = 96;
-    public const SlateBlue1         = 99;
-    public const Yellow4            = 100;
-    public const Wheat4             = 101;
-    public const Grey53             = 102;
-    public const LightSlateGrey     = 103;
-    public const MediumPurple       = 104;
-    public const LightSlateBlue     = 105;
-    public const DarkOliveGreen3    = 107;
-    public const DarkSeaGreen       = 108;
-    public const SkyBlue2           = 111;
-    public const DarkSeaGreen3      = 115;
-    public const DarkSlateGray3     = 116;
-    public const SkyBlue1           = 117;
-    public const Chartreuse1        = 118;
-    public const PaleGreen1         = 121;
-    public const DarkSlateGray1     = 123;
-    public const Red3               = 124;
-    public const MediumVioletRed    = 126;
-    public const Magenta3           = 127;
-    public const DarkOrange3        = 130;
-    public const IndianRed          = 131;
-    public const HotPink3           = 132;
-    public const MediumOrchid3      = 133;
-    public const MediumOrchid       = 134;
-    public const MediumPurple2      = 135;
-    public const DarkGoldenrod      = 136;
-    public const LightSalmon3       = 137;
-    public const RosyBrown          = 138;
-    public const Grey63             = 139;
-    public const MediumPurple1      = 141;
-    public const Gold3              = 142;
-    public const DarkKhaki          = 143;
-    public const NavajoWhite3       = 144;
-    public const Grey69             = 145;
-    public const LightSteelBlue3    = 146;
-    public const LightSteelBlue     = 147;
-    public const Yellow3            = 148;
-    public const DarkSeaGreen2      = 151;
-    public const LightCyan3         = 152;
-    public const LightSkyBlue1      = 153;
-    public const GreenYellow        = 154;
-    public const DarkOliveGreen2    = 155;
-    public const DarkSeaGreen1      = 158;
-    public const PaleTurquoise1     = 159;
-    public const Magenta2           = 165;
-    public const HotPink2           = 169;
-    public const Orchid             = 170;
-    public const MediumOrchid1      = 171;
-    public const Orange3            = 172;
-    public const LightPink3         = 174;
-    public const Pink3              = 175;
-    public const Plum3              = 176;
-    public const Violet             = 177;
-    public const LightGoldenrod3    = 179;
-    public const Tan                = 180;
-    public const MistyRose3         = 181;
-    public const Thistle3           = 182;
-    public const Plum2              = 183;
-    public const Khaki3             = 185;
-    public const LightGoldenrod2    = 186;
-    public const LightYellow3       = 187;
-    public const Grey84             = 188;
-    public const LightSteelBlue1    = 189;
-    public const Yellow2            = 190;
-    public const Honeydew2          = 194;
-    public const LightCyan1         = 195;
-    public const Red1               = 196;
-    public const DeepPink2          = 197;
-    public const Magenta1           = 201;
-    public const OrangeRed1         = 202;
-    public const DarkOrange         = 208;
-    public const Salmon1            = 209;
-    public const LightCoral         = 210;
-    public const PaleVioletRed1     = 211;
-    public const Orchid2            = 212;
-    public const Orchid1            = 213;
-    public const Orange1            = 214;
-    public const SandyBrown         = 215;
-    public const LightSalmon1       = 216;
-    public const LightPink1         = 217;
-    public const Pink1              = 218;
-    public const Plum1              = 219;
-    public const Gold1              = 220;
-    public const NavajoWhite1       = 223;
-    public const MistyRose1         = 224;
-    public const Thistle1           = 225;
-    public const Yellow1            = 226;
-    public const LightGoldenrod1    = 227;
-    public const Khaki1             = 228;
-    public const Wheat1             = 229;
-    public const Cornsilk1          = 230;
-    public const Grey100            = 231;
-    public const Grey3              = 232;
-    public const Grey7              = 233;
-    public const Grey11             = 234;
-    public const Grey15             = 235;
-    public const Grey19             = 236;
-    public const Grey23             = 237;
-    public const Grey27             = 238;
-    public const Grey30             = 239;
-    public const Grey35             = 240;
-    public const Grey39             = 241;
-    public const Grey42             = 242;
-    public const Grey46             = 243;
-    public const Grey50             = 244;
-    public const Grey54             = 245;
-    public const Grey58             = 246;
-    public const Grey62             = 247;
-    public const Grey66             = 248;
-    public const Grey70             = 249;
-    public const Grey74             = 250;
-    public const Grey78             = 251;
-    public const Grey82             = 252;
-    public const Grey85             = 253;
-    public const Grey89             = 254;
-    public const Grey93             = 255;
-
     /**
      * Provide hex color map to command color.
      *
@@ -296,22 +112,22 @@ class Colors
     }
 
     /**
-     * Convert rgb color to teminal color raw (text).
+     * Convert rgb color (true color) to teminal color raw (text).
      *
      * @param int $r Red (0-255)
      * @param int $g Green (0-255)
      * @param int $b Blue (0-255)
      *
-     * @return string Terminal code
+     * @return ForegroundColor Terminal code
      */
-    public static function rgbRawText($r, $g, $b)
+    public static function rgbText($r, $g, $b)
     {
         // normalize (value: 0-255)
         $r = $r < 0 ? 0 : ($r > 255 ? 255 : $r);
         $g = $g < 0 ? 0 : ($g > 255 ? 255 : $g);
         $b = $b < 0 ? 0 : ($b > 255 ? 255 : $b);
 
-        return implode(';', [38, 2, $r, $g, $b]);
+        return new ForegroundColor([38, 2, $r, $g, $b]);
     }
 
     /**
@@ -321,15 +137,15 @@ class Colors
      * @param int $g Green (0-255)
      * @param int $b Blue (0-255)
      *
-     * @return string Terminal code
+     * @return BackgroundColor Terminal code
      */
-    public static function rgbRawBg($r, $g, $b)
+    public static function rgbBg($r, $g, $b)
     {
         // normalize (value: 0-255)
         $r = $r < 0 ? 0 : ($r > 255 ? 255 : $r);
         $g = $g < 0 ? 0 : ($g > 255 ? 255 : $g);
         $b = $b < 0 ? 0 : ($b > 255 ? 255 : $b);
 
-        return implode(';', [48, 2, $r, $g, $b]);
+        return new BackgroundColor([48, 2, $r, $g, $b]);
     }
 }

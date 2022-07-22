@@ -2,6 +2,9 @@
 
 namespace System\Console\Traits;
 
+use System\Console\Style\Color;
+use System\Console\Style\Color\BackgroundColor;
+use System\Console\Style\Color\ForegroundColor;
 use System\Console\Style\Decorate;
 
 trait CommandTrait
@@ -199,29 +202,21 @@ trait CommandTrait
     /**
      * Just in time text color.
      *
-     * @param int $color Color code 0-256
+     * @param ForegroundColor $color Color code 0-256
      */
-    protected function textColor(int $color, string $text): string
+    protected function textColor(ForegroundColor $color, string $text): string
     {
-        if ($color < 0 | $color > 256) {
-            throw new \InvalidArgumentException('Color code must 0-256 range.');
-        }
-
-        return $this->rules([38, 5, $color], $text);
+        return $this->rules($color->get(), $text);
     }
 
     /**
      * Just in time background color.
      *
-     * @param int $color Color code 0-256
+     * @param BackgroundColor $color Color code 0-256
      */
-    protected function bgColor(int $color, string $text): string
+    protected function bgColor(BackgroundColor $color, string $text): string
     {
-        if ($color < 0 | $color > 256) {
-            throw new \InvalidArgumentException('Color code must 0-256 range.');
-        }
-
-        return $this->rules([48, 5, $color], $text);
+        return $this->rules($color->get(), $text);
     }
 
     protected function textBold(string $text): string

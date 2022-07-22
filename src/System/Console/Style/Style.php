@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Console\Style;
 
+use System\Console\Interfaces\ColorInterface;
 use System\Console\Traits\CommandTrait;
 use System\Text\Str;
 
@@ -40,7 +41,7 @@ use function System\Text\text;
  * @method self bgLightCyan()
  * @method self bgWhite()
  */
-class Rule
+class Style
 {
     use CommandTrait;
 
@@ -313,13 +314,15 @@ class Rule
     /**
      * Add raw terminal code.
      *
-     * @param string $color Raw terminal code
+     * @param ColorInterface|string $color Raw terminal code
      *
      * @return self
      */
     public function raw($color)
     {
-        $this->raw_rules = $color;
+        $this->raw_rules = $color instanceof ColorInterface
+            ? $color->raw()
+            : $color;
 
         return $this;
     }
