@@ -318,7 +318,7 @@ class Style
      *
      * @return self
      */
-    public function raw($color, $reset = '')
+    public function raw($color)
     {
         $this->raw_rules = $color instanceof ColorInterface
             ? $color->raw()
