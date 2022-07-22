@@ -294,4 +294,42 @@ class Colors
 
         return '48;5;' . $color;
     }
+
+    /**
+     * Convert rgb color to teminal color raw (text).
+     *
+     * @param int $r Red (0-255)
+     * @param int $g Green (0-255)
+     * @param int $b Blue (0-255)
+     *
+     * @return string Terminal code
+     */
+    public static function rgbRawText($r, $g, $b)
+    {
+        // normalize (value: 0-255)
+        $r = $r < 0 ? 0 : ($r > 255 ? 255 : $r);
+        $g = $g < 0 ? 0 : ($g > 255 ? 255 : $g);
+        $b = $b < 0 ? 0 : ($b > 255 ? 255 : $b);
+
+        return implode(';', [38, 2, $r, $g, $b]);
+    }
+
+    /**
+     * Convert rgb color to teminal color raw (background).
+     *
+     * @param int $r Red (0-255)
+     * @param int $g Green (0-255)
+     * @param int $b Blue (0-255)
+     *
+     * @return string Terminal code
+     */
+    public static function rgbRawBg($r, $g, $b)
+    {
+        // normalize (value: 0-255)
+        $r = $r < 0 ? 0 : ($r > 255 ? 255 : $r);
+        $g = $g < 0 ? 0 : ($g > 255 ? 255 : $g);
+        $b = $b < 0 ? 0 : ($b > 255 ? 255 : $b);
+
+        return implode(';', [48, 2, $r, $g, $b]);
+    }
 }

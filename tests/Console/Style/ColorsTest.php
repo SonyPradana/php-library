@@ -46,4 +46,11 @@ final class ColorsTest extends TestCase
         $this->expectErrorMessage('Hex code not found.');
         $this->assertEquals('48;5;231', Colors::hexRawBg('#badas'));
     }
+
+    /** @test */
+    public function itCanConvertRGBToTermnialColorCode()
+    {
+        $this->assertEquals('38;2;0;0;0', Colors::rgbRawText(0, 0, 0), 'rgb text color white');
+        $this->assertEquals('48;2;0;0;0', Colors::rgbRawBg(0, 0, 0), 'rgb bg color white');
+    }
 }
