@@ -40,7 +40,7 @@ use function System\Text\text;
  * @method self bgLightCyan()
  * @method self bgWhite()
  */
-class Rule
+class Style
 {
     use CommandTrait;
 

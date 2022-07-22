@@ -10,10 +10,10 @@ if (!function_exists('style')) {
      *
      * @param string $text
      *
-     * @return \System\Console\Style\Rule
+     * @return \System\Console\Style\Style
      */
     function style($text)
     {
-        return new \System\Console\Style\Rule($text);
+        return new \System\Console\Style\Style($text);
     }
 }
