@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace System\Console\Style;
 
+use System\Console\Style\Color\BackgroundColor;
+use System\Console\Style\Color\ForegroundColor;
+
 class Colors
 {
     public const Black              = 0;
@@ -296,22 +299,22 @@ class Colors
     }
 
     /**
-     * Convert rgb color to teminal color raw (text).
+     * Convert rgb color (true color) to teminal color raw (text).
      *
      * @param int $r Red (0-255)
      * @param int $g Green (0-255)
      * @param int $b Blue (0-255)
      *
-     * @return string Terminal code
+     * @return ForegroundColor Terminal code
      */
-    public static function rgbRawText($r, $g, $b)
+    public static function rgbText($r, $g, $b)
     {
         // normalize (value: 0-255)
         $r = $r < 0 ? 0 : ($r > 255 ? 255 : $r);
         $g = $g < 0 ? 0 : ($g > 255 ? 255 : $g);
         $b = $b < 0 ? 0 : ($b > 255 ? 255 : $b);
 
-        return implode(';', [38, 2, $r, $g, $b]);
+        return new ForegroundColor([38, 2, $r, $g, $b]);
     }
 
     /**
@@ -321,15 +324,15 @@ class Colors
      * @param int $g Green (0-255)
      * @param int $b Blue (0-255)
      *
-     * @return string Terminal code
+     * @return BackgroundColor Terminal code
      */
-    public static function rgbRawBg($r, $g, $b)
+    public static function rgbBg($r, $g, $b)
     {
         // normalize (value: 0-255)
         $r = $r < 0 ? 0 : ($r > 255 ? 255 : $r);
         $g = $g < 0 ? 0 : ($g > 255 ? 255 : $g);
         $b = $b < 0 ? 0 : ($b > 255 ? 255 : $b);
 
-        return implode(';', [48, 2, $r, $g, $b]);
+        return new BackgroundColor([48, 2, $r, $g, $b]);
     }
 }

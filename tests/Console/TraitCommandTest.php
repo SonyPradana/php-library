@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use System\Console\Command;
+use System\Console\Style\Color\ForegroundColor;
 use System\Console\Traits\CommandTrait;
 
 final class TraitCommandTest extends TestCase
@@ -28,7 +29,7 @@ final class TraitCommandTest extends TestCase
                     echo $this->textGreen('Color');
                 }
                 if ($name === 'textColor') {
-                    echo $this->textColor((int) $arguments[0], 'Color');
+                    echo $this->textColor($arguments[0], 'Color');
                 }
             }
         };
@@ -67,10 +68,11 @@ final class TraitCommandTest extends TestCase
     /** @test */
     public function itCanMakeTextColor()
     {
+        $color = new ForegroundColor([38, 2, 0, 0, 0]);
         ob_start();
-        $this->command->textColor(25);
+        $this->command->textColor($color);
         $out = ob_get_clean();
 
-        $this->assertEquals("\e[38;5;25mColor\e[0m", $out);
+        $this->assertEquals("\e[38;2;0;0;0mColor\e[0m", $out);
     }
 }

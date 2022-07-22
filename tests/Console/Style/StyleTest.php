@@ -39,12 +39,26 @@ final class StyleTest extends TestCase
     }
 
     /** @test */
-    public function itCanRenderColorUsingRawTerminalCode()
+    public function itCanRenderColorUsingRawColorInterface()
     {
         $cmd  = new Style('text');
         $text =  $cmd->raw(Colors::hexRawText('#ffd787'));
 
         $this->assertEquals("\e[39;49;38;5;222mtext\e[0m", $text, 'text must return raw color terminal code');
+
+        $cmd  = new Style('text');
+        $text = $cmd->raw(Colors::rgbText(0, 0, 0));
+
+        $this->assertEquals("\e[39;49;38;2;0;0;0mtext\e[0m", $text);
+    }
+
+    /** @test */
+    public function itCanRenderColorRaw()
+    {
+        $cmd  = new Style('text');
+        $text = $cmd->raw('38;2;0;0;0');
+
+        $this->assertEquals("\e[39;49;38;2;0;0;0mtext\e[0m", $text);
     }
 
     /** @test */
