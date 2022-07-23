@@ -8,39 +8,29 @@ use System\Console\Style\Colors;
 final class ColorsTest extends TestCase
 {
     /** @test */
-    public function itCanConvertHexToTermnialColorCode()
+    public function itCanConvertHexTextToTermnialColorCode()
     {
-        $this->expectErrorMessage('Hex code not found.');
-        $this->assertEquals(231, Colors::hex('#Badas'));
+        $this->assertEquals('38;2;255;255;255', Colors::hexText('#ffffff')->raw());
+        $this->assertEquals('38;2;255;255;255', Colors::hexText('#FFFFFF')->raw());
 
         $this->expectErrorMessage('Hex code not found.');
-        $this->assertEquals(231, Colors::hex('#ffffff'));
+        $this->assertEquals('38;5;231', Colors::hexText('ffffff'));
+
+        $this->expectErrorMessage('Hex code not found.');
+        $this->assertEquals('38;5;231', Colors::hexText('#badas'));
     }
 
     /** @test */
-    public function itCanConvertHexRawTextToTermnialColorCode()
+    public function itCanConvertHexBgToTermnialColorCode()
     {
-        $this->assertEquals('38;5;231', Colors::hexRawText('#ffffff'));
-        $this->assertEquals('38;5;231', Colors::hexRawText('#FFFFFF'));
+        $this->assertEquals('48;2;255;255;255', Colors::hexBg('#ffffff')->raw());
+        $this->assertEquals('48;2;255;255;255', Colors::hexBg('#FFFFFF')->raw());
 
         $this->expectErrorMessage('Hex code not found.');
-        $this->assertEquals('38;5;231', Colors::hexRawText('ffffff'));
+        $this->assertEquals('48;5;231', Colors::hexBg('ffffff')->raw());
 
         $this->expectErrorMessage('Hex code not found.');
-        $this->assertEquals('38;5;231', Colors::hexRawText('#badas'));
-    }
-
-    /** @test */
-    public function itCanConvertHexRawBgToTermnialColorCode()
-    {
-        $this->assertEquals('48;5;231', Colors::hexRawBg('#ffffff'));
-        $this->assertEquals('48;5;231', Colors::hexRawBg('#FFFFFF'));
-
-        $this->expectErrorMessage('Hex code not found.');
-        $this->assertEquals('48;5;231', Colors::hexRawBg('ffffff'));
-
-        $this->expectErrorMessage('Hex code not found.');
-        $this->assertEquals('48;5;231', Colors::hexRawBg('#badas'));
+        $this->assertEquals('48;5;231', Colors::hexBg('#badas')->raw());
     }
 
     /** @test */
