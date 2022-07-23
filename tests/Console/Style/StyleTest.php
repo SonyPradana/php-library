@@ -42,9 +42,9 @@ final class StyleTest extends TestCase
     public function itCanRenderColorUsingRawColorInterface()
     {
         $cmd  = new Style('text');
-        $text =  $cmd->raw(Colors::hexRawText('#ffd787'));
+        $text =  $cmd->raw(Colors::hexText('#ffd787'));
 
-        $this->assertEquals("\e[39;49;38;5;222mtext\e[0m", $text, 'text must return raw color terminal code');
+        $this->assertEquals("\e[39;49;38;2;255;215;135mtext\e[0m", $text, 'text must return raw color terminal code');
 
         $cmd  = new Style('text');
         $text = $cmd->raw(Colors::rgbText(0, 0, 0));
