@@ -55,9 +55,9 @@ class Style
     /**
      * Array of command rule.
      *
-     * @var string
+     * @var array<int, string|int>
      */
-    private $raw_rules = '';
+    private $raw_rules = [];
 
     /**
      * Array of command rule.
@@ -138,8 +138,8 @@ class Style
         foreach ($this->decorate_rules as $decorate) {
             $this->rules[] = $decorate;
         }
-        if ($this->raw_rules !== '') {
-            $this->rules[] = $this->raw_rules;
+        foreach ($this->raw_rules as $raw) {
+            $this->rules[] = $raw;
         }
 
         return $this->ref . $this->rules($this->rules, $this->text, true, $this->reset_rules);
@@ -183,7 +183,7 @@ class Style
         $this->bg_color_rule   = Decorate::BG_DEFAULT;
         $this->decorate_rules  = [];
         $this->reset_rules     = [Decorate::RESET];
-        $this->raw_rules       = '';
+        $this->raw_rules       = [];
         $this->ref             = '';
 
         return $this;
@@ -314,15 +314,15 @@ class Style
     /**
      * Add raw terminal code.
      *
-     * @param ColorInterface|string $color Raw terminal code
+     * @param ColorInterface|string $raw Raw terminal code
      *
      * @return self
      */
-    public function raw($color)
+    public function raw($raw)
     {
-        $this->raw_rules = $color instanceof ColorInterface
-            ? $color->raw()
-            : $color;
+        $this->raw_rules = $raw instanceof ColorInterface
+            ? $raw->get()
+            : [$raw];
 
         return $this;
     }
