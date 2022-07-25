@@ -7,7 +7,7 @@ namespace System\Console\Style;
  *
  * @see https://gist.github.com/davidpiesse/74f5eaa23eb405e61b58cfe535d9907c
  */
-class VariantColor
+class ColorVariant
 {
     public const RED             = '#f44336';
     public const RED_50          = '#ffebee';
