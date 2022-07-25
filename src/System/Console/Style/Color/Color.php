@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace System\Console\Style\Color;
 
-use System\Console\Interfaces\ColorInterface;
+use System\Console\Interfaces\RuleInterface;
 
-abstract class Color implements ColorInterface
+abstract class Color implements RuleInterface
 {
     protected $rule;
 

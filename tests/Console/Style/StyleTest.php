@@ -39,7 +39,7 @@ final class StyleTest extends TestCase
     }
 
     /** @test */
-    public function itCanRenderColorUsingRawColorInterface()
+    public function itCanRenderColorUsingRawRuleInterface()
     {
         $cmd  = new Style('text');
         $text =  $cmd->raw(Colors::hexText('#ffd787'));
