@@ -42,7 +42,7 @@ final class TraitCommandTest extends TestCase
         $this->command->echoTextRed();
         $out = ob_get_clean();
 
-        $this->assertEquals("\e[31mColor\e[0m", $out);
+        $this->assertEquals(sprintf('%s[31mColor%s[0m', chr(27), chr(27)), $out);
     }
 
     /** @test */
@@ -52,7 +52,7 @@ final class TraitCommandTest extends TestCase
         $this->command->echoTextYellow();
         $out = ob_get_clean();
 
-        $this->assertEquals("\e[33mColor\e[0m", $out);
+        $this->assertEquals(sprintf('%s[33mColor%s[0m', chr(27), chr(27)), $out);
     }
 
     /** @test */
@@ -62,7 +62,7 @@ final class TraitCommandTest extends TestCase
         $this->command->echoTextGreen();
         $out = ob_get_clean();
 
-        $this->assertEquals("\e[32mColor\e[0m", $out);
+        $this->assertEquals(sprintf('%s[32mColor%s[0m', chr(27), chr(27)), $out);
     }
 
     /** @test */
@@ -73,6 +73,6 @@ final class TraitCommandTest extends TestCase
         $this->command->textColor($color);
         $out = ob_get_clean();
 
-        $this->assertEquals("\e[38;2;0;0;0mColor\e[0m", $out);
+        $this->assertEquals(sprintf('%s[38;2;0;0;0mColor%s[0m', chr(27), chr(27)), $out);
     }
 }

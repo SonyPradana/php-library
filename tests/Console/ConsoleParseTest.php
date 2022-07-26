@@ -87,7 +87,7 @@ class ConsoleParseTest extends TestCase
         $console->main();
         $out = ob_get_clean();
 
-        $this->assertEquals("\e[32mOke\e[0m", $out);
+        $this->assertEquals(sprintf('%s[32mOke%s[0m', chr(27), chr(27)), $out);
     }
 
     /** @test */
