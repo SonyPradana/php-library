@@ -339,6 +339,8 @@ class Style
      */
     public function repeat($content, $repeat = 1)
     {
+        $repeat = $repeat < 0 ? 0 : $repeat;
+
         return $this->push(
             str_repeat($content, $repeat)
         );
