@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Console\Style;
 
-use System\Console\Interfaces\ColorInterface;
+use System\Console\Interfaces\RuleInterface;
 use System\Console\Traits\CommandTrait;
 use System\Text\Str;
 
@@ -314,15 +314,15 @@ class Style
     /**
      * Add raw terminal code.
      *
-     * @param ColorInterface|string $raw Raw terminal code
+     * @param RuleInterface|string $color Raw terminal code
      *
      * @return self
      */
     public function raw($raw)
     {
-        $this->raw_rules = $raw instanceof ColorInterface
-            ? $raw->get()
-            : [$raw];
+        $this->raw_rules = $raw instanceof RuleInterface
+            ? $raw->raw()
+            : $raw;
 
         return $this;
     }

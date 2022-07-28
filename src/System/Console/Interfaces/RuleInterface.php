@@ -2,7 +2,7 @@
 
 namespace System\Console\Interfaces;
 
-interface ColorInterface
+interface RuleInterface
 {
     public function get(): array;
 

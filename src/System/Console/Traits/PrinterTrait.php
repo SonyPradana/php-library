@@ -34,8 +34,8 @@ trait PrinterTrait
      */
     protected function rule($rule, $text, $reset = true, $reset_rule = Decorate::RESET)
     {
-        $rule       = "\e[" . $rule . 'm' . $text;
-        $reset_rule = "\e[" . $reset_rule . 'm';
+        $rule       = chr(27) . '[' . $rule . 'm' . $text;
+        $reset_rule = chr(27) . '[' . $reset_rule . 'm';
 
         return $reset
             ? $rule . $reset_rule
@@ -69,7 +69,7 @@ trait PrinterTrait
      */
     protected function clear_cursor()
     {
-        echo "\e[1K";
+        echo chr(27) . '[1K';
     }
 
     /**
@@ -79,6 +79,6 @@ trait PrinterTrait
      */
     protected function clear_line()
     {
-        echo "\e[2K";
+        echo chr(27) . '[2K';
     }
 }
