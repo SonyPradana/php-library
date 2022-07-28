@@ -112,4 +112,29 @@ final class StyleTest extends TestCase
             $out
         );
     }
+
+    /** @test */
+    public function itCanRenderTextColorTerminalCodeWithPushNewLineTabsSpaces()
+    {
+        $cmd  = new Style('text');
+        $text =  $cmd
+            ->textBlue()
+            ->tabs(2)
+        ;
+        $this->assertEquals(sprintf('%s[34;49mtext%s[0m%s[39;49m%s%s[0m', chr(27), chr(27), chr(27), "\t\t", chr(27)), $text);
+
+        $cmd  = new Style('text');
+        $text =  $cmd
+            ->textBlue()
+            ->new_lines(2)
+        ;
+        $this->assertEquals(sprintf('%s[34;49mtext%s[0m%s[39;49m%s%s[0m', chr(27), chr(27), chr(27), "\n\n", chr(27)), $text);
+
+        $cmd  = new Style('text');
+        $text =  $cmd
+            ->textBlue()
+            ->repeat('.', 5)
+        ;
+        $this->assertEquals(sprintf('%s[34;49mtext%s[0m%s[39;49m%s%s[0m', chr(27), chr(27), chr(27), '.....', chr(27)), $text);
+    }
 }

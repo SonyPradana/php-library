@@ -328,4 +328,43 @@ class Style
 
         return $this;
     }
+
+    /**
+     * Push/insert repeat character.
+     *
+     * @param string $content
+     * @param int    $repeat
+     *
+     * @return self
+     */
+    public function repeat($content, $repeat = 1)
+    {
+        return $this->push(
+            str_repeat($content, $repeat)
+        );
+    }
+
+    /**
+     * Push/insert new lines.
+     *
+     * @param int $repeat
+     *
+     * @return self
+     */
+    public function new_lines($repeat = 1)
+    {
+        return $this->repeat("\n", $repeat);
+    }
+
+    /**
+     * Push/insert tabs.
+     *
+     * @param int $repeat
+     *
+     * @return self
+     */
+    public function tabs($repeat = 1)
+    {
+        return $this->repeat("\t", $repeat);
+    }
 }
