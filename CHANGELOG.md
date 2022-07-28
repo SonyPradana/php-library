@@ -5,6 +5,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.10.1] - 2022-29-07
+### Added
+- Added method `Colors::rgbText`, `Colors::rgbBg`.
+- Added `Style::repeat`, `Style::new_lines` and `Style::tabs`.
+- Added property to define terminal color `ForegroundColor::class` and `BackgroundColor::class`.
+
+### Changed
+- Updated php-cs-fixer to "3.9".
+- Changed class from `Rule::class` to `Style::class`.
+- `Style::push()` return as self.
+- Change from 255 color to true color teminal `Colors::class`.
+- Changed method `Colors::RawHexText` to `Colors::hexText`, `Colors::RawHexBg` to `Colors::hexBg`.
+- Push no longger print out before method `out` call.
+- Use `chr(27)` intead of "\e" for escape charakter.
+
 ## [0.10.0] - 2022-07-07
 ### Added
 - Added default argument for parse console argument in `Command::class`.
