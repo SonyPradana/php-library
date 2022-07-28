@@ -102,9 +102,9 @@ class Style
     private $ref = '';
 
     /**
-     * @param string $text set text to decorate
+     * @param string|int $text set text to decorate
      */
-    public function __construct($text)
+    public function __construct($text = '')
     {
         $this->text = $text;
     }
@@ -112,7 +112,7 @@ class Style
     /**
      * Invoke new Rule class.
      *
-     * @param string $text set text to decorate
+     * @param string|int $text set text to decorate
      *
      * @return self
      */
@@ -208,7 +208,7 @@ class Style
     /**
      * Chain code (continue with other text).
      *
-     * @param string $text text
+     * @param string|int $text text
      *
      * @return self
      */
