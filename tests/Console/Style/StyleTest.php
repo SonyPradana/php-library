@@ -62,6 +62,17 @@ final class StyleTest extends TestCase
     }
 
     /** @test */
+    public function itCanRenderColorMultyRaw()
+    {
+        $cmd  = new Style('text');
+        $text = $cmd
+            ->raw('38;2;0;0;0')
+            ->raw('48;2;255;255;255');
+
+        $this->assertEquals(sprintf('%s[39;49;38;2;0;0;0;48;2;255;255;255mtext%s[0m', chr(27), chr(27)), $text);
+    }
+
+    /** @test */
     public function itCanRenderChainCode()
     {
         $cmd = new Style('text');

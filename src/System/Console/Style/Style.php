@@ -55,9 +55,9 @@ class Style
     /**
      * Array of command rule.
      *
-     * @var string
+     * @var array<int, array<int, string|int>>
      */
-    private $raw_rules = '';
+    private $raw_rules = [];
 
     /**
      * Array of command rule.
@@ -102,9 +102,9 @@ class Style
     private $ref = '';
 
     /**
-     * @param string $text set text to decorate
+     * @param string|int $text set text to decorate
      */
-    public function __construct($text)
+    public function __construct($text = '')
     {
         $this->text = $text;
     }
@@ -112,7 +112,7 @@ class Style
     /**
      * Invoke new Rule class.
      *
-     * @param string $text set text to decorate
+     * @param string|int $text set text to decorate
      *
      * @return self
      */
@@ -138,8 +138,10 @@ class Style
         foreach ($this->decorate_rules as $decorate) {
             $this->rules[] = $decorate;
         }
-        if ($this->raw_rules !== '') {
-            $this->rules[] = $this->raw_rules;
+        foreach ($this->raw_rules as $raws) {
+            foreach ($raws as $raw) {
+                $this->rules[] = $raw;
+            }
         }
 
         return $this->ref . $this->rules($this->rules, $this->text, true, $this->reset_rules);
@@ -183,7 +185,7 @@ class Style
         $this->bg_color_rule   = Decorate::BG_DEFAULT;
         $this->decorate_rules  = [];
         $this->reset_rules     = [Decorate::RESET];
-        $this->raw_rules       = '';
+        $this->raw_rules       = [];
         $this->ref             = '';
 
         return $this;
@@ -206,7 +208,7 @@ class Style
     /**
      * Chain code (continue with other text).
      *
-     * @param string $text text
+     * @param string|int $text text
      *
      * @return self
      */
@@ -314,15 +316,15 @@ class Style
     /**
      * Add raw terminal code.
      *
-     * @param RuleInterface|string $color Raw terminal code
+     * @param RuleInterface|string $raw Raw terminal code
      *
      * @return self
      */
-    public function raw($color)
+    public function raw($raw)
     {
-        $this->raw_rules = $color instanceof RuleInterface
-            ? $color->raw()
-            : $color;
+        $this->raw_rules[] = $raw instanceof RuleInterface
+            ? $raw->get()
+            : [$raw];
 
         return $this;
     }
