@@ -55,7 +55,7 @@ class Style
     /**
      * Array of command rule.
      *
-     * @var array<int, string|int>
+     * @var array<int, array<int, string|int>>
      */
     private $raw_rules = [];
 
@@ -138,8 +138,10 @@ class Style
         foreach ($this->decorate_rules as $decorate) {
             $this->rules[] = $decorate;
         }
-        foreach ($this->raw_rules as $raw) {
-            $this->rules[] = $raw;
+        foreach ($this->raw_rules as $raws) {
+            foreach ($raws as $raw) {
+                $this->rules[] = $raw;
+            }
         }
 
         return $this->ref . $this->rules($this->rules, $this->text, true, $this->reset_rules);
@@ -314,15 +316,15 @@ class Style
     /**
      * Add raw terminal code.
      *
-     * @param RuleInterface|string $color Raw terminal code
+     * @param RuleInterface|string $raw Raw terminal code
      *
      * @return self
      */
     public function raw($raw)
     {
-        $this->raw_rules = $raw instanceof RuleInterface
-            ? $raw->raw()
-            : $raw;
+        $this->raw_rules[] = $raw instanceof RuleInterface
+            ? $raw->get()
+            : [$raw];
 
         return $this;
     }
