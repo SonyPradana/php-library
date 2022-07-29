@@ -155,27 +155,19 @@ Assembling beautifull console app make easy
 ```php
 class GreatConsole extends Console
 {
-  public function println()
+  public function main()
   {
     // getter to get param form cli argument
     $name = $this->name ?? 'animus';
 
-    $this->prints(
-      $this->textGreen("Great console application\n"),
-      "hay my name is " . $this->bgYellow($name)
-    );
-  }
-
-  public function printHelp()
-  {
-   return array(
-     'option' => array(
-        "run" . $this->tab(3) . "Run greate app"
-     ),
-     'argument' => array(
-        $this->textDim("--name") . $this->tab(3) . "Set file name"
-     )
-   );
+    style("Great console Aapplication")
+    	->textGreen()
+        ->new_lines()
+        ->push("hay my name is ")
+        ->push($name)
+        ->textYellow()
+        ->out()
+    ;
   }
 }
 ```
@@ -187,7 +179,7 @@ class GreatConsole extends Console
 #!usr/bin/env php
 
 // $argv come with default global php 
-return (new greatConsole($argv))->println();
+return (new greatConsole($argv))->main();
 
 ```
 
