@@ -15,7 +15,7 @@ final class StyleTest extends TestCase
     public function itCanRenderTextColorTerminalCode()
     {
         $cmd  = new Style('text');
-        $text =  $cmd->textBlue();
+        $text = $cmd->textBlue();
 
         $this->assertEquals(sprintf('%s[34;49mtext%s[0m', chr(27), chr(27)), $text, 'text must return blue text terminal code');
     }
@@ -24,7 +24,7 @@ final class StyleTest extends TestCase
     public function itCanRenderBgColorTerminalCode()
     {
         $cmd  = new Style('text');
-        $text =  $cmd->bgBlue();
+        $text = $cmd->bgBlue();
 
         $this->assertEquals(sprintf('%s[39;44mtext%s[0m', chr(27), chr(27)), $text, 'text must return blue bankground terminal code');
     }
@@ -33,7 +33,7 @@ final class StyleTest extends TestCase
     public function itCanRenderTextAndBgColorTerminalCode()
     {
         $cmd  = new Style('text');
-        $text =  $cmd->textRed()->bgBlue();
+        $text = $cmd->textRed()->bgBlue();
 
         $this->assertEquals(sprintf('%s[31;44mtext%s[0m', chr(27), chr(27)), $text, 'text must return red text and blue text terminal code');
     }
@@ -42,7 +42,7 @@ final class StyleTest extends TestCase
     public function itCanRenderColorUsingRawRuleInterface()
     {
         $cmd  = new Style('text');
-        $text =  $cmd->raw(Colors::hexText('#ffd787'));
+        $text = $cmd->raw(Colors::hexText('#ffd787'));
 
         $this->assertEquals(sprintf('%s[38;2;255;215;135;49mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
 
@@ -117,24 +117,42 @@ final class StyleTest extends TestCase
     public function itCanRenderTextColorTerminalCodeWithPushNewLineTabsSpaces()
     {
         $cmd  = new Style('text');
-        $text =  $cmd
+        $text = $cmd
             ->textBlue()
             ->tabs(2)
         ;
         $this->assertEquals(sprintf('%s[34;49mtext%s[0m%s[39;49m%s%s[0m', chr(27), chr(27), chr(27), "\t\t", chr(27)), $text);
 
         $cmd  = new Style('text');
-        $text =  $cmd
+        $text = $cmd
             ->textBlue()
             ->new_lines(2)
         ;
         $this->assertEquals(sprintf('%s[34;49mtext%s[0m%s[39;49m%s%s[0m', chr(27), chr(27), chr(27), "\n\n", chr(27)), $text);
 
         $cmd  = new Style('text');
-        $text =  $cmd
+        $text = $cmd
             ->textBlue()
             ->repeat('.', 5)
         ;
         $this->assertEquals(sprintf('%s[34;49mtext%s[0m%s[39;49m%s%s[0m', chr(27), chr(27), chr(27), '.....', chr(27)), $text);
+    }
+
+    /** @test */
+    public function itCanRenderColorUsingTextColor()
+    {
+        $cmd  = new Style('text');
+        $text = $cmd->textColor(Colors::hexText('#ffd787'));
+
+        $this->assertEquals(sprintf('%s[38;2;255;215;135;49mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
+    }
+
+    /** @test */
+    public function itCanRenderColorUsingBgColor()
+    {
+        $cmd  = new Style('text');
+        $text = $cmd->bgColor(Colors::hexBg('#ffd787'));
+
+        $this->assertEquals(sprintf('%s[39;48;2;255;215;135mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
     }
 }

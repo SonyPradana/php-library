@@ -354,6 +354,30 @@ class Style
     }
 
     /**
+     * @param ForegroundColor $color
+     *
+     * @return self
+     */
+    public function textColor($color)
+    {
+        $this->text_color_rule = $color->get();
+
+        return $this;
+    }
+
+    /**
+     * @param BackgroundColor $color
+     *
+     * @return self
+     */
+    public function bgColor($color)
+    {
+        $this->bg_color_rule = $color->get();
+
+        return $this;
+    }
+
+    /**
      * Push/insert repeat character.
      *
      * @param string $content
