@@ -44,12 +44,12 @@ final class StyleTest extends TestCase
         $cmd  = new Style('text');
         $text =  $cmd->raw(Colors::hexText('#ffd787'));
 
-        $this->assertEquals(sprintf('%s[39;49;38;2;255;215;135mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
+        $this->assertEquals(sprintf('%s[38;2;255;215;135;49mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
 
         $cmd  = new Style('text');
         $text = $cmd->raw(Colors::rgbText(0, 0, 0));
 
-        $this->assertEquals(sprintf('%s[39;49;38;2;0;0;0mtext%s[0m', chr(27), chr(27)), $text);
+        $this->assertEquals(sprintf('%s[38;2;0;0;0;49mtext%s[0m', chr(27), chr(27)), $text);
     }
 
     /** @test */

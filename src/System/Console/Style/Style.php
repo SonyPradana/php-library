@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace System\Console\Style;
 
 use System\Console\Interfaces\RuleInterface;
+use System\Console\Style\Color\BackgroundColor;
+use System\Console\Style\Color\ForegroundColor;
 use System\Console\Traits\CommandTrait;
 use System\Text\Str;
 
@@ -69,16 +71,16 @@ class Style
     /**
      * Rule of text color.
      *
-     * @var int
+     * @var array<int, int>
      */
-    private $text_color_rule = Decorate::TEXT_DEFAULT;
+    private $text_color_rule = [Decorate::TEXT_DEFAULT];
 
     /**
      * Rule of background color.
      *
-     * @var int
+     * @var array<int, int>
      */
-    private $bg_color_rule = Decorate::BG_DEFAULT;
+    private $bg_color_rule = [Decorate::BG_DEFAULT];
 
     /**
      * Rule of text decorate.
@@ -133,11 +135,23 @@ class Style
         // flush
         $this->rules = [];
         // merge rule
-        $this->rules[] = $this->text_color_rule;
-        $this->rules[] = $this->bg_color_rule;
+
+        // font color
+        foreach ($this->text_color_rule as $text_color) {
+            $this->rules[] = $text_color;
+        }
+
+        // bg color
+        foreach ($this->bg_color_rule as $bg_color) {
+            $this->rules[] = $bg_color;
+        }
+
+        // decorate
         foreach ($this->decorate_rules as $decorate) {
             $this->rules[] = $decorate;
         }
+
+        // raw
         foreach ($this->raw_rules as $raws) {
             foreach ($raws as $raw) {
                 $this->rules[] = $raw;
@@ -162,12 +176,12 @@ class Style
 
             if (Str::startsWith($name, 'text')) {
                 $constant              = 'TEXT' . text($constant)->upper()->slice(4);
-                $this->text_color_rule = Decorate::getConst($constant);
+                $this->text_color_rule = [Decorate::getConst($constant)];
             }
 
             if (Str::startsWith($name, 'bg')) {
                 $constant            =  'BG' . text($constant)->upper()->slice(2);
-                $this->bg_color_rule = Decorate::getConst($constant);
+                $this->bg_color_rule = [Decorate::getConst($constant)];
             }
         }
 
@@ -181,8 +195,8 @@ class Style
      */
     public function flush()
     {
-        $this->text_color_rule = Decorate::TEXT_DEFAULT;
-        $this->bg_color_rule   = Decorate::BG_DEFAULT;
+        $this->text_color_rule = [Decorate::TEXT_DEFAULT];
+        $this->bg_color_rule   = [Decorate::BG_DEFAULT];
         $this->decorate_rules  = [];
         $this->reset_rules     = [Decorate::RESET];
         $this->raw_rules       = [];
@@ -322,9 +336,19 @@ class Style
      */
     public function raw($raw)
     {
-        $this->raw_rules[] = $raw instanceof RuleInterface
-            ? $raw->get()
-            : [$raw];
+        if ($raw instanceof ForegroundColor) {
+            $this->text_color_rule = $raw->get();
+
+            return $this;
+        }
+
+        if ($raw instanceof BackgroundColor) {
+            $this->bg_color_rule = $raw->get();
+
+            return $this;
+        }
+
+        $this->raw_rules[] = [$raw];
 
         return $this;
     }
