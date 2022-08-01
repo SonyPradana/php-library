@@ -8,8 +8,16 @@ use System\Console\Interfaces\RuleInterface;
 
 abstract class Color implements RuleInterface
 {
+    /**
+     * Rule terminal.
+     *
+     * @var array<int, int>
+     */
     protected $rule;
 
+    /**
+     * @param array<int, int> $rule
+     */
     public function __construct($rule)
     {
         $this->rule = $rule;
