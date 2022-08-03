@@ -183,6 +183,19 @@ class Style
                 $constant            =  'BG' . text($constant)->upper()->slice(2);
                 $this->bg_color_rule = [Decorate::getConst($constant)];
             }
+
+            return $this;
+        }
+
+        $constant = text($name)->upper();
+        if ($constant->startsWith('TEXT_')) {
+            $constant->slice(5);
+            $this->textColor(Colors::hexText(ColorVariant::getConst($constant->__toString())));
+        }
+
+        if ($constant->startsWith('BG_')) {
+            $constant->slice(3);
+            $this->bgColor(Colors::hexBg(ColorVariant::getConst($constant->__toString())));
         }
 
         return $this;

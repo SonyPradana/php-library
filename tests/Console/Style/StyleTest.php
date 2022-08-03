@@ -155,4 +155,23 @@ final class StyleTest extends TestCase
 
         $this->assertEquals(sprintf('%s[39;48;2;255;215;135mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
     }
+
+    /** @test */
+    public function itCanRenderColorVariantUsingMagicCall()
+    {
+        $text = (new Style('text'))->text_red_500();
+
+        $this->assertEquals(sprintf('%s[38;2;244;67;54;49mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
+
+        $text = (new Style('text'))->bg_blue_500();
+
+        $this->assertEquals(sprintf('%s[39;48;2;33;150;243mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
+    }
+
+    /** @test */
+    public function itCanThrowExceptionWhenColorVariantNotRegister()
+    {
+        $this->expectError();
+        (new Style('text'))->text_red_10();
+    }
 }
