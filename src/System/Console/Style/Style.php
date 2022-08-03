@@ -9,7 +9,6 @@ use System\Console\Style\Color\BackgroundColor;
 use System\Console\Style\Color\ForegroundColor;
 use System\Console\Traits\CommandTrait;
 use System\Text\Str;
-use System\Text\Text;
 
 use function System\Text\text;
 
