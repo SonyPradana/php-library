@@ -5,6 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.10.2] - 2022-04-08
+### Added
+- Added `Style::textColor` and `Style::BgColor` with paramter as `ForegroundColor` or `BackgroundColor` or string hex color.
+- Support color variant call directly uning magic call (eg `Style::text_blue_500`).
+- Added `Style::lenght()` count text lenght without count rule.
+
+### Changed
+- `Style::raw` will add specific on textColor or bgColor.
+
 ## [0.10.1] - 2022-29-07
 ### Added
 - Added method `Colors::rgbText`, `Colors::rgbBg`.
