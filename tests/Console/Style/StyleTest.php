@@ -148,10 +148,28 @@ final class StyleTest extends TestCase
     }
 
     /** @test */
+    public function itCanRenderColorUsingTextColorWithHexString()
+    {
+        $cmd  = new Style('text');
+        $text = $cmd->textColor('#ffd787');
+
+        $this->assertEquals(sprintf('%s[38;2;255;215;135;49mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
+    }
+
+    /** @test */
     public function itCanRenderColorUsingBgColor()
     {
         $cmd  = new Style('text');
         $text = $cmd->bgColor(Colors::hexBg('#ffd787'));
+
+        $this->assertEquals(sprintf('%s[39;48;2;255;215;135mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
+    }
+
+    /** @test */
+    public function itCanRenderColorUsingBgColorWithHexString()
+    {
+        $cmd  = new Style('text');
+        $text = $cmd->bgColor('#ffd787');
 
         $this->assertEquals(sprintf('%s[39;48;2;255;215;135mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
     }

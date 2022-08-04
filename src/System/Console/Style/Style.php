@@ -367,25 +367,34 @@ class Style
     }
 
     /**
-     * @param ForegroundColor $color
+     * Set text color.
+     *
+     * @param ForegroundColor|string $color
      *
      * @return self
      */
     public function textColor($color)
     {
-        $this->text_color_rule = $color->get();
+        $this->text_color_rule = $color instanceof ForegroundColor
+            ? $color->get()
+            : Colors::hexText($color)->get()
+        ;
 
         return $this;
     }
 
     /**
-     * @param BackgroundColor $color
+     * Set Background color.
+     *
+     * @param BackgroundColor|string $color
      *
      * @return self
      */
     public function bgColor($color)
     {
-        $this->bg_color_rule = $color->get();
+        $this->bg_color_rule = $color instanceof BackgroundColor
+            ? $color->get()
+            : Colors::hexBg($color)->get();
 
         return $this;
     }
