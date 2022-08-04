@@ -97,6 +97,13 @@ class Style
     private $text;
 
     /**
+     * Lenght of text.
+     *
+     * @var int
+     */
+    private $length = 0;
+
+    /**
      * Reference from preview text (like prefix).
      *
      * @var string
@@ -108,7 +115,8 @@ class Style
      */
     public function __construct($text = '')
     {
-        $this->text = $text;
+        $this->text   = $text;
+        $this->length = \strlen($text);
     }
 
     /**
@@ -120,7 +128,8 @@ class Style
      */
     public function __invoke($text)
     {
-        $this->text = $text;
+        $this->text   = $text;
+        $this->length = \strlen($text);
 
         return $this->flush();
     }
@@ -243,8 +252,19 @@ class Style
     {
         $ref        = $this->__toString();
         $this->text = $text;
+        $this->length += \strlen($text);
 
         return $this->flush()->ref($ref);
+    }
+
+    /**
+     * Get text lenght witout rule counted.
+     *
+     * @return int
+     */
+    public function length()
+    {
+        return $this->length;
     }
 
     // method ------------------------------------------------

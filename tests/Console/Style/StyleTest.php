@@ -192,4 +192,13 @@ final class StyleTest extends TestCase
         $this->expectError();
         (new Style('text'))->text_red_10();
     }
+
+    /** @test */
+    public function itCanCountTextLengthWithoutRuleCounted()
+    {
+        $text = new Style('12345');
+        $text->bgBlue()->textWhite()->underline();
+
+        $this->assertEquals(5, $text->length());
+    }
 }
