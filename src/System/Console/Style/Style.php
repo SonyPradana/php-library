@@ -116,7 +116,7 @@ class Style
     public function __construct($text = '')
     {
         $this->text   = $text;
-        $this->length = \strlen($text);
+        $this->length = \strlen((string) $text);
     }
 
     /**
@@ -129,7 +129,7 @@ class Style
     public function __invoke($text)
     {
         $this->text   = $text;
-        $this->length = \strlen($text);
+        $this->length = \strlen((string) $text);
 
         return $this->flush();
     }
@@ -252,7 +252,7 @@ class Style
     {
         $ref        = $this->__toString();
         $this->text = $text;
-        $this->length += \strlen($text);
+        $this->length += \strlen((string) $text);
 
         return $this->flush()->ref($ref);
     }

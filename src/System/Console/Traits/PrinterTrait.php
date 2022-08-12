@@ -12,9 +12,10 @@ trait PrinterTrait
      * Run commandline text rule.
      *
      * @param array<int, string|int> $rule
+     * @param string|int             $text
      * @param array<int, string|int> $reset_rule
      */
-    protected function rules(array $rule, string $text, bool $reset = true, array $reset_rule = [Decorate::RESET]): string
+    protected function rules(array $rule, $text, bool $reset = true, array $reset_rule = [Decorate::RESET]): string
     {
         $string_rules       = implode(';', $rule);
         $string_reset_rules = implode(';', $reset_rule);

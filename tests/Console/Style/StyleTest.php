@@ -201,4 +201,21 @@ final class StyleTest extends TestCase
 
         $this->assertEquals(5, $text->length());
     }
+
+    /** @test */
+    public function itCanCountTextNumberLengthWithoutRuleCounted()
+    {
+        $text = new Style(12345);
+        $text->bgBlue()->textWhite()->underline();
+
+        $this->assertEquals(5, $text->length());
+
+        // add using invoke
+        $text(123)->bgBlue()->textWhite()->underline();
+        $this->assertEquals(3, $text->length());
+
+        // add using push
+        $text->push(123)->bgBlue()->textWhite()->underline();
+        $this->assertEquals(6, $text->length());
+    }
 }
