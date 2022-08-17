@@ -11,8 +11,9 @@ class Router
     private static $pathNotFound     = null;
     private static $methodNotAllowed = null;
     public static $group             = [
-    'prefix' => '',
-  ];
+        'prefix'     => '',
+        'middleware' => [],
+    ];
     /** @var Route */
     private static $current;
 
