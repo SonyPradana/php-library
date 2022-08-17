@@ -22,7 +22,7 @@ class RequestFactory
 
     private function getHeaders(): array
     {
-        if (!function_exists('apache_request_headers')) {
+        if (function_exists('apache_request_headers')) {
             return array_change_key_case(
                 apache_request_headers()
             );
