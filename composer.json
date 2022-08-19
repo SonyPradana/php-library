@@ -32,6 +32,16 @@
           "src/System/Time/helper.php"
         ]
     },
+    "extra": {
+        "laravel": {
+            "dont-discover": [
+                "*"
+            ]
+        },
+        "branch-alias": {
+            "dev-master": "0.x-dev"
+        }
+    },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
