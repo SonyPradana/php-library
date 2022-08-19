@@ -342,8 +342,8 @@ class BasicCollectionTest extends TestCase
       ->set(0, 0)
       ->clear()
       ->replace($origin)
-      ->each(fn ($el)   => in_array($el, $origin))
-      ->map(fn ($el)    => $el + 100 - (2 * 50)) // equal +0
+      ->each(fn ($el) => in_array($el, $origin))
+      ->map(fn ($el) => $el + 100 - (2 * 50)) // equal +0
       ->filter(fn ($el) => $el > -1)
       ->sort()
       ->sortDesc()

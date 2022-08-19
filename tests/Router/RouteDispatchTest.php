@@ -63,7 +63,7 @@ class RouteDispatchTest extends TestCase
         $dispatcher = RouteDispatcher::dispatchFrom('/', 'GET', $this->routes());
 
         $dispatch = $dispatcher->run(
-            fn ()      => 'found',
+            fn () => 'found',
             fn ($path) => 'not found - ',
             fn ($path, $method) => 'method not allowd - - ',
         );
@@ -79,7 +79,7 @@ class RouteDispatchTest extends TestCase
         $dispatcher = RouteDispatcher::dispatchFrom('/not-found', 'GET', $this->routes());
 
         $dispatch = $dispatcher->run(
-            fn ()      => 'found',
+            fn () => 'found',
             fn ($path) => 'not found - ',
             fn ($path, $method) => 'method not allowd - - ',
         );
@@ -95,7 +95,7 @@ class RouteDispatchTest extends TestCase
         $dispatcher = RouteDispatcher::dispatchFrom('/', 'POST', $this->routes());
 
         $dispatch = $dispatcher->run(
-            fn ()      => 'found',
+            fn () => 'found',
             fn ($path) => 'not found - ',
             fn ($path, $method) => 'method not allowd - - ',
         );
