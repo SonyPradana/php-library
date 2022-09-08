@@ -45,21 +45,21 @@ class Command
      *
      * @var array<string, string>
      */
-    protected $option_describes = [];
+    protected $command_describes = [];
 
     /**
      * Option describe for print.
      *
      * @var array<string, string>
      */
-    protected $argument_describes = [];
+    protected $option_describes = [];
 
     /**
      * Relation between Option and Argument.
      *
      * @var array<string, array<string, string>>
      */
-    protected $option_relation = [];
+    protected $command_relation = [];
 
     /**
      * Parse commandline.
