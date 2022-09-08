@@ -14,6 +14,7 @@ class View
      * @param array<string, mixed> $portal    Data to push
      *
      * @return Response
+     *
      * @throw ViewFileNotFound
      */
     public static function render(string $view_path, array $portal = [])
