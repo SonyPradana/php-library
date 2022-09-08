@@ -37,6 +37,7 @@ final class Str
      * @param array<int, string> $parameters Parameters
      *
      * @return mixed
+     *
      * @throw MacroNotFound
      */
     public static function __callStatic(string $method, array $parameters)
@@ -342,6 +343,7 @@ final class Str
      * @param string $text inpu text
      *
      * @return string
+     *
      * @throw NoReturn
      */
     public static function slug(string $text)
