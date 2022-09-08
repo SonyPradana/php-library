@@ -41,6 +41,27 @@ class Command
     protected $option_mapper;
 
     /**
+     * Option describe for print.
+     *
+     * @var array<string, string>
+     */
+    protected $option_describes = [];
+
+    /**
+     * Option describe for print.
+     *
+     * @var array<string, string>
+     */
+    protected $argument_describes = [];
+
+    /**
+     * Relation between Option and Argument.
+     *
+     * @var array<string, array<string, string>>
+     */
+    protected $option_relation = [];
+
+    /**
      * Parse commandline.
      *
      * @param array<int, string>                  $argv
@@ -152,16 +173,5 @@ class Command
     public function main()
     {
         // print welcome screen or what ever you want
-    }
-
-    /**
-     * @return string|array<string, array<int, string>> Text or array of text to be echo<
-     */
-    public function printHelp()
-    {
-        return [
-            'option'   => [],
-            'argument' => [],
-        ];
     }
 }
