@@ -1,6 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use System\Http\Request;
 use System\Http\Response;
 
 class ResponseTest extends TestCase
@@ -75,5 +76,63 @@ class ResponseTest extends TestCase
             'edited',
             $html
         );
+    }
+
+    /** @test */
+    public function itCanSetHeaderUsingConstructContent()
+    {
+        $res = new Response([
+            'headers' => [
+                'test' => 'test',
+            ],
+        ]);
+
+        $get_header = $res->getHeaders()['test'];
+
+        $this->assertEquals('test', $get_header);
+    }
+
+    /** @test */
+    public function itCanSetHeaderUsingConstructHeader()
+    {
+        $res = new Response('content', 200, ['test' => 'test']);
+
+        $get_header = $res->getHeaders()['test'];
+
+        $this->assertEquals('test', $get_header);
+    }
+
+    /** @test */
+    public function itCanSetHeaderUsingSetHeaders()
+    {
+        $res = new Response('content');
+        $res->setHeaders(['test' => 'test']);
+
+        $get_header = $res->getHeaders()['test'];
+
+        $this->assertEquals('test', $get_header);
+    }
+
+    /** @test */
+    public function itCanSetHeaderUsingHeader()
+    {
+        $res = new Response('content');
+        $res->header('test', 'test');
+
+        $get_header = $res->getHeaders()['test'];
+
+        $this->assertEquals('test', $get_header);
+    }
+
+    /** @test */
+    public function itCanSetHeaderUsingFollowRequest()
+    {
+        $req = new Request('test', null, null, null, null, null, ['test' => 'test']);
+        $res = new Response('content');
+
+        $res->followRequest($req, ['test']);
+        $get_header = $res->getHeaders()['test'];
+
+        $this->assertEquals('test', $get_header);
     }
 }

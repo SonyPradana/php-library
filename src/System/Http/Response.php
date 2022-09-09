@@ -19,19 +19,19 @@ class Response
 
     // status respone text
     public static $statusTexts = [
-    200 => 'OK',
-    201 => 'Created',
-    202 => 'Accepted',
-    203 => 'Non-Authoritative Information',
-    204 => 'No Content',
-    301 => 'Moved Permanently',
-    304 => 'Not Modified',
-    400 => 'Bad Request',
-    401 => 'Unauthorized',
-    403 => 'Forbidden',
-    404 => 'Not Found',
-    405 => 'Method Not Allowed',
-  ];
+        200 => 'OK',
+        201 => 'Created',
+        202 => 'Accepted',
+        203 => 'Non-Authoritative Information',
+        204 => 'No Content',
+        301 => 'Moved Permanently',
+        304 => 'Not Modified',
+        400 => 'Bad Request',
+        401 => 'Unauthorized',
+        403 => 'Forbidden',
+        404 => 'Not Found',
+        405 => 'Method Not Allowed',
+    ];
 
     // property
     private $content;
@@ -43,7 +43,7 @@ class Response
     private $remove_headers = [];
 
     /** @var string Default content type */
-    private $content_type = 'Content-Type: text/html';
+    private $content_type = 'text/html';
 
     /**
      * Create rosone http base on conten and header.
@@ -54,17 +54,47 @@ class Response
      */
     public function __construct($content = '', int $respone_code = Response::HTTP_OK, array $headers = [])
     {
-        $headers_content = $content['headers'] ?? [];
         // remove header information
         if (isset($content['headers'])) {
-            unset($content['headers']);
+            foreach ($content['headers'] as $key => $header) {
+                $headers[$key] = $header;
+            }
         }
 
-        $this->content      = $content;
-        $this->respone_code = $respone_code;
-        $this->headers      = array_merge($headers, $headers_content);
+        $this->setContent($content);
+        $this->setResponeCode($respone_code);
+
+        foreach ($headers as $key => $header) {
+            if (is_numeric($key)) {
+                if (!str_contains($header, ':')) {
+                    continue;
+                }
+
+                $map    = explode(':', $header);
+                $key    = trim($map[0]);
+                $header = trim($map[1]);
+            }
+            $this->header($key, $header);
+        }
 
         $this->is_array = is_array($content);
+    }
+
+    public function __toString()
+    {
+        $respone_code   = $this->respone_code;
+        $respone_text   = Response::$statusTexts[$respone_code] ?? 'ok';
+        $respone_header = sprintf('HTTP/1.1 %s %s', $respone_code, $respone_text);
+
+        $headers = [];
+        foreach ($this->headers as $header_name => $header) {
+            $headers[] = $header_name . ': ' . $header;
+        }
+
+        return
+            $respone_header . "\r\n" .
+            implode("\r\n", $headers) . "\r\n" . "\r\n" .
+            $this->content;
     }
 
     /**
@@ -83,10 +113,10 @@ class Response
         header($respone_template);
 
         // header
-        $this->headers[] = $this->content_type;
+        $this->headers['Content-Type'] = $this->content_type;
         // add costume header
-        foreach ($this->headers as $header) {
-            header($header);
+        foreach ($this->headers as $key => $header) {
+            header($key . ':' . $header);
         }
 
         // remove header
@@ -160,7 +190,7 @@ class Response
      */
     public function json($content = null)
     {
-        $this->content_type = 'Content-Type: application/json';
+        $this->content_type = 'application/json';
 
         if ($content != null) {
             $this->setContent($content);
@@ -177,7 +207,7 @@ class Response
      */
     public function html(bool $minify = false)
     {
-        $this->content_type = 'Content-Type: text/html';
+        $this->content_type = 'text/html';
 
         if (!$this->is_array && $minify) {
             $this->setContent($this->minify($this->content));
@@ -191,7 +221,7 @@ class Response
      */
     public function planText()
     {
-        $this->content_type = 'Content-Type: text/html';
+        $this->content_type = 'text/html';
 
         return $this;
     }
@@ -204,18 +234,18 @@ class Response
     private function minify(string $content)
     {
         $search = [
-      '/\>[^\S ]+/s',     // strip whitespaces after tags, except space
-      '/[^\S ]+\</s',     // strip whitespaces before tags, except space
-      '/(\s)+/s',         // shorten multiple whitespace sequences
-      '/<!--(.|\s)*?-->/', // Remove HTML comments
-    ];
+            '/\>[^\S ]+/s',     // strip whitespaces after tags, except space
+            '/[^\S ]+\</s',     // strip whitespaces before tags, except space
+            '/(\s)+/s',         // shorten multiple whitespace sequences
+            '/<!--(.|\s)*?-->/', // Remove HTML comments
+        ];
 
         $replace = [
-      '>',
-      '<',
-      '\\1',
-      '',
-    ];
+            '>',
+            '<',
+            '\\1',
+            '',
+        ];
 
         return preg_replace($search, $replace, $content);
     }
@@ -251,7 +281,7 @@ class Response
      *
      * @return $this
      */
-    public function setResponeCode(int $respone_code): object
+    public function setResponeCode(int $respone_code)
     {
         $this->respone_code = $respone_code;
 
@@ -263,7 +293,9 @@ class Response
      */
     public function setHeaders(array $headers)
     {
-        $this->headers = $headers;
+        foreach ($headers as $name => $header) {
+            $this->header($name, $header);
+        }
 
         return $this;
     }
@@ -283,11 +315,21 @@ class Response
      */
     public function header(string $header, ?string $value = null)
     {
-        $this->headers[] = $value === null
-      ? $header
-      : $header . ': ' . $value;
+        $header_name = $header;
+        $header_val  = $value;
+
+        if ($value === null && \str_contains($header, ':')) {
+            [$header_name, $header_val] = \explode(':', $header);
+        }
+
+        $this->headers[$header_name] = \trim($header_val);
 
         return $this;
+    }
+
+    public function getHeaders()
+    {
+        return $this->headers;
     }
 
     /**
@@ -295,21 +337,22 @@ class Response
      *
      * The respone header will follow respone request
      *
-     * @param Request $request Http Web Request
-     * @param array   $headers Respone header will be follow from request
+     * @param Request $request     Http Web Request
+     * @param array   $header_name Respone header will be follow from request
      *
      * @return $this
      */
-    public function followRequest(Request $request, array $headers = [])
+    public function followRequest(Request $request, array $header_name = [])
     {
-        $follow_rule = array_merge($headers, [
-      'cache-control',
-      'conten-type',
-    ]);
+        $follow_rule = array_merge($header_name, [
+            'cache-control',
+            'conten-type',
+        ]);
+
         // header based on the Request
         foreach ($follow_rule as $rule) {
             if ($request->hasHeader($rule)) {
-                $this->headers[] = $request->getHeaders($rule);
+                $this->header($rule, $request->getHeaders($rule));
             }
         }
 
