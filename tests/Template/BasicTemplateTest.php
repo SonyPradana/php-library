@@ -18,7 +18,9 @@ class BasicTemplateTest extends TestCase
     {
         $file_name = __DIR__ . DIRECTORY_SEPARATOR . 'expected' . DIRECTORY_SEPARATOR . $expected;
 
-        return file_get_contents($file_name);
+        $file_content = file_get_contents($file_name);
+
+        return str_replace("\r\n", "\n",$file_content);
     }
 
     /** @test */

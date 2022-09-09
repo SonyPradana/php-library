@@ -23,14 +23,14 @@ class RenderViewTest extends TestCase
         // view: view-html
         $this->assertEquals(
             "<html><head></head><body></body></html>\n",
-            $render_html,
+            str_replace("\r\n", "\n", $render_html),
             'it must same output with template html'
         );
 
         // view: view-php
         $this->assertEquals(
             "<html><head></head><body><h1>hay</h1></body></html>\n",
-            $render_php,
+            str_replace("\r\n", "\n", $render_php),
             'it must same output with template html'
         );
     }
