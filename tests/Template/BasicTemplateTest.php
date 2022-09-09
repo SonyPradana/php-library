@@ -20,7 +20,7 @@ class BasicTemplateTest extends TestCase
 
         $file_content = file_get_contents($file_name);
 
-        return str_replace("\r\n", "\n",$file_content);
+        return str_replace("\r\n", "\n", $file_content);
     }
 
     /** @test */
