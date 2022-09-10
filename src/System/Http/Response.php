@@ -17,7 +17,11 @@ class Response
     public const HTTP_NOT_FOUND                     = 404;
     public const HTTP_METHOD_NOT_ALLOWED            = 405;
 
-    // status respone text
+    /**
+     * status respone text.
+     *
+     * @var array<int, string>
+     */
     public static $statusTexts = [
         200 => 'OK',
         201 => 'Created',
@@ -34,52 +38,60 @@ class Response
     ];
 
     // property
+    /**
+     * Http body content.
+     *
+     * @var string|array<mixed, mixed>
+     */
     private $content;
+
+    /**
+     * http respone code.
+     *
+     * @var int
+     */
     private $respone_code;
 
-    /** Header array pools */
+    /**
+     * Header array pools.
+     *
+     * @var array<string, string>
+     */
     private $headers;
-    private $is_array;  // content type
+
+    /**
+     * List header to be hide/remove to client.
+     *
+     * @var array<int, string>
+     */
     private $remove_headers = [];
 
-    /** @var string Default content type */
+    /**
+     * Content type.
+     *
+     * @var string
+     * */
     private $content_type = 'text/html';
 
     /**
      * Create rosone http base on conten and header.
      *
-     * @param string|array $content      Content to serve to client
-     * @param int          $respone_code Respone code
-     * @param array        $headers      Header tosend to client
+     * @param string|array<mixed, mixed> $content      Content to serve to client
+     * @param int                        $respone_code Respone code
+     * @param array<string, string>      $headers      Header tosend to client
      */
     public function __construct($content = '', int $respone_code = Response::HTTP_OK, array $headers = [])
     {
-        // remove header information
-        if (isset($content['headers'])) {
-            foreach ($content['headers'] as $key => $header) {
-                $headers[$key] = $header;
-            }
-        }
-
         $this->setContent($content);
         $this->setResponeCode($respone_code);
-
-        foreach ($headers as $key => $header) {
-            if (is_numeric($key)) {
-                if (!str_contains($header, ':')) {
-                    continue;
-                }
-
-                $map    = explode(':', $header);
-                $key    = trim($map[0]);
-                $header = trim($map[1]);
-            }
-            $this->header($key, $header);
-        }
-
-        $this->is_array = is_array($content);
+        $this->setHeaders($headers);
     }
 
+    /**
+     * Get raw http respone include http version, header, content.
+     *
+     * @return string
+     */
     public function __toString()
     {
         $respone_code   = $this->respone_code;
@@ -91,17 +103,25 @@ class Response
             $headers[] = $header_name . ': ' . $header;
         }
 
+        $header_lines = implode("\r\n", $headers);
+        $content      = is_array($this->content)
+            ? json_encode($this->content, JSON_NUMERIC_CHECK)
+            : $this->content;
+
         return
             $respone_header . "\r\n" .
-            implode("\r\n", $headers) . "\r\n" . "\r\n" .
-            $this->content;
+            $header_lines . "\r\n" .
+            "\r\n" .
+            $content;
     }
 
     /**
      * Send header to client from header array pool,
      * include respone code.
+     *
+     * @return void
      */
-    private function sendHeaders(): void
+    private function sendHeaders()
     {
         if (headers_sent()) {
             return;
@@ -132,15 +152,14 @@ class Response
     /**
      * Print/echo conten to client,
      * also send header to clinet.
+     *
+     * @return void
      */
-    private function sendContent(): void
+    private function sendContent()
     {
-        // print data to client
-        if ($this->is_array) {
-            echo json_encode($this->content, JSON_NUMERIC_CHECK);
-        } else {
-            echo $this->content;
-        }
+        echo is_array($this->content)
+            ? json_encode($this->content, JSON_NUMERIC_CHECK)
+            : $this->content;
     }
 
     /**
@@ -149,8 +168,10 @@ class Response
      * Resulting level can be greater than target level if a non-removable buffer has been encountered.
      *
      * @final
+     *
+     * @return void
      */
-    public static function closeOutputBuffers(int $targetLevel, bool $flush): void
+    public static function closeOutputBuffers(int $targetLevel, bool $flush)
     {
         $status = ob_get_status(true);
         $level  = \count($status);
@@ -167,6 +188,8 @@ class Response
 
     /**
      * Send data to client.
+     *
+     * @return self
      */
     public function send()
     {
@@ -185,8 +208,9 @@ class Response
     /**
      * Send data to client with json format.
      *
-     * @param string|array $content
-     *                              Content to send data
+     * @param string|array<mixed, mixed> $content Content to send data
+     *
+     * @return self
      */
     public function json($content = null)
     {
@@ -202,15 +226,20 @@ class Response
     /**
      * Send data to client with html format.
      *
-     * @param bool $minify
-     *                     If true html tag will be send minify
+     * @param bool $minify If true html tag will be send minify
+     *
+     * @return self
      */
     public function html(bool $minify = false)
     {
         $this->content_type = 'text/html';
 
-        if (!$this->is_array && $minify) {
-            $this->setContent($this->minify($this->content));
+        if (!is_array($this->content) && $minify) {
+            /** @var string */
+            $string_content = $this->content;
+            $string_content =  $this->minify($string_content);
+
+            $this->setContent($string_content);
         }
 
         return $this;
@@ -218,6 +247,8 @@ class Response
 
     /**
      * Send data to client with plan format.
+     *
+     * @return self
      */
     public function planText()
     {
@@ -230,6 +261,8 @@ class Response
      * Minify html conntent.
      *
      * @param string $content Raw html content
+     *
+     * @return string
      */
     private function minify(string $content)
     {
@@ -247,11 +280,13 @@ class Response
             '',
         ];
 
-        return preg_replace($search, $replace, $content);
+        return preg_replace($search, $replace, $content) ?? $content;
     }
 
     /**
      * Its instant of exit apilication.
+     *
+     * @return void
      */
     public function close()
     {
@@ -261,17 +296,13 @@ class Response
     /**
      * Set Content.
      *
-     * @param string|array $content Raw Content
+     * @param string|array<mixed, mixed> $content Raw Content
+     *
+     * @return self
      */
     public function setContent($content)
     {
-        // remove header information
-        if (isset($content['headers'])) {
-            unset($content['headers']);
-        }
-
         $this->content  = $content;
-        $this->is_array = is_array($content);
 
         return $this;
     }
@@ -279,7 +310,7 @@ class Response
     /**
      * Set repone code (override).
      *
-     * @return $this
+     * @return self
      */
     public function setResponeCode(int $respone_code)
     {
@@ -290,11 +321,25 @@ class Response
 
     /**
      * Set header pools (overide).
+     *
+     * @param array<string, string> $headers
+     *
+     * @return self
      */
-    public function setHeaders(array $headers)
+    public function setHeaders($headers)
     {
-        foreach ($headers as $name => $header) {
-            $this->header($name, $header);
+        // flush headers
+        $this->headers = [];
+
+        foreach ($headers as $header_name => $header) {
+            if (is_numeric($header_name)) {
+                if (!str_contains($header, ':')) {
+                    continue;
+                }
+
+                [$header_name, $header] = explode(':', $header, 2);
+            }
+            $this->header(\trim($header_name), \trim($header));
         }
 
         return $this;
@@ -302,16 +347,25 @@ class Response
 
     /**
      * Remove header from origin header.
+     *
+     * @param array<int, string> $headers
+     *
+     * @return self
      */
-    public function removeHeader(?array $headers = null)
+    public function removeHeader($headers = [])
     {
-        $this->remove_headers = $headers;
+        $this->remove_headers = [];
+        foreach ($headers as $header) {
+            $this->remove_headers[] = $header;
+        }
 
         return $this;
     }
 
     /**
      * Add new header to headers pools.
+     *
+     * @return self
      */
     public function header(string $header, ?string $value = null)
     {
@@ -319,14 +373,19 @@ class Response
         $header_val  = $value;
 
         if ($value === null && \str_contains($header, ':')) {
-            [$header_name, $header_val] = \explode(':', $header);
+            [$header_name, $header_val] = \explode(':', $header, 2);
         }
 
-        $this->headers[$header_name] = \trim($header_val);
+        $this->headers[\trim($header_name)] = \trim($header_val ?? '');
 
         return $this;
     }
 
+    /**
+     * Get entry header.
+     *
+     * @return array<string, string>
+     */
     public function getHeaders()
     {
         return $this->headers;
@@ -337,10 +396,10 @@ class Response
      *
      * The respone header will follow respone request
      *
-     * @param Request $request     Http Web Request
-     * @param array   $header_name Respone header will be follow from request
+     * @param Request            $request     Http Web Request
+     * @param array<int, string> $header_name Respone header will be follow from request
      *
-     * @return $this
+     * @return self
      */
     public function followRequest(Request $request, array $header_name = [])
     {

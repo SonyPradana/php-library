@@ -79,20 +79,6 @@ class ResponseTest extends TestCase
     }
 
     /** @test */
-    public function itCanSetHeaderUsingConstructContent()
-    {
-        $res = new Response([
-            'headers' => [
-                'test' => 'test',
-            ],
-        ]);
-
-        $get_header = $res->getHeaders()['test'];
-
-        $this->assertEquals('test', $get_header);
-    }
-
-    /** @test */
     public function itCanSetHeaderUsingConstructHeader()
     {
         $res = new Response('content', 200, ['test' => 'test']);
@@ -122,6 +108,17 @@ class ResponseTest extends TestCase
         $get_header = $res->getHeaders()['test'];
 
         $this->assertEquals('test', $get_header);
+    }
+
+    /** @test */
+    public function itCanSetHeaderUsingHeaderAndSenitazerHeader()
+    {
+        $res = new Response('content');
+        $res->header('test : test:ok');
+
+        $get_header = $res->getHeaders()['test'];
+
+        $this->assertEquals('test:ok', $get_header);
     }
 
     /** @test */

@@ -37,7 +37,7 @@ class View
         return (new Response())
             ->setContent($html)
             ->setResponeCode(\System\Http\Response::HTTP_OK)
-            ->setHeaders([$content_type])
+            ->header($content_type)
             ->removeHeader([
                 'Expires',
                 'Pragma',
