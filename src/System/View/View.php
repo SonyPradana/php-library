@@ -26,7 +26,6 @@ class View
         $auth         = new Portal($portal['auth'] ?? []);
         $meta         = new Portal($portal['meta'] ?? []);
         $content      = new Portal($portal['contents'] ?? []);
-        $content_type = $portal['header']['content_type'] ?? 'Content-Type: text/html';
 
         // get render content
         ob_start();
@@ -37,7 +36,6 @@ class View
         return (new Response())
             ->setContent($html)
             ->setResponeCode(\System\Http\Response::HTTP_OK)
-            ->setHeaders([$content_type])
             ->removeHeader([
                 'Expires',
                 'Pragma',
