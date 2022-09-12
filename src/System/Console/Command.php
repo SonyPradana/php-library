@@ -57,7 +57,7 @@ class Command
     /**
      * Relation between Option and Argument.
      *
-     * @var array<string, array<string, string>>
+     * @var array<string, array<int, string>>
      */
     protected $command_relation = [];
 
@@ -144,7 +144,7 @@ class Command
     /**
      * Get parse commandline parameters (name, value).
      *
-     * @param string|null $default Default if parameter not found
+     * @param string|bool|int|null $default Default if parameter not found
      *
      * @return string|bool|int|null
      */
