@@ -181,11 +181,11 @@ class Request
     }
 
     /**
-     * Get all request and return in single array.
+     * Get all request and wrap it.
      *
      * @return array Insert all request array in single array
      */
-    public function allIn()
+    public function wrap()
     {
         return [$this->all()];
     }
