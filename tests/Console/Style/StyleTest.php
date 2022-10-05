@@ -218,4 +218,24 @@ final class StyleTest extends TestCase
         $text->push(123)->bgBlue()->textWhite()->underline();
         $this->assertEquals(6, $text->length());
     }
+
+    /** @test */
+    public function itCanPushUsingStyle()
+    {
+        $cmd  = new Style('text');
+        $cmd->textBlue();
+
+        $tap = new style('text2');
+        $tap->textRed();
+
+        // push using tab
+        $cmd->tap($tap);
+
+        $text = $cmd->__toString();
+
+        $this->assertEquals(
+            sprintf('%s[34;49mtext%s[0m%s[31;49mtext2%s[0m', chr(27), chr(27), chr(27), chr(27)),
+            $text
+        );
+    }
 }
