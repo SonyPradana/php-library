@@ -257,7 +257,14 @@ class Style
         return $this->flush()->ref($ref);
     }
 
-    public function tap(Style $style)
+    /**
+     * Push Style.
+     *
+     * @param Style $style Style to push
+     *
+     * @return self
+     */
+    public function tap($style)
     {
         $this->ref             = $this->__toString();
         $this->text            = $style->text;
