@@ -257,6 +257,21 @@ class Style
         return $this->flush()->ref($ref);
     }
 
+    public function tap(Style $style)
+    {
+        $this->ref             = $this->__toString();
+        $this->text            = $style->text;
+        $this->text_color_rule = $style->text_color_rule;
+        $this->bg_color_rule   = $style->bg_color_rule;
+        $this->decorate_rules  = $style->decorate_rules;
+        $this->reset_rules     = $style->reset_rules;
+        $this->raw_rules       = $style->raw_rules;
+
+        $this->length += $style->length;
+
+        return $this;
+    }
+
     /**
      * Get text lenght witout rule counted.
      *
