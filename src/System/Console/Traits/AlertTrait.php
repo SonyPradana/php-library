@@ -9,6 +9,13 @@ trait AlertTrait
     /** @var int margin left */
     protected $margin_left = 0;
 
+    /**
+     * Set margin left.
+     * 
+     * @param int $margin_left
+     * 
+     * @return self
+     */
     public function marginLeft($margin_left)
     {
         $this->margin_left = $margin_left;
@@ -16,6 +23,13 @@ trait AlertTrait
         return $this;
     }
 
+    /**
+     * Render alert info.
+     * 
+     * @param string $info
+     * 
+     * @return Style
+     */
     public function info($info)
     {
         return (new Style())
@@ -26,10 +40,18 @@ trait AlertTrait
             ->bgBlue()
             ->push(' ')
             ->push($info)
-            ->new_lines(2);
+            ->new_lines(2)
+        ;
     }
 
-    public function warn($info)
+    /**
+     * Render alert warning.
+     * 
+     * @param string $warn
+     * 
+     * @return Style
+     */
+    public function warn($warn)
     {
         return (new Style())
             ->new_lines()
@@ -38,11 +60,19 @@ trait AlertTrait
             ->bold()
             ->bgYellow()
             ->push(' ')
-            ->push($info)
-            ->new_lines(2);
+            ->push($warn)
+            ->new_lines(2)
+        ;
     }
 
-    public function fail($info)
+    /**
+     * Render alert fail.
+     * 
+     * @param string $fail
+     * 
+     * @return Style
+     */
+    public function fail($fail)
     {
         return (new Style())
             ->new_lines()
@@ -51,11 +81,20 @@ trait AlertTrait
             ->bold()
             ->bgRed()
             ->push(' ')
-            ->push($info)
-            ->new_lines(2);
+            ->push($fail)
+            ->new_lines(2)
+        ;
     }
 
-    public function success($info)
+    /**
+     * Render alert success.
+     * 
+     * @param string $success
+     * 
+     * @return Style
+     */
+    
+    public function success($success)
     {
         return (new Style())
             ->new_lines()
@@ -64,7 +103,30 @@ trait AlertTrait
             ->bold()
             ->bgGreen()
             ->push(' ')
-            ->push($info)
-            ->new_lines(2);
+            ->push($success)
+            ->new_lines(2)
+        ;
+    }
+
+    /**
+     * Render alert ok (similar with success).
+     * 
+     * @param string $ok
+     * 
+     * @return Style
+     */
+    
+    public function ok($ok)
+    {
+        return (new Style())
+            ->new_lines()
+            ->repeat(' ', $this->margin_left)
+            ->push(' ok ')
+            ->bold()
+            ->bgGreen()
+            ->push(' ')
+            ->push($ok)
+            ->new_lines(2)
+        ;
     }
 }
