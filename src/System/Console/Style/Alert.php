@@ -17,6 +17,6 @@ class Alert
      */
     public static function render()
     {
-        return new static;
+        return (new self);
     }
 }
