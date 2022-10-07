@@ -11,9 +11,9 @@ trait AlertTrait
 
     /**
      * Set margin left.
-     * 
+     *
      * @param int $margin_left
-     * 
+     *
      * @return self
      */
     public function marginLeft($margin_left)
@@ -25,9 +25,9 @@ trait AlertTrait
 
     /**
      * Render alert info.
-     * 
+     *
      * @param string $info
-     * 
+     *
      * @return Style
      */
     public function info($info)
@@ -46,9 +46,9 @@ trait AlertTrait
 
     /**
      * Render alert warning.
-     * 
+     *
      * @param string $warn
-     * 
+     *
      * @return Style
      */
     public function warn($warn)
@@ -67,9 +67,9 @@ trait AlertTrait
 
     /**
      * Render alert fail.
-     * 
+     *
      * @param string $fail
-     * 
+     *
      * @return Style
      */
     public function fail($fail)
@@ -87,35 +87,12 @@ trait AlertTrait
     }
 
     /**
-     * Render alert success.
-     * 
-     * @param string $success
-     * 
-     * @return Style
-     */
-    
-    public function success($success)
-    {
-        return (new Style())
-            ->new_lines()
-            ->repeat(' ', $this->margin_left)
-            ->push(' success ')
-            ->bold()
-            ->bgGreen()
-            ->push(' ')
-            ->push($success)
-            ->new_lines(2)
-        ;
-    }
-
-    /**
      * Render alert ok (similar with success).
-     * 
+     *
      * @param string $ok
-     * 
+     *
      * @return Style
      */
-    
     public function ok($ok)
     {
         return (new Style())

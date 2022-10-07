@@ -12,11 +12,11 @@ class Alert
 
     /**
      * New instance.
-     * 
-     * @return Style
+     *
+     * @return self
      */
     public static function render()
     {
-        return (new self);
+        return new self();
     }
 }
