@@ -141,33 +141,7 @@ class Style
      */
     public function __toString()
     {
-        // flush
-        $this->rules = [];
-        // merge rule
-
-        // font color
-        foreach ($this->text_color_rule as $text_color) {
-            $this->rules[] = $text_color;
-        }
-
-        // bg color
-        foreach ($this->bg_color_rule as $bg_color) {
-            $this->rules[] = $bg_color;
-        }
-
-        // decorate
-        foreach ($this->decorate_rules as $decorate) {
-            $this->rules[] = $decorate;
-        }
-
-        // raw
-        foreach ($this->raw_rules as $raws) {
-            foreach ($raws as $raw) {
-                $this->rules[] = $raw;
-            }
-        }
-
-        return $this->ref . $this->rules($this->rules, $this->text, true, $this->reset_rules);
+        return $this->toString($this->text, $this->ref);
     }
 
     /**
@@ -211,6 +185,49 @@ class Style
     }
 
     /**
+     * Render text, reference with current rule.
+     *
+     * @param string $text Text tobe render with rule (this)
+     * @param string $ref  Text reference to be add begain text
+     *
+     * @return string
+     */
+    public function toString($text, $ref = '')
+    {
+        // make sure not push empty text
+        if ($text == '' && $ref == '') {
+            return '';
+        }
+
+        // flush
+        $this->rules = [];
+
+        // font color
+        foreach ($this->text_color_rule as $text_color) {
+            $this->rules[] = $text_color;
+        }
+
+        // bg color
+        foreach ($this->bg_color_rule as $bg_color) {
+            $this->rules[] = $bg_color;
+        }
+
+        // decorate
+        foreach ($this->decorate_rules as $decorate) {
+            $this->rules[] = $decorate;
+        }
+
+        // raw
+        foreach ($this->raw_rules as $raws) {
+            foreach ($raws as $raw) {
+                $this->rules[] = $raw;
+            }
+        }
+
+        return $ref . $this->rules($this->rules, $text, true, $this->reset_rules);
+    }
+
+    /**
      * Flush class.
      *
      * @return self
@@ -250,7 +267,7 @@ class Style
      */
     public function push($text)
     {
-        $ref        = $this->__toString();
+        $ref        = $this->toString($this->text, $this->ref);
         $this->text = $text;
         $this->length += \strlen((string) $text);
 
@@ -266,7 +283,7 @@ class Style
      */
     public function tap($style)
     {
-        $this->ref             = $this->__toString();
+        $this->ref             = $this->toString($this->text) . $style->toString($style->ref);
         $this->text            = $style->text;
         $this->text_color_rule = $style->text_color_rule;
         $this->bg_color_rule   = $style->bg_color_rule;
