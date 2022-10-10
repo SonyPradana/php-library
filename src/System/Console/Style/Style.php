@@ -283,7 +283,7 @@ class Style
      */
     public function tap($style)
     {
-        $this->ref             = $this->toString($this->text) . $style->toString($style->ref);
+        $this->ref             = $this->toString($this->text, $this->ref) . $style->toString($style->ref);
         $this->text            = $style->text;
         $this->text_color_rule = $style->text_color_rule;
         $this->bg_color_rule   = $style->bg_color_rule;
