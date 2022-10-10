@@ -32,16 +32,10 @@ trait AlertTrait
      */
     public function info($info)
     {
-        return (new Style())
-            ->new_lines()
-            ->repeat(' ', $this->margin_left)
-            ->push(' info ')
-            ->bold()
-            ->bgBlue()
-            ->push(' ')
-            ->push($info)
-            ->new_lines(2)
-        ;
+        return $this->alert(
+            $this->margin()->push(' INFO ')->bold()->bgBlue(),
+            new Style($info)
+        )->new_lines(2);
     }
 
     /**
@@ -53,16 +47,10 @@ trait AlertTrait
      */
     public function warn($warn)
     {
-        return (new Style())
-            ->new_lines()
-            ->repeat(' ', $this->margin_left)
-            ->push(' warn ')
-            ->bold()
-            ->bgYellow()
-            ->push(' ')
-            ->push($warn)
-            ->new_lines(2)
-        ;
+        return $this->alert(
+            $this->margin()->push(' WARN ')->bold()->bgYellow(),
+            new Style($warn)
+        )->new_lines(2);
     }
 
     /**
@@ -74,16 +62,10 @@ trait AlertTrait
      */
     public function fail($fail)
     {
-        return (new Style())
-            ->new_lines()
-            ->repeat(' ', $this->margin_left)
-            ->push(' fail ')
-            ->bold()
-            ->bgRed()
-            ->push(' ')
-            ->push($fail)
-            ->new_lines(2)
-        ;
+        return $this->alert(
+            $this->margin()->push(' FAIL ')->bold()->bgRed(),
+            new Style($fail)
+        )->new_lines(2);
     }
 
     /**
@@ -95,15 +77,23 @@ trait AlertTrait
      */
     public function ok($ok)
     {
+        return $this->alert(
+            $this->margin()->push(' OK ')->bold()->bgGreen(),
+            new Style($ok)
+        )->new_lines(2);
+    }
+
+    private function margin()
+    {
+        return (new Style())->new_lines()->repeat(' ', $this->margin_left);
+    }
+
+    public function alert(Style $header, Style $body)
+    {
         return (new Style())
-            ->new_lines()
-            ->repeat(' ', $this->margin_left)
-            ->push(' ok ')
-            ->bold()
-            ->bgGreen()
+            ->tap($header)
             ->push(' ')
-            ->push($ok)
-            ->new_lines(2)
+            ->tap($body)
         ;
     }
 }
