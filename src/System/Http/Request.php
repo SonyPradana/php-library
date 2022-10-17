@@ -2,13 +2,17 @@
 
 namespace System\Http;
 
-class Request
+use ArrayAccess;
+use System\Collection\Collection;
+use System\Collection\CollectionImmutable;
+
+class Request implements ArrayAccess
 {
     private $method;
     private $url;
-    private $query      = [];
+    private Collection $query;
     private $attributes = [];
-    private $post       = [];
+    private Collection $post;
     private $files      = [];
     private $cookies    = [];
     private $headers    = [];
@@ -29,8 +33,8 @@ class Request
         callable $rawBodyCallback = null
     ) {
         $this->url             = $url;
-        $this->query           = $query;
-        $this->post            = $post;
+        $this->query           = new Collection($query ?? []);
+        $this->post            = new Collection($post ?? []);
         $this->attributes      = $attributes;
         $this->cookies         = $cookies;
         $this->files           = $files;
@@ -45,22 +49,38 @@ class Request
         return $this->url;
     }
 
+    /**
+     * Get query ($_GET).
+     */
+    public function query(): CollectionImmutable
+    {
+        return $this->query->immutable();
+    }
+
     public function getQuery(string $key = null)
     {
         if (func_num_args() === 0) {
-            return $this->query;
+            return $this->query->all();
         }
 
-        return $this->query[$key];
+        return $this->query->get($key);
+    }
+
+    /**
+     * Get post ($_POST).
+     */
+    public function post(): CollectionImmutable
+    {
+        return $this->post->immutable();
     }
 
     public function getPost(string $key = null)
     {
         if (func_num_args() === 0) {
-            return $this->post;
+            return $this->post->all();
         }
 
-        return $this->post[$key] ?? null;
+        return $this->post->get($key);
     }
 
     public function getFile(string $key = null)
@@ -161,14 +181,14 @@ class Request
     /**
      * Get all request as array.
      *
-     * @return array All request
+     * @return array<string, mixed> All request
      */
     public function all()
     {
         return array_merge(
             $this->headers,
-            $this->query,
-            $this->post,
+            $this->query->all(),
+            $this->post->all(),
             $this->attributes,
             $this->cookies,
             ['files' => $this->files],
@@ -188,5 +208,68 @@ class Request
     public function wrap()
     {
         return [$this->all()];
+    }
+
+    /**
+     * Get input resource base on method type.
+     */
+    private function source(): Collection
+    {
+        return in_array($this->method, ['GET', 'HEAD']) ? $this->query : $this->post;
+    }
+
+    /**
+     * Determine if the given offset exists.
+     *
+     * @param string $offset
+     */
+    public function offsetExists($offset): bool
+    {
+        return $this->source()->has($offset);
+    }
+
+    /**
+     * Get the value at the given offset.
+     *
+     * @param string $offset
+     *
+     * @return string|null
+     */
+    public function offsetGet($offset)
+    {
+        return $this->__get($offset);
+    }
+
+    /**
+     * Set the value at the given offset.
+     *
+     * @param string $offset
+     * @param mixed  $value
+     */
+    public function offsetSet($offset, $value): void
+    {
+        $this->source()->set($offset, $value);
+    }
+
+    /**
+     * Remove the value at the given offset.
+     *
+     * @param string $offset
+     */
+    public function offsetUnset($offset): void
+    {
+        $this->source()->remove($offset);
+    }
+
+    /**
+     * Get an input element from the request.
+     *
+     * @param string $key
+     *
+     * @return string|null
+     */
+    public function __get($key)
+    {
+        return $this->source()->get($key);
     }
 }

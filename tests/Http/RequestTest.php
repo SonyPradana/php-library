@@ -24,7 +24,7 @@ class RequestTest extends TestCase
               'size'      => 0,
             ]],
             ['header_1'  => 'header', 'header_2' => 123, 'foo' => 'bar'],
-            'POST',
+            'GET',
             '127:0:0:1',
             fn () => '{"respone":"ok"}'
         );
@@ -44,6 +44,7 @@ class RequestTest extends TestCase
     public function hasSameQuery()
     {
         $this->assertEquals('query', $this->request->getQuery('query_1'));
+        $this->assertEquals('query', $this->request->query()->get('query_1'));
     }
 
     /**
@@ -52,6 +53,7 @@ class RequestTest extends TestCase
     public function hasSamePost()
     {
         $this->assertEquals('post', $this->request->getPost('post_1'));
+        $this->assertEquals('post', $this->request->post()->get('post_1'));
     }
 
     /**
@@ -103,7 +105,7 @@ class RequestTest extends TestCase
      */
     public function hasSameMethod()
     {
-        $this->assertEquals('POST', $this->request->getMethod());
+        $this->assertEquals('GET', $this->request->getMethod());
     }
 
     /**
@@ -154,5 +156,31 @@ class RequestTest extends TestCase
     public function isHeaderContains()
     {
         $this->assertTrue($this->request->isHeader('foo', 'bar'));
+    }
+
+    /**
+     * @test
+     */
+    public function itCanAccessAsArrayGet()
+    {
+        $this->assertEquals('query', $this->request['query_1']);
+        $this->assertEquals(null, $this->request['query_x']);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanAccessAsArrayHas()
+    {
+        $this->assertTrue(isset($this->request['query_1']));
+        $this->assertFalse(isset($this->request['query_x']));
+    }
+
+    /**
+     * @test
+     */
+    public function itCanAccessUsingGetter()
+    {
+        $this->assertEquals('query', $this->request->query_1);
     }
 }
