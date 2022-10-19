@@ -124,7 +124,7 @@ class ResponseTest extends TestCase
     /** @test */
     public function itCanSetHeaderUsingFollowRequest()
     {
-        $req = new Request('test', null, null, null, null, null, ['test' => 'test']);
+        $req = new Request('test', [], [], [], [], [], ['test' => 'test']);
         $res = new Response('content');
 
         $res->followRequest($req, ['test']);

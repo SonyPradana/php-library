@@ -68,9 +68,9 @@ class Request implements \ArrayAccess
     /**
      * Request Body content.
      *
-     * @var ?callable
+     * @var ?string
      */
-    private $rawBodyCallback;
+    private $rawBody;
 
     /**
      * @param array<string, string> $query
@@ -79,30 +79,30 @@ class Request implements \ArrayAccess
      * @param array<string, string> $cookies
      * @param array<string, string> $files
      * @param array<string, string> $headers
-     * @param callable              $rawBodyCallback
+     * @param ?string               $rawBody
      */
     public function __construct(
         string $url,
-        array $query = null,
-        array $post = null,
-        array $attributes = null,
-        array $cookies = null,
-        array $files = null,
-        array $headers = null,
+        array $query = [],
+        array $post = [],
+        array $attributes = [],
+        array $cookies = [],
+        array $files = [],
+        array $headers = [],
         string $method = 'GET',
         string $remoteAddress = '::1',
-        callable $rawBodyCallback = null
+        ?string $rawBody = null
     ) {
         $this->url             = $url;
-        $this->query           = new Collection($query ?? []);
-        $this->post            = new Collection($post ?? []);
-        $this->attributes      = $attributes ?? [];
-        $this->cookies         = $cookies ?? [];
-        $this->files           = $files ?? [];
-        $this->headers         = $headers ?? [];
+        $this->query           = new Collection($query);
+        $this->post            = new Collection($post);
+        $this->attributes      = $attributes;
+        $this->cookies         = $cookies;
+        $this->files           = $files;
+        $this->headers         = $headers;
         $this->method          = $method;
         $this->remoteAddress   = $remoteAddress;
-        $this->rawBodyCallback = $rawBodyCallback;
+        $this->rawBody         = $rawBody;
     }
 
     public function getUrl(): string
@@ -168,7 +168,7 @@ class Request implements \ArrayAccess
         return $this->files[$key];
     }
 
-    public function getCookie(string $key): ?string
+    public function getCookie(string $key): string
     {
         return $this->cookies[$key] ?? null;
     }
@@ -194,13 +194,13 @@ class Request implements \ArrayAccess
     }
 
     /**
-     * Get header or headers.
+     * Get header/s.
      *
      * @return array<string, string>|string|null get header/s
      */
     public function getHeaders(string $header = null)
     {
-        if ($header == null) {
+        if ($header === null) {
             return $this->headers;
         }
 
@@ -228,26 +228,40 @@ class Request implements \ArrayAccess
             : false;  // http;
     }
 
-    public function getRemoteAddress(): ?string
+    public function getRemoteAddress(): string
     {
         return $this->remoteAddress;
     }
 
-    public function getRawBody(): string
+    public function getRawBody(): ?string
     {
-        return call_user_func($this->rawBodyCallback);
+        return $this->rawBody;
     }
 
     /**
      * Get Json array.
      *
      * @return array<mixed, mixed>
+     *
+     * @see https://github.com/symfony/symfony/blob/6.2/src/Symfony/Component/HttpFoundation/Request.php
      */
     public function getJsonBody()
     {
-        $raw = call_user_func($this->rawBodyCallback);
+        if ('' === $content = $this->rawBody) {
+            throw new \Exception('Request body is empty.');
+        }
 
-        return json_decode($raw, true);
+        try {
+            $content = json_decode($content, true, 512, \JSON_BIGINT_AS_STRING | \JSON_THROW_ON_ERROR);
+        } catch (\Exception $e) {
+            throw new \Exception('Could not decode request body.', $e->getCode(), $e);
+        }
+
+        if (!\is_array($content)) {
+            throw new \Exception(sprintf('JSON content was expected to decode to an array, "%s" returned.', get_debug_type($content)));
+        }
+
+        return $content;
     }
 
     /**
@@ -280,7 +294,7 @@ class Request implements \ArrayAccess
             $this->cookies,
             ['files' => $this->files],
             [
-              'x-raw'     => $this->rawBodyCallback ? ($this->rawBodyCallback)() : null,
+              'x-raw'     => $this->rawBody ? ($this->rawBody)() : null,
               'x-method'  => $this->method,
             ],
             $this->getJsonBody(),

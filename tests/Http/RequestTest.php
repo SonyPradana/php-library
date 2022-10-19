@@ -26,7 +26,7 @@ class RequestTest extends TestCase
             ['header_1'  => 'header', 'header_2' => 123, 'foo' => 'bar'],
             'GET',
             '127:0:0:1',
-            fn () => '{"respone":"ok"}'
+            '{"respone":"ok"}'
         );
     }
 

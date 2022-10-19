@@ -50,7 +50,7 @@ final class RouteDispatcher
      */
     public static function dispatchFrom(string $uri, string $method, $routes)
     {
-        $create_request = new Request($uri, null, null, null, null, null, null, $method);
+        $create_request = new Request($uri, [], [], [], [], [], [], $method);
 
         return new static($create_request, $routes);
     }
