@@ -20,6 +20,9 @@ class RequestFactory
         );
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function getHeaders(): array
     {
         if (function_exists('apache_request_headers')) {
