@@ -294,7 +294,7 @@ class Request implements \ArrayAccess
             $this->cookies,
             ['files' => $this->files],
             [
-              'x-raw'     => $this->rawBody ? ($this->rawBody)() : null,
+              'x-raw'     => $this->rawBody,
               'x-method'  => $this->method,
             ],
             $this->getJsonBody(),
