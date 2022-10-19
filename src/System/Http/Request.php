@@ -1,25 +1,86 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Http;
 
-use ArrayAccess;
 use System\Collection\Collection;
 use System\Collection\CollectionImmutable;
 
-class Request implements ArrayAccess
+/**
+ * @implements \ArrayAccess<string, string>
+ */
+class Request implements \ArrayAccess
 {
-    private $method;
-    private $url;
+    /**
+     * Request method.
+     */
+    private string $method;
+
+    /**
+     * Request url.
+     */
+    private string $url;
+
+    /**
+     * Request query ($_GET).
+     */
     private Collection $query;
-    private $attributes = [];
+
+    /**
+     * Costume request information.
+     *
+     * @var array<string, string|int|bool>
+     */
+    private array $attributes;
+
+    /**
+     * Request post ($_POST).
+     */
     private Collection $post;
-    private $files      = [];
-    private $cookies    = [];
-    private $headers    = [];
-    private $remoteAddress;
-    /** @var ?callable */
+
+    /**
+     * Request file ($_FILE).
+     *
+     * @var array<string, array<int, string>|string>
+     */
+    private array $files;
+
+    /**
+     * Request cookies ($_COOKIES).
+     *
+     * @var array<string, string>
+     */
+    private array $cookies;
+
+    /**
+     * Request header.
+     *
+     * @var array<string, string>
+     */
+    private array $headers;
+
+    /**
+     * Request remote addres (IP).
+     */
+    private string $remoteAddress;
+
+    /**
+     * Request Body content.
+     *
+     * @var ?callable
+     */
     private $rawBodyCallback;
 
+    /**
+     * @param array<string, string> $query
+     * @param array<string, string> $post
+     * @param array<string, string> $attributes
+     * @param array<string, string> $cookies
+     * @param array<string, string> $files
+     * @param array<string, string> $headers
+     * @param callable              $rawBodyCallback
+     */
     public function __construct(
         string $url,
         array $query = null,
@@ -28,23 +89,23 @@ class Request implements ArrayAccess
         array $cookies = null,
         array $files = null,
         array $headers = null,
-        string $method = null,
-        string $remoteAddress = null,
+        string $method = 'GET',
+        string $remoteAddress = '::1',
         callable $rawBodyCallback = null
     ) {
         $this->url             = $url;
         $this->query           = new Collection($query ?? []);
         $this->post            = new Collection($post ?? []);
-        $this->attributes      = $attributes;
-        $this->cookies         = $cookies;
-        $this->files           = $files;
-        $this->headers         = $headers;
-        $this->method          = $method ?? 'GET';
+        $this->attributes      = $attributes ?? [];
+        $this->cookies         = $cookies ?? [];
+        $this->files           = $files ?? [];
+        $this->headers         = $headers ?? [];
+        $this->method          = $method;
         $this->remoteAddress   = $remoteAddress;
         $this->rawBodyCallback = $rawBodyCallback;
     }
 
-    public function getUrl()
+    public function getUrl(): string
     {
         return $this->url;
     }
@@ -57,6 +118,11 @@ class Request implements ArrayAccess
         return $this->query->immutable();
     }
 
+    /**
+     * Get Post/s ($_GET).
+     *
+     * @return array<string, string>|string
+     */
     public function getQuery(string $key = null)
     {
         if (func_num_args() === 0) {
@@ -74,6 +140,11 @@ class Request implements ArrayAccess
         return $this->post->immutable();
     }
 
+    /**
+     * Get Post/s ($_POST).
+     *
+     * @return array<string, string>|string
+     */
     public function getPost(string $key = null)
     {
         if (func_num_args() === 0) {
@@ -83,6 +154,11 @@ class Request implements ArrayAccess
         return $this->post->get($key);
     }
 
+    /**
+     * Get file/s ($_FILE).
+     *
+     * @return array<string, array<int, string>|string>|array<int, string>|string
+     */
     public function getFile(string $key = null)
     {
         if (func_num_args() === 0) {
@@ -92,26 +168,36 @@ class Request implements ArrayAccess
         return $this->files[$key];
     }
 
-    public function getCookie(string $key)
+    public function getCookie(string $key): ?string
     {
         return $this->cookies[$key] ?? null;
     }
 
+    /**
+     * Get cookies.
+     *
+     * @return array<string, string>|null
+     */
     public function getCookies()
     {
         return $this->cookies;
     }
 
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->method;
     }
 
-    public function isMethod(string $method)
+    public function isMethod(string $method): bool
     {
         return strcasecmp($this->method, $method) === 0;
     }
 
+    /**
+     * Get header or headers.
+     *
+     * @return array<string, string>|string|null get header/s
+     */
     public function getHeaders(string $header = null)
     {
         if ($header == null) {
@@ -121,7 +207,7 @@ class Request implements ArrayAccess
         return $this->headers[$header] ?? null;
     }
 
-    public function isHeader(string $header_key, string $header_val)
+    public function isHeader(string $header_key, string $header_val): bool
     {
         if (isset($this->headers[$header_key])) {
             return $this->headers[$header_key] === $header_val;
@@ -130,35 +216,36 @@ class Request implements ArrayAccess
         return false;
     }
 
-    public function hasHeader(string $header_key)
+    public function hasHeader(string $header_key): bool
     {
         return isset($this->headers[$header_key]);
     }
 
-    public function isSecured()
+    public function isSecured(): bool
     {
         return !empty($_SERVER['HTTPS']) && strcasecmp($_SERVER['HTTPS'], 'off')
-      ? true    // https
-      : false;  // http;
+            ? true    // https
+            : false;  // http;
     }
 
-    public function getRemoteAddress()
+    public function getRemoteAddress(): ?string
     {
         return $this->remoteAddress;
     }
 
-    public function getRawBody()
+    public function getRawBody(): string
     {
-        return $this->rawBodyCallback
-      ? ($this->rawBodyCallback)()
-      : null;
+        return call_user_func($this->rawBodyCallback);
     }
 
+    /**
+     * Get Json array.
+     *
+     * @return array<mixed, mixed>
+     */
     public function getJsonBody()
     {
-        $raw = $this->rawBodyCallback
-      ? ($this->rawBodyCallback)()
-      : '{}';
+        $raw = call_user_func($this->rawBodyCallback);
 
         return json_decode($raw, true);
     }
@@ -167,11 +254,11 @@ class Request implements ArrayAccess
      * Push costume attributes to the request,
      * uses for costume request to server.
      *
-     * @param array $push_attributes Push a attributes as array
+     * @param array<string, string|int|bool> $push_attributes Push a attributes as array
      *
      * @return self
      */
-    public function with(array $push_attributes)
+    public function with($push_attributes)
     {
         $this->attributes = array_merge($this->attributes, $push_attributes);
 
@@ -196,14 +283,14 @@ class Request implements ArrayAccess
               'x-raw'     => $this->rawBodyCallback ? ($this->rawBodyCallback)() : null,
               'x-method'  => $this->method,
             ],
-            $this->getJsonBody() ?? []
+            $this->getJsonBody(),
         );
     }
 
     /**
      * Get all request and wrap it.
      *
-     * @return array Insert all request array in single array
+     * @return array<int, array<string, mixed>> Insert all request array in single array
      */
     public function wrap()
     {
@@ -244,7 +331,7 @@ class Request implements ArrayAccess
      * Set the value at the given offset.
      *
      * @param string $offset
-     * @param mixed  $value
+     * @param string $value
      */
     public function offsetSet($offset, $value): void
     {
