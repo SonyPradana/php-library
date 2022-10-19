@@ -16,7 +16,7 @@ class RequestFactory
             $this->getHeaders(),
             $this->getMethod(),
             $this->getClient(),
-            fn (): string => file_get_contents('php://input')
+            $this->getRawBody()
         );
     }
 
@@ -73,5 +73,10 @@ class RequestFactory
         return !empty($_SERVER['REMOTE_ADDR'])
             ? trim($_SERVER['REMOTE_ADDR'], '[]')
             : null;
+    }
+
+    private function getRawBody(): ?string
+    {
+        return file_get_contents('php://input') | null;
     }
 }
