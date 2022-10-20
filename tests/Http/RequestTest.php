@@ -190,6 +190,28 @@ class RequestTest extends TestCase
     /**
      * @test
      */
+    public function itCanThrowErrorWhenBodyEmpty()
+    {
+        $request = new Request('test.test', [], [], [], [], [], ['Content-Length' => '1'], 'PUT', '::1', '');
+
+        $this->expectErrorMessage('Request body is empty.');
+        $request->all();
+    }
+
+    /**
+     * @test
+     */
+    public function itCanThrowErrorWhenBodyCantDecode()
+    {
+        $request = new Request('test.test', [], [], [], [], [], ['Content-Length' => '1'], 'PUT', '::1', 'nobody');
+
+        $this->expectErrorMessage('Could not decode request body.');
+        $request->all();
+    }
+
+    /**
+     * @test
+     */
     public function itCanAccessAsArrayGet()
     {
         $this->assertEquals('query', $this->request['query_1']);
