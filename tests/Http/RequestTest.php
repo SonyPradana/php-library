@@ -16,13 +16,15 @@ class RequestTest extends TestCase
             ['post_1'  => 'post'],
             ['costume' => 'costume'],
             ['cookies' => 'cookies'],
-            [[
-              'name'      => 'file_name',
-              'type'      => 'text',
-              'tmp_name'  => 'tmp_name',
-              'error'     => 0,
-              'size'      => 0,
-            ]],
+            [
+                'file_1' => [
+                    'name'      => 'file_name',
+                    'type'      => 'text',
+                    'tmp_name'  => 'tmp_name',
+                    'error'     => 0,
+                    'size'      => 0,
+                ],
+            ],
             ['header_1'  => 'header', 'header_2' => 123, 'foo' => 'bar'],
             'GET',
             '127:0:0:1',
@@ -69,7 +71,7 @@ class RequestTest extends TestCase
      */
     public function hasSameFile()
     {
-        $file = $this->request->getFile(0);
+        $file = $this->request->getFile('file_1');
         $this->assertEquals(
             'file_name',
             $file['name']
@@ -156,6 +158,33 @@ class RequestTest extends TestCase
     public function isHeaderContains()
     {
         $this->assertTrue($this->request->isHeader('foo', 'bar'));
+    }
+
+    /**
+     * @test
+     */
+    public function itCanGetAllProperty()
+    {
+        $this->assertEquals($this->request->all(), [
+            'header_1'          => 'header',
+            'header_2'          => 123,
+            'foo'               => 'bar',
+            'query_1'           => 'query',
+            'post_1'            => 'post',
+            'costume'           => 'costume',
+            'x-raw'             => '{"respone":"ok"}',
+            'x-method'          => 'GET',
+            'cookies'           => 'cookies',
+            'files'             => [
+                'file_1' => [
+                    'name'      => 'file_name',
+                    'type'      => 'text',
+                    'tmp_name'  => 'tmp_name',
+                    'error'     => 0,
+                    'size'      => 0,
+                ],
+            ],
+        ]);
     }
 
     /**

@@ -286,18 +286,22 @@ class Request implements \ArrayAccess
      */
     public function all()
     {
+        $content = in_array($this->method, ['PUT', 'DELETE', 'PATCH']) ? $this->getJsonBody() : [];
+        $this->with([
+            'x-raw'     => $this->rawBody,
+            'x-method'  => $this->method,
+        ]);
+
         return array_merge(
             $this->headers,
             $this->query->all(),
             $this->post->all(),
             $this->attributes,
             $this->cookies,
-            ['files' => $this->files],
             [
-              'x-raw'     => $this->rawBody,
-              'x-method'  => $this->method,
+                'files' => $this->files,
             ],
-            $this->getJsonBody(),
+            $content
         );
     }
 
