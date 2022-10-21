@@ -2,11 +2,9 @@
 
 use PHPUnit\Framework\TestCase;
 use System\Text\Str;
-
-use function System\Text\string;
-
 use System\Text\Text;
 
+use function System\Text\string;
 use function System\Text\text;
 
 class TextTest extends TestCase

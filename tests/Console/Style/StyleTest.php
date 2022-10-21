@@ -3,11 +3,10 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-
-use function System\Console\style;
-
 use System\Console\Style\Colors;
 use System\Console\Style\Style;
+
+use function System\Console\style;
 
 final class StyleTest extends TestCase
 {
