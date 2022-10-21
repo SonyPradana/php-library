@@ -286,6 +286,7 @@ class Request implements \ArrayAccess
      */
     public function all()
     {
+        /** @var array<string, mixed> */
         $all = [
             ...$this->headers,
             ...$this->query->all(),
