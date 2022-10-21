@@ -286,21 +286,22 @@ class Request implements \ArrayAccess
      */
     public function all()
     {
-        /** @var array<string, mixed> */
-        $all = [
-            ...$this->headers,
-            ...$this->query->all(),
-            ...$this->post->all(),
-            ...$this->attributes,
-            ...$this->cookies,
-            'x-raw'     => $this->getRawBody() ?? '',
-            'x-method'  => $this->getMethod(),
-            'files'     => $this->files,
-        ];
+        $all = array_merge(
+            $this->headers,
+            $this->query->all(),
+            $this->post->all(),
+            $this->attributes,
+            $this->cookies,
+            [
+                'x-raw'     => $this->getRawBody() ?? '',
+                'x-method'  => $this->getMethod(),
+                'files'     => $this->files,
+            ]
+        );
 
         $length = $this->getHeaders('Content-Length') ?? '0';
         if ($length !== '0') {
-            return [...$all, ...$this->getJsonBody()];
+            return array_merge($all, $this->getJsonBody());
         }
 
         return $all;
