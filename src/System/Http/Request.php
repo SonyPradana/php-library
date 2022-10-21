@@ -185,7 +185,7 @@ class Request implements \ArrayAccess
 
     public function getMethod(): string
     {
-        return $this->method;
+        return \strtoupper($this->method);
     }
 
     public function isMethod(string $method): bool
@@ -286,19 +286,25 @@ class Request implements \ArrayAccess
      */
     public function all()
     {
-        return array_merge(
+        $all = array_merge(
             $this->headers,
             $this->query->all(),
             $this->post->all(),
             $this->attributes,
             $this->cookies,
-            ['files' => $this->files],
             [
-              'x-raw'     => $this->rawBody,
-              'x-method'  => $this->method,
-            ],
-            $this->getJsonBody(),
+                'x-raw'     => $this->getRawBody() ?? '',
+                'x-method'  => $this->getMethod(),
+                'files'     => $this->files,
+            ]
         );
+
+        $length = $this->getHeaders('Content-Length') ?? '0';
+        if ($length !== '0') {
+            return array_merge($all, $this->getJsonBody());
+        }
+
+        return $all;
     }
 
     /**
