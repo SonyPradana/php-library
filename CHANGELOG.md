@@ -5,11 +5,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### [0.12.0] - 2022-10-21
+### Added
+- Added `Style::tap()` push style class.
+- `Request::class` implement ArrayAccess.
+- `Request::class` supported higher order expectations.
+- Added `Request::query()`, `Request::post()` return collection $__GET, $__POST.
+
+### Changed
+- Change method name `Request::allin()` to `Request::wrap()`.
+- `Request::__constructor` parameter not nullable.
+- `Request::rawBody()` return string|null.
+- `Request::getJsonBody()` throw exception when rawBody is not array/json and empty body.
+- `Request::all()` return body content if content length not equal zero or empty.
+
 ### [0.11.0] - 2022-09-11
 ### Deprecated
 - Deprecated set header from content['header'] in `Respone::class`.
 - Deprecated set header from content['header'] in `View::render`.
-- Deprecated `Command::printHelp`/
+- Deprecated `Command::printHelp`.
 
 ### Added
 - Added trait to print help option and argument using array.
