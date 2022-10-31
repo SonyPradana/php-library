@@ -240,13 +240,9 @@ class RequestTest extends TestCase
      */
     public function itCanDetectAjaxRequest()
     {
-        // mocker server request
-        $back_up                          = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? '';
-        $_SERVER['HTTP_X_REQUESTED_WITH'] = 'xmlhttprequest';
-
-        $req = new Request('test.test');
+        $req = new Request('test.test', [], [], [], [], [], [
+            'X-Requested-With' => 'XMLHttpRequest',
+        ]);
         $this->assertTrue($req->isAjax());
-
-        $_SERVER['HTTP_X_REQUESTED_WITH'] = $back_up;
     }
 }

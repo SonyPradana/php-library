@@ -322,7 +322,7 @@ class Request implements \ArrayAccess
      */
     public function isAjax(): bool
     {
-        return strtoupper($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHTTPREQUEST';
+        return $this->getHeaders('X-Requested-With') == 'XMLHttpRequest';
     }
 
     /**
