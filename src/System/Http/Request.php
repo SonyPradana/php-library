@@ -318,6 +318,14 @@ class Request implements \ArrayAccess
     }
 
     /**
+     * Determinate request is ajax.
+     */
+    public function isAjax(): bool
+    {
+        return strtoupper($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHTTPREQUEST';
+    }
+
+    /**
      * Get input resource base on method type.
      */
     private function source(): Collection

@@ -234,4 +234,19 @@ class RequestTest extends TestCase
     {
         $this->assertEquals('query', $this->request->query_1);
     }
+
+    /**
+     * @test it can detect Ajax Request
+     */
+    public function itCanDetectAjaxRequest()
+    {
+        // mocker server request
+        $back_up                          = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? '';
+        $_SERVER['HTTP_X_REQUESTED_WITH'] = 'xmlhttprequest';
+
+        $req = new Request('test.test');
+        $this->assertTrue($req->isAjax());
+
+        $_SERVER['HTTP_X_REQUESTED_WITH'] = $back_up;
+    }
 }
