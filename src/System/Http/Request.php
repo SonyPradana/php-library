@@ -318,6 +318,14 @@ class Request implements \ArrayAccess
     }
 
     /**
+     * Determinate request is ajax.
+     */
+    public function isAjax(): bool
+    {
+        return $this->getHeaders('X-Requested-With') == 'XMLHttpRequest';
+    }
+
+    /**
      * Get input resource base on method type.
      */
     private function source(): Collection

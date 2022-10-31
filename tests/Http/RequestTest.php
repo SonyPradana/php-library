@@ -234,4 +234,15 @@ class RequestTest extends TestCase
     {
         $this->assertEquals('query', $this->request->query_1);
     }
+
+    /**
+     * @test it can detect Ajax Request
+     */
+    public function itCanDetectAjaxRequest()
+    {
+        $req = new Request('test.test', [], [], [], [], [], [
+            'X-Requested-With' => 'XMLHttpRequest',
+        ]);
+        $this->assertTrue($req->isAjax());
+    }
 }
