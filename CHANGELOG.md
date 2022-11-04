@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### [0.12.2] - 2022-11-04
+### Added
+- Added `Request::isAjax()` detect ajax request.
+
+### Removed
+- Removed `AbstracMiddleware::handle()`.
+
+- Added 
 ### [0.12.1] - 2022-10-21
 ### Fixed
 - Fix error when create from global to get content body #66.

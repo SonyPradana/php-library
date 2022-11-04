@@ -93,6 +93,30 @@ class Request implements \ArrayAccess
         string $remoteAddress = '::1',
         ?string $rawBody = null
     ) {
+        $this->initialize($url, $query, $post, $attributes, $cookies, $files, $headers, $method, $remoteAddress, $rawBody);
+    }
+
+    /**
+     * @param array<string, string> $query
+     * @param array<string, string> $post
+     * @param array<string, string> $attributes
+     * @param array<string, string> $cookies
+     * @param array<string, string> $files
+     * @param array<string, string> $headers
+     * @param ?string               $rawBody
+     */
+    public function initialize(
+        string $url,
+        array $query = [],
+        array $post = [],
+        array $attributes = [],
+        array $cookies = [],
+        array $files = [],
+        array $headers = [],
+        string $method = 'GET',
+        string $remoteAddress = '::1',
+        ?string $rawBody = null
+    ) {
         $this->url             = $url;
         $this->query           = new Collection($query);
         $this->post            = new Collection($post);
