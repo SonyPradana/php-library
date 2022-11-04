@@ -51,8 +51,9 @@ class Karnel
     protected function handle_middleware($middlewares)
     {
         foreach ($middlewares as $middleware) {
-            // prevent duplicate middleware
-            if (in_array($middleware, $this->middleware_used)) {
+            // prevent duplicate middleware and not handle-able
+            if (in_array($middleware, $this->middleware_used)
+            && !method_exists($middleware, 'handle')) {
                 continue;
             }
 
