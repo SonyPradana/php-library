@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace System\File\Exceptions;
 
-use InvalidArgumentException;
-
 /**
  * @internal
  */
-final class MutyFileUploadDetect extends InvalidArgumentException
+final class MutyFileUploadDetect extends \InvalidArgumentException
 {
     /**
      * Creates a new Exception instance.

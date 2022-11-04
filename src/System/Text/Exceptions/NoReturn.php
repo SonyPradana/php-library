@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace System\Text\Exceptions;
 
-use InvalidArgumentException;
-
 /**
  * @internal
  */
-final class NoReturn extends InvalidArgumentException
+final class NoReturn extends \InvalidArgumentException
 {
     /**
      * Creates a new Exception instance.

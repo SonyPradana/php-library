@@ -4,7 +4,7 @@ namespace System\Router;
 
 use ArrayAccess;
 
-class Route implements ArrayAccess
+class Route implements \ArrayAccess
 {
     private $route;
     private $prefix_name;

@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace System\File\Exceptions;
 
-use InvalidArgumentException;
-
 /**
  * @internal
  */
-final class FileNotExists extends InvalidArgumentException
+final class FileNotExists extends \InvalidArgumentException
 {
     /**
      * Creates a new Exception instance.

@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace System\Time\Exceptions;
 
-use InvalidArgumentException;
-
 /**
  * @internal
  */
-final class PropertyNotSetAble extends InvalidArgumentException
+final class PropertyNotSetAble extends \InvalidArgumentException
 {
     /**
      * Creates a new Exception instance.

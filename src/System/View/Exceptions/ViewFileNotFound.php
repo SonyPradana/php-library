@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace System\View\Exceptions;
 
-use InvalidArgumentException;
-
 /**
  * @internal
  */
-final class ViewFileNotFound extends InvalidArgumentException
+final class ViewFileNotFound extends \InvalidArgumentException
 {
     /**
      * Creates a new Exception instance.

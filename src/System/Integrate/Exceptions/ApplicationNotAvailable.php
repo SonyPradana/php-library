@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace System\Integrate\Exceptions;
 
-use RuntimeException;
-
 /**
  * @internal
  */
-final class ApplicationNotAvailable extends RuntimeException
+final class ApplicationNotAvailable extends \RuntimeException
 {
     /**
      * Creates a new Exception instance.

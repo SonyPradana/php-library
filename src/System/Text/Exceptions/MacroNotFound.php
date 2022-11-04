@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace System\Text\Exceptions;
 
-use InvalidArgumentException;
-
 /**
  * @internal
  */
-final class MacroNotFound extends InvalidArgumentException
+final class MacroNotFound extends \InvalidArgumentException
 {
     /**
      * Creates a new Exception instance.
