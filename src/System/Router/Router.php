@@ -133,7 +133,7 @@ class Router
     /**
      * Run mindle before run group route.
      *
-     * @param AbstractMiddleware[] $middlewares Middleware
+     * @param array<int, class-string> $middlewares Middleware
      */
     public static function middleware(array $middlewares)
     {

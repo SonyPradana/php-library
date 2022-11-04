@@ -2,21 +2,9 @@
 
 namespace System\Router;
 
+/**
+ * deprecated soon, v0.13.
+ */
 abstract class AbstractMiddleware
 {
-    /**
-     * Run middleware.
-     */
-    public function handle()
-    {
-        // ovveridedable
-    }
-
-    /**
-     * Use for clear middleware if needed.
-     */
-    public function close()
-    {
-        // ovveridedable
-    }
 }
