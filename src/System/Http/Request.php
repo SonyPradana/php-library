@@ -295,6 +295,18 @@ class Request implements \ArrayAccess
     }
 
     /**
+     * Get attribute.
+     *
+     * @param string|int|bool $default
+     *
+     * @return string|int|bool
+     */
+    public function getAttribute(string $key, $default)
+    {
+        return $this->attributes[$key] ?? $default;
+    }
+
+    /**
      * Push costume attributes to the request,
      * uses for costume request to server.
      *

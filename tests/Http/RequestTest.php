@@ -245,4 +245,11 @@ class RequestTest extends TestCase
         ]);
         $this->assertTrue($req->isAjax());
     }
+
+    /** @test */
+    public function itCanGetItemFromAttribute()
+    {
+        $this->assertEquals('costume', $this->request->getAttribute('costume', 'fixed'));
+        $this->assertEquals('fixed', $this->request->getAttribute('fixed', 'fixed'));
+    }
 }
