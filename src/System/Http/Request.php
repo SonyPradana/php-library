@@ -97,6 +97,8 @@ class Request implements \ArrayAccess
     }
 
     /**
+     * Initial request.
+     *
      * @param array<string, string> $query
      * @param array<string, string> $post
      * @param array<string, string> $attributes
@@ -104,6 +106,8 @@ class Request implements \ArrayAccess
      * @param array<string, string> $files
      * @param array<string, string> $headers
      * @param ?string               $rawBody
+     *
+     * @return self
      */
     public function initialize(
         string $url,
@@ -127,6 +131,8 @@ class Request implements \ArrayAccess
         $this->method          = $method;
         $this->remoteAddress   = $remoteAddress;
         $this->rawBody         = $rawBody;
+
+        return $this;
     }
 
     public function getUrl(): string
