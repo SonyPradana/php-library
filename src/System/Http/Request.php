@@ -10,7 +10,7 @@ use System\Collection\CollectionImmutable;
 /**
  * @implements \ArrayAccess<string, string>
  */
-class Request implements \ArrayAccess
+class Request implements \ArrayAccess, \IteratorAggregate
 {
     /**
      * Request method.
@@ -428,5 +428,13 @@ class Request implements \ArrayAccess
     public function __get($key)
     {
         return $this->source()->get($key);
+    }
+
+    /**
+     * Iterator.
+     */
+    public function getIterator(): \Traversable
+    {
+        return new \ArrayIterator($this->source()->all());
     }
 }
