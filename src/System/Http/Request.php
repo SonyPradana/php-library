@@ -74,6 +74,11 @@ class Request implements \ArrayAccess, \IteratorAggregate
     private $rawBody;
 
     /**
+     * Json body rendered.
+     */
+    private Collection $json;
+
+    /**
      * @param array<string, string> $query
      * @param array<string, string> $post
      * @param array<string, string> $attributes
@@ -376,13 +381,22 @@ class Request implements \ArrayAccess, \IteratorAggregate
          || Str::contains($this->getHeaders('content-type') ?? '', '+json');
     }
 
+    public function json(): Collection
+    {
+        if (!isset($this->json)) {
+            $this->json = new Collection($this->getJsonBody());
+        }
+
+        return $this->json;
+    }
+
     /**
      * Get input resource base on method type.
      */
     private function source(): Collection
     {
         if ($this->isJson()) {
-            return new Collection($this->getJsonBody());
+            return $this->json();
         }
 
         return in_array($this->method, ['GET', 'HEAD']) ? $this->query : $this->post;

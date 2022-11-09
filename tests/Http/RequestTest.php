@@ -266,9 +266,22 @@ class RequestTest extends TestCase
     {
         $this->assertFalse($this->request->isJson());
 
+        $req = new Request('test.test', ['a'=>'b'], [], [], [], [], [
+            'content-type' => 'app/json',
+        ], '', '', '{"respone":"ok"}');
+
+        $this->assertTrue($req->isJson());
+    }
+
+    /** @test */
+    public function itCanReturnBodyIfRequestComeFromJsonRequest()
+    {
         $req = new Request('test.test', [], [], [], [], [], [
             'content-type' => 'app/json',
-        ]);
-        $this->assertTrue($req->isJson());
+        ], '', '', '{"respone":"ok"}');
+
+        $this->assertEquals('ok', $req->json()->get('respone', 'bad'));
+        $this->assertEquals('ok', $req->all()['respone']);
+        $this->assertEquals('ok', $req['respone']);
     }
 }
