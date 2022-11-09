@@ -6,6 +6,7 @@ namespace System\Http;
 
 use System\Collection\Collection;
 use System\Collection\CollectionImmutable;
+use System\Text\Str;
 
 /**
  * @implements \ArrayAccess<string, string>
@@ -341,8 +342,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
             ]
         );
 
-        $length = $this->getHeaders('Content-Length') ?? '0';
-        if ($length !== '0') {
+        if ($this->isJson()) {
             return array_merge($all, $this->getJsonBody());
         }
 
@@ -368,10 +368,23 @@ class Request implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
+     * Determinate request is json request.
+     */
+    public function isJson(): bool
+    {
+        return Str::contains($this->getHeaders('content-type') ?? '', '/json')
+         || Str::contains($this->getHeaders('content-type') ?? '', '+json');
+    }
+
+    /**
      * Get input resource base on method type.
      */
     private function source(): Collection
     {
+        if ($this->isJson()) {
+            return new Collection($this->getJsonBody());
+        }
+
         return in_array($this->method, ['GET', 'HEAD']) ? $this->query : $this->post;
     }
 

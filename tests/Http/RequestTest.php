@@ -192,7 +192,7 @@ class RequestTest extends TestCase
      */
     public function itCanThrowErrorWhenBodyEmpty()
     {
-        $request = new Request('test.test', [], [], [], [], [], ['Content-Length' => '1'], 'PUT', '::1', '');
+        $request = new Request('test.test', [], [], [], [], [], ['content-type' => 'app/json'], 'PUT', '::1', '');
 
         $this->expectErrorMessage('Request body is empty.');
         $request->all();
@@ -203,7 +203,7 @@ class RequestTest extends TestCase
      */
     public function itCanThrowErrorWhenBodyCantDecode()
     {
-        $request = new Request('test.test', [], [], [], [], [], ['Content-Length' => '1'], 'PUT', '::1', 'nobody');
+        $request = new Request('test.test', [], [], [], [], [], ['content-type' => 'app/json'], 'PUT', '::1', 'nobody');
 
         $this->expectErrorMessage('Could not decode request body.');
         $request->all();
@@ -259,5 +259,16 @@ class RequestTest extends TestCase
         foreach ($this->request as $key => $value) {
             $this->assertEquals($this->request[$key], $value);
         }
+    }
+
+    /** @test */
+    public function itCanDetectRequestJsonRequest()
+    {
+        $this->assertFalse($this->request->isJson());
+
+        $req = new Request('test.test', [], [], [], [], [], [
+            'content-type' => 'app/json',
+        ]);
+        $this->assertTrue($req->isJson());
     }
 }
