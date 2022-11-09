@@ -252,4 +252,12 @@ class RequestTest extends TestCase
         $this->assertEquals('costume', $this->request->getAttribute('costume', 'fixed'));
         $this->assertEquals('fixed', $this->request->getAttribute('fixed', 'fixed'));
     }
+
+    /** @test */
+    public function itCanUseForeaceRequest()
+    {
+        foreach ($this->request as $key => $value) {
+            $this->assertEquals($this->request[$key], $value);
+        }
+    }
 }
