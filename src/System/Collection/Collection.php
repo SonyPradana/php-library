@@ -9,6 +9,16 @@ class Collection extends AbstractCollectionImmutable
         return $this->set($name, $value);
     }
 
+    /**
+     * Add reference from collection.
+     */
+    public function ref(AbstractCollectionImmutable $collection): self
+    {
+        $this->add($collection->collection);
+
+        return $this;
+    }
+
     public function clear()
     {
         $this->collection = [];
