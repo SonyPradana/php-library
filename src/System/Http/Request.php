@@ -336,8 +336,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
     {
         $all = array_merge(
             $this->headers,
-            $this->query->all(),
-            $this->post->all(),
+            $this->input()->all(),
             $this->attributes,
             $this->cookies,
             [
@@ -346,10 +345,6 @@ class Request implements \ArrayAccess, \IteratorAggregate
                 'files'     => $this->files,
             ]
         );
-
-        if ($this->isJson()) {
-            return array_merge($all, $this->getJsonBody());
-        }
 
         return $all;
     }
@@ -388,6 +383,21 @@ class Request implements \ArrayAccess, \IteratorAggregate
         }
 
         return $this->json;
+    }
+
+    /**
+     * Compine all request input.
+     *
+     * @param mixed $default
+     */
+    public function input(string $key = null, $default = null): Collection
+    {
+        $input = $this->source()->add($this->query->all());
+        if (null === $key) {
+            return $input;
+        }
+
+        return $input->get($key, $default);
     }
 
     /**

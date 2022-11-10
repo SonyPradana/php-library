@@ -8,6 +8,12 @@ class RequestTest extends TestCase
     /** @var Request */
     private $request;
 
+    /** @var Request */
+    private $request_post;
+
+    /** @var Request */
+    private $request_put;
+
     protected function setUp(): void
     {
         $this->request = new Request(
@@ -30,6 +36,31 @@ class RequestTest extends TestCase
             '127:0:0:1',
             '{"respone":"ok"}'
         );
+
+        $this->request_post = new Request(
+            'http://localhost/',
+            ['query_1' => 'query'],
+            ['post_1'  => 'post'],
+            ['costume' => 'costume'],
+            ['cookies' => 'cookies'],
+            [
+                'file_1' => [
+                    'name'      => 'file_name',
+                    'type'      => 'text',
+                    'tmp_name'  => 'tmp_name',
+                    'error'     => 0,
+                    'size'      => 0,
+                ],
+            ],
+            ['header_1'  => 'header', 'header_2' => 123, 'foo' => 'bar'],
+            'POST',
+            '127:0:0:1',
+            '{"respone":"ok"}'
+        );
+
+        $this->request_put = new Request('test.test', [], [], [], [], [], [
+            'content-type' => 'app/json',
+        ], '', '', '{"respone":"ok"}');
     }
 
     /**
@@ -170,7 +201,6 @@ class RequestTest extends TestCase
             'header_2'          => 123,
             'foo'               => 'bar',
             'query_1'           => 'query',
-            'post_1'            => 'post',
             'costume'           => 'costume',
             'x-raw'             => '{"respone":"ok"}',
             'x-method'          => 'GET',
@@ -265,23 +295,38 @@ class RequestTest extends TestCase
     public function itCanDetectRequestJsonRequest()
     {
         $this->assertFalse($this->request->isJson());
-
-        $req = new Request('test.test', ['a'=>'b'], [], [], [], [], [
-            'content-type' => 'app/json',
-        ], '', '', '{"respone":"ok"}');
-
-        $this->assertTrue($req->isJson());
+        $this->assertTrue($this->request_put->isJson());
     }
 
     /** @test */
     public function itCanReturnBodyIfRequestComeFromJsonRequest()
     {
-        $req = new Request('test.test', [], [], [], [], [], [
-            'content-type' => 'app/json',
-        ], '', '', '{"respone":"ok"}');
+        $this->assertEquals('ok', $this->request_put->json()->get('respone', 'bad'));
+        $this->assertEquals('ok', $this->request_put->all()['respone']);
+        $this->assertEquals('ok', $this->request_put['respone']);
+    }
 
-        $this->assertEquals('ok', $req->json()->get('respone', 'bad'));
-        $this->assertEquals('ok', $req->all()['respone']);
-        $this->assertEquals('ok', $req['respone']);
+    public function itCanGetAllPropertyIfMethodPost()
+    {
+        $this->assertEquals($this->request_post->all(), [
+            'header_1'          => 'header',
+            'header_2'          => 123,
+            'foo'               => 'bar',
+            'query_1'           => 'query',
+            'post_1'            => 'post',
+            'costume'           => 'costume',
+            'x-raw'             => '{"respone":"ok"}',
+            'x-method'          => 'GET',
+            'cookies'           => 'cookies',
+            'files'             => [
+                'file_1' => [
+                    'name'      => 'file_name',
+                    'type'      => 'text',
+                    'tmp_name'  => 'tmp_name',
+                    'error'     => 0,
+                    'size'      => 0,
+                ],
+            ],
+        ]);
     }
 }
