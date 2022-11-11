@@ -49,11 +49,16 @@
         "lint": "php-cs-fixer fix -v",
         "test:lint": "php-cs-fixer fix -v --dry-run",
         "test:types": "phpstan analyse --ansi --memory-limit=-1 --debug",
-        "test:unit": "phpunit",
-        "test": [
+        "test:unit": "phpunit --testdox",
+        "test:dev": [
             "@test:lint",
             "@test:types",
             "@test:unit"
+        ],
+        "test": [
+            "php-cs-fixer fix -v",
+            "phpstan analyse --ansi --memory-limit=-1",
+            "phpunit"
         ]
     }
 }
