@@ -6,13 +6,18 @@ namespace System\Http;
 
 use System\Collection\Collection;
 use System\Collection\CollectionImmutable;
+use System\Support\Marco;
 use System\Text\Str;
 
 /**
+ * @method \Validator\Validator validate(?\Closure $rule = null, ?\Closure $filter = null)
+ *
  * @implements \ArrayAccess<string, string>
  */
 class Request implements \ArrayAccess, \IteratorAggregate
 {
+    use Marco;
+
     /**
      * Request method.
      */

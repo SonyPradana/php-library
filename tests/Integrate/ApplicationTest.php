@@ -1,6 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use System\Http\Request;
 use System\Integrate\Application;
 use System\Integrate\Exceptions\ApplicationNotAvailable;
 
@@ -62,6 +63,14 @@ class ApplicationTest extends TestCase
         $test = $app->get('ping');
 
         $this->assertEquals('pong', $test);
+    }
+
+    /** @test */
+    public function itCanCallMacroRequestValidate()
+    {
+        new Application('/');
+
+        $this->assertTrue(Request::hasMacro('validate'));
     }
 
     private function defaultConfigs()

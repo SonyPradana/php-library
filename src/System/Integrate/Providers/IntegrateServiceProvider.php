@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace System\Integrate\Providers;
 
+use System\Http\Request;
 use System\Integrate\ServiceProvider;
+use Validator\Validator;
 
 class IntegrateServiceProvider extends ServiceProvider
 {
@@ -13,6 +15,9 @@ class IntegrateServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // application
+        Request::macro(
+            'validate',
+            fn (?\Closure $rule = null, ?\Closure $filter = null) => Validator::make($this->{'all'}(), $rule, $filter)
+        );
     }
 }
