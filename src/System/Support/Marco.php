@@ -11,7 +11,7 @@ trait Marco
      *
      * @var string[]
      */
-    private static $macros = [];
+    protected static $macros = [];
 
     /**
      * Register string macro.
