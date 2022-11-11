@@ -42,6 +42,7 @@ trait Marco
             throw new MacroNotFound($method);
         }
 
+        /** @var \Closure */
         $macro = static::$macros[$method];
 
         if ($macro instanceof \Closure) {
@@ -67,6 +68,7 @@ trait Marco
             throw new MacroNotFound($method);
         }
 
+        /** @var \Closure */
         $macro = static::$macros[$method];
 
         if ($macro instanceof \Closure) {
