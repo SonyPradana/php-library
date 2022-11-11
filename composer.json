@@ -50,12 +50,12 @@
         "test:lint": "php-cs-fixer fix -v --dry-run",
         "test:types": "phpstan analyse --ansi --memory-limit=-1 --debug",
         "test:unit": "phpunit --testdox",
-        "test": [
+        "test:dev": [
             "@test:lint",
             "@test:types",
             "@test:unit"
         ],
-        "test:dev": [
+        "test": [
             "php-cs-fixer fix -v",
             "phpstan analyse --ansi --memory-limit=-1",
             "phpunit"
