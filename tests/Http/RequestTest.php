@@ -307,6 +307,7 @@ class RequestTest extends TestCase
         $this->assertEquals('ok', $this->request_put['respone']);
     }
 
+    /** @test */
     public function itCanGetAllPropertyIfMethodPost()
     {
         $this->assertEquals($this->request_post->all(), [
@@ -317,7 +318,7 @@ class RequestTest extends TestCase
             'post_1'            => 'post',
             'costume'           => 'costume',
             'x-raw'             => '{"respone":"ok"}',
-            'x-method'          => 'GET',
+            'x-method'          => 'POST',
             'cookies'           => 'cookies',
             'files'             => [
                 'file_1' => [
