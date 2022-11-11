@@ -2,6 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use System\Http\Request;
+use Validator\Validator;
 
 class RequestTest extends TestCase
 {
@@ -328,5 +329,36 @@ class RequestTest extends TestCase
                 ],
             ],
         ]);
+    }
+
+    /** @test */
+    public function itCanUseValidateMacro()
+    {
+        Request::macro('validate', function () {
+            return new Validator($this->{'all'}());
+        });
+
+        // get
+        $v = $this->request->validate();
+        $v->field('query_1')->required();
+        $this->assertTrue($v->is_valid());
+
+        // post
+        $v = $this->request_post->validate();
+        $v->field('query_1')->required();
+        $v->field('post_1')->required();
+        $this->assertTrue($v->is_valid());
+
+        // file
+        $v = $this->request_post->validate();
+        $v->field('query_1')->required();
+        $v->field('post_1')->required();
+        $v->field('files.file_1')->required();
+        $this->assertTrue($v->is_valid());
+
+        // put
+        $v = $this->request_put->validate();
+        $v->field('respone')->required();
+        $this->assertTrue($v->is_valid());
     }
 }
