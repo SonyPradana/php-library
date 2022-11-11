@@ -10,7 +10,7 @@ use System\Support\Marco;
 use System\Text\Str;
 
 /**
- * @method \Validator\Validator validate(?\Closure $rule_validation = null)
+ * @method \Validator\Validator validate(?\Closure $rule = null, ?\Closure $filter = null)
  *
  * @implements \ArrayAccess<string, string>
  */

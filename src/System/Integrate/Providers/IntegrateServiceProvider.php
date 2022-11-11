@@ -15,14 +15,9 @@ class IntegrateServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        Request::macro('validate', function (?\Closure $rule_validation = null) {
-            $validate = new Validator($this->{'all'}());
-
-            if (null !== $rule_validation) {
-                $validate->validation($rule_validation);
-            }
-
-            return $validate;
-        });
+        Request::macro(
+            'validate',
+            fn (?\Closure $rule = null, ?\Closure $filter = null) => Validator::make($this->{'all'}(), $rule, $filter)
+        );
     }
 }

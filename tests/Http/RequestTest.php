@@ -2,6 +2,8 @@
 
 use PHPUnit\Framework\TestCase;
 use System\Http\Request;
+use Validator\Rule\FilterPool;
+use Validator\Rule\ValidPool;
 use Validator\Validator;
 
 class RequestTest extends TestCase
@@ -335,9 +337,10 @@ class RequestTest extends TestCase
     /** @test */
     public function itCanUseValidateMacro()
     {
-        Request::macro('validate', function () {
-            return new Validator($this->{'all'}());
-        });
+        Request::macro(
+            'validate',
+            fn (?\Closure $rule = null, ?\Closure $filter = null) => Validator::make($this->{'all'}(), $rule, $filter)
+        );
 
         // get
         $v = $this->request->validate();
@@ -361,5 +364,13 @@ class RequestTest extends TestCase
         $v = $this->request_put->validate();
         $v->field('respone')->required();
         $this->assertTrue($v->is_valid());
+
+        // get (filter)
+        $v = $this->request->validate(
+            fn (ValidPool $vr) => $vr('query_1')->required(),
+            fn (FilterPool $fr) => $fr('query_1')->upper_case()
+        );
+        $this->assertTrue($v->is_valid());
+        $this->assertEquals('QUERY', $v->filters->get('query_1'));
     }
 }
