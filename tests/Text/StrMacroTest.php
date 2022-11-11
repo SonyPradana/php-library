@@ -1,7 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use System\Text\Exceptions\MacroNotFound;
+use System\Support\Exceptions\MacroNotFound;
 use System\Text\Str;
 
 final class StrMacroTest extends TestCase
