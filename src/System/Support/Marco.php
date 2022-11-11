@@ -42,7 +42,13 @@ trait Marco
             throw new MacroNotFound($method);
         }
 
-        return call_user_func_array(self::$macros[$method], $parameters);
+        $macro = static::$macros[$method];
+
+        if ($macro instanceof \Closure) {
+            $macro = $macro->bindTo(null, static::class);
+        }
+
+        return $macro(...$parameters);
     }
 
     /**
@@ -61,7 +67,13 @@ trait Marco
             throw new MacroNotFound($method);
         }
 
-        return call_user_func_array(self::$macros[$method], $parameters);
+        $macro = static::$macros[$method];
+
+        if ($macro instanceof \Closure) {
+            $macro = $macro->bindTo($this, static::class);
+        }
+
+        return $macro(...$parameters);
     }
 
     /**
