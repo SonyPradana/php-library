@@ -54,4 +54,24 @@ final class ScheduleTest extends TestCase
 
         $Schedule->execute();
     }
+
+    /** @test */
+    public function itCanRunRetryCondtionSchedule()
+    {
+        $time_trevel = new Now('09/07/2021 00:30:00');
+        $Schedule    = new Schedule($time_trevel->timestamp);
+
+        $test = 1;
+
+        $Schedule
+            ->call(function () use (&$test) {
+                $test++;
+            })
+            ->retryIf(true)
+            ->everyThirtyMinutes()
+            ->eventName('test 30 minute');
+
+        $Schedule->execute();
+        $this->assertEquals(3, $test);
+    }
 }
