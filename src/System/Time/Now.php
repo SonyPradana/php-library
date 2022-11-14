@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Time;
 
 use System\Time\Exceptions\PropertyNotExist;
@@ -15,6 +17,7 @@ use System\Time\Exceptions\PropertyNotSetAble;
  * @property int    $second
  * @property string $monthName
  * @property string $dayName
+ * @property string $shortDay
  * @property string $timeZone
  * @property int    $age
  */
@@ -48,6 +51,8 @@ class Now
     private $monthName;
     /** @var string */
     private $dayName;
+    /** @var string */
+    private $shortDay;
     /** @var string */
     private $timeZone;
 
@@ -124,6 +129,7 @@ class Now
         $this->monthName = date('F', $this->time);
         $this->dayName   = date('l', $this->time);
         $this->timeZone  = date('e', $this->time);
+        $this->shortDay  = date('D', $this->time);
 
         $age       = time() - $this->time;
         $this->age = abs(floor($age / (365 * 60 * 60 * 24)));
