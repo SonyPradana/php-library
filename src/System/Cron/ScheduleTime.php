@@ -48,6 +48,16 @@ class ScheduleTime
     private bool $animusly  = false;
 
     /**
+     * Determinate cron execute run error.
+     */
+    private bool $is_fail = false;
+
+    /**
+     * Determinate retry maxsimum execute.
+     */
+    private int $retry_atempts = 0;
+
+    /**
      * Contructor.
      *
      * @param mixed[] $params
@@ -105,6 +115,23 @@ class ScheduleTime
         return $this->time_exect;
     }
 
+    public function isFail()
+    {
+        return $this->is_fail;
+    }
+
+    public function retryAtempts()
+    {
+        return $this->retry_atempts;
+    }
+
+    public function retry($atempt): self
+    {
+        $this->retry_atempts = $atempt;
+
+        return $this;
+    }
+
     // TODO: get next due time
 
     public function exect(): void
@@ -113,13 +140,23 @@ class ScheduleTime
             // stopwatch
             $watch_start = microtime(true);
 
-            $out_put = call_user_func($this->call_back, $this->params) ?? [];
+            try {
+                $out_put             = call_user_func($this->call_back, $this->params) ?? [];
+                $this->retry_atempts = 0;
+                $this->is_fail       = false;
+            } catch (\Throwable $th) {
+                $this->retry_atempts--;
+                $this->is_fail = true;
+                $out_put       = [
+                    'error' => $th->getMessage(),
+                ];
+            }
 
             // stopwatch
             $watch_end = round(microtime(true) - $watch_start, 3) * 1000;
 
             // send command log
-            if (!$this->animusly) {
+            if (!$this->animusly && !$this->is_fail) {
                 $this->interpolate($out_put, [
                     'excute_time' => $watch_end,
                     'cron_time'   => $this->time,
@@ -132,7 +169,7 @@ class ScheduleTime
     /**
      * @param array<string, mixed> $contex
      */
-    protected function interpolate(mixed $message, array $contex): void
+    protected function interpolate($message, array $contex): void
     {
         // do stuff
     }
