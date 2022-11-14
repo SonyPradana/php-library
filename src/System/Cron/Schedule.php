@@ -39,6 +39,10 @@ class Schedule
             do {
                 $cron->exect();
             } while ($cron->retryAtempts() > 0);
+
+            if ($cron->isRetry()) {
+                $cron->exect();
+            }
         }
     }
 }

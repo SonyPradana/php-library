@@ -58,6 +58,11 @@ class ScheduleTime
     private int $retry_atempts = 0;
 
     /**
+     * Reatry if condition is true.
+     */
+    private bool $retry_condition = false;
+
+    /**
      * Contructor.
      *
      * @param mixed[] $params
@@ -130,6 +135,18 @@ class ScheduleTime
         $this->retry_atempts = $atempt;
 
         return $this;
+    }
+
+    public function retryIf(bool $condition): self
+    {
+        $this->retry_condition = $condition;
+
+        return $this;
+    }
+
+    public function isRetry(): bool
+    {
+        return $this->retry_condition;
     }
 
     // TODO: get next due time
