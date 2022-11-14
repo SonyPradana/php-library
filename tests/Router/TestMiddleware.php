@@ -1,8 +1,6 @@
 <?php
 
-use System\Router\AbstractMiddleware;
-
-class TestMiddleware extends AbstractMiddleware
+class TestMiddleware
 {
     public function handle()
     {
