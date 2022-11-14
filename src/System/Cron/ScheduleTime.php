@@ -1,22 +1,60 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Cron;
 
 class ScheduleTime
 {
+    /**
+     * Closure to call if due the time.
+     *
+     * @var callable
+     */
     private $call_back;
-    private $params = [];
-    private $time;
-    private $event_name = 'animus';
-    private $time_exect;
-    private $time_name = '';
-    private $animusly  = false;
 
-    public function __construct($call_back, $params, $time)
+    /**
+     * Parameter of closure.
+     *
+     * @var array
+     */
+    private $params = [];
+
+    /**
+     * Current time.
+     */
+    private int $time;
+
+    /**
+     * Event name.
+     */
+    private string $event_name = 'animus';
+
+    /**
+     * Times to check (cron time).
+     *
+     * @var array<int, array<string, int|string>|int>
+     */
+    private $time_exect;
+
+    /**
+     * Cron time name.
+     */
+    private string $time_name = '';
+
+    /**
+     * Check is animus cron job.
+     */
+    private bool $animusly  = false;
+
+    /**
+     * Contructor.
+     */
+    public function __construct(callable $call_back, array $params, int $timestamp)
     {
         $this->call_back  = $call_back;
         $this->params     = $params;
-        $this->time       = $time;
+        $this->time       = $timestamp;
         $this->time_exect = [
             [
                 'D' => date('D', $this->time),
@@ -27,14 +65,14 @@ class ScheduleTime
         ];
     }
 
-    public function eventName($val)
+    public function eventName(string $val)
     {
         $this->event_name = $val;
 
         return $this;
     }
 
-    public function animusly($run_as_animusly = true)
+    public function animusly(bool $run_as_animusly = true)
     {
         $this->animusly = $run_as_animusly;
 
@@ -46,16 +84,20 @@ class ScheduleTime
         return $this->animusly;
     }
 
-    public function getEventname()
+    public function getEventname(): string
     {
         return $this->event_name;
     }
 
-    public function getTimeName()
+    public function getTimeName(): string
     {
         return $this->time_name;
     }
 
+    /**
+     * Get cron time.
+     *
+     * @return  array<int, array<string, int|string>|int> */
     public function getTimeExect()
     {
         return $this->time_exect;
@@ -63,7 +105,7 @@ class ScheduleTime
 
     // TODO: get next due time
 
-    public function exect()
+    public function exect(): void
     {
         if ($this->isDue()) {
             // stopwatch
@@ -85,12 +127,12 @@ class ScheduleTime
         }
     }
 
-    protected function interpolate($message, array $contex)
+    protected function interpolate(mixed $message, array $contex)
     {
         // do stuff
     }
 
-    public function isDue()
+    public function isDue(): bool
     {
         $events = $this->time_exect;
 
@@ -113,7 +155,7 @@ class ScheduleTime
         return false;
     }
 
-    public function justInTime()
+    public function justInTime(): self
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
@@ -128,7 +170,7 @@ class ScheduleTime
         return $this;
     }
 
-    public function everyTenMinute()
+    public function everyTenMinute(): self
     {
         $this->time_name = __FUNCTION__;
         $minute          = [];
@@ -147,7 +189,7 @@ class ScheduleTime
         return $this;
     }
 
-    public function everyThirtyMinutes()
+    public function everyThirtyMinutes(): self
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
@@ -166,7 +208,7 @@ class ScheduleTime
         return $this;
     }
 
-    public function everyTwoHour()
+    public function everyTwoHour(): self
     {
         $this->time_name = __FUNCTION__;
 
@@ -187,7 +229,7 @@ class ScheduleTime
         return $this;
     }
 
-    public function everyTwelveHour()
+    public function everyTwelveHour(): self
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
@@ -206,7 +248,7 @@ class ScheduleTime
         return $this;
     }
 
-    public function hourly()
+    public function hourly(): self
     {
         $this->time_name = __FUNCTION__;
         $hourly          = []; // from 00.00 to 23.00 (24 time)
@@ -223,7 +265,7 @@ class ScheduleTime
         return $this;
     }
 
-    public function hourlyAt(int $hour24)
+    public function hourlyAt(int $hour24): self
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
@@ -237,7 +279,7 @@ class ScheduleTime
         return $this;
     }
 
-    public function daily()
+    public function daily(): self
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
@@ -248,7 +290,7 @@ class ScheduleTime
         return $this;
     }
 
-    public function dailyAt(int $day)
+    public function dailyAt(int $day): self
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
@@ -262,7 +304,7 @@ class ScheduleTime
         return $this;
     }
 
-    public function weekly()
+    public function weekly(): self
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
@@ -277,7 +319,7 @@ class ScheduleTime
         return $this;
     }
 
-    public function mountly()
+    public function mountly(): self
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
