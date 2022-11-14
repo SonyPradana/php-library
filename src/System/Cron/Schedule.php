@@ -4,25 +4,36 @@ namespace System\Cron;
 
 class Schedule
 {
+    /** @var int|null */
     protected $time;
-    protected $pools = [];
+
+    /** @var ScheduleTime[] */
+    protected array $pools = [];
 
     public function __construct(int $time = null)
     {
         $this->time = $time ?? time();
     }
 
+    /**
+     * @return ScheduleTime[]
+     */
     public function getPools()
     {
         return $this->pools;
     }
 
-    public function call($call_back, $params = [])
+    /**
+     * @param mixed[] $params
+     *
+     * @return ScheduleTime
+     */
+    public function call(\Closure $call_back, $params = [])
     {
         return $this->pools[] = new ScheduleTime($call_back, $params, $this->time);
     }
 
-    public function execute()
+    public function execute(): void
     {
         foreach ($this->pools as $cron) {
             $cron->exect();

@@ -9,14 +9,14 @@ class ScheduleTime
     /**
      * Closure to call if due the time.
      *
-     * @var callable
+     * @var \Closure
      */
     private $call_back;
 
     /**
      * Parameter of closure.
      *
-     * @var array
+     * @var mixed[]
      */
     private $params = [];
 
@@ -49,8 +49,10 @@ class ScheduleTime
 
     /**
      * Contructor.
+     *
+     * @param mixed[] $params
      */
-    public function __construct(callable $call_back, array $params, int $timestamp)
+    public function __construct(\Closure $call_back, array $params, int $timestamp)
     {
         $this->call_back  = $call_back;
         $this->params     = $params;
@@ -65,14 +67,14 @@ class ScheduleTime
         ];
     }
 
-    public function eventName(string $val)
+    public function eventName(string $val): self
     {
         $this->event_name = $val;
 
         return $this;
     }
 
-    public function animusly(bool $run_as_animusly = true)
+    public function animusly(bool $run_as_animusly = true): self
     {
         $this->animusly = $run_as_animusly;
 
@@ -127,7 +129,10 @@ class ScheduleTime
         }
     }
 
-    protected function interpolate(mixed $message, array $contex)
+    /**
+     * @param array<string, mixed> $contex
+     */
+    protected function interpolate(mixed $message, array $contex): void
     {
         // do stuff
     }
