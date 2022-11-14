@@ -1,40 +1,80 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Cron;
 
 class ScheduleTime
 {
+    /**
+     * Closure to call if due the time.
+     *
+     * @var \Closure
+     */
     private $call_back;
-    private $params = [];
-    private $time;
-    private $event_name = 'animus';
-    private $time_exect;
-    private $time_name = '';
-    private $animusly  = false;
 
-    public function __construct($call_back, $params, $time)
+    /**
+     * Parameter of closure.
+     *
+     * @var mixed[]
+     */
+    private $params = [];
+
+    /**
+     * Current time.
+     */
+    private int $time;
+
+    /**
+     * Event name.
+     */
+    private string $event_name = 'animus';
+
+    /**
+     * Times to check (cron time).
+     *
+     * @var array<int, array<string, int|string>|int>
+     */
+    private $time_exect;
+
+    /**
+     * Cron time name.
+     */
+    private string $time_name = '';
+
+    /**
+     * Check is animus cron job.
+     */
+    private bool $animusly  = false;
+
+    /**
+     * Contructor.
+     *
+     * @param mixed[] $params
+     */
+    public function __construct(\Closure $call_back, array $params, int $timestamp)
     {
         $this->call_back  = $call_back;
         $this->params     = $params;
-        $this->time       = $time;
+        $this->time       = $timestamp;
         $this->time_exect = [
-      [
-        'D' => date('D', $this->time),
-        'd' => date('d', $this->time),
-        'h' => date('H', $this->time),
-        'm' => date('i', $this->time),
-      ],
-    ];
+            [
+                'D' => date('D', $this->time),
+                'd' => date('d', $this->time),
+                'h' => date('H', $this->time),
+                'm' => date('i', $this->time),
+            ],
+        ];
     }
 
-    public function eventName($val)
+    public function eventName(string $val): self
     {
         $this->event_name = $val;
 
         return $this;
     }
 
-    public function animusly($run_as_animusly = true)
+    public function animusly(bool $run_as_animusly = true): self
     {
         $this->animusly = $run_as_animusly;
 
@@ -46,16 +86,20 @@ class ScheduleTime
         return $this->animusly;
     }
 
-    public function getEventname()
+    public function getEventname(): string
     {
         return $this->event_name;
     }
 
-    public function getTimeName()
+    public function getTimeName(): string
     {
         return $this->time_name;
     }
 
+    /**
+     * Get cron time.
+     *
+     * @return  array<int, array<string, int|string>|int> */
     public function getTimeExect()
     {
         return $this->time_exect;
@@ -63,7 +107,7 @@ class ScheduleTime
 
     // TODO: get next due time
 
-    public function exect()
+    public function exect(): void
     {
         if ($this->isDue()) {
             // stopwatch
@@ -77,20 +121,23 @@ class ScheduleTime
             // send command log
             if (!$this->animusly) {
                 $this->interpolate($out_put, [
-          'excute_time' => $watch_end,
-          'cron_time'   => $this->time,
-          'event_name'  => $this->event_name,
-        ]);
+                    'excute_time' => $watch_end,
+                    'cron_time'   => $this->time,
+                    'event_name'  => $this->event_name,
+                ]);
             }
         }
     }
 
-    protected function interpolate($message, array $contex)
+    /**
+     * @param array<string, mixed> $contex
+     */
+    protected function interpolate(mixed $message, array $contex): void
     {
         // do stuff
     }
 
-    public function isDue()
+    public function isDue(): bool
     {
         $events = $this->time_exect;
 
@@ -103,9 +150,9 @@ class ScheduleTime
             $eventDayLetter = $event['D'] ?? $dayLetter; // default day letter every event
 
             if ($eventDayLetter == $dayLetter
-      && $event['d'] == $day
-      && $event['h'] == $hour
-      && $event['m'] == $minute) {
+            && $event['d'] == $day
+            && $event['h'] == $hour
+            && $event['m'] == $minute) {
                 return true;
             }
         }
@@ -113,32 +160,32 @@ class ScheduleTime
         return false;
     }
 
-    public function justInTime()
+    public function justInTime(): self
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
-      [
-        'D' => date('D', $this->time),
-        'd' => date('d', $this->time),
-        'h' => date('H', $this->time),
-        'm' => date('i', $this->time),
-      ],
-    ];
+            [
+                'D' => date('D', $this->time),
+                'd' => date('d', $this->time),
+                'h' => date('H', $this->time),
+                'm' => date('i', $this->time),
+            ],
+        ];
 
         return $this;
     }
 
-    public function everyTenMinute()
+    public function everyTenMinute(): self
     {
         $this->time_name = __FUNCTION__;
         $minute          = [];
-        for ($i=0; $i < 60; $i++) {
-            if ($i % 10 == 0) {
+        foreach (range(0, 59) as $time) {
+            if ($time % 10 == 0) {
                 $minute[] = [
-          'd' => date('d', $this->time),
-          'h' => date('H', $this->time),
-          'm' => $i,
-        ];
+                    'd' => date('d', $this->time),
+                    'h' => date('H', $this->time),
+                    'm' => $time,
+                ];
             }
         }
 
@@ -147,38 +194,38 @@ class ScheduleTime
         return $this;
     }
 
-    public function everyThirtyMinutes()
+    public function everyThirtyMinutes(): self
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
-      [
-        'd' => date('d', $this->time),
-        'h' => date('H', $this->time),
-        'm' => 0,
-      ],
-      [
-        'd' => date('d', $this->time),
-        'h' => date('H', $this->time),
-        'm' => 30,
-      ],
-    ];
+            [
+                'd' => date('d', $this->time),
+                'h' => date('H', $this->time),
+                'm' => 0,
+            ],
+            [
+                'd' => date('d', $this->time),
+                'h' => date('H', $this->time),
+                'm' => 30,
+            ],
+        ];
 
         return $this;
     }
 
-    public function everyTwoHour()
+    public function everyTwoHour(): self
     {
         $this->time_name = __FUNCTION__;
 
         $thisDay = date('d', $this->time);
         $hourly  = []; // from 00.00 to 23.00 (12 time)
-        for ($i=0; $i < 24; $i++) {
-            if ($i % 2 == 0) {
+        foreach (range(0, 23) as $time) {
+            if ($time % 2 == 0) {
                 $hourly[] = [
-          'd' => $thisDay,
-          'h' => $i,
-          'm' => 0,
-        ];
+                    'd' => $thisDay,
+                    'h' => $time,
+                    'm' => 0,
+                ];
             }
         }
 
@@ -187,35 +234,35 @@ class ScheduleTime
         return $this;
     }
 
-    public function everyTwelveHour()
+    public function everyTwelveHour(): self
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
-      [
-        'd' => date('d', $this->time),
-        'h' => 0,
-        'm' => 0,
-      ],
-      [
-        'd' => date('d', $this->time),
-        'h' => 12,
-        'm' => 0,
-      ],
-    ];
+            [
+                'd' => date('d', $this->time),
+                'h' => 0,
+                'm' => 0,
+            ],
+            [
+                'd' => date('d', $this->time),
+                'h' => 12,
+                'm' => 0,
+            ],
+        ];
 
         return $this;
     }
 
-    public function hourly()
+    public function hourly(): self
     {
         $this->time_name = __FUNCTION__;
         $hourly          = []; // from 00.00 to 23.00 (24 time)
-        for ($i=0; $i < 24; $i++) {
+        foreach (range(0, 23) as $time) {
             $hourly[] = [
-        'd' => date('d', $this->time),
-        'h' => $i,
-        'm' => 0,
-      ];
+                'd' => date('d', $this->time),
+                'h' => $time,
+                'm' => 0,
+            ];
         }
 
         $this->time_exect = $hourly;
@@ -223,70 +270,70 @@ class ScheduleTime
         return $this;
     }
 
-    public function hourlyAt(int $hour24)
+    public function hourlyAt(int $hour24): self
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
-      [
-        'd' => date('d', $this->time),
-        'h' => $hour24,
-        'm' => 0,
-      ],
-    ];
+            [
+                'd' => date('d', $this->time),
+                'h' => $hour24,
+                'm' => 0,
+            ],
+        ];
 
         return $this;
     }
 
-    public function daily()
+    public function daily(): self
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
-      // from day 1 to 31 (31 time)
-      ['d' => (int) date('d'), 'h' => 0, 'm' => 0],
-    ];
+            // from day 1 to 31 (31 time)
+            ['d' => (int) date('d'), 'h' => 0, 'm' => 0],
+        ];
 
         return $this;
     }
 
-    public function dailyAt(int $day)
+    public function dailyAt(int $day): self
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
-      [
-        'd' => $day,
-        'h' => 0,
-        'm' => 0,
-      ],
-    ];
+            [
+                'd' => $day,
+                'h' => 0,
+                'm' => 0,
+            ],
+        ];
 
         return $this;
     }
 
-    public function weekly()
+    public function weekly(): self
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
-      [
-        'D' => 'Sun',
-        'd' => date('d', $this->time),
-        'h' => 0,
-        'm' => 0,
-      ],
-    ];
+            [
+                'D' => 'Sun',
+                'd' => date('d', $this->time),
+                'h' => 0,
+                'm' => 0,
+            ],
+        ];
 
         return $this;
     }
 
-    public function mountly()
+    public function mountly(): self
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
-      [
-        'd' => 1,
-        'h' => 0,
-        'm' => 0,
-      ],
-    ];
+            [
+                'd' => 1,
+                'h' => 0,
+                'm' => 0,
+            ],
+        ];
 
         return $this;
     }
