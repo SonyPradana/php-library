@@ -18,13 +18,13 @@ class ScheduleTime
         $this->params     = $params;
         $this->time       = $time;
         $this->time_exect = [
-      [
-        'D' => date('D', $this->time),
-        'd' => date('d', $this->time),
-        'h' => date('H', $this->time),
-        'm' => date('i', $this->time),
-      ],
-    ];
+            [
+                'D' => date('D', $this->time),
+                'd' => date('d', $this->time),
+                'h' => date('H', $this->time),
+                'm' => date('i', $this->time),
+            ],
+        ];
     }
 
     public function eventName($val)
@@ -77,10 +77,10 @@ class ScheduleTime
             // send command log
             if (!$this->animusly) {
                 $this->interpolate($out_put, [
-          'excute_time' => $watch_end,
-          'cron_time'   => $this->time,
-          'event_name'  => $this->event_name,
-        ]);
+                    'excute_time' => $watch_end,
+                    'cron_time'   => $this->time,
+                    'event_name'  => $this->event_name,
+                ]);
             }
         }
     }
@@ -103,9 +103,9 @@ class ScheduleTime
             $eventDayLetter = $event['D'] ?? $dayLetter; // default day letter every event
 
             if ($eventDayLetter == $dayLetter
-      && $event['d'] == $day
-      && $event['h'] == $hour
-      && $event['m'] == $minute) {
+            && $event['d'] == $day
+            && $event['h'] == $hour
+            && $event['m'] == $minute) {
                 return true;
             }
         }
@@ -117,13 +117,13 @@ class ScheduleTime
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
-      [
-        'D' => date('D', $this->time),
-        'd' => date('d', $this->time),
-        'h' => date('H', $this->time),
-        'm' => date('i', $this->time),
-      ],
-    ];
+            [
+                'D' => date('D', $this->time),
+                'd' => date('d', $this->time),
+                'h' => date('H', $this->time),
+                'm' => date('i', $this->time),
+            ],
+        ];
 
         return $this;
     }
@@ -132,13 +132,13 @@ class ScheduleTime
     {
         $this->time_name = __FUNCTION__;
         $minute          = [];
-        for ($i=0; $i < 60; $i++) {
-            if ($i % 10 == 0) {
+        foreach (range(0, 59) as $time) {
+            if ($time % 10 == 0) {
                 $minute[] = [
-          'd' => date('d', $this->time),
-          'h' => date('H', $this->time),
-          'm' => $i,
-        ];
+                    'd' => date('d', $this->time),
+                    'h' => date('H', $this->time),
+                    'm' => $time,
+                ];
             }
         }
 
@@ -151,17 +151,17 @@ class ScheduleTime
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
-      [
-        'd' => date('d', $this->time),
-        'h' => date('H', $this->time),
-        'm' => 0,
-      ],
-      [
-        'd' => date('d', $this->time),
-        'h' => date('H', $this->time),
-        'm' => 30,
-      ],
-    ];
+            [
+                'd' => date('d', $this->time),
+                'h' => date('H', $this->time),
+                'm' => 0,
+            ],
+            [
+                'd' => date('d', $this->time),
+                'h' => date('H', $this->time),
+                'm' => 30,
+            ],
+        ];
 
         return $this;
     }
@@ -172,13 +172,13 @@ class ScheduleTime
 
         $thisDay = date('d', $this->time);
         $hourly  = []; // from 00.00 to 23.00 (12 time)
-        for ($i=0; $i < 24; $i++) {
-            if ($i % 2 == 0) {
+        foreach (range(0, 23) as $time) {
+            if ($time % 2 == 0) {
                 $hourly[] = [
-          'd' => $thisDay,
-          'h' => $i,
-          'm' => 0,
-        ];
+                    'd' => $thisDay,
+                    'h' => $time,
+                    'm' => 0,
+                ];
             }
         }
 
@@ -191,17 +191,17 @@ class ScheduleTime
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
-      [
-        'd' => date('d', $this->time),
-        'h' => 0,
-        'm' => 0,
-      ],
-      [
-        'd' => date('d', $this->time),
-        'h' => 12,
-        'm' => 0,
-      ],
-    ];
+            [
+                'd' => date('d', $this->time),
+                'h' => 0,
+                'm' => 0,
+            ],
+            [
+                'd' => date('d', $this->time),
+                'h' => 12,
+                'm' => 0,
+            ],
+        ];
 
         return $this;
     }
@@ -210,12 +210,12 @@ class ScheduleTime
     {
         $this->time_name = __FUNCTION__;
         $hourly          = []; // from 00.00 to 23.00 (24 time)
-        for ($i=0; $i < 24; $i++) {
+        foreach (range(0, 23) as $time) {
             $hourly[] = [
-        'd' => date('d', $this->time),
-        'h' => $i,
-        'm' => 0,
-      ];
+                'd' => date('d', $this->time),
+                'h' => $time,
+                'm' => 0,
+            ];
         }
 
         $this->time_exect = $hourly;
@@ -227,12 +227,12 @@ class ScheduleTime
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
-      [
-        'd' => date('d', $this->time),
-        'h' => $hour24,
-        'm' => 0,
-      ],
-    ];
+            [
+                'd' => date('d', $this->time),
+                'h' => $hour24,
+                'm' => 0,
+            ],
+        ];
 
         return $this;
     }
@@ -241,9 +241,9 @@ class ScheduleTime
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
-      // from day 1 to 31 (31 time)
-      ['d' => (int) date('d'), 'h' => 0, 'm' => 0],
-    ];
+            // from day 1 to 31 (31 time)
+            ['d' => (int) date('d'), 'h' => 0, 'm' => 0],
+        ];
 
         return $this;
     }
@@ -252,12 +252,12 @@ class ScheduleTime
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
-      [
-        'd' => $day,
-        'h' => 0,
-        'm' => 0,
-      ],
-    ];
+            [
+                'd' => $day,
+                'h' => 0,
+                'm' => 0,
+            ],
+        ];
 
         return $this;
     }
@@ -266,13 +266,13 @@ class ScheduleTime
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
-      [
-        'D' => 'Sun',
-        'd' => date('d', $this->time),
-        'h' => 0,
-        'm' => 0,
-      ],
-    ];
+            [
+                'D' => 'Sun',
+                'd' => date('d', $this->time),
+                'h' => 0,
+                'm' => 0,
+            ],
+        ];
 
         return $this;
     }
@@ -281,12 +281,12 @@ class ScheduleTime
     {
         $this->time_name  = __FUNCTION__;
         $this->time_exect = [
-      [
-        'd' => 1,
-        'h' => 0,
-        'm' => 0,
-      ],
-    ];
+            [
+                'd' => 1,
+                'h' => 0,
+                'm' => 0,
+            ],
+        ];
 
         return $this;
     }
