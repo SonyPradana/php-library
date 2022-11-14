@@ -40,6 +40,12 @@ final class TimeTravelTest extends TestCase
         );
 
         $this->assertEquals(
+            date('D'),
+            $now->shortDay,
+            'the time must same with this short day'
+        );
+
+        $this->assertEquals(
             date('H'),
             $now->hour,
             'the time must same with this hour'
@@ -102,6 +108,12 @@ final class TimeTravelTest extends TestCase
             date('d', $time),
             $now->day,
             'the time must same with this day'
+        );
+
+        $this->assertEquals(
+            date('D', $time),
+            $now->shortDay,
+            'the time must same with this short day'
         );
 
         $this->assertEquals(
@@ -172,7 +184,7 @@ final class TimeTravelTest extends TestCase
     /** @test */
     public function itCanUsePrivatePropertyUsingSetterAndGetter()
     {
-        $now = new Now(10000000000);
+        $now = new Now();
 
         $now->year = 2022;
         $this->assertEquals(2022, $now->year);
@@ -194,6 +206,7 @@ final class TimeTravelTest extends TestCase
 
         $this->assertEquals('June', $now->monthName);
         $this->assertEquals('Saturday', $now->dayName);
+        $this->assertEquals('Sat', $now->shortDay);
         $this->assertEquals('Asia/Jakarta', $now->timeZone);
 
         $this->lessThan($now->age);
@@ -226,6 +239,6 @@ final class TimeTravelTest extends TestCase
         $now = new Now();
 
         $this->expectException(PropertyNotExist::class);
-        $get = $now->not_exist_property;
+        $now->not_exist_property;
     }
 }
