@@ -5,6 +5,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+### [0.13.0] - 2022-11-14
+### Changed
+- Changed `Request::all` with check content type.
+- Changed `Request` from json request, return only json body from content.
+- Changed `Requet::all` return base on method and return files (if avilable). Post Method return only post, and Get Method return only get.
+- Change `Str::class` using `Macro::trait`.
+
+### Added
+- Added `Request::isJson` determinate request from json request.
+- Added `Request::input()` return merge post and query request.
+- Added `Macro::trait` to add macro in class.
+- Added integrate Request-Validation (servise provider) macro.
+- Added `Collection::ref` to add refrence (add collection in collection).
+- Added support cron job to `retry` and `retryCondition()`.
+- Added `Now::shortDay` property.
+
+### Removed 
+- Removed `AbstractMiddleware::class`.
+
 ### [0.12.4] - 2022-11-09
 ### Added
 - Added support Request Iterator interface (loop class-object).
