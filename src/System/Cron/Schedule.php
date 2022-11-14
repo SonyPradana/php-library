@@ -36,7 +36,9 @@ class Schedule
     public function execute(): void
     {
         foreach ($this->pools as $cron) {
-            $cron->exect();
+            do {
+                $cron->exect();
+            } while ($cron->retryAtempts() > 0);
         }
     }
 }
