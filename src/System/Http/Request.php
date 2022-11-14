@@ -13,6 +13,7 @@ use System\Text\Str;
  * @method \Validator\Validator validate(?\Closure $rule = null, ?\Closure $filter = null)
  *
  * @implements \ArrayAccess<string, string>
+ * @implements \IteratorAggregate<string, string>
  */
 class Request implements \ArrayAccess, \IteratorAggregate
 {
@@ -377,8 +378,10 @@ class Request implements \ArrayAccess, \IteratorAggregate
      */
     public function isJson(): bool
     {
-        return Str::contains($this->getHeaders('content-type') ?? '', '/json')
-         || Str::contains($this->getHeaders('content-type') ?? '', '+json');
+        /** @var string */
+        $content_type = $this->getHeaders('content-type') ?? '';
+
+        return Str::contains($content_type, '/json') || Str::contains($content_type, '+json');
     }
 
     public function json(): Collection
