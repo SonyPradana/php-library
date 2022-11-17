@@ -111,6 +111,22 @@ final class QueryStringTest extends TestCase
     }
 
     /** @test */
+    public function itCorrectSelectQueryAndLimitOrderWIthLimitEndLessThatZero(): void
+    {
+        $select = MyQuery::from('test', $this->PDO)
+            ->select()
+            ->between('column_1', 1, 100)
+            ->limit(2, -1)
+            ->order('column_1', MyQuery::ORDER_ASC);
+
+        $this->assertEquals(
+            'SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN :b_start AND :b_end) ORDER BY `test`.`column_1` ASC LIMIT 2, 0',
+            $select->__toString(),
+            'select with where statment is between'
+        );
+    }
+
+    /** @test */
     public function itCorrectSelectMultyColumn(): void
     {
         $select = MyQuery::from('test', $this->PDO)
