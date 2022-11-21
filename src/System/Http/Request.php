@@ -10,7 +10,8 @@ use System\Support\Marco;
 use System\Text\Str;
 
 /**
- * @method \Validator\Validator validate(?\Closure $rule = null, ?\Closure $filter = null)
+ * @method \Validator\Validator    validate(?\Closure $rule = null, ?\Closure $filter = null)
+ * @method \System\File\UploadFile uploads(array $file_name)
  *
  * @implements \ArrayAccess<string, string>
  * @implements \IteratorAggregate<string, string>
