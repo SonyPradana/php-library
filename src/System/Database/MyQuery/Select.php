@@ -179,7 +179,7 @@ final class Select extends Fetch
             : " $this->_sort_order";
 
         // limit
-        $limit = $this->_limit_end > 0 ? " LIMTI $this->_limit_end" : '';
+        $limit = $this->_limit_end > 0 ? " LIMIT $this->_limit_end" : '';
         $limit = $this->_limit_start > 0
             ? " LIMIT $this->_limit_start, $this->_limit_end"
             : $limit
