@@ -393,7 +393,7 @@ class RequestTest extends TestCase
     public function itCanUseUploadMacro()
     {
         Request::macro(
-            'uploads',
+            'upload',
             function ($file_name) {
                 $files = $this->{'getFile'}();
 
@@ -401,7 +401,7 @@ class RequestTest extends TestCase
             }
         );
 
-        $upload = $this->request->uploads('file_2');
+        $upload = $this->request->upload('file_2');
         $upload
             ->setFileName('success')
             ->setFileTypes(['txt', 'md'])

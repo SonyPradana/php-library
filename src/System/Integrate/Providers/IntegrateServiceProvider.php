@@ -22,7 +22,7 @@ class IntegrateServiceProvider extends ServiceProvider
         );
 
         Request::macro(
-            'uploads',
+            'upload',
             function ($file_name) {
                 $files = $this->{'getFile'}();
 

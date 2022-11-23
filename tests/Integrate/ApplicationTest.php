@@ -78,7 +78,7 @@ class ApplicationTest extends TestCase
     {
         new Application('/');
 
-        $this->assertTrue(Request::hasMacro('uploads'));
+        $this->assertTrue(Request::hasMacro('upload'));
     }
 
     private function defaultConfigs()

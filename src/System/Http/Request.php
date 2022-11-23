@@ -11,7 +11,7 @@ use System\Text\Str;
 
 /**
  * @method \Validator\Validator    validate(?\Closure $rule = null, ?\Closure $filter = null)
- * @method \System\File\UploadFile uploads(array $file_name)
+ * @method \System\File\UploadFile upload(array $file_name)
  *
  * @implements \ArrayAccess<string, string>
  * @implements \IteratorAggregate<string, string>
