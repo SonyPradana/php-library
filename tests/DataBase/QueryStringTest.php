@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use PHPUnit\Framework\TestCase;
 use System\Database\MyPDO;
 use System\Database\MyQuery;
@@ -123,6 +125,36 @@ final class QueryStringTest extends TestCase
             'SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN :b_start AND :b_end) ORDER BY `test`.`column_1` ASC LIMIT 2, 0',
             $select->__toString(),
             'select with where statment is between'
+        );
+    }
+
+    /** @test */
+    public function itCorrectSelectQueryAndLimitOrderWIthLimitStartLessThatZero(): void
+    {
+        $select = MyQuery::from('test', $this->PDO)
+            ->select()
+            ->between('column_1', 1, 100)
+            ->limit(-1, 2)
+            ->order('column_1', MyQuery::ORDER_ASC);
+
+        $this->assertEquals(
+            'SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN :b_start AND :b_end) ORDER BY `test`.`column_1` ASC LIMIT 2',
+            $select->__toString()
+        );
+    }
+
+    /** @test */
+    public function itCorrectSelectQueryAndLimitOrderWIthLimitStartLessAndLimitEndtLessThatZero(): void
+    {
+        $select = MyQuery::from('test', $this->PDO)
+            ->select()
+            ->between('column_1', 1, 100)
+            ->limit(-1, -1)
+            ->order('column_1', MyQuery::ORDER_ASC);
+
+        $this->assertEquals(
+            'SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN :b_start AND :b_end) ORDER BY `test`.`column_1` ASC',
+            $select->__toString()
         );
     }
 
