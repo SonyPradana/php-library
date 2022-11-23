@@ -34,13 +34,6 @@ class RequestTest extends TestCase
                     'error'     => 0,
                     'size'      => 0,
                 ],
-                'file_2' => [
-                    'name'      => 'test123.txt',
-                    'type'      => 'file',
-                    'tmp_name'  => dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . 'File' . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'test123.tmp',
-                    'error'     => 0,
-                    'size'      => 1,
-                ],
             ],
             ['header_1'  => 'header', 'header_2' => 123, 'foo' => 'bar'],
             'GET',
@@ -61,6 +54,13 @@ class RequestTest extends TestCase
                     'tmp_name'  => 'tmp_name',
                     'error'     => 0,
                     'size'      => 0,
+                ],
+                'file_2' => [
+                    'name'      => 'test123.txt',
+                    'type'      => 'file',
+                    'tmp_name'  => dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . 'File' . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'test123.tmp',
+                    'error'     => 0,
+                    'size'      => 1,
                 ],
             ],
             ['header_1'  => 'header', 'header_2' => 123, 'foo' => 'bar'],
@@ -224,13 +224,6 @@ class RequestTest extends TestCase
                     'error'     => 0,
                     'size'      => 0,
                 ],
-                'file_2' => [
-                    'name'      => 'test123.txt',
-                    'type'      => 'file',
-                    'tmp_name'  => dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . 'File' . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'test123.tmp',
-                    'error'     => 0,
-                    'size'      => 1,
-                ],
             ],
         ]);
     }
@@ -345,6 +338,13 @@ class RequestTest extends TestCase
                     'error'     => 0,
                     'size'      => 0,
                 ],
+                'file_2' => [
+                    'name'      => 'test123.txt',
+                    'type'      => 'file',
+                    'tmp_name'  => dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . 'File' . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'test123.tmp',
+                    'error'     => 0,
+                    'size'      => 1,
+                ],
             ],
         ]);
     }
@@ -401,7 +401,7 @@ class RequestTest extends TestCase
             }
         );
 
-        $upload = $this->request->upload('file_2');
+        $upload = $this->request_post->upload('file_2');
         $upload
             ->setFileName('success')
             ->setFileTypes(['txt', 'md'])
