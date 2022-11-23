@@ -73,6 +73,14 @@ class ApplicationTest extends TestCase
         $this->assertTrue(Request::hasMacro('validate'));
     }
 
+    /** @test */
+    public function itCanCallMacroRequestUploads()
+    {
+        new Application('/');
+
+        $this->assertTrue(Request::hasMacro('upload'));
+    }
+
     private function defaultConfigs()
     {
         return [
