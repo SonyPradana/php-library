@@ -173,11 +173,12 @@ class ScheduleTime
             $watch_end = round(microtime(true) - $watch_start, 3) * 1000;
 
             // send command log
-            if (!$this->animusly && !$this->is_fail) {
+            if (!$this->animusly) {
                 $this->interpolate($out_put, [
                     'excute_time' => $watch_end,
                     'cron_time'   => $this->time,
                     'event_name'  => $this->event_name,
+                    'atempts'     => $this->retry_atempts,
                 ]);
             }
         }
