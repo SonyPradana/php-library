@@ -8,6 +8,8 @@ use System\Database\MyPDO;
 
 class Insert extends Execute
 {
+    private int $uniq_bind = 0;
+
     public function __construct(string $table_name, MyPDO $PDO)
     {
         $this->_table = $table_name;
@@ -29,7 +31,7 @@ class Insert extends Execute
     public function values($values)
     {
         foreach ($values as $key => $value) {
-            $this->_binder[] = [$key, $value, true];
+            $this->value($key, $value);
         }
 
         return $this;
@@ -42,23 +44,19 @@ class Insert extends Execute
      */
     public function value(string $bind, $value)
     {
-        $this->_binder[] = [$bind, $value, true];
+        $this->_binds[] = Bind::set($bind, $value, $bind)->prefixBind(':bind_' . $this->uniq_bind . '_');
+
+        $this->uniq_bind++;
 
         return $this;
     }
 
     protected function builder(): string
     {
-        $arraycolumns = array_column($this->_binder, 0);
-        $arrayBinds   = array_map(
-            fn ($e) => ":val_$e",
-            array_column($this->_binder, 0)
-        );
-        $arraycolumns = array_filter($arraycolumns);
-        $arrayBinds   = array_filter($arrayBinds);
+        [$binds, ,$columns] = $this->bindsDestructur();
 
-        $stringColumn = implode(', ', $arraycolumns);
-        $stringBinds  = implode(', ', $arrayBinds);
+        $stringBinds  = implode(', ', $binds);
+        $stringColumn = implode(', ', $columns);
 
         $this->_query = "INSERT INTO `$this->_table` ($stringColumn) VALUES ($stringBinds)";
 

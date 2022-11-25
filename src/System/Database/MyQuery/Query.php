@@ -26,6 +26,12 @@ abstract class Query
      * @var array<string, string> Binder for PDO bind */
     protected $_binder = [];
 
+    /**
+     * Binder array(['key', 'val']).
+     *
+     * @var Bind[] Binder for PDO bind */
+    protected $_binds = [];
+
     /** @var int Limit start from */
     protected $_limit_start = 0;
 
@@ -208,5 +214,23 @@ abstract class Query
     protected function builder(): string
     {
         return '';
+    }
+
+    public function bindsDestructur(): array
+    {
+        $bind_name = [];
+        $value     = [];
+        $columns   = [];
+
+        new Bind('', 1);
+        foreach ($this->_binds as $bind) {
+            $bind_name[] = $bind->getBind();
+            $value[]     = $bind->getValue();
+            if (!in_array($bind->getColumnName(), $columns)) {
+                $columns[] = $bind->getColumnName();
+            }
+        }
+
+        return [$bind_name, $value, $columns];
     }
 }

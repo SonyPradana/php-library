@@ -205,8 +205,8 @@ final class QueryStringTest extends TestCase
             ->value('g', 'h');
 
         $this->assertEquals(
-            'INSERT INTO `test` (a, c, e, g) VALUES (:val_a, :val_c, :val_e, :val_g)',
-            $insert,
+            'INSERT INTO `test` (a, c, e, g) VALUES (:bind_0_a, :bind_1_c, :bind_2_e, :bind_3_g)',
+            $insert->__toString(),
             'insert must equal with query 1 new row with 2 data'
         );
     }
