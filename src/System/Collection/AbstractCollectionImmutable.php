@@ -2,7 +2,7 @@
 
 namespace System\Collection;
 
-abstract class AbstractCollectionImmutable
+abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAggregate
 {
     protected array $collection = [];
 

@@ -232,4 +232,29 @@ class Collection extends AbstractCollectionImmutable
     {
         return new CollectionImmutable($this->collection);
     }
+
+   public function offsetExists($offset): bool
+   {
+       return $this->has($offset);
+   }
+
+    public function offsetGet($offset)
+    {
+        return $this->__get($offset);
+    }
+
+    public function offsetSet($offset, $value): void
+    {
+        $this->set($offset, $value);
+    }
+
+    public function offsetUnset($offset): void
+    {
+        $this->remove($offset);
+    }
+
+    public function getIterator(): \Traversable
+    {
+        return new \ArrayIterator($this->all());
+    }
 }
