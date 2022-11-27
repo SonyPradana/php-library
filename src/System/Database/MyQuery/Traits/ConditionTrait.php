@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Database\MyQuery\Traits;
 
+use System\Database\MyQuery\Bind;
 use System\Database\MyQuery\Select;
 
 /**
@@ -44,8 +45,8 @@ trait ConditionTrait
     /**
      * Insert 'where' condition in (query bulider).
      *
-     * @param string                             $where_condition Spesific column name
-     * @param array<int, array<int, string|int>> $binder          Bind and value (use for 'in')
+     * @param string $where_condition Spesific column name
+     * @param array  $binder          Bind and value (use for 'in')
      *
      * @return self
      */
@@ -54,7 +55,9 @@ trait ConditionTrait
         $this->_where[] = $where_condition;
 
         if ($binder !== null) {
-            $this->_binder = array_merge($this->_binder, $binder);
+            foreach ($binder as $bind) {
+                $this->_binds[] = Bind::set($bind[0], $bind[1]);
+            }
         }
 
         return $this;
@@ -74,10 +77,13 @@ trait ConditionTrait
         $this->where(
             "(`$this->_table`.`$column_name` BETWEEN :b_start AND :b_end)",
             [
-                [':b_start', $value_1],
-                [':b_end', $value_2],
+                // [':b_start', $value_1],
+                // [':b_end', $value_2],
             ]
         );
+
+        $this->_binds[] = Bind::set('b_strat', $value_1);
+        $this->_binds[] = Bind::set('b_end', $value_1);
 
         return $this;
     }
@@ -118,7 +124,9 @@ trait ConditionTrait
     public function whereExist(Select $select)
     {
         $this->_where[] = 'EXISTS (' . $select->__toString() . ')';
-        $this->_binder  = array_merge($this->_binder, $select->_binder);
+        foreach ($select->_binds as $binds) {
+            $this->_binds[] = $binds;
+        }
 
         return $this;
     }
@@ -133,7 +141,9 @@ trait ConditionTrait
     public function whereNotExist(Select $select)
     {
         $this->_where[] = 'NOT EXISTS (' . $select->__toString() . ')';
-        $this->_binder  = array_merge($this->_binder, $select->_binder);
+        foreach ($select->_binds as $binds) {
+            $this->_binds[] = $binds;
+        }
 
         return $this;
     }

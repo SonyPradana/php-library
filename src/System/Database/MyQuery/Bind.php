@@ -74,18 +74,6 @@ final class Bind
         return $this;
     }
 
-    public function hasColumName(): bool
-    {
-        return '' !== $this->column_name;
-    }
-
-    public function markAsColumn(): self
-    {
-        $this->column_name = $this->bind;
-
-        return $this;
-    }
-
     public function getBind(): string
     {
         return $this->prefix_bind . $this->bind;
@@ -99,5 +87,22 @@ final class Bind
     public function getColumnName(): string
     {
         return $this->column_name;
+    }
+
+    public function hasColumName(): bool
+    {
+        return '' !== $this->column_name;
+    }
+
+    public function markAsColumn(): self
+    {
+        $this->column_name = $this->bind;
+
+        return $this;
+    }
+
+    public function hasBind(): bool
+    {
+        return '' === $this->bind;
     }
 }

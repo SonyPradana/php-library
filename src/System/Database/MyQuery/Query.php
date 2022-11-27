@@ -23,12 +23,6 @@ abstract class Query
     /**
      * Binder array(['key', 'val']).
      *
-     * @var array<string, string> Binder for PDO bind */
-    protected $_binder = [];
-
-    /**
-     * Binder array(['key', 'val']).
-     *
      * @var Bind[] Binder for PDO bind */
     protected $_binds = [];
 
@@ -93,7 +87,7 @@ abstract class Query
     {
         $this->_table         = '';
         $this->_column        = ['*'];
-        $this->_binder        = [];
+        $this->_binds         = [];
         $this->_limit_start   = 0;
         $this->_limit_end     = 0;
         $this->_where         = [];
@@ -118,7 +112,7 @@ abstract class Query
      */
     public function compare(string $bind, string $comparation, $value, bool $bindValue = false)
     {
-        $this->_binder[]       = [$bind, $value];
+        $this->_binds[]        = Bind::set($bind, $value);
         $this->_filters[$bind] = [
             'value'       => $value,
             'comparation' => $comparation,
@@ -222,8 +216,10 @@ abstract class Query
         $value     = [];
         $columns   = [];
 
-        new Bind('', 1);
         foreach ($this->_binds as $bind) {
+            // if (!$bind->hasColumName()) {
+            //     continue;
+            // }
             $bind_name[] = $bind->getBind();
             $value[]     = $bind->getValue();
             if (!in_array($bind->getColumnName(), $columns)) {

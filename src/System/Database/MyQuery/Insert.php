@@ -8,8 +8,6 @@ use System\Database\MyPDO;
 
 class Insert extends Execute
 {
-    private int $uniq_bind = 0;
-
     public function __construct(string $table_name, MyPDO $PDO)
     {
         $this->_table = $table_name;
@@ -44,9 +42,7 @@ class Insert extends Execute
      */
     public function value(string $bind, $value)
     {
-        $this->_binds[] = Bind::set($bind, $value, $bind)->prefixBind(':bind_' . $this->uniq_bind . '_');
-
-        $this->uniq_bind++;
+        $this->_binds[] = Bind::set($bind, $value, $bind)->prefixBind(':bind_');
 
         return $this;
     }
