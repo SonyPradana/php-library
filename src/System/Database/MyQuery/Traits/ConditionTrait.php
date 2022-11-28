@@ -50,14 +50,12 @@ trait ConditionTrait
      *
      * @return self
      */
-    public function where(string $where_condition, ?array $binder = null)
+    public function where(string $where_condition, array $binder = [])
     {
         $this->_where[] = $where_condition;
 
-        if ($binder !== null) {
-            foreach ($binder as $bind) {
-                $this->_binds[] = Bind::set($bind[0], $bind[1]);
-            }
+        foreach ($binder as $bind) {
+            $this->_binds[] = Bind::set($bind[0], $bind[1])->prefixBind('');
         }
 
         return $this;

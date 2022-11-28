@@ -22,7 +22,7 @@ abstract class Fetch extends Query
 
         $this->PDO->query($this->_query);
         foreach ($this->_binds as $bind) {
-            if ($bind->hasBind()) {
+            if (!$bind->hasBind()) {
                 $this->PDO->bind($bind->getBind(), $bind->getValue());
             }
         }
@@ -38,7 +38,7 @@ abstract class Fetch extends Query
 
         $this->PDO->query($this->_query);
         foreach ($this->_binds as $bind) {
-            if ($bind->hasBind()) {
+            if (!$bind->hasBind()) {
                 $this->PDO->bind($bind->getBind(), $bind->getValue());
             }
         }

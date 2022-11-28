@@ -229,4 +229,9 @@ abstract class Query
 
         return [$bind_name, $value, $columns];
     }
+
+    public function getBinds()
+    {
+        return $this->_binds;
+    }
 }
