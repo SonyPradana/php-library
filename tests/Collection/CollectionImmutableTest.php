@@ -126,4 +126,13 @@ class CollectionImmutableTest extends TestCase
         $this->expectException(NoModify::class);
         unset($coll['one']);
     }
+
+    /** @test */
+    public function itCanCountUsingCountFunction()
+    {
+        $coll = new CollectionImmutable(['one' => 1, 'two' => 2, 'three' => 3]);
+
+        $this->assertCount(3, $coll);
+        $this->assertEquals(3, count($coll));
+    }
 }
