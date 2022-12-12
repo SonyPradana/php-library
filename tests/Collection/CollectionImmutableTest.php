@@ -133,9 +133,6 @@ class CollectionImmutableTest extends TestCase
         $coll = new CollectionImmutable(['one' => 1, 'two' => 2, 'three' => 3]);
 
         $this->assertCount(3, $coll);
-
-        $count = count($coll);
-
-        $this->assertEquals(3, $count);
+        $this->assertEquals(3, count($coll));
     }
 }
