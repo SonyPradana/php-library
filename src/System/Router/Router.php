@@ -207,6 +207,24 @@ class Router
     }
 
     /**
+     * @param class-string $class_name
+     */
+    public static function resource(string $uri, $class_name, array $setup = [])
+    {
+        $resource = new ResourceController($uri, $class_name);
+        if (isset($setup['only'])) {
+            $resource->only($setup['only']);
+        }
+        if (isset($setup['except'])) {
+            $resource->except($setup['except']);
+        }
+
+        $resource->get()->each(function ($route) {
+            self::$routes[] = $route;
+        });
+    }
+
+    /**
      * Function used to add a new route.
      *
      * @param array|string          $method   Methods allow
