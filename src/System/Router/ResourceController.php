@@ -39,18 +39,20 @@ class ResourceController
         // index
         if (method_exists($class_name, $map['index'])) {
             $this->resource->set($map['index'], new Route([
-              'expression' => $uri,
-              'function'   => [$class_name, $map['index']],
-              'method'     => 'get',
+                'expression' => Router::mapPatterns($uri),
+                'function'   => [$class_name, $map['index']],
+                'method'     => 'get',
+                'middleware' => Router::$group['middleware'] ?? [],
             ]));
         }
 
         // store
         if (method_exists($class_name, $map['store'])) {
             $this->resource->set($map['store'], new Route([
-              'expression' => $uri,
-              'function'   => [$class_name, $map['store']],
-              'method'     => 'post',
+                'expression' => Router::mapPatterns($uri),
+                'function'   => [$class_name, $map['store']],
+                'method'     => 'post',
+                'middleware' => Router::$group['middleware'] ?? [],
             ]));
         }
 
