@@ -25,6 +25,8 @@ class ResourceController
      */
     public function ganerate(string $uri, $class_name): self
     {
+        $uri = Router::$group['prefix'] . $uri;
+
         // get mapper
         $map = [
           'index' => 'index',

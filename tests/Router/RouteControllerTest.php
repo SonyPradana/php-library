@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 use PHPUnit\Framework\TestCase;
-use System\Router\Controller;
 use System\Router\Router;
 
 class RouteControllerTest extends TestCase
 {
-    protected $class_controller;
     protected $backup;
 
     public function __construct()
@@ -18,13 +18,6 @@ class RouteControllerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->class_controller = new class() extends Controller {
-            public function index()
-            {
-                echo 'here';
-            }
-        };
-
         Router::pathNotFound(function () { echo 'not found'; });
         Router::methodNotAllowed(function () { echo 'not allowed'; });
 
