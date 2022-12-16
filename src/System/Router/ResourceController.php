@@ -34,8 +34,9 @@ class ResourceController
         ];
 
         if (property_exists($class_name, 'resource_map')) {
-            $reflection = new \ReflectionClass($class_name);
-            $map        = array_merge($map, $reflection->getProperty('resource_map')->getValue());
+            $reflection   = new \ReflectionClass($class_name);
+            $resource_map = $reflection->getDefaultProperties()['resource_map'];
+            $map          = array_merge($map, $resource_map);
         }
 
         // index

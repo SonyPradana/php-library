@@ -1,6 +1,8 @@
 <?php
 
-class RouteClassController
+use System\Router\Controller;
+
+class RouteClassController extends Controller
 {
     public function index()
     {
