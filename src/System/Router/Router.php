@@ -366,7 +366,7 @@ class Router
                 try {
                     return call_user_func_array($current, $params);
                 } catch (\Throwable $th) {
-                    throw new \Exception('error during excute: ' . $current);
+                    throw new \Exception('error during excute: ' . json_encode($current, JSON_PRETTY_PRINT));
                 }
             },
             // fn ($current, $params) => call_user_func_array($current, $params),
