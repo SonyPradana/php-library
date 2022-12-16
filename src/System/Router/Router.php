@@ -362,7 +362,14 @@ class Router
         ->trailingSlashMatters($trailing_slash_matters)
         ->multimatch($multimatch)
         ->run(
-            fn ($current, $params) => call_user_func_array($current, $params),
+            function ($current, $params) {
+                try {
+                    return call_user_func_array($current, $params);
+                } catch (\Throwable $th) {
+                    throw new \Exception('error during excute: ' . $current);
+                }
+            },
+            // fn ($current, $params) => call_user_func_array($current, $params),
             fn ($path) => call_user_func_array(self::$pathNotFound, [$path]),
             fn ($path, $method) => call_user_func_array(self::$methodNotAllowed, [$path, $method])
         );
