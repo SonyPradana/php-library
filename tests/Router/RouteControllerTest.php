@@ -55,6 +55,7 @@ class RouteControllerTest extends TestCase
     /** @test */
     public function itCanRouteUsingResourceControllerIndex()
     {
+        $_SERVER['REQUEST_METHOD'] = '/';
         $_SERVER['REQUEST_METHOD'] = 'get';
 
         Router::resource('/', RouteClassController::class);
@@ -69,6 +70,7 @@ class RouteControllerTest extends TestCase
     /** @test */
     public function itCanRouteUsingResourceControllerStore()
     {
+        $_SERVER['REQUEST_METHOD'] = '/';
         $_SERVER['REQUEST_METHOD'] = 'post';
 
         Router::resource('/', RouteClassController::class);
