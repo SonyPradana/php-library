@@ -88,8 +88,8 @@ final class Select extends Fetch
      */
     public function limit(int $limit_start, int $limit_end)
     {
-        $this->_limit_start = $limit_start;
-        $this->_limit_end   = $limit_end;
+        $this->limitStart($limit_start);
+        $this->limitEnd($limit_end);
 
         return $this;
     }
@@ -103,7 +103,7 @@ final class Select extends Fetch
      */
     public function limitStart(int $value)
     {
-        $this->_limit_start = $value;
+        $this->_limit_start = $value < 0 ? 0 : $value;
 
         return $this;
     }
@@ -118,7 +118,7 @@ final class Select extends Fetch
      */
     public function limitEnd(int $value)
     {
-        $this->_limit_end = $value;
+        $this->_limit_end = $value < 0 ? 0 : $value;
 
         return $this;
     }
@@ -179,13 +179,11 @@ final class Select extends Fetch
             : " $this->_sort_order";
 
         // limit
-        $limit = $this->_limit_start < 0
-            ? " LIMIT $this->_limit_end"
-            : " LIMIT $this->_limit_start, $this->_limit_end";
-
-        $limit = $this->_limit_end == 0
-            ? ''
-            : $limit;
+        $limit = $this->_limit_end > 0 ? " LIMIT $this->_limit_end" : '';
+        $limit = $this->_limit_start > 0
+            ? " LIMIT $this->_limit_start, $this->_limit_end"
+            : $limit
+        ;
 
         $condition = $join . $where . $sort_order . $limit;
 

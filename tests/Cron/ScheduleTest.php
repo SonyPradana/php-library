@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use System\Cron\Schedule;
+use System\Cron\ScheduleTime;
 use System\Time\Now;
 
 final class ScheduleTest extends TestCase
@@ -73,5 +74,36 @@ final class ScheduleTest extends TestCase
 
         $Schedule->execute();
         $this->assertEquals(3, $test);
+    }
+
+    /** @test */
+    public function itCanLogCronExectWhateverCondition()
+    {
+        $time_trevel = new Now('09/07/2021 00:30:00');
+        $Schedule    = new class($time_trevel->timestamp) extends Schedule {
+            public function call(Closure $call_back, $params = [])
+            {
+                $cron = new class($call_back, $params, $this->time) extends ScheduleTime {
+                    protected function interpolate($message, array $contex): void
+                    {
+                        echo 'works';
+                    }
+                };
+
+                return $this->pools[] = new $cron($call_back, $params, $this->time);
+            }
+        };
+
+        $Schedule
+            ->call(fn () => 0 / 0)
+            ->retry(20)
+            ->everyThirtyMinutes()
+            ->eventName('test 30 minute');
+
+        ob_start();
+        $Schedule->execute();
+        $out = ob_get_clean();
+
+        $this->assertEquals(str_repeat('works', 20), $out);
     }
 }

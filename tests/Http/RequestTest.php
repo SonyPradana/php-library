@@ -1,6 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use System\File\UploadFile;
 use System\Http\Request;
 use Validator\Rule\FilterPool;
 use Validator\Rule\ValidPool;
@@ -53,6 +54,13 @@ class RequestTest extends TestCase
                     'tmp_name'  => 'tmp_name',
                     'error'     => 0,
                     'size'      => 0,
+                ],
+                'file_2' => [
+                    'name'      => 'test123.txt',
+                    'type'      => 'file',
+                    'tmp_name'  => dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . 'File' . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'test123.tmp',
+                    'error'     => 0,
+                    'size'      => 1,
                 ],
             ],
             ['header_1'  => 'header', 'header_2' => 123, 'foo' => 'bar'],
@@ -330,6 +338,13 @@ class RequestTest extends TestCase
                     'error'     => 0,
                     'size'      => 0,
                 ],
+                'file_2' => [
+                    'name'      => 'test123.txt',
+                    'type'      => 'file',
+                    'tmp_name'  => dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . 'File' . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'test123.tmp',
+                    'error'     => 0,
+                    'size'      => 1,
+                ],
             ],
         ]);
     }
@@ -372,5 +387,33 @@ class RequestTest extends TestCase
         );
         $this->assertTrue($v->is_valid());
         $this->assertEquals('QUERY', $v->filters->get('query_1'));
+    }
+
+    /** @test */
+    public function itCanUseUploadMacro()
+    {
+        Request::macro(
+            'upload',
+            function ($file_name) {
+                $files = $this->{'getFile'}();
+
+                return (new UploadFile($files[$file_name]))->markTest(true);
+            }
+        );
+
+        $upload = $this->request_post->upload('file_2');
+        $upload
+            ->setFileName('success')
+            ->setFileTypes(['txt', 'md'])
+            ->setFolderLocation(dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . 'File' . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR)
+            ->setMaxFileSize(91)
+            ->setMimeTypes(['file'])
+        ;
+
+        $upload->upload();
+
+        $upload->delete(dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . 'File' . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'success.txt');
+
+        $this->assertTrue($upload->success());
     }
 }
