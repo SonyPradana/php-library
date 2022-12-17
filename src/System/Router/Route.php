@@ -89,6 +89,7 @@ class Route implements \ArrayAccess
         unset($this->route[$offset]);
     }
 
+    #[\ReturnTypeWillChange]
     /**
      * Returns the value at specified offset.
      *

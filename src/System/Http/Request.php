@@ -431,6 +431,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
         return $this->source()->has($offset);
     }
 
+    #[\ReturnTypeWillChange]
     /**
      * Get the value at the given offset.
      *
