@@ -33,6 +33,11 @@
           "src/System/Time/helper.php"
         ]
     },
+    "autoload-dev": {
+        "files": [
+            "tests/DataBase/RealDatabaseConnectionTest.php"
+        ]
+    },
     "extra": {
         "laravel": {
             "dont-discover": [
