@@ -8,6 +8,7 @@ final class InsertTest extends RealDatabaseConnectionTest
 {
     /**
      * @test
+     *
      * @group database
      */
     public function itCanInsertData()

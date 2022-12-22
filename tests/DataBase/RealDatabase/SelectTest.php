@@ -33,6 +33,7 @@ final class SelectTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanSelectQuery()
@@ -49,6 +50,7 @@ final class SelectTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanSelectQueryOnlyuser()
@@ -65,6 +67,7 @@ final class SelectTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanSelectQueryWithBetween()
@@ -80,6 +83,7 @@ final class SelectTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanSelectQueryWithCompare()
@@ -95,6 +99,7 @@ final class SelectTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanSelectQueryWithEqual()
@@ -110,6 +115,7 @@ final class SelectTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanSelectQueryWithIn()
@@ -125,6 +131,7 @@ final class SelectTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanSelectQueryWithLike()
@@ -140,6 +147,7 @@ final class SelectTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanSelectQueryWithWhere()
@@ -157,6 +165,7 @@ final class SelectTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanSelectQueryWithMultyCondition()
@@ -175,6 +184,7 @@ final class SelectTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanSelectQueryWithLimit()
@@ -192,6 +202,7 @@ final class SelectTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanSelectQueryWithStritMode()
@@ -209,6 +220,7 @@ final class SelectTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanSelectJoin()

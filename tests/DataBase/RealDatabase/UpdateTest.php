@@ -8,6 +8,7 @@ final class UpdateTest extends RealDatabaseConnectionTest
 {
     /**
      * @test
+     *
      * @group database
      */
     public function itCanUpdate()
@@ -23,6 +24,7 @@ final class UpdateTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanUpdateWithBetween()
@@ -39,6 +41,7 @@ final class UpdateTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanUpdateWithCompare()
@@ -55,6 +58,7 @@ final class UpdateTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanUpdateWithEqual()
@@ -71,6 +75,7 @@ final class UpdateTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanUpdateWithIn()
@@ -87,6 +92,7 @@ final class UpdateTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanUpdateWithLike()
@@ -103,6 +109,7 @@ final class UpdateTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanUpdateWithWhere()
@@ -121,6 +128,7 @@ final class UpdateTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanUpdateWithMultyCondition()

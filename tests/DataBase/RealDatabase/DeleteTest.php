@@ -8,6 +8,7 @@ final class DeleteTest extends RealDatabaseConnectionTest
 {
     /**
      * @test
+     *
      * @group database
      */
     public function itCanDelete()
@@ -22,6 +23,7 @@ final class DeleteTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanDeleteWithBetween()
@@ -37,6 +39,7 @@ final class DeleteTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanDeleteWithCompare()
@@ -52,6 +55,7 @@ final class DeleteTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanDeleteWithEqual()
@@ -67,6 +71,7 @@ final class DeleteTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanDeleteWithIn()
@@ -82,6 +87,7 @@ final class DeleteTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanDeleteWithLike()
@@ -97,6 +103,7 @@ final class DeleteTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanDeleteWithWhere()
@@ -114,6 +121,7 @@ final class DeleteTest extends RealDatabaseConnectionTest
 
     /**
      * @test
+     *
      * @group database
      */
     public function itCanDeleteWithMultyCondition()
