@@ -85,31 +85,31 @@ class ApplicationTest extends TestCase
     {
         return [
             // app config
-            'BASEURL'            => '/',
-            'time_zone'          => 'Asia/Jakarta',
-            'APP_KEY'            => '',
-            'ENVIRONMENT'        => 'dev',
+            'BASEURL'               => '/',
+            'time_zone'             => 'Asia/Jakarta',
+            'APP_KEY'               => '',
+            'ENVIRONMENT'           => 'dev',
 
-            'MODEL_PATH'        => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR,
-            'VIEW_PATH'         => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
-            'CONTROLLER_PATH'   => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR,
-            'SERVICES_PATH'     => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'services' . DIRECTORY_SEPARATOR,
-            'COMPONENT_PATH'    => DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR,
-            'COMMNAD_PATH'      => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'commands' . DIRECTORY_SEPARATOR,
-            'CACHE_PATH'        => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR,
-            'CONFIG'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR,
-            'MIDDLEWARE'        => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'middleware' . DIRECTORY_SEPARATOR,
-            'SERVICE_PROVIDER'  => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Providers' . DIRECTORY_SEPARATOR,
+            'MODEL_PATH'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR,
+            'VIEW_PATH'             => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
+            'CONTROLLER_PATH'       => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR,
+            'SERVICES_PATH'         => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'services' . DIRECTORY_SEPARATOR,
+            'COMPONENT_PATH'        => DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR,
+            'COMMNAD_PATH'          => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'commands' . DIRECTORY_SEPARATOR,
+            'CACHE_PATH'            => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR,
+            'CONFIG'                => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR,
+            'MIDDLEWARE'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'middleware' . DIRECTORY_SEPARATOR,
+            'SERVICE_PROVIDER'      => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Providers' . DIRECTORY_SEPARATOR,
 
-            'PROVIDERS'         => [
+            'PROVIDERS'             => [
                 // provider class name
             ],
 
             // db config
-            'DB_HOST' => 'localhost',
-            'DB_USER' => 'root',
-            'DB_PASS' => '',
-            'DB_NAME' => '',
+            'DB_HOST'               => 'localhost',
+            'DB_USER'               => 'root',
+            'DB_PASS'               => '',
+            'DB_NAME'               => '',
 
             // pusher
             'PUSHER_APP_ID'         => '',
@@ -118,14 +118,14 @@ class ApplicationTest extends TestCase
             'PUSHER_APP_CLUSTER'    => '',
 
             // redis driver
-            'REDIS_HOST' => '127.0.0.1',
-            'REDIS_PASS' => '',
-            'REDIS_PORT' => 6379,
+            'REDIS_HOST'            => '127.0.0.1',
+            'REDIS_PASS'            => '',
+            'REDIS_PORT'            => 6379,
 
             // memcahe
-            'MEMCACHED_HOST' => '127.0.0.1',
-            'MEMCACHED_PASS' => '',
-            'MEMCACHED_PORT' => 6379,
+            'MEMCACHED_HOST'        => '127.0.0.1',
+            'MEMCACHED_PASS'        => '',
+            'MEMCACHED_PORT'        => 6379,
         ];
     }
 }
