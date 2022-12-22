@@ -6,8 +6,6 @@
     <testsuites>
         <testsuite name="unit">
             <directory suffix="Test.php">./tests</directory>
-            <exclude>./tests/Database/RealDatabaseConnectionTest.php</exclude>
-            <exclude>./tests/Database/RealDatabase/</exclude>
         </testsuite>
     </testsuites>
     <coverage processUncoveredFiles="true">

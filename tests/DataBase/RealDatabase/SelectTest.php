@@ -31,7 +31,10 @@ final class SelectTest extends RealDatabaseConnectionTest
             ->execute();
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanSelectQuery()
     {
         $users = MyQuery::from('users', $this->pdo)
@@ -44,7 +47,10 @@ final class SelectTest extends RealDatabaseConnectionTest
         $this->assertArrayHasKey('stat', $users[0]);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanSelectQueryOnlyuser()
     {
         $users = MyQuery::from('users', $this->pdo)
@@ -57,7 +63,10 @@ final class SelectTest extends RealDatabaseConnectionTest
         $this->assertArrayNotHasKey('stat', $users[0]);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanSelectQueryWithBetween()
     {
         $users = MyQuery::from('users', $this->pdo)
@@ -69,7 +78,10 @@ final class SelectTest extends RealDatabaseConnectionTest
         $this->assertEquals('taylor', $users[0]['user']);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanSelectQueryWithCompare()
     {
         $users = MyQuery::from('users', $this->pdo)
@@ -81,7 +93,10 @@ final class SelectTest extends RealDatabaseConnectionTest
         $this->assertEquals('taylor', $users[0]['user']);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanSelectQueryWithEqual()
     {
         $users = MyQuery::from('users', $this->pdo)
@@ -93,7 +108,10 @@ final class SelectTest extends RealDatabaseConnectionTest
         $this->assertEquals('taylor', $users[0]['user']);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanSelectQueryWithIn()
     {
         $users = MyQuery::from('users', $this->pdo)
@@ -105,7 +123,10 @@ final class SelectTest extends RealDatabaseConnectionTest
         $this->assertEquals('taylor', $users[0]['user']);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanSelectQueryWithLike()
     {
         $users = MyQuery::from('users', $this->pdo)
@@ -117,7 +138,10 @@ final class SelectTest extends RealDatabaseConnectionTest
         $this->assertEquals('taylor', $users[0]['user']);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanSelectQueryWithWhere()
     {
         $users = MyQuery::from('users', $this->pdo)
@@ -131,7 +155,10 @@ final class SelectTest extends RealDatabaseConnectionTest
         $this->assertEquals('taylor', $users[0]['user']);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanSelectQueryWithMultyCondition()
     {
         $users = MyQuery::from('users', $this->pdo)
@@ -146,7 +173,10 @@ final class SelectTest extends RealDatabaseConnectionTest
         $this->assertEquals('taylor', $users[0]['user']);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanSelectQueryWithLimit()
     {
         $users = MyQuery::from('users', $this->pdo)
@@ -160,7 +190,10 @@ final class SelectTest extends RealDatabaseConnectionTest
         $this->assertArrayHasKey('stat', $users[0]);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanSelectQueryWithStritMode()
     {
         $users = MyQuery::from('users', $this->pdo)
@@ -174,7 +207,10 @@ final class SelectTest extends RealDatabaseConnectionTest
         $this->assertEquals('taylor', $users[0]['user']);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanSelectJoin()
     {
         $this->profileFactory();

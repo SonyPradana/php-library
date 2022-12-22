@@ -6,7 +6,10 @@ use System\Database\MyQuery;
 
 final class InsertTest extends RealDatabaseConnectionTest
 {
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanInsertData()
     {
         MyQuery::from('users', $this->pdo)

@@ -6,7 +6,10 @@ use System\Database\MyQuery;
 
 final class DeleteTest extends RealDatabaseConnectionTest
 {
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanDelete()
     {
         MyQuery::from('users', $this->pdo)
@@ -17,7 +20,10 @@ final class DeleteTest extends RealDatabaseConnectionTest
         $this->assertUserNotExist('taylor');
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanDeleteWithBetween()
     {
         MyQuery::from('users', $this->pdo)
@@ -29,7 +35,10 @@ final class DeleteTest extends RealDatabaseConnectionTest
         $this->assertUserNotExist('taylor');
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanDeleteWithCompare()
     {
         MyQuery::from('users', $this->pdo)
@@ -41,7 +50,10 @@ final class DeleteTest extends RealDatabaseConnectionTest
         $this->assertUserNotExist('taylor');
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanDeleteWithEqual()
     {
         MyQuery::from('users', $this->pdo)
@@ -53,7 +65,10 @@ final class DeleteTest extends RealDatabaseConnectionTest
         $this->assertUserNotExist('taylor');
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanDeleteWithIn()
     {
         MyQuery::from('users', $this->pdo)
@@ -65,7 +80,10 @@ final class DeleteTest extends RealDatabaseConnectionTest
         $this->assertUserNotExist('taylor');
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanDeleteWithLike()
     {
         MyQuery::from('users', $this->pdo)
@@ -77,7 +95,10 @@ final class DeleteTest extends RealDatabaseConnectionTest
         $this->assertUserNotExist('taylor');
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanDeleteWithWhere()
     {
         MyQuery::from('users', $this->pdo)
@@ -91,7 +112,10 @@ final class DeleteTest extends RealDatabaseConnectionTest
         $this->assertUserNotExist('taylor');
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanDeleteWithMultyCondition()
     {
         MyQuery::from('users', $this->pdo)

@@ -6,7 +6,10 @@ use System\Database\MyQuery;
 
 final class UpdateTest extends RealDatabaseConnectionTest
 {
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanUpdate()
     {
         MyQuery::from('users', $this->pdo)
@@ -18,7 +21,10 @@ final class UpdateTest extends RealDatabaseConnectionTest
         $this->assertUserStat('taylor', 0);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanUpdateWithBetween()
     {
         MyQuery::from('users', $this->pdo)
@@ -31,7 +37,10 @@ final class UpdateTest extends RealDatabaseConnectionTest
         $this->assertUserStat('taylor', 0);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanUpdateWithCompare()
     {
         MyQuery::from('users', $this->pdo)
@@ -44,7 +53,10 @@ final class UpdateTest extends RealDatabaseConnectionTest
         $this->assertUserStat('taylor', 0);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanUpdateWithEqual()
     {
         MyQuery::from('users', $this->pdo)
@@ -57,7 +69,10 @@ final class UpdateTest extends RealDatabaseConnectionTest
         $this->assertUserStat('taylor', 0);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanUpdateWithIn()
     {
         MyQuery::from('users', $this->pdo)
@@ -70,7 +85,10 @@ final class UpdateTest extends RealDatabaseConnectionTest
         $this->assertUserStat('taylor', 0);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanUpdateWithLike()
     {
         MyQuery::from('users', $this->pdo)
@@ -83,7 +101,10 @@ final class UpdateTest extends RealDatabaseConnectionTest
         $this->assertUserStat('taylor', 0);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanUpdateWithWhere()
     {
         MyQuery::from('users', $this->pdo)
@@ -98,7 +119,10 @@ final class UpdateTest extends RealDatabaseConnectionTest
         $this->assertUserStat('taylor', 0);
     }
 
-    /** @test */
+    /**
+     * @test
+     * @group database
+     */
     public function itCanUpdateWithMultyCondition()
     {
         MyQuery::from('users', $this->pdo)
