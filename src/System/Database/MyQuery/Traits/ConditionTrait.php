@@ -80,8 +80,8 @@ trait ConditionTrait
             ]
         );
 
-        $this->_binds[] = Bind::set('b_strat', $value_1);
-        $this->_binds[] = Bind::set('b_end', $value_1);
+        $this->_binds[] = Bind::set('b_start', $value_1);
+        $this->_binds[] = Bind::set('b_end', $value_2);
 
         return $this;
     }
