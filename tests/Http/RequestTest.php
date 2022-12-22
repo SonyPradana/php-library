@@ -22,10 +22,10 @@ class RequestTest extends TestCase
     {
         $this->request = new Request(
             'http://localhost/',
-            ['query_1' => 'query'],
-            ['post_1'  => 'post'],
-            ['costume' => 'costume'],
-            ['cookies' => 'cookies'],
+            ['query_1'   => 'query'],
+            ['post_1'    => 'post'],
+            ['costume'   => 'costume'],
+            ['cookies'   => 'cookies'],
             [
                 'file_1' => [
                     'name'      => 'file_name',
@@ -43,10 +43,10 @@ class RequestTest extends TestCase
 
         $this->request_post = new Request(
             'http://localhost/',
-            ['query_1' => 'query'],
-            ['post_1'  => 'post'],
-            ['costume' => 'costume'],
-            ['cookies' => 'cookies'],
+            ['query_1'   => 'query'],
+            ['post_1'    => 'post'],
+            ['costume'   => 'costume'],
+            ['cookies'   => 'cookies'],
             [
                 'file_1' => [
                     'name'      => 'file_name',
