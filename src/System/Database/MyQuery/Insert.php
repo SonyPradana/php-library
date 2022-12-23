@@ -47,6 +47,11 @@ class Insert extends Execute
         return $this;
     }
 
+    /**
+     * Added multy raws (values).
+     *
+     * @param array<int, array<string, string|int|bool|null>> $raws
+     */
     public function raws(array $raws): self
     {
         foreach ($raws as $index => $values) {
