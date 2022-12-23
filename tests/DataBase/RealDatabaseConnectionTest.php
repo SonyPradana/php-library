@@ -23,7 +23,7 @@ abstract class RealDatabaseConnectionTest extends TestCase
         ];
 
         $this->schema()->query('DROP DATABASE IF EXISTS testing_db;')->execute();
-        $this->schema()->query('CREATE DATABASE testing_db;')->execute();
+        $this->schema()->query('CREATE DATABASE IF NOT EXISTS testing_db;')->execute();
 
         $this->pdo = new MyPDO($this->env);
 
