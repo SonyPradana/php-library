@@ -47,14 +47,32 @@ class Insert extends Execute
         return $this;
     }
 
+    public function raws(array $raws): self
+    {
+        foreach ($raws as $index => $values) {
+            foreach ($values as $bind => $value) {
+                $this->_binds[] = Bind::set($bind, $value, $bind)->prefixBind(':bind_' . $index . '_');
+            }
+        }
+
+        return $this;
+    }
+
     protected function builder(): string
     {
         [$binds, ,$columns] = $this->bindsDestructur();
 
-        $stringBinds  = implode(', ', $binds);
+        $strings_binds = [];
+        /** @var array<int, array<int, string>> */
+        $chunk         = array_chunk($binds, count($columns), true);
+        foreach ($chunk as $group) {
+            $strings_binds[] = '(' . implode(', ', $group) . ')';
+        }
+
+        $stringBinds  = implode(', ', $strings_binds);
         $stringColumn = implode(', ', $columns);
 
-        $this->_query = "INSERT INTO `$this->_table` ($stringColumn) VALUES ($stringBinds)";
+        $this->_query = "INSERT INTO `$this->_table` ($stringColumn) VALUES $stringBinds";
 
         return $this->_query;
     }
