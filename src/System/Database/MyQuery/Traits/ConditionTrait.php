@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Database\MyQuery\Traits;
 
+use System\Database\MyQuery\Bind;
 use System\Database\MyQuery\Select;
 
 /**
@@ -44,17 +45,17 @@ trait ConditionTrait
     /**
      * Insert 'where' condition in (query bulider).
      *
-     * @param string                             $where_condition Spesific column name
-     * @param array<int, array<int, string|int>> $binder          Bind and value (use for 'in')
+     * @param string $where_condition Spesific column name
+     * @param array  $binder          Bind and value (use for 'in')
      *
      * @return self
      */
-    public function where(string $where_condition, ?array $binder = null)
+    public function where(string $where_condition, array $binder = [])
     {
         $this->_where[] = $where_condition;
 
-        if ($binder !== null) {
-            $this->_binder = array_merge($this->_binder, $binder);
+        foreach ($binder as $bind) {
+            $this->_binds[] = Bind::set($bind[0], $bind[1])->prefixBind('');
         }
 
         return $this;
@@ -74,10 +75,13 @@ trait ConditionTrait
         $this->where(
             "(`$this->_table`.`$column_name` BETWEEN :b_start AND :b_end)",
             [
-                [':b_start', $value_1],
-                [':b_end', $value_2],
+                // [':b_start', $value_1],
+                // [':b_end', $value_2],
             ]
         );
+
+        $this->_binds[] = Bind::set('b_start', $value_1);
+        $this->_binds[] = Bind::set('b_end', $value_2);
 
         return $this;
     }
@@ -118,7 +122,9 @@ trait ConditionTrait
     public function whereExist(Select $select)
     {
         $this->_where[] = 'EXISTS (' . $select->__toString() . ')';
-        $this->_binder  = array_merge($this->_binder, $select->_binder);
+        foreach ($select->_binds as $binds) {
+            $this->_binds[] = $binds;
+        }
 
         return $this;
     }
@@ -133,7 +139,31 @@ trait ConditionTrait
     public function whereNotExist(Select $select)
     {
         $this->_where[] = 'NOT EXISTS (' . $select->__toString() . ')';
-        $this->_binder  = array_merge($this->_binder, $select->_binder);
+        foreach ($select->_binds as $binds) {
+            $this->_binds[] = $binds;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Where statment setter,
+     * menambahakan syarat pada query builder.
+     *
+     * @param string               $bind        Key atau nama column
+     * @param string               $comparation tanda hubung yang akan digunakan (AND|OR|>|<|=|LIKE)
+     * @param string|int|bool|null $value       Value atau nilai dari key atau nama column
+     *
+     * @return self
+     */
+    public function compare(string $bind, string $comparation, $value, bool $bindValue = false)
+    {
+        $this->_binds[]        = Bind::set($bind, $value);
+        $this->_filters[$bind] = [
+            'value'       => $value,
+            'comparation' => $comparation,
+            $bindValue,
+        ];
 
         return $this;
     }

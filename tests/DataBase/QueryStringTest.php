@@ -55,7 +55,7 @@ final class QueryStringTest extends TestCase
 
         $select['where'] = MyQuery::from('test', $this->PDO, $this->PDO)
             ->select()
-            ->where('a < :a OR b > :b', ['a' => 1, 'b' => 2]);
+            ->where('a < :a OR b > :b', [['a', 1], ['b', 2]]);
 
         // assertation
 
@@ -205,8 +205,8 @@ final class QueryStringTest extends TestCase
             ->value('g', 'h');
 
         $this->assertEquals(
-            'INSERT INTO `test` (a, c, e, g) VALUES (:val_a, :val_c, :val_e, :val_g)',
-            $insert,
+            'INSERT INTO `test` (a, c, e, g) VALUES (:bind_a, :bind_c, :bind_e, :bind_g)',
+            $insert->__toString(),
             'insert must equal with query 1 new row with 2 data'
         );
     }
@@ -243,37 +243,37 @@ final class QueryStringTest extends TestCase
         $update['where'] = MyQuery::from('test', $this->PDO)
             ->update()
             ->value('a', 'b')
-            ->where('col1 = :col1 OR col2 = :col2', ['col1' => 1, 'col2' => 2]);
+            ->where('col1 = :col1 OR col2 = :col2', [['col1', 1], ['col2', 2]]);
 
         // assertation
 
         $this->assertEquals(
-            'UPDATE `test` SET `a` = :val_a WHERE (`test`.`coulumn_1` BETWEEN :b_start AND :b_end)',
-            $update['between'],
+            'UPDATE `test` SET `a` = :bind_a WHERE (`test`.`coulumn_1` BETWEEN :b_start AND :b_end)',
+            $update['between']->__toString(),
             'update query must same with between operator'
         );
 
         $this->assertEquals(
-            'UPDATE `test` SET `a` = :val_a WHERE ( (test.ten > :ten) )',
-            $update['compare'],
+            'UPDATE `test` SET `a` = :bind_a WHERE ( (test.ten > :ten) )',
+            $update['compare']->__toString(),
             'update query must same with compire operator'
         );
 
         $this->assertEquals(
-            'UPDATE `test` SET `a` = :val_a WHERE ( (test.ten = :ten) )',
-            $update['equal'],
+            'UPDATE `test` SET `a` = :bind_a WHERE ( (test.ten = :ten) )',
+            $update['equal']->__toString(),
             'update query must same with equal operator'
         );
 
         $this->assertEquals(
-            'UPDATE `test` SET `a` = :val_a WHERE (`test`.`column_1` IN (:in_0, :in_1, :in_2, :in_3, :in_4))',
-            $update['in'],
+            'UPDATE `test` SET `a` = :bind_a WHERE (`test`.`column_1` IN (:in_0, :in_1, :in_2, :in_3, :in_4))',
+            $update['in']->__toString(),
             'update query must same with in operator'
         );
 
         $this->assertEquals(
-            'UPDATE `test` SET `a` = :val_a WHERE col1 = :col1 OR col2 = :col2',
-            $update['where'],
+            'UPDATE `test` SET `a` = :bind_a WHERE col1 = :col1 OR col2 = :col2',
+            $update['where']->__toString(),
             'update query must same with where operator'
         );
     }
@@ -304,7 +304,7 @@ final class QueryStringTest extends TestCase
 
         $delete['where'] = MyQuery::from('test', $this->PDO)
             ->delete()
-            ->where('col1 = :col1 OR col2 = :col2', ['col1' => 1, 'col2' => 2]);
+            ->where('col1 = :col1 OR col2 = :col2', [['col1', 1], ['col2', 2]]);
 
         // assertation
 

@@ -12,10 +12,10 @@ abstract class Execute extends Query
 
         if ($this->_query != null) {
             $this->PDO->query($this->_query);
-            foreach ($this->_binder as $bind) {
-                $isVal  = $bind[2] ?? false;
-                $binder = $isVal ? "val_$bind[0]" : $bind[0];
-                $this->PDO->bind($binder, $bind[1]);
+            foreach ($this->_binds as $bind) {
+                if (!$bind->hasBind()) {
+                    $this->PDO->bind($bind->getBind(), $bind->getValue());
+                }
             }
 
             $this->PDO->execute();

@@ -33,6 +33,11 @@
           "src/System/Time/helper.php"
         ]
     },
+    "autoload-dev": {
+        "files": [
+            "tests/DataBase/RealDatabaseConnectionTest.php"
+        ]
+    },
     "extra": {
         "laravel": {
             "dont-discover": [
@@ -49,7 +54,7 @@
         "lint": "php-cs-fixer fix -v",
         "test:lint": "php-cs-fixer fix -v --dry-run",
         "test:types": "phpstan analyse --ansi --memory-limit=-1 --debug",
-        "test:unit": "phpunit --testdox",
+        "test:unit": "phpunit --testdox --exclude-group database",
         "test:dev": [
             "@test:lint",
             "@test:types",
@@ -58,7 +63,7 @@
         "test": [
             "php-cs-fixer fix -v",
             "phpstan analyse --ansi --memory-limit=-1",
-            "phpunit"
+            "phpunit --exclude-group database"
         ]
     }
 }
