@@ -212,6 +212,31 @@ final class QueryStringTest extends TestCase
     }
 
     /** @test */
+    public function itCorrectInsertQueryMultyRaws(): void
+    {
+        $insert = MyQuery::from('test', $this->PDO)
+            ->insert()
+            // insert using multy value
+            ->raws([
+                [
+                    'a' => 'b',
+                    'c' => 'd',
+                    'e' => 'f',
+                ], [
+                    'a' => 'b',
+                    'c' => 'd',
+                    'e' => 'f',
+                ],
+            ]);
+
+        $this->assertEquals(
+            'INSERT INTO `test` (a, c, e) VALUES (:bind_0_a, :bind_0_c, :bind_0_e), (:bind_1_a, :bind_1_c, :bind_1_e)',
+            $insert->__toString(),
+            'insert must equal with query 1 new row with 2 data'
+        );
+    }
+
+    /** @test */
     public function itCorrectUpdateQuery(): void
     {
         $update            = [];
