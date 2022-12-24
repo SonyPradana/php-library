@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### [0.14.0] - 2022-12-24
+### Fixed
+- Allowed schadule logging event job execute has error (#90).
+- Fixed query limit less that 0 (#91).
+
+### Added
+- Added `Request::macro` to upload file (#92).
+- Added support database insert multy raw (#98).
+
+### Changed
+- Collection implements `Countable`, `ArrayAccess` and `IteratorAggregate` interface (#93) (#97).
+- Database query using Bind as Class `Bind::class` (#94).
+
 ### [0.13.0] - 2022-11-14
 ### Changed
 - Changed `Request::all` with check content type.
