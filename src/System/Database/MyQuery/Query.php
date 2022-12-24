@@ -212,4 +212,16 @@ abstract class Query
     {
         return $this->_binds;
     }
+
+    protected function binding(): MyPDO
+    {
+        $this->PDO->query($this->_query);
+        foreach ($this->_binds as $bind) {
+            if (!$bind->hasBind()) {
+                $this->PDO->bind($bind->getBind(), $bind->getValue());
+            }
+        }
+
+        return $this->PDO;
+    }
 }

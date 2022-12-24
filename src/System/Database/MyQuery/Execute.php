@@ -10,19 +10,12 @@ abstract class Execute extends Query
     {
         $this->builder();
 
-        if ($this->_query != null) {
-            $this->PDO->query($this->_query);
-            foreach ($this->_binds as $bind) {
-                if (!$bind->hasBind()) {
-                    $this->PDO->bind($bind->getBind(), $bind->getValue());
-                }
-            }
-
-            $this->PDO->execute();
-
-            return $this->PDO->rowCount() > 0 ? true : false;
+        if (null === $this->_query) {
+            return false;
         }
 
-        return false;
+        $this->binding()->execute();
+
+        return $this->PDO->rowCount() > 0 ? true : false;
     }
 }

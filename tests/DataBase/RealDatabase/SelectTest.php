@@ -53,6 +53,41 @@ final class SelectTest extends RealDatabaseConnectionTest
      *
      * @group database
      */
+    public function itCanSelectQuerySingle()
+    {
+        $users = MyQuery::from('users', $this->pdo)
+            ->select()
+            ->single()
+        ;
+
+        $this->assertArrayHasKey('user', $users);
+        $this->assertArrayHasKey('pwd', $users);
+        $this->assertArrayHasKey('stat', $users);
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanSelectQueryGet()
+    {
+        $users = MyQuery::from('users', $this->pdo)
+            ->select()
+            ->get()
+            ->first()
+        ;
+
+        $this->assertArrayHasKey('user', $users);
+        $this->assertArrayHasKey('pwd', $users);
+        $this->assertArrayHasKey('stat', $users);
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
     public function itCanSelectQueryOnlyuser()
     {
         $users = MyQuery::from('users', $this->pdo)
