@@ -157,7 +157,7 @@ final class TimeTravelTest extends TestCase
     {
         $now = new Now('01/01/2000');
         $this->assertSame(
-            22.0,
+            23.0,
             $now->age,
             'the age must equal'
         );
