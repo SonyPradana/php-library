@@ -23,8 +23,8 @@ abstract class Query
     /**
      * Binder array(['key', 'val']).
      *
-     * @var array<string, string> Binder for PDO bind */
-    protected $_binder = [];
+     * @var Bind[] Binder for PDO bind */
+    protected $_binds = [];
 
     /** @var int Limit start from */
     protected $_limit_start = 0;
@@ -87,7 +87,7 @@ abstract class Query
     {
         $this->_table         = '';
         $this->_column        = ['*'];
-        $this->_binder        = [];
+        $this->_binds         = [];
         $this->_limit_start   = 0;
         $this->_limit_end     = 0;
         $this->_where         = [];
@@ -99,28 +99,6 @@ abstract class Query
     }
 
     // Query builder
-
-    /**
-     * Where statment setter,
-     * menambahakan syarat pada query builder.
-     *
-     * @param string               $bind        Key atau nama column
-     * @param string               $comparation tanda hubung yang akan digunakan (AND|OR|>|<|=|LIKE)
-     * @param string|int|bool|null $value       Value atau nilai dari key atau nama column
-     *
-     * @return self
-     */
-    public function compare(string $bind, string $comparation, $value, bool $bindValue = false)
-    {
-        $this->_binder[]       = [$bind, $value];
-        $this->_filters[$bind] = [
-            'value'       => $value,
-            'comparation' => $comparation,
-            $bindValue,
-        ];
-
-        return $this;
-    }
 
     /**
      * Get where statment baseon binding set before.
@@ -208,5 +186,30 @@ abstract class Query
     protected function builder(): string
     {
         return '';
+    }
+
+    public function bindsDestructur(): array
+    {
+        $bind_name = [];
+        $value     = [];
+        $columns   = [];
+
+        foreach ($this->_binds as $bind) {
+            // if (!$bind->hasColumName()) {
+            //     continue;
+            // }
+            $bind_name[] = $bind->getBind();
+            $value[]     = $bind->getValue();
+            if (!in_array($bind->getColumnName(), $columns)) {
+                $columns[] = $bind->getColumnName();
+            }
+        }
+
+        return [$bind_name, $value, $columns];
+    }
+
+    public function getBinds()
+    {
+        return $this->_binds;
     }
 }

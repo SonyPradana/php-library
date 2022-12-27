@@ -29,7 +29,7 @@ class Insert extends Execute
     public function values($values)
     {
         foreach ($values as $key => $value) {
-            $this->_binder[] = [$key, $value, true];
+            $this->value($key, $value);
         }
 
         return $this;
@@ -42,25 +42,42 @@ class Insert extends Execute
      */
     public function value(string $bind, $value)
     {
-        $this->_binder[] = [$bind, $value, true];
+        $this->_binds[] = Bind::set($bind, $value, $bind)->prefixBind(':bind_');
+
+        return $this;
+    }
+
+    /**
+     * Added multy raws (values).
+     *
+     * @param array<int, array<string, string|int|bool|null>> $raws
+     */
+    public function raws(array $raws): self
+    {
+        foreach ($raws as $index => $values) {
+            foreach ($values as $bind => $value) {
+                $this->_binds[] = Bind::set($bind, $value, $bind)->prefixBind(':bind_' . $index . '_');
+            }
+        }
 
         return $this;
     }
 
     protected function builder(): string
     {
-        $arraycolumns = array_column($this->_binder, 0);
-        $arrayBinds   = array_map(
-            fn ($e) => ":val_$e",
-            array_column($this->_binder, 0)
-        );
-        $arraycolumns = array_filter($arraycolumns);
-        $arrayBinds   = array_filter($arrayBinds);
+        [$binds, ,$columns] = $this->bindsDestructur();
 
-        $stringColumn = implode(', ', $arraycolumns);
-        $stringBinds  = implode(', ', $arrayBinds);
+        $strings_binds = [];
+        /** @var array<int, array<int, string>> */
+        $chunk         = array_chunk($binds, count($columns), true);
+        foreach ($chunk as $group) {
+            $strings_binds[] = '(' . implode(', ', $group) . ')';
+        }
 
-        $this->_query = "INSERT INTO `$this->_table` ($stringColumn) VALUES ($stringBinds)";
+        $stringBinds  = implode(', ', $strings_binds);
+        $stringColumn = implode(', ', $columns);
+
+        $this->_query = "INSERT INTO `$this->_table` ($stringColumn) VALUES $stringBinds";
 
         return $this->_query;
     }

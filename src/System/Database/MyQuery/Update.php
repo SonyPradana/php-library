@@ -32,7 +32,7 @@ class Update extends Execute
     public function values($values)
     {
         foreach ($values as $key => $value) {
-            $this->_binder[] = [$key, $value, true];
+            $this->value($key, $value);
         }
 
         return $this;
@@ -48,7 +48,7 @@ class Update extends Execute
      */
     public function value(string $bind, $value)
     {
-        $this->_binder[] = [$bind, $value, true];
+        $this->_binds[] = Bind::set($bind, $value, $bind)->prefixBind(':bind_');
 
         return $this;
     }
@@ -57,15 +57,17 @@ class Update extends Execute
     {
         $where = $this->getWhere();
 
-        $setArray = array_map(
-            fn ($e, $c) => $c == true ? "`$e` = :val_$e" : null,
-            array_column($this->_binder, 0),
-            array_column($this->_binder, 2)
-        );
-        $setArray   = array_filter($setArray);  // remove empety items
-        $setString  = implode(', ', $setArray); // concvert to string
+        $setter = [];
+        foreach ($this->_binds as $bind) {
+            if ($bind->hasColumName()) {
+                $setter[] = '`' . $bind->getColumnName() . '` = ' . $bind->getBind();
+            }
+        }
 
-        $this->_query = "UPDATE `$this->_table` SET $setString $where";
+        // $binds       = array_filter($setter);
+        $set_string  = implode(', ', $setter);
+
+        $this->_query = "UPDATE `$this->_table` SET $set_string $where";
 
         return $this->_query;
     }
