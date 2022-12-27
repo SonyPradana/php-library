@@ -124,6 +124,20 @@ final class Select extends Fetch
     }
 
     /**
+     * Set offest.
+     *
+     * @param int $value offet
+     *
+     * @return self
+     */
+    public function offset(int $value)
+    {
+        $this->_offset = $value < 0 ? 0 : $value;
+
+        return $this;
+    }
+
+    /**
      * Set sort column and order
      * column name must register.
      *
@@ -178,15 +192,28 @@ final class Select extends Fetch
             ? ''
             : " $this->_sort_order";
 
-        // limit
-        $limit = $this->_limit_end > 0 ? " LIMIT $this->_limit_end" : '';
-        $limit = $this->_limit_start > 0
-            ? " LIMIT $this->_limit_start, $this->_limit_end"
-            : $limit
-        ;
+        $limit = $this->getLimit();
 
         $condition = $join . $where . $sort_order . $limit;
 
         return $this->_query = "SELECT $column FROM `$this->_table` $condition";
+    }
+
+    /**
+     * Get formated combine limit and offset.
+     */
+    private function getLimit(): string
+    {
+        $limit = $this->_limit_end > 0 ? " LIMIT $this->_limit_end" : '';
+
+        if ($this->_limit_start === 0) {
+            return $limit;
+        }
+
+        if ($this->_limit_end === 0 && $this->_offset > 0) {
+            return " LIMIT $this->_limit_start OFFSET $this->_offset";
+        }
+
+        return " LIMIT $this->_limit_start, $this->_limit_end";
     }
 }

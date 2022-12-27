@@ -32,6 +32,9 @@ abstract class Query
     /** @var int Limit end to */
     protected $_limit_end = 0;
 
+    /** @var int offest */
+    protected $_offset = 0;
+
     /** @var string Sort result ASC|DESC */
     protected $_sort_order  = '';
 
