@@ -138,6 +138,17 @@ final class Select extends Fetch
     }
 
     /**
+     * Set limit using limit and offset.
+     */
+    public function limitOffset(int $limit, int $offset): self
+    {
+        return $this
+            ->limitStart($limit)
+            ->limitEnd(0)
+            ->offset($offset);
+    }
+
+    /**
      * Set sort column and order
      * column name must register.
      *
