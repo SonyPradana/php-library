@@ -182,7 +182,16 @@ abstract class Query
         return $filters['strict'] ? implode(' AND ', $clear_query) : implode(' OR ', $clear_query);
     }
 
-    // this class must be overvrided
+    /**
+     * Bind query with binding.
+     */
+    public function queryBind(): string
+    {
+        [$binds, $values] = $this->bindsDestructur();
+
+        return str_replace($binds, $values, $this->builder());
+    }
+
     protected function builder(): string
     {
         return '';
