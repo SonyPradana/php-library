@@ -224,6 +224,23 @@ final class QueryStringTest extends TestCase
     }
 
     /** @test */
+    public function itCorrectSelectQueryBinding(): void
+    {
+        $select = MyQuery::from('test', $this->PDO)
+            ->select()
+            ->equal('user', 'test')
+            ->between('column_1', 1, 100)
+            ->limit(1, 10)
+            ->order('column_1', MyQuery::ORDER_ASC);
+
+        $this->assertEquals(
+            "SELECT * FROM `test` WHERE ( (test.user = 'test') ) AND (`test`.`column_1` BETWEEN 1 AND 100) ORDER BY `test`.`column_1` ASC LIMIT 1, 10",
+            $select->queryBind(),
+            'select with where statment is between'
+        );
+    }
+
+    /** @test */
     public function itCorrectInsertQueryMultyValues(): void
     {
         $insert = MyQuery::from('test', $this->PDO)
@@ -240,6 +257,27 @@ final class QueryStringTest extends TestCase
         $this->assertEquals(
             'INSERT INTO `test` (a, c, e, g) VALUES (:bind_a, :bind_c, :bind_e, :bind_g)',
             $insert->__toString(),
+            'insert must equal with query 1 new row with 2 data'
+        );
+    }
+
+    /** @test */
+    public function itCorrectInsertQueryMultyValuesQueryBinding(): void
+    {
+        $insert = MyQuery::from('test', $this->PDO)
+            ->insert()
+            // insert using multy value
+            ->values([
+                'a' => 'b',
+                'c' => 'd',
+                'e' => 'f',
+            ])
+            // insert using single value
+            ->value('g', 'h');
+
+        $this->assertEquals(
+            "INSERT INTO `test` (a, c, e, g) VALUES ('b', 'd', 'f', 'h')",
+            $insert->queryBind(),
             'insert must equal with query 1 new row with 2 data'
         );
     }
@@ -456,7 +494,7 @@ final class QueryStringTest extends TestCase
     }
 
     /** @test */
-    public function itCanGenerateWhereExitsQuery(): void
+    public function itCanGenerateWhereExisQuery(): void
     {
         $select = MyQuery::from('base_1', $this->PDO)
             ->select()
