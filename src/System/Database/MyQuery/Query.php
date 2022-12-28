@@ -189,7 +189,15 @@ abstract class Query
     {
         [$binds, $values] = $this->bindsDestructur();
 
-        return str_replace($binds, $values, $this->builder());
+        $quote_values = array_map(function ($value) {
+            if (is_string($value)) {
+                return "'" . $value . "'";
+            }
+
+            return $value;
+        }, $values);
+
+        return str_replace($binds, $quote_values, $this->builder());
     }
 
     protected function builder(): string

@@ -201,7 +201,7 @@ final class QueryStringTest extends TestCase
             ->order('column_1', MyQuery::ORDER_ASC);
 
         $this->assertEquals(
-            'SELECT * FROM `test` WHERE ( (test.user = test) ) AND (`test`.`column_1` BETWEEN 1 AND 100) ORDER BY `test`.`column_1` ASC LIMIT 1, 10',
+            "SELECT * FROM `test` WHERE ( (test.user = 'test') ) AND (`test`.`column_1` BETWEEN 1 AND 100) ORDER BY `test`.`column_1` ASC LIMIT 1, 10",
             $select->queryBind(),
             'select with where statment is between'
         );
@@ -243,7 +243,7 @@ final class QueryStringTest extends TestCase
             ->value('g', 'h');
 
         $this->assertEquals(
-            'INSERT INTO `test` (a, c, e, g) VALUES (b, d, f, h)',
+            "INSERT INTO `test` (a, c, e, g) VALUES ('b', 'd', 'f', 'h')",
             $insert->queryBind(),
             'insert must equal with query 1 new row with 2 data'
         );
