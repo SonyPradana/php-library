@@ -205,6 +205,43 @@ final class SelectTest extends RealDatabaseConnectionTest
      *
      * @group database
      */
+    public function itCanSelectQueryWithOffset()
+    {
+        $users = MyQuery::from('users', $this->pdo)
+            ->select()
+            ->limitStart(0)
+            ->offset(1)
+            ->all()
+        ;
+
+        $this->assertArrayHasKey('user', $users[0]);
+        $this->assertArrayHasKey('pwd', $users[0]);
+        $this->assertArrayHasKey('stat', $users[0]);
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanSelectQueryWithLimitOffset()
+    {
+        $users = MyQuery::from('users', $this->pdo)
+            ->select()
+            ->limitOffset(0, 10)
+            ->all()
+        ;
+
+        $this->assertArrayHasKey('user', $users[0]);
+        $this->assertArrayHasKey('pwd', $users[0]);
+        $this->assertArrayHasKey('stat', $users[0]);
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
     public function itCanSelectQueryWithStritMode()
     {
         $users = MyQuery::from('users', $this->pdo)

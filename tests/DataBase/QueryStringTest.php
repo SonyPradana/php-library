@@ -144,6 +144,39 @@ final class QueryStringTest extends TestCase
     }
 
     /** @test */
+    public function itCorrectSelectQueryLimitAndOffet(): void
+    {
+        $select = MyQuery::from('test', $this->PDO)
+            ->select()
+            ->between('column_1', 1, 100)
+            ->limitStart(1)
+            ->offset(10)
+            ->order('column_1', MyQuery::ORDER_ASC);
+
+        $this->assertEquals(
+            'SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN :b_start AND :b_end) ORDER BY `test`.`column_1` ASC LIMIT 1 OFFSET 10',
+            $select->__toString()
+        );
+    }
+
+    /** @test */
+    public function itCorrectSelectQueryLimitAndOffetButHaveLimitEnd(): void
+    {
+        $select = MyQuery::from('test', $this->PDO)
+            ->select()
+            ->between('column_1', 1, 100)
+            ->limitStart(1)
+            ->limitEnd(10)
+            ->offset(10)
+            ->order('column_1', MyQuery::ORDER_ASC);
+
+        $this->assertEquals(
+            'SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN :b_start AND :b_end) ORDER BY `test`.`column_1` ASC LIMIT 1, 10',
+            $select->__toString()
+        );
+    }
+
+    /** @test */
     public function itCorrectSelectQueryAndLimitOrderWIthLimitStartLessAndLimitEndtLessThatZero(): void
     {
         $select = MyQuery::from('test', $this->PDO)
