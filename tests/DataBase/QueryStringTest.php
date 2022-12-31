@@ -12,9 +12,9 @@ use System\Database\MyQuery\Join\LeftJoin;
 use System\Database\MyQuery\Join\RightJoin;
 use System\Database\MyQuery\Select;
 
-final class QueryStringTest extends TestCase
+abstract class QueryStringTest extends TestCase
 {
-    private $PDO;
+    protected $PDO;
 
     protected function setUp(): void
     {

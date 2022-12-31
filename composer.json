@@ -35,6 +35,7 @@
     },
     "autoload-dev": {
         "files": [
+            "tests/DataBase/QueryStringTest.php",
             "tests/DataBase/RealDatabaseConnectionTest.php"
         ]
     },
