@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
+namespace System\Test\Database\RealDatabase;
+
 use System\Database\MyQuery;
 
-final class DeleteTest extends RealDatabaseConnectionTest
+final class DeleteTest extends \RealDatabaseConnectionTest
 {
     /**
      * @test

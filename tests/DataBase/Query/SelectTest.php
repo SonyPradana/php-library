@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Test\Database\Query;
 
 use System\Database\MyQuery;
+use System\Database\MyQuery\Select;
 
 final class SelectTest extends \QueryStringTest
 {
@@ -103,7 +104,6 @@ final class SelectTest extends \QueryStringTest
         );
     }
 
-    // generate test for 'where' operator
     /** @test */
     public function itCanSelectWhere()
     {
@@ -140,12 +140,12 @@ final class SelectTest extends \QueryStringTest
               'select statment must have 3 selected query'
           );
 
-          //   WARNING: bolean return as boolean not 0 or 1
-          //   $this->assertEquals(
-        //       "SELECT `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (test.column_1 = 123) AND (test.column_2 = 'abc') AND (test.column_3 = 1) )",
-        //       $select->queryBind(),
-        //       'select statment must have 3 selected query'
-          //   );
+          $this->markTestIncomplete('bolean return as boolean not 0 or 1');
+          $this->assertEquals(
+              "SELECT `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (test.column_1 = 123) AND (test.column_2 = 'abc') AND (test.column_3 = 1) )",
+              $select->queryBind(),
+              'select statment must have 3 selected query'
+          );
       }
 
     /** @test */
@@ -167,6 +167,60 @@ final class SelectTest extends \QueryStringTest
             "SELECT `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (test.column_1 = 123) OR (test.column_2 = 'abc') )",
             $select->queryBind(),
             'select statment must have using or statment'
+        );
+    }
+
+    /** @test */
+    public function itCanGenerateWhereExisQuery(): void
+    {
+        $select = MyQuery::from('base_1', $this->PDO)
+            ->select()
+            ->whereExist(
+                (new Select('base_2', ['*'], $this->PDO))
+                    ->equal('test', 'success')
+                    ->where('base_1.id = base_2.id')
+            )
+            ->limit(1, 10)
+            ->order('id', MyQuery::ORDER_ASC)
+        ;
+
+        $this->assertEquals(
+            'SELECT * FROM `base_1` WHERE EXISTS (SELECT * FROM `base_2` WHERE ( (base_2.test = :test) ) AND base_1.id = base_2.id) ORDER BY `base_1`.`id` ASC LIMIT 1, 10',
+            $select->__toString(),
+            'where exist query'
+        );
+
+        $this->assertEquals(
+            "SELECT * FROM `base_1` WHERE EXISTS (SELECT * FROM `base_2` WHERE ( (base_2.test = 'success') ) AND base_1.id = base_2.id) ORDER BY `base_1`.`id` ASC LIMIT 1, 10",
+            $select->queryBind(),
+            'where exist query'
+        );
+    }
+
+    /** @test */
+    public function itCanGenerateWhereNotExisQuery(): void
+    {
+        $select = MyQuery::from('base_1', $this->PDO)
+            ->select()
+            ->whereNotExist(
+                (new Select('base_2', ['*'], $this->PDO))
+                    ->equal('test', 'success')
+                    ->where('base_1.id = base_2.id')
+            )
+            ->limit(1, 10)
+            ->order('id', MyQuery::ORDER_ASC)
+        ;
+
+        $this->assertEquals(
+            'SELECT * FROM `base_1` WHERE NOT EXISTS (SELECT * FROM `base_2` WHERE ( (base_2.test = :test) ) AND base_1.id = base_2.id) ORDER BY `base_1`.`id` ASC LIMIT 1, 10',
+            $select->__toString(),
+            'where exist query'
+        );
+
+        $this->assertEquals(
+            "SELECT * FROM `base_1` WHERE NOT EXISTS (SELECT * FROM `base_2` WHERE ( (base_2.test = 'success') ) AND base_1.id = base_2.id) ORDER BY `base_1`.`id` ASC LIMIT 1, 10",
+            $select->queryBind(),
+            'where exist query'
         );
     }
 }
