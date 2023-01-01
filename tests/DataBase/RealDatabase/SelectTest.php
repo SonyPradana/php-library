@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
+namespace System\Test\Database\RealDatabase;
+
 use System\Database\MyQuery;
 use System\Database\MyQuery\Join\InnerJoin;
 
-final class SelectTest extends RealDatabaseConnectionTest
+final class SelectTest extends \RealDatabaseConnectionTest
 {
     private function profileFactory()
     {
