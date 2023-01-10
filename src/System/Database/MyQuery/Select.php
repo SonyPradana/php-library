@@ -56,17 +56,13 @@ final class Select extends Fetch
     }
 
     /**
-     * Membuat join table
+     * Join statment:
      *  - inner join
      *  - left join
      *  - right join
      *  - full join.
-     *
-     * @param AbstractJoin $ref_table Configure type of join
-     *
-     * @return self
      */
-    public function join(AbstractJoin $ref_table)
+    public function join(AbstractJoin $ref_table): self
     {
         // overide master table
         $ref_table->table($this->_table);
@@ -76,7 +72,13 @@ final class Select extends Fetch
         return $this;
     }
 
-    // sort, order, grouping
+    private function joinBuilder(): string
+    {
+        return 0 === count($this->_join)
+            ? ''
+            : implode(' ', $this->_join)
+        ;
+    }
 
     /**
      * Set data start for feact all data.
@@ -170,25 +172,14 @@ final class Select extends Fetch
     {
         $column = implode(', ', $this->_column);
 
-        // join
-        $join = count($this->_join) == 0
-            ? ''
-            : implode(' ', $this->_join);
+        $build = [];
 
-        // where
-        $where  = $this->getWhere();
-        $where  = $where == '' && count($this->_join) > 0
-            ? ''
-            : $where;
+        $build['join']       = $this->joinBuilder();
+        $build['where']      = $this->getWhere();
+        $build['sort_order'] = $this->_sort_order;
+        $build['limit']      = $this->getLimit();
 
-        // sort order
-        $sort_order = $this->_sort_order == ''
-            ? ''
-            : " $this->_sort_order";
-
-        $limit = $this->getLimit();
-
-        $condition = $join . $where . $sort_order . $limit;
+        $condition = implode(' ', array_filter($build, fn ($item) => $item !== ''));
 
         return $this->_query = "SELECT $column FROM `$this->_table` $condition";
     }
@@ -198,16 +189,16 @@ final class Select extends Fetch
      */
     private function getLimit(): string
     {
-        $limit = $this->_limit_end > 0 ? " LIMIT $this->_limit_end" : '';
+        $limit = $this->_limit_end > 0 ? "LIMIT $this->_limit_end" : '';
 
         if ($this->_limit_start === 0) {
             return $limit;
         }
 
         if ($this->_limit_end === 0 && $this->_offset > 0) {
-            return " LIMIT $this->_limit_start OFFSET $this->_offset";
+            return "LIMIT $this->_limit_start OFFSET $this->_offset";
         }
 
-        return " LIMIT $this->_limit_start, $this->_limit_end";
+        return "LIMIT $this->_limit_start, $this->_limit_end";
     }
 }
