@@ -173,14 +173,10 @@ trait ConditionTrait
      *
      * True = operator using AND,
      * False = operator using OR
-     *
-     * @param bool $value True where statment operation using AND
-     *
-     * @return self
      */
-    public function strictMode(bool $value)
+    public function strictMode(bool $strict): self
     {
-        $this->_strict_mode = $value;
+        $this->_strict_mode = $strict;
 
         return $this;
     }
