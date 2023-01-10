@@ -107,4 +107,44 @@ final class JoinTest extends \QueryStringTest
             $join->queryBind()
         );
     }
+
+    /** @test */
+    public function itCanJoinMultyple()
+    {
+        $join = MyQuery::from('base_table', $this->PDO)
+            ->select()
+            ->join(InnerJoin::ref('join_table_1', 'base_id', 'join_id'))
+            ->join(InnerJoin::ref('join_table_2', 'base_id', 'join_id'))
+        ;
+
+        $this->assertEquals(
+            'SELECT * FROM `base_table` INNER JOIN join_table_1 ON base_table.base_id = join_table_1.join_id INNER JOIN join_table_2 ON base_table.base_id = join_table_2.join_id',
+            $join->__toString()
+        );
+
+        $this->assertEquals(
+            'SELECT * FROM `base_table` INNER JOIN join_table_1 ON base_table.base_id = join_table_1.join_id INNER JOIN join_table_2 ON base_table.base_id = join_table_2.join_id',
+            $join->queryBind()
+        );
+    }
+
+    /** @test */
+    public function itCanJoinWithCondition()
+    {
+        $join = MyQuery::from('base_table', $this->PDO)
+            ->select()
+            ->equal('a', 1)
+            ->join(InnerJoin::ref('join_table_1', 'base_id', 'join_id'))
+        ;
+
+        $this->assertEquals(
+            'SELECT * FROM `base_table` INNER JOIN join_table_1 ON base_table.base_id = join_table_1.join_id WHERE ( (base_table.a = :a) )',
+            $join->__toString()
+        );
+
+        $this->assertEquals(
+            'SELECT * FROM `base_table` INNER JOIN join_table_1 ON base_table.base_id = join_table_1.join_id WHERE ( (base_table.a = 1) )',
+            $join->queryBind()
+        );
+    }
 }
