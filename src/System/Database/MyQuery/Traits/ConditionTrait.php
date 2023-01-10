@@ -167,4 +167,21 @@ trait ConditionTrait
 
         return $this;
     }
+
+    /**
+     * Setter strict mode.
+     *
+     * True = operator using AND,
+     * False = operator using OR
+     *
+     * @param bool $value True where statment operation using AND
+     *
+     * @return self
+     */
+    public function strictMode(bool $value)
+    {
+        $this->_strict_mode = $value;
+
+        return $this;
+    }
 }

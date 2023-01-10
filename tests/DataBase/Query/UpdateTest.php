@@ -133,8 +133,6 @@ final class UpdateTest extends \QueryStringTest
     /** @test */
     public function itCorrectUpdateWithStrictOff(): void
     {
-        $this->markTestIncomplete('support strict mode in update query');
-
         $update = MyQuery::from('test', $this->PDO)
             ->update()
             ->value('a', 'b')
@@ -143,15 +141,13 @@ final class UpdateTest extends \QueryStringTest
             ->strictMode(false);
 
         $this->assertEquals(
-            'Update `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (test.column_1 = :column_1) OR (test.column_2 = :column_2) )',
-            $update,
-            'update statment must have using or statment'
+            'UPDATE `test` SET `a` = :bind_a WHERE ( (test.column_1 = :column_1) OR (test.column_2 = :column_2) )',
+            $update->__toString()
         );
 
         $this->assertEquals(
-            "Update `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (test.column_1 = 123) OR (test.column_2 = 'abc') )",
-            $update->queryBind(),
-            'update statment must have using or statment'
+            "UPDATE `test` SET `a` = 'b' WHERE ( (test.column_1 = 123) OR (test.column_2 = 'abc') )",
+            $update->queryBind()
         );
     }
 }
