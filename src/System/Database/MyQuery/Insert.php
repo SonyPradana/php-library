@@ -48,13 +48,13 @@ class Insert extends Execute
     }
 
     /**
-     * Added multy raws (values).
+     * Added multy rows (values).
      *
-     * @param array<int, array<string, string|int|bool|null>> $raws
+     * @param array<int, array<string, string|int|bool|null>> $rows
      */
-    public function raws(array $raws): self
+    public function rows(array $rows): self
     {
-        foreach ($raws as $index => $values) {
+        foreach ($rows as $index => $values) {
             foreach ($values as $bind => $value) {
                 $this->_binds[] = Bind::set($bind, $value, $bind)->prefixBind(':bind_' . $index . '_');
             }
