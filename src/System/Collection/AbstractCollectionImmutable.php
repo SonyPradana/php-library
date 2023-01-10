@@ -147,6 +147,13 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
         return $this->collection[$key] ?? $default;
     }
 
+    public function rand()
+    {
+        $rand = array_rand($this->items());
+
+        return $this->get($rand);
+    }
+
     public function isEmpty(): bool
     {
         return empty($this->collection);
