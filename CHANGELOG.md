@@ -6,8 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### [0.14.0] - 2022-12-24
+### [0.15.0] - 2023-01-10
+### Added
+- Added `Query::queryBind()` method to return query string with the bind's.
+- Added support `Query::class` limit using `offet`.
+- Added `Collection::shuffle()`, `Collection::rand()`, `Collection::current()`, `Collection::next()` and `Collection::prev()`.
+
 ### Fixed
+- Fixed concat between join and where condition in query builder.
+- Fixed return query bind boolean return as boolean.
+
+### [0.14.0] - 2022-12-24
 - Allowed schadule logging event job execute has error (#90).
 - Fixed query limit less that 0 (#91).
 
