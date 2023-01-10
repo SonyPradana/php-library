@@ -127,8 +127,6 @@ final class DeleteTest extends \QueryStringTest
     /** @test */
     public function itCorrectDeleteWithStrictOff(): void
     {
-        $this->markTestIncomplete('support strict mode in update query');
-
         $delete = MyQuery::from('test', $this->PDO)
             ->delete()
             ->equal('column_1', 123)
@@ -136,13 +134,13 @@ final class DeleteTest extends \QueryStringTest
             ->strictMode(false);
 
         $this->assertEquals(
-            'Delete `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (test.column_1 = :column_1) OR (test.column_2 = :column_2) )',
-            $delete,
+            'DELETE FROM `test` WHERE ( (test.column_1 = :column_1) OR (test.column_2 = :column_2) )',
+            $delete->__toString(),
             'update statment must have using or statment'
         );
 
         $this->assertEquals(
-            "Delete `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (test.column_1 = 123) OR (test.column_2 = 'abc') )",
+            "DELETE FROM `test` WHERE ( (test.column_1 = 123) OR (test.column_2 = 'abc') )",
             $delete->queryBind(),
             'update statment must have using or statment'
         );
