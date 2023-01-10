@@ -79,7 +79,7 @@ final class InsertTest extends \QueryStringTest
     {
         $insert = MyQuery::from('test', $this->PDO)
             ->insert()
-            ->raws([
+            ->rows([
                 [
                     'a' => 'b',
                     'c' => 'd',

@@ -36,7 +36,7 @@ final class InsertTest extends \RealDatabaseConnectionTest
     {
         MyQuery::from('users', $this->pdo)
             ->insert()
-            ->raws([
+            ->rows([
                 [
                     'user' => 'sony',
                     'pwd'  => 'secret',
