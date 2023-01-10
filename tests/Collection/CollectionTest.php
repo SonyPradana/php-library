@@ -342,4 +342,17 @@ class CollectionTest extends TestCase
             $this->assertEquals($value, $coll[$key]);
         }
     }
+
+    /** @test */
+    public function itCanByShuffle()
+    {
+        $arr  = ['one' => 1, 'two' => 2, 'three' => 3];
+        $coll = new Collection($arr);
+
+        $coll->shuffle();
+
+        foreach ($arr as $key => $val) {
+            $this->assertArrayHasKey($key, $coll);
+        }
+    }
 }

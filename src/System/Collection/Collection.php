@@ -257,4 +257,17 @@ class Collection extends AbstractCollectionImmutable
     {
         return new \ArrayIterator($this->all());
     }
+
+    public function shuffle(): self
+    {
+        $items = $this->collection;
+        $keys  = $this->keys();
+        shuffle($keys);
+        $reordered = [];
+        foreach ($keys as $key) {
+            $reordered[$key] = $items[$key];
+        }
+
+        return $this->replace($reordered);
+    }
 }
