@@ -136,14 +136,26 @@ class CollectionImmutableTest extends TestCase
         $this->assertEquals(3, count($coll));
     }
 
-    public function it_can_randomize_items_in_collection()
+    /** @test */
+    public function itCanRandomizeItemsInCollection()
     {
         $arr  = ['one' => 1, 'two' => 2, 'three' => 3];
         $coll = new CollectionImmutable($arr);
         $item = $coll->rand();
 
         $this->assertTrue(
-            in_array($item, $arr)
+            in_array($item, array_values($arr))
         );
+    }
+
+    /** @test */
+    public function itCanGetCurrentNextPrev()
+    {
+        $arr  = ['one' => 1, 'two' => 2, 'three' => 3];
+        $coll = new CollectionImmutable($arr);
+
+        $this->assertEquals(1, $coll->current());
+        $this->assertEquals(2, $coll->next());
+        $this->assertEquals(1, $coll->prev());
     }
 }
