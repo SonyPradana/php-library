@@ -140,9 +140,8 @@ final class SelectTest extends \QueryStringTest
               'select statment must have 3 selected query'
           );
 
-          $this->markTestIncomplete('bolean return as boolean not 0 or 1');
           $this->assertEquals(
-              "SELECT `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (test.column_1 = 123) AND (test.column_2 = 'abc') AND (test.column_3 = 1) )",
+              "SELECT `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (test.column_1 = 123) AND (test.column_2 = 'abc') AND (test.column_3 = true) )",
               $select->queryBind(),
               'select statment must have 3 selected query'
           );
