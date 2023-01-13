@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace System\Database\MySchema;
 
-use System\Database\MyPDO as BasPDO;
+use System\Database\MyPDO as BasePDO;
 
-class MyPDO extends BasPDO
+class MyPDO extends BasePDO
 {
     /**
      * @param array<string, string> $configs

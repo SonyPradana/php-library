@@ -32,7 +32,7 @@ abstract class RealDatabaseConnectionTest extends TestCase
         $this->schema->database()->create('testing_db')->ifNotExists()->execute();
 
         $this->pdo        = new MyPDO($this->env);
-        
+
         // factory
         $this->pdo
             ->query('CREATE TABLE `users` (

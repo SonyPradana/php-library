@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Database;
 
-use System\Database\MySchema\DB\Schema;
+use System\Database\MySchema\DB;
 use System\Database\MySchema\MyPDO;
 
 class MySchema
@@ -19,6 +19,6 @@ class MySchema
 
     public function database()
     {
-        return new Schema($this->pdo);
+        return new DB\Schema($this->pdo);
     }
 }
