@@ -43,7 +43,7 @@ class MyPDO
         return $this;
     }
 
-    public function useDsn(string $dsn, $user, $pass)
+    protected function useDsn(string $dsn, string $user, string $pass)
     {
         $option = [
             \PDO::ATTR_PERSISTENT => true,
@@ -51,7 +51,7 @@ class MyPDO
         ];
         // menjalankan koneksi daabase
         try {
-            $this->dbh = new \PDO($dsn, $user, $pass);
+            $this->dbh = new \PDO($dsn, $user, $pass, $option);
         } catch (\PDOException $e) {
             throw new \Exception($e->getMessage());
         }
