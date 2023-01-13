@@ -5,6 +5,7 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use System\Database\MyPDO;
 use System\Database\MyQuery;
+use System\Database\MySchema;
 
 use function PHPUnit\Framework\assertTrue;
 
@@ -12,6 +13,8 @@ abstract class RealDatabaseConnectionTest extends TestCase
 {
     private $env;
     protected MyPDO $pdo;
+    protected MySchema\MyPDO $pdo_schema;
+    protected MySchema $schema;
 
     protected function setUp(): void
     {
@@ -22,11 +25,14 @@ abstract class RealDatabaseConnectionTest extends TestCase
             'database_name'  => 'testing_db',
         ];
 
-        $this->schema()->query('DROP DATABASE IF EXISTS testing_db;')->execute();
-        $this->schema()->query('CREATE DATABASE IF NOT EXISTS testing_db;')->execute();
+        $this->pdo_schema = new MySchema\MyPDO($this->env);
+        $this->schema     = new MySchema($this->pdo_schema);
 
-        $this->pdo = new MyPDO($this->env);
+        // building the database
+        $this->schema->database()->create('testing_db')->ifNotExists()->execute();
 
+        $this->pdo        = new MyPDO($this->env);
+        
         // factory
         $this->pdo
             ->query('CREATE TABLE `users` (
@@ -55,7 +61,7 @@ abstract class RealDatabaseConnectionTest extends TestCase
 
     protected function tearDown(): void
     {
-        $this->schema()->query('DROP DATABASE IF EXISTS testing_db;')->execute();
+        $this->schema->database()->drop('testing_db')->ifExists()->execute();
     }
 
     private function schema()

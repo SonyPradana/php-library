@@ -16,7 +16,7 @@ class MyPDO
      *
      * @var array<string, string>
      */
-    private $configs;
+    protected $configs;
 
     /**
      * @param array<string, string> $configs
@@ -29,20 +29,8 @@ class MyPDO
         $pass             = $configs['password'];
 
         $this->configs = $configs;
-
-        // konfigurasi driver
-        $dsn    = "mysql:host=$host;dbname=$database_name";
-        $option = [
-            \PDO::ATTR_PERSISTENT => true,
-            \PDO::ATTR_ERRMODE    => \PDO::ERRMODE_EXCEPTION,
-        ];
-
-        // menjalankan koneksi daabase
-        try {
-            $this->dbh = new \PDO($dsn, $user, $pass, $option);
-        } catch (\PDOException $e) {
-            throw new \Exception($e->getMessage());
-        }
+        $dsn           = "mysql:host=$host;dbname=$database_name";
+        $this->useDsn($dsn, $user, $pass);
     }
 
     /**
@@ -52,6 +40,22 @@ class MyPDO
      */
     public function instance()
     {
+        return $this;
+    }
+
+    public function useDsn(string $dsn, $user, $pass)
+    {
+        $option = [
+            \PDO::ATTR_PERSISTENT => true,
+            \PDO::ATTR_ERRMODE    => \PDO::ERRMODE_EXCEPTION,
+        ];
+        // menjalankan koneksi daabase
+        try {
+            $this->dbh = new \PDO($dsn, $user, $pass);
+        } catch (\PDOException $e) {
+            throw new \Exception($e->getMessage());
+        }
+
         return $this;
     }
 
@@ -65,6 +69,12 @@ class MyPDO
     public static function conn(array $configs)
     {
         return new self($configs);
+    }
+
+    public static function dsn(string $dsn, $user, $pass): self
+    {
+        return (new self(['database_name' => '', 'host' => '', 'user' => $user, 'password' => $pass]))
+            ->useDsn($dsn, $user, $pass);
     }
 
     /**
