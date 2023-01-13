@@ -49,7 +49,7 @@ class MyPDO
             \PDO::ATTR_PERSISTENT => true,
             \PDO::ATTR_ERRMODE    => \PDO::ERRMODE_EXCEPTION,
         ];
-        // menjalankan koneksi daabase
+
         try {
             $this->dbh = new \PDO($dsn, $user, $pass, $option);
         } catch (\PDOException $e) {
