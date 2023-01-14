@@ -6,6 +6,7 @@ namespace System\Database;
 
 use System\Database\MySchema\DB;
 use System\Database\MySchema\MyPDO;
+use System\Database\MySchema\Table;
 
 class MySchema
 {
@@ -20,5 +21,10 @@ class MySchema
     public function database()
     {
         return new DB\Schema($this->pdo);
+    }
+
+    public function table()
+    {
+        return new Table\Schema($this->pdo);
     }
 }
