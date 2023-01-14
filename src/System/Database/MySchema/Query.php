@@ -12,18 +12,38 @@ abstract class Query
     /** @var string Main query */
     protected $query;
 
-    public function query(string $query)
+    public function __toString()
+    {
+        return $this->builder();
+    }
+
+    public function query(string $query): self
     {
         $this->query = $query;
+
+        return $this;
     }
 
     protected function builder(): string
     {
-        return '';
+        return $this->query = '';
     }
 
     public function execute(): bool
     {
         return $this->pdo->query($this->query)->execute();
+    }
+
+    /**
+     * Helper: join condition into string.
+     *
+     * @param string[] $array
+     */
+    protected function join(array $array): string
+    {
+        return implode(
+            ' ',
+            array_filter($array, fn ($item) => $item !== '')
+        );
     }
 }

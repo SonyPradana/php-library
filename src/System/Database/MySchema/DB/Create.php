@@ -24,8 +24,8 @@ class Create extends Query
 
     protected function builder(): string
     {
-        $conditon = implode(' ', [$this->if_exists, $this->database_name]);
+        $conditon = $this->join([$this->if_exists, $this->database_name]);
 
-        return "CREATE DATABASE $conditon ;";
+        return $this->query = 'CREATE DATABASE ' . $conditon . ';';
     }
 }

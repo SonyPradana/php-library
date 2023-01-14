@@ -7,6 +7,7 @@ use System\Database\MyPDO;
 use System\Database\MyQuery;
 use System\Database\MySchema;
 
+use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertTrue;
 
 abstract class RealDatabaseConnectionTest extends TestCase
@@ -64,15 +65,6 @@ abstract class RealDatabaseConnectionTest extends TestCase
         $this->schema->database()->drop('testing_db')->ifExists()->execute();
     }
 
-    private function schema()
-    {
-        $host = $this->env['host'];
-        $user = $this->env['user'];
-        $pass = $this->env['password'];
-
-        return new PDO("mysql:host=$host;charset=utf8mb4", $user, $pass);
-    }
-
     // assert
 
     protected function assertUserExist(string $user)
@@ -103,5 +95,12 @@ abstract class RealDatabaseConnectionTest extends TestCase
             ->all();
 
         $this->assertEquals($expect, (int) $data[0]['stat']);
+    }
+
+    protected function assertDbExists(string $database_name)
+    {
+        $a = $this->pdo_schema->query('SHOW DATABASES LIKE ' . $database_name)->resultset();
+
+        assertCount(1, $a);
     }
 }
