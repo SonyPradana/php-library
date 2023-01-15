@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace System\Database;
 
-use System\Database\MySchema\DB;
+use System\Database\MySchema\Create;
+use System\Database\MySchema\Drop;
 use System\Database\MySchema\MyPDO;
-use System\Database\MySchema\Table;
 
 class MySchema
 {
@@ -18,13 +18,13 @@ class MySchema
         $this->pdo = $pdo;
     }
 
-    public function database()
+    public function create()
     {
-        return new DB\Schema($this->pdo);
+        return new Create($this->pdo);
     }
 
-    public function table()
+    public function drop()
     {
-        return new Table\Schema($this->pdo);
+        return new Drop($this->pdo);
     }
 }

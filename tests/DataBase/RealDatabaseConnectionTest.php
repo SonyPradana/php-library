@@ -30,7 +30,7 @@ abstract class RealDatabaseConnectionTest extends TestCase
         $this->schema     = new MySchema($this->pdo_schema);
 
         // building the database
-        $this->schema->database()->create('testing_db')->ifNotExists()->execute();
+        $this->schema->create()->database('testing_db')->ifNotExists()->execute();
 
         $this->pdo        = new MyPDO($this->env);
 
@@ -62,7 +62,7 @@ abstract class RealDatabaseConnectionTest extends TestCase
 
     protected function tearDown(): void
     {
-        $this->schema->database()->drop('testing_db')->ifExists()->execute();
+        $this->schema->drop()->database('testing_db')->ifExists()->execute();
     }
 
     // assert
