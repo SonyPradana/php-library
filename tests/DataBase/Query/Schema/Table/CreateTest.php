@@ -61,7 +61,7 @@ final class CreateTest extends \QueryStringTest
         $schema->primaryKey('PersonID');
 
         $this->assertEquals(
-            'CREATE TABLE test ( PersonID int, LastName varchar(255), PRIMARY KEY (`PersonID`) )',
+            'CREATE TABLE test ( `PersonID` int, `LastName` varchar(255), PRIMARY KEY (`PersonID`) )',
             $schema->__toString()
         );
     }
