@@ -39,10 +39,10 @@ abstract class Query
      *
      * @param string[] $array
      */
-    protected function join(array $array): string
+    protected function join(array $array, string $sperator = ' '): string
     {
         return implode(
-            ' ',
+            $sperator,
             array_filter($array, fn ($item) => $item !== '')
         );
     }
