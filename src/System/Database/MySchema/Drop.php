@@ -18,4 +18,9 @@ class Drop
     {
         return new DB\Drop($database_name, $this->pdo);
     }
+    
+    public function table(string $database_name)
+    {
+        return new Table\Drop($database_name, $this->pdo);
+    }
 }
