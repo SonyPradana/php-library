@@ -45,7 +45,7 @@ final class CreateTest extends \QueryStringTest
         $schema->unique('PersonID');
 
         $this->assertEquals(
-            'CREATE TABLE test ( PersonID int, LastName varchar(255) )',
+            'CREATE TABLE test ( PersonID int, LastName varchar(255), UNIQUE (`PersonID`) )',
             $schema->__toString()
         );
     }

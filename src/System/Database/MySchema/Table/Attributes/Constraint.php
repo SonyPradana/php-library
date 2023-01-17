@@ -17,12 +17,12 @@ class Constraint
 
     public function __construct(string $data_type)
     {
-        $this->data_type = $data_type;
-        $this->null_able = '';
-        $this->default = '';
+        $this->data_type      = $data_type;
+        $this->null_able      = '';
+        $this->default        = '';
         $this->auto_increment = '';
     }
-    
+
     public function __toString()
     {
         return $this->query();
@@ -37,7 +37,7 @@ class Constraint
             $this->auto_increment,
         ];
 
-        return implode(' ', array_filter($collumn, fn($item) => $item !== ''));
+        return implode(' ', array_filter($collumn, fn ($item) => $item !== ''));
     }
 
     public function notNull(bool $null = true): self
@@ -49,7 +49,7 @@ class Constraint
 
     public function null(bool $null = true): self
     {
-        return $this->notNull(!null);
+        return $this->notNull(!$null);
     }
 
     public function default(string $default): self
@@ -70,5 +70,4 @@ class Constraint
     {
         return $this->autoIncrement($incremnet);
     }
-
 }

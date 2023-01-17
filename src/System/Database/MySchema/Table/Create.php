@@ -15,7 +15,7 @@ class Create extends Query
 
     /** @var string[] */
     private $primaryKeys;
-    
+
     /** @var string[] */
     private $uniques;
 

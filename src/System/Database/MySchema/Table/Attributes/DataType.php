@@ -30,7 +30,7 @@ class DataType
     public function int(int $lenght = 0): Constraint
     {
         if ($lenght === 0) {
-            return $this->datatype = new Constraint("int");
+            return $this->datatype = new Constraint('int');
         }
 
         return $this->datatype = new Constraint("int($lenght)");
@@ -39,7 +39,7 @@ class DataType
     public function tinyint(int $lenght = 0): Constraint
     {
         if ($lenght === 0) {
-            return $this->datatype = new Constraint("tinyint");
+            return $this->datatype = new Constraint('tinyint');
         }
 
         return $this->datatype = new Constraint("tinyint($lenght)");
@@ -48,7 +48,7 @@ class DataType
     public function smallint(int $lenght = 0): Constraint
     {
         if ($lenght === 0) {
-            return $this->datatype = new Constraint("smallint");
+            return $this->datatype = new Constraint('smallint');
         }
 
         return $this->datatype = new Constraint("smallint($lenght)");
@@ -57,7 +57,7 @@ class DataType
     public function bigint(int $lenght = 0): Constraint
     {
         if ($lenght === 0) {
-            return $this->datatype = new Constraint("bigint");
+            return $this->datatype = new Constraint('bigint');
         }
 
         return $this->datatype = new Constraint("bigint($lenght)");
@@ -66,7 +66,7 @@ class DataType
     public function float(int $lenght = 0): Constraint
     {
         if ($lenght === 0) {
-            return $this->datatype = new Constraint("float");
+            return $this->datatype = new Constraint('float');
         }
 
         return $this->datatype = new Constraint("float($lenght)");
@@ -77,7 +77,7 @@ class DataType
     public function time(int $lenght = 0): Constraint
     {
         if ($lenght === 0) {
-            return $this->datatype = new Constraint("time");
+            return $this->datatype = new Constraint('time');
         }
 
         return $this->datatype = new Constraint("time($lenght)");
@@ -86,7 +86,7 @@ class DataType
     public function timestamp(int $lenght = 0): Constraint
     {
         if ($lenght === 0) {
-            return $this->datatype = new Constraint("timestamp");
+            return $this->datatype = new Constraint('timestamp');
         }
 
         return $this->datatype = new Constraint("timestamp($lenght)");
@@ -94,7 +94,7 @@ class DataType
 
     public function date(): Constraint
     {
-        return $this->datatype = new Constraint("date");
+        return $this->datatype = new Constraint('date');
     }
 
     // text
@@ -102,7 +102,7 @@ class DataType
     public function varchar(int $lenght = 0): Constraint
     {
         if ($lenght === 0) {
-            return $this->datatype = new Constraint("varchar");
+            return $this->datatype = new Constraint('varchar');
         }
 
         return $this->datatype = new Constraint("varchar($lenght)");
@@ -111,7 +111,7 @@ class DataType
     public function text(int $lenght = 0): Constraint
     {
         if ($lenght === 0) {
-            return $this->datatype = new Constraint("text");
+            return $this->datatype = new Constraint('text');
         }
 
         return $this->datatype = new Constraint("text($lenght)");
@@ -120,7 +120,7 @@ class DataType
     public function blob(int $lenght = 0): Constraint
     {
         if ($lenght === 0) {
-            return $this->datatype = new Constraint("blob");
+            return $this->datatype = new Constraint('blob');
         }
 
         return $this->datatype = new Constraint("blob($lenght)");
