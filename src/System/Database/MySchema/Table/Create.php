@@ -15,6 +15,9 @@ class Create extends Query
 
     /** @var string[] */
     private $primaryKeys;
+    
+    /** @var string[] */
+    private $uniques;
 
     /** @var string */
     private $database_name;
@@ -26,6 +29,7 @@ class Create extends Query
 
         $this->columns     = [];
         $this->primaryKeys = [];
+        $this->uniques     = [];
 
         $this->query         = $this->builder();
     }
@@ -58,10 +62,17 @@ class Create extends Query
         return $this;
     }
 
+    public function unique(string $unique): self
+    {
+        $this->uniques[] = $unique;
+
+        return $this;
+    }
+
     protected function builder(): string
     {
         /** @var string[] */
-        $columns = array_merge($this->getColumns(), $this->getPrimarykey());
+        $columns = array_merge($this->getColumns(), $this->getPrimarykey(), $this->getUnique());
         $columns = $this->join($columns, ', ');
         $query   = $this->join([$this->database_name, '(', $columns, ')']);
 
@@ -88,5 +99,16 @@ class Create extends Query
         $primaryKeys = implode(', ', $this->primaryKeys);
 
         return ['PRIMARY KEY (`' . $primaryKeys . '`)'];
+    }
+
+    private function getUnique(): array
+    {
+        if (count($this->uniques) === 0) {
+            return [''];
+        }
+
+        $uniques = implode(', ', $this->uniques);
+
+        return ['UNIQUE (`' . $uniques . '`)'];
     }
 }

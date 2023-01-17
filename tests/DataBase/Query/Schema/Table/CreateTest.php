@@ -37,6 +37,20 @@ final class CreateTest extends \QueryStringTest
     }
 
     /** @test */
+    public function itCanGenerateQueryUsingAddColumnWithUnique()
+    {
+        $schema = new Create('test', $this->pdo_schame);
+        $schema->addColumn()->raw('PersonID int');
+        $schema->addColumn()->raw('LastName varchar(255)');
+        $schema->unique('PersonID');
+
+        $this->assertEquals(
+            'CREATE TABLE test ( PersonID int, LastName varchar(255) )',
+            $schema->__toString()
+        );
+    }
+
+    /** @test */
     public function itCanGenerateQueryUsingColumns()
     {
         $schema = new Create('test', $this->pdo_schame);
