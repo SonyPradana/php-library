@@ -65,4 +65,18 @@ final class CreateTest extends \QueryStringTest
             $schema->__toString()
         );
     }
+
+    /** @test */
+    public function itCanGenerateQueryWithDatatypeAndConstrait()
+    {
+        $schema = new Create('test', $this->pdo_schame);
+        $schema('PersonID')->int()->notNull();
+        $schema('LastName')->varchar(255);
+        $schema->primaryKey('PersonID');
+
+        $this->assertEquals(
+            'CREATE TABLE test ( `PersonID` int NOT NULL, `LastName` varchar(255), PRIMARY KEY (`PersonID`) )',
+            $schema->__toString()
+        );
+    }
 }
