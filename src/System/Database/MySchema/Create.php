@@ -14,12 +14,12 @@ class Create
         $this->pdo = $pdo;
     }
 
-    public function database(string $database_name)
+    public function database(string $database_name): DB\Create
     {
         return new DB\Create($database_name, $this->pdo);
     }
 
-    public function table(string $table_name)
+    public function table(string $table_name): Table\Create
     {
         $database_name = $this->pdo->configs()['database_name'];
 

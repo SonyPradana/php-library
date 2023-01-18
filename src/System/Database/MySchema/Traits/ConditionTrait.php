@@ -6,6 +6,7 @@ namespace System\Database\MySchema\Traits;
 
 trait ConditionTrait
 {
+    /** @var string */
     private $if_exists = '';
 
     public function ifExists(bool $value = true): self

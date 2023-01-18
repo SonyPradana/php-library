@@ -10,7 +10,7 @@ use System\Database\MySchema\Table\Attributes\DataType;
 
 class Create extends Query
 {
-    /** @var Column[] */
+    /** @var Column[]|DataType[] */
     private $columns;
 
     /** @var string[] */
@@ -76,6 +76,7 @@ class Create extends Query
         return 'CREATE TABLE ' . $query;
     }
 
+    /** @return string[] */
     private function getColumns(): array
     {
         $res = [];
@@ -87,6 +88,7 @@ class Create extends Query
         return $res;
     }
 
+    /** @return string[] */
     private function getPrimarykey(): array
     {
         if (count($this->primaryKeys) === 0) {
@@ -98,6 +100,7 @@ class Create extends Query
         return ['PRIMARY KEY (`' . $primaryKeys . '`)'];
     }
 
+    /** @return string[] */
     private function getUnique(): array
     {
         if (count($this->uniques) === 0) {

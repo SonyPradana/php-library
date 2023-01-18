@@ -6,7 +6,9 @@ namespace System\Database\MySchema\Table\Attributes;
 
 class DataType
 {
+    /** @var string */
     private $name;
+    /** @var string|Constraint */
     private $datatype;
 
     public function __construct(string $column_name)

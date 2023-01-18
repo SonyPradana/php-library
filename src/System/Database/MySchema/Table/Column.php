@@ -8,11 +8,12 @@ use System\Database\MySchema\Table\Attributes\DataType;
 
 class Column
 {
+    /** @var string|DataType */
     protected $query;
 
     public function __toString()
     {
-        return $this->query;
+        return (string) $this->query;
     }
 
     public function column(string $column_name): DataType
