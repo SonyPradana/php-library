@@ -71,12 +71,6 @@ class MyPDO
         return new self($configs);
     }
 
-    public static function dsn(string $dsn, $user, $pass): self
-    {
-        return (new self(['database_name' => '', 'host' => '', 'user' => $user, 'password' => $pass]))
-            ->useDsn($dsn, $user, $pass);
-    }
-
     /**
      * Get connection configuration.
      *
