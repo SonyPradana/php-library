@@ -20,18 +20,15 @@ class Create extends Query
     private $uniques;
 
     /** @var string */
-    private $database_name;
+    private $table_name;
 
-    public function __construct(string $database_name, MyPDO $pdo)
+    public function __construct(string $database_name, string $table_name, MyPDO $pdo)
     {
-        $this->database_name = $database_name;
-        $this->pdo           = $pdo;
-
+        $this->table_name  = $database_name . '.' . $table_name;
+        $this->pdo         = $pdo;
         $this->columns     = [];
         $this->primaryKeys = [];
         $this->uniques     = [];
-
-        $this->query         = $this->builder();
     }
 
     public function __invoke(string $column_name): DataType
@@ -74,9 +71,9 @@ class Create extends Query
         /** @var string[] */
         $columns = array_merge($this->getColumns(), $this->getPrimarykey(), $this->getUnique());
         $columns = $this->join($columns, ', ');
-        $query   = $this->join([$this->database_name, '(', $columns, ')']);
+        $query   = $this->join([$this->table_name, '(', $columns, ')']);
 
-        return $this->query = 'CREATE TABLE ' . $query;
+        return 'CREATE TABLE ' . $query;
     }
 
     private function getColumns(): array

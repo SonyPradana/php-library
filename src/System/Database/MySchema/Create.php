@@ -19,8 +19,10 @@ class Create
         return new DB\Create($database_name, $this->pdo);
     }
 
-    public function table(string $database_name)
+    public function table(string $table_name)
     {
-        return new Table\Create($database_name, $this->pdo);
+        $database_name = $this->pdo->configs()['database_name'];
+
+        return new Table\Create($database_name, $table_name, $this->pdo);
     }
 }

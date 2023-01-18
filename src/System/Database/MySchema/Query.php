@@ -9,29 +9,19 @@ abstract class Query
     /** @var MyPDO PDO property */
     protected $pdo;
 
-    /** @var string Main query */
-    protected $query;
-
     public function __toString()
     {
         return $this->builder();
     }
 
-    public function query(string $query): self
-    {
-        $this->query = $query;
-
-        return $this;
-    }
-
     protected function builder(): string
     {
-        return $this->query = '';
+        return '';
     }
 
     public function execute(): bool
     {
-        return $this->pdo->query($this->query)->execute();
+        return $this->pdo->query($this->builder())->execute();
     }
 
     /**

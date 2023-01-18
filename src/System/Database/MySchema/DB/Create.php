@@ -19,13 +19,12 @@ class Create extends Query
     {
         $this->database_name = $database_name;
         $this->pdo           = $pdo;
-        $this->query         = $this->builder();
     }
 
     protected function builder(): string
     {
         $conditon = $this->join([$this->if_exists, $this->database_name]);
 
-        return $this->query = 'CREATE DATABASE ' . $conditon . ';';
+        return 'CREATE DATABASE ' . $conditon . ';';
     }
 }

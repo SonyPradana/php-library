@@ -19,8 +19,10 @@ class Drop
         return new DB\Drop($database_name, $this->pdo);
     }
 
-    public function table(string $database_name)
+    public function table(string $table_name)
     {
-        return new Table\Drop($database_name, $this->pdo);
+        $database_name = $this->pdo->configs()['database_name'];
+
+        return new Table\Drop($database_name, $table_name, $this->pdo);
     }
 }

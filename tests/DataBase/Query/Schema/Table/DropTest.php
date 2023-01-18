@@ -11,10 +11,10 @@ final class DropTest extends \QueryStringTest
     /** @test */
     public function itCanGenerateCreateDatabase()
     {
-        $schema = new Drop('test', $this->pdo_schame);
+        $schema = new Drop('testing_db', 'test', $this->pdo_schame);
 
         $this->assertEquals(
-            'DROP TABLE test;',
+            'DROP TABLE testing_db.test;',
             $schema->__toString()
         );
     }
@@ -22,10 +22,10 @@ final class DropTest extends \QueryStringTest
     /** @test */
     public function itCanGenerateCreateDatabaseIfExists()
     {
-        $schema = new Drop('test', $this->pdo_schame);
+        $schema = new Drop('testing_db', 'test', $this->pdo_schame);
 
         $this->assertEquals(
-            'DROP TABLE IF EXISTS test;',
+            'DROP TABLE IF EXISTS testing_db.test;',
             $schema->ifExists(true)->__toString()
         );
     }
@@ -33,10 +33,10 @@ final class DropTest extends \QueryStringTest
     /** @test */
     public function itCanGenerateCreateDatabaseIfExistsFalse()
     {
-        $schema = new Drop('test', $this->pdo_schame);
+        $schema = new Drop('testing_db', 'test', $this->pdo_schame);
 
         $this->assertEquals(
-            'DROP TABLE IF NOT EXISTS test;',
+            'DROP TABLE IF NOT EXISTS testing_db.test;',
             $schema->ifExists(false)->__toString()
         );
     }
@@ -44,10 +44,10 @@ final class DropTest extends \QueryStringTest
     /** @test */
     public function itCanGenerateCreateDatabaseIfNotExists()
     {
-        $schema = new Drop('test', $this->pdo_schame);
+        $schema = new Drop('testing_db', 'test', $this->pdo_schame);
 
         $this->assertEquals(
-            'DROP TABLE IF NOT EXISTS test;',
+            'DROP TABLE IF NOT EXISTS testing_db.test;',
             $schema->ifNotExists(true)->__toString()
         );
     }
@@ -55,10 +55,10 @@ final class DropTest extends \QueryStringTest
     /** @test */
     public function itCanGenerateCreateDatabaseIfNotExistsFalse()
     {
-        $schema = new Drop('test', $this->pdo_schame);
+        $schema = new Drop('testing_db', 'test', $this->pdo_schame);
 
         $this->assertEquals(
-            'DROP TABLE IF EXISTS test;',
+            'DROP TABLE IF EXISTS testing_db.test;',
             $schema->ifNotExists(false)->__toString()
         );
     }

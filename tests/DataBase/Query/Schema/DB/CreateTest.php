@@ -9,18 +9,6 @@ use System\Database\MySchema\DB\Create;
 final class CreateTest extends \QueryStringTest
 {
     /** @test */
-    public function itCanSetQuery()
-    {
-        $schema = new Create('test', $this->pdo_schame);
-        $schema->query('CREATE DATABASE test;');
-
-        $this->assertEquals(
-            'CREATE DATABASE test;',
-            $schema->__toString()
-        );
-    }
-
-    /** @test */
     public function itCanGenerateCreateDatabase()
     {
         $schema = new Create('test', $this->pdo_schame);

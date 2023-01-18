@@ -13,19 +13,18 @@ class Drop extends Query
     use ConditionTrait;
 
     /** @var string */
-    private $database_name;
+    private $table_name;
 
-    public function __construct(string $database_name, MyPDO $pdo)
+    public function __construct(string $database_name, string $table_name, MyPDO $pdo)
     {
-        $this->database_name = $database_name;
+        $this->table_name    = $database_name . '.' . $table_name;
         $this->pdo           = $pdo;
-        $this->query         = $this->builder();
     }
 
     protected function builder(): string
     {
-        $conditon = $this->join([$this->if_exists, $this->database_name]);
+        $conditon = $this->join([$this->if_exists, $this->table_name]);
 
-        return $this->query = 'DROP TABLE ' . $conditon . ';';
+        return 'DROP TABLE ' . $conditon . ';';
     }
 }
