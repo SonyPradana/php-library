@@ -8,7 +8,11 @@ use System\Database\MySchema\DB\Create;
 
 final class CreateTest extends \RealDatabaseConnectionTest
 {
-    /** @test */
+    /**
+     * @test
+     *
+     * @group database
+     */
     public function itCanGenerateCreateDatabase()
     {
         // need clean up

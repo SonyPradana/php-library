@@ -8,7 +8,11 @@ use System\Database\MySchema\Table\Create;
 
 final class CreateTest extends \RealDatabaseConnectionTest
 {
-    /** @test */
+    /**
+     * @test
+     *
+     * @group database
+     */
     public function itCanGenerateCreateDatabase()
     {
         $schema = new Create($this->pdo_schema->configs()['database_name'], 'profiles', $this->pdo_schema);

@@ -8,7 +8,11 @@ use System\Database\MySchema\Table\Drop;
 
 final class DropTest extends \RealDatabaseConnectionTest
 {
-    /** @test */
+    /**
+     * @test
+     *
+     * @group database
+     */
     public function itCanGenerateCreateDatabase()
     {
         $schema = new Drop($this->pdo_schema->configs()['database_name'], 'users', $this->pdo_schema);
