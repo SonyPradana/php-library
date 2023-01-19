@@ -19,17 +19,17 @@ class MySchema
         $this->pdo = $pdo;
     }
 
-    public function create()
+    public function create(): Create
     {
         return new Create($this->pdo);
     }
 
-    public function drop()
+    public function drop(): Drop
     {
         return new Drop($this->pdo);
     }
 
-    public function refresh(string $table_name)
+    public function refresh(string $table_name): Truncate
     {
         $database_name = $this->pdo->configs()['database_name'];
 

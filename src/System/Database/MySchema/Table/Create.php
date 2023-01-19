@@ -11,7 +11,7 @@ use System\Database\MySchema\Table\Attributes\DataType;
 class Create extends Query
 {
     public const INNODB    = 'INNODB';
-    public const MyISAM    = 'MyISAM';
+    public const MYISAM    = 'MYISAM';
     public const MEMORY    = 'MEMORY';
     public const MERGE     = 'MERGE';
     public const EXAMPLE   = 'EXAMPLE';
