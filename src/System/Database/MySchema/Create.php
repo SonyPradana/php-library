@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Database\MySchema;
 
+/** Proxy for create database and table */
 class Create
 {
     /** @var MyPDO */

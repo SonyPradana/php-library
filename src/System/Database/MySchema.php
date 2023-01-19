@@ -7,6 +7,7 @@ namespace System\Database;
 use System\Database\MySchema\Create;
 use System\Database\MySchema\Drop;
 use System\Database\MySchema\MyPDO;
+use System\Database\MySchema\Table\Truncate;
 
 class MySchema
 {
@@ -26,5 +27,12 @@ class MySchema
     public function drop()
     {
         return new Drop($this->pdo);
+    }
+
+    public function refresh(string $table_name)
+    {
+        $database_name = $this->pdo->configs()['database_name'];
+
+        return new Truncate($database_name, $table_name, $this->pdo);
     }
 }

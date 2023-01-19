@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Database\MySchema;
 
+/** Proxy for drop database and table */
 class Drop
 {
     /** @var MyPDO */

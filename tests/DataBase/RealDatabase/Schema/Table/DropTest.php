@@ -13,7 +13,7 @@ final class DropTest extends \RealDatabaseConnectionTest
      *
      * @group database
      */
-    public function itCanGenerateCreateDatabase()
+    public function itCanGenerateDropDatabase()
     {
         $schema = new Drop($this->pdo_schema->configs()['database_name'], 'users', $this->pdo_schema);
 
