@@ -93,4 +93,19 @@ final class CreateTest extends \QueryStringTest
             $schema->__toString()
         );
     }
+
+    /** @test */
+    public function itCanGenerateQueryWithStorageEngine()
+    {
+        $schema = new Create('testing_db', 'test', $this->pdo_schame);
+        $schema->addColumn()->raw('PersonID int');
+        $schema->addColumn()->raw('LastName varchar(255)');
+        $schema->primaryKey('PersonID');
+        $schema->engine(Create::INNODB);
+
+        $this->assertEquals(
+            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), PRIMARY KEY (`PersonID`) ) ENGINE=INNODB',
+            $schema->__toString()
+        );
+    }
 }
