@@ -14,6 +14,8 @@ class Constraint
     private $default;
     /** @var string */
     private $auto_increment;
+    /** @var string */
+    private $raw;
 
     public function __construct(string $data_type)
     {
@@ -21,6 +23,7 @@ class Constraint
         $this->null_able      = '';
         $this->default        = '';
         $this->auto_increment = '';
+        $this->raw            = '';
     }
 
     public function __toString()
@@ -35,6 +38,7 @@ class Constraint
             $this->null_able,
             $this->default,
             $this->auto_increment,
+            $this->raw,
         ];
 
         return implode(' ', array_filter($collumn, fn ($item) => $item !== ''));
@@ -69,5 +73,12 @@ class Constraint
     public function increment(bool $incremnet): self
     {
         return $this->autoIncrement($incremnet);
+    }
+
+    public function raw(string $raw): self
+    {
+        $this->raw = $raw;
+
+        return $this;
     }
 }
