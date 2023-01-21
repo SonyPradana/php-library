@@ -101,6 +101,17 @@ PDO::transaction(function() {
 });
 ```
 
+### Create Database Table
+create database table
+```php
+  Schema::table('users', function(Column $column) {
+    $column('user')->varchar(50);
+    $column('pwd')->varchar(500)->notNull();
+    $column->primeryKeys('user');
+  })
+  ->excute();
+```
+
 [🔝 Back to contents](#Feature)
 
 ## Collection 

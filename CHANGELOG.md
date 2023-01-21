@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### [0.16.0] - 2023-01-21
+### Added
+- Added `\System\Database\MySchema\Create::class`, `\System\Database\MySchema\Drop::class`, `\System\Database\MySchema\Truncate::class` to crate/drop database or table. Or using shorthand 'MySchema::class`.
+
 ### [0.15.0] - 2023-01-10
 ### Added
 - Added `Query::queryBind()` method to return query string with the bind's.
