@@ -60,12 +60,14 @@ class Now
     /** @var int|float */
     private $age;
 
-    public function __construct(string $date_format = 'now')
+    public function __construct(string $date_format = 'now', string $time_zone = null)
     {
-        $this->time = strtotime($date_format);
+        if (null !== $time_zone) {
+            $time_zone = new \DateTimeZone($time_zone);
+        }
+        $date = new \DateTime($date_format, $time_zone);
 
-        // set porperty
-        $this->refresh();
+        $this->refresh($date->getTimestamp());
     }
 
     public function __toString()
@@ -116,8 +118,9 @@ class Now
      *
      * @return void
      */
-    private function refresh()
+    private function refresh(int $timestamp = null)
     {
+        $this->time = $timestamp ?? $this->time;
         $this->timestamp = $this->time;
         $this->year      = (int) date('Y', $this->time);
         $this->month     = (int) date('n', $this->time);
