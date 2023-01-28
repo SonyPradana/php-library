@@ -23,12 +23,7 @@ use System\Time\Exceptions\PropertyNotSetAble;
  */
 class Now
 {
-    /**
-     * Timestime.
-     *
-     * @var int|false
-     */
-    private $time;
+    private \DateTime $date;
 
     // public
     /** @var int|false */
@@ -60,19 +55,21 @@ class Now
     /** @var int|float */
     private $age;
 
-    public function __construct(string $date_format = 'now')
+    public function __construct(string $date_format = 'now', string $time_zone = null)
     {
-        $this->time = strtotime($date_format);
+        if (null !== $time_zone) {
+            $time_zone = new \DateTimeZone($time_zone);
+        }
+        $this->date = new \DateTime($date_format, $time_zone);
 
-        // set porperty
         $this->refresh();
     }
 
     public function __toString()
     {
         return implode('T', [
-            date('Y-m-d', $this->time),
-            date('H:i:s', $this->time),
+            $this->date->format('Y-m-d'),
+            $this->date->format('H:i:s'),
         ]);
     }
 
@@ -113,25 +110,23 @@ class Now
 
     /**
      * Refresh property with current time.
-     *
-     * @return void
      */
     private function refresh()
     {
-        $this->timestamp = $this->time;
-        $this->year      = (int) date('Y', $this->time);
-        $this->month     = (int) date('n', $this->time);
-        $this->day       = (int) date('d', $this->time);
-        $this->hour      = (int) date('H', $this->time);
-        $this->minute    = (int) date('i', $this->time);
-        $this->second    = (int) date('s', $this->time);
+        $this->timestamp = $this->date->getTimestamp();
+        $this->year      = (int) $this->date->format('Y');
+        $this->month     = (int) $this->date->format('n');
+        $this->day       = (int) $this->date->format('d');
+        $this->hour      = (int) $this->date->format('H');
+        $this->minute    = (int) $this->date->format('i');
+        $this->second    = (int) $this->date->format('s');
 
-        $this->monthName = date('F', $this->time);
-        $this->dayName   = date('l', $this->time);
-        $this->timeZone  = date('e', $this->time);
-        $this->shortDay  = date('D', $this->time);
+        $this->monthName = $this->date->format('F');
+        $this->dayName   = $this->date->format('l');
+        $this->timeZone  = $this->date->format('e');
+        $this->shortDay  = $this->date->format('D');
 
-        $age       = time() - $this->time;
+        $age       = time() - $this->date->getTimestamp();
         $this->age = abs(floor($age / (365 * 60 * 60 * 24)));
     }
 
@@ -142,13 +137,16 @@ class Now
      */
     public function year(int $year)
     {
-        $this->time = mktime(
+        $this->date
+        ->setDate(
+            $year,
+            $this->month,
+            $this->day
+        )
+        ->setTime(
             $this->hour,
             $this->minute,
-            $this->second,
-            $this->month,
-            $this->day,
-            $year
+            $this->second
         );
         $this->refresh();
 
@@ -162,13 +160,16 @@ class Now
      */
     public function month(int $month)
     {
-        $this->time = mktime(
+        $this->date
+        ->setDate(
+            $this->year,
+            $month,
+            $this->day
+        )
+        ->setTime(
             $this->hour,
             $this->minute,
-            $this->second,
-            $month,
-            $this->day,
-            $this->year
+            $this->second
         );
         $this->refresh();
 
@@ -182,13 +183,16 @@ class Now
      */
     public function day(int $day)
     {
-        $this->time = mktime(
+        $this->date
+        ->setDate(
+            $this->year,
+            $this->month,
+            $day
+        )
+        ->setTime(
             $this->hour,
             $this->minute,
-            $this->second,
-            $this->month,
-            $day,
-            $this->year
+            $this->second
         );
         $this->refresh();
 
@@ -202,13 +206,16 @@ class Now
      */
     public function hour(int $hour)
     {
-        $this->time = mktime(
+        $this->date
+        ->setDate(
+            $this->year,
+            $this->month,
+            $this->day
+        )
+        ->setTime(
             $hour,
             $this->minute,
-            $this->second,
-            $this->month,
-            $this->day,
-            $this->year
+            $this->second
         );
         $this->refresh();
 
@@ -222,13 +229,16 @@ class Now
      */
     public function minute(int $minute)
     {
-        $this->time = mktime(
+        $this->date
+        ->setDate(
+            $this->year,
+            $this->month,
+            $this->day
+        )
+        ->setTime(
             $this->hour,
             $minute,
-            $this->second,
-            $this->month,
-            $this->day,
-            $this->year
+            $this->second
         );
         $this->refresh();
 
@@ -242,13 +252,16 @@ class Now
      */
     public function second(int $second)
     {
-        $this->time = mktime(
+        $this->date
+        ->setDate(
+            $this->year,
+            $this->month,
+            $this->day
+        )
+        ->setTime(
             $this->hour,
             $this->minute,
-            $second,
-            $this->month,
-            $this->day,
-            $this->year
+            $second
         );
         $this->refresh();
 
@@ -259,99 +272,99 @@ class Now
 
     public function isJan(): bool
     {
-        return date('M', $this->time) === 'Jan';
+        return $this->date->format('M') === 'Jan';
     }
 
     public function isFeb(): bool
     {
-        return date('M', $this->time) === 'Feb';
+        return $this->date->format('M') === 'Feb';
     }
 
     public function isMar(): bool
     {
-        return date('M', $this->time) === 'Mar';
+        return $this->date->format('M') === 'Mar';
     }
 
     public function isApr(): bool
     {
-        return date('M', $this->time) === 'Apr';
+        return $this->date->format('M') === 'Apr';
     }
 
     public function isMay(): bool
     {
-        return date('M', $this->time) === 'May';
+        return $this->date->format('M') === 'May';
     }
 
     public function isJun(): bool
     {
-        return date('M', $this->time) === 'Jun';
+        return $this->date->format('M') === 'Jun';
     }
 
     public function isJul(): bool
     {
-        return date('M', $this->time) === 'Jul';
+        return $this->date->format('M') === 'Jul';
     }
 
     public function isAug(): bool
     {
-        return date('M', $this->time) === 'Aug';
+        return $this->date->format('M') === 'Aug';
     }
 
     public function isSep(): bool
     {
-        return date('M', $this->time) === 'Sep';
+        return $this->date->format('M') === 'Sep';
     }
 
     public function isOct(): bool
     {
-        return date('M', $this->time) === 'Oct';
+        return $this->date->format('M') === 'Oct';
     }
 
     public function isNov(): bool
     {
-        return date('M', $this->time) === 'Nov';
+        return $this->date->format('M') === 'Nov';
     }
 
     //  day
 
     public function isDec(): bool
     {
-        return date('M', $this->time) === 'Dec';
+        return $this->date->format('M') === 'Dec';
     }
 
     public function isMonday(): bool
     {
-        return date('D', $this->time) === 'Mon';
+        return $this->date->format('D') === 'Mon';
     }
 
     public function isTuesday(): bool
     {
-        return date('D', $this->time) === 'Tue';
+        return $this->date->format('D') === 'Tue';
     }
 
     public function isWednesday(): bool
     {
-        return date('D', $this->time) === 'Wed';
+        return $this->date->format('D') === 'Wed';
     }
 
     public function isThursday(): bool
     {
-        return date('D', $this->time) == 'Thu';
+        return $this->date->format('D') == 'Thu';
     }
 
     public function isFriday(): bool
     {
-        return date('D', $this->time) == 'Fri';
+        return $this->date->format('D') == 'Fri';
     }
 
     public function isSaturday(): bool
     {
-        return date('D', $this->time) == 'Sat';
+        return $this->date->format('D') == 'Sat';
     }
 
     public function isSunday(): bool
     {
-        return date('D', $this->time) == 'Sun';
+        return $this->date->format('D') == 'Sun';
     }
 
     // next time
