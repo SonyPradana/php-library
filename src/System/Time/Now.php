@@ -25,7 +25,6 @@ class Now
 {
     private \DateTime $date;
 
-    // public
     /** @var int|false */
     private $timestamp;
     /** @var int */
@@ -128,6 +127,16 @@ class Now
 
         $age       = time() - $this->date->getTimestamp();
         $this->age = abs(floor($age / (365 * 60 * 60 * 24)));
+    }
+
+    private function current(string $format, int $timestamp): string
+    {
+        $date = $this->date;
+
+        return $date
+            ->setTimestamp($timestamp)
+            ->format($format)
+        ;
     }
 
     /**
@@ -371,69 +380,69 @@ class Now
 
     public function isNextYear(): bool
     {
-        return date('Y') + 1 == $this->year;
+        return (int) $this->current('Y', time()) + 1 == $this->year;
     }
 
     public function isNextMonth(): bool
     {
         $time = strtotime('next month');
 
-        return date('n', $time) == $this->month;
+        return $this->current('n', $time) == $this->month;
     }
 
     public function isNextDay(): bool
     {
         $time = strtotime('next day');
 
-        return date('m', $time) == $this->day;
+        return $this->current('m', $time) == $this->day;
     }
 
     public function isNextHour(): bool
     {
         $time = strtotime('next hour');
 
-        return date('H', $time) == $this->hour;
+        return $this->current('H', $time) == $this->hour;
     }
 
     public function isNextMinute(): bool
     {
         $time = strtotime('next minute');
 
-        return date('i', $time) == $this->minute;
+        return $this->current('i', $time) == $this->minute;
     }
 
     // last time
 
     public function isLastYear(): bool
     {
-        return date('Y') - 1 == $this->year;
+        return (int) $this->current('Y', time()) - 1 == $this->year;
     }
 
     public function isLastMonth(): bool
     {
         $time = strtotime('next month');
 
-        return date('m', $time) == $this->month;
+        return $this->current('m', $time) == $this->month;
     }
 
     public function isLastDay(): bool
     {
         $time = strtotime('next day');
 
-        return date('m', $time) == $this->day;
+        return $this->current('m', $time) == $this->day;
     }
 
     public function isLastHour(): bool
     {
         $time = strtotime('next hour');
 
-        return date('H', $time) == $this->hour;
+        return $this->current('H', $time) == $this->hour;
     }
 
     public function isLastMinute(): bool
     {
         $time = strtotime('next minute');
 
-        return date('i', $time) == $this->minute;
+        return $this->current('i', $time) == $this->minute;
     }
 }
