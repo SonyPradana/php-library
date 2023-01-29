@@ -140,6 +140,14 @@ class Now
     }
 
     /**
+     * Get formated date time.
+     */
+    public function format(string $format): string
+    {
+        return $this->date->format($format);
+    }
+
+    /**
      * Set year time.
      *
      * @return self
