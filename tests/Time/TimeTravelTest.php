@@ -241,4 +241,12 @@ final class TimeTravelTest extends TestCase
         $this->expectException(PropertyNotExist::class);
         $now->not_exist_property;
     }
+
+    /** @test */
+    public function itCanReturnFormatedTime()
+    {
+        $now = new Now('29-01-2023');
+
+        $this->assertEquals('2023-01-29', $now->format('Y-m-d'));
+    }
 }
