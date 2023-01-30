@@ -430,7 +430,7 @@ class Now
     {
         $time = strtotime('next month');
 
-        return $this->current('d', $time) == $this->month;
+        return $this->current('m', $time) == $this->month;
     }
 
     public function isLastDay(): bool
