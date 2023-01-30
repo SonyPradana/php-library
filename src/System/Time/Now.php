@@ -402,7 +402,7 @@ class Now
     {
         $time = strtotime('next day');
 
-        return $this->current('m', $time) == $this->day;
+        return $this->current('d', $time) == $this->day;
     }
 
     public function isNextHour(): bool
@@ -430,14 +430,14 @@ class Now
     {
         $time = strtotime('next month');
 
-        return $this->current('m', $time) == $this->month;
+        return $this->current('d', $time) == $this->month;
     }
 
     public function isLastDay(): bool
     {
         $time = strtotime('next day');
 
-        return $this->current('m', $time) == $this->day;
+        return $this->current('d', $time) == $this->day;
     }
 
     public function isLastHour(): bool
