@@ -388,7 +388,9 @@ class Now
 
     public function isNextYear(): bool
     {
-        return (int) $this->current('Y', time()) + 1 == $this->year;
+        $time = strtotime('next year');
+
+        return $this->current('Y', $time) == $this->year;
     }
 
     public function isNextMonth(): bool
@@ -423,33 +425,35 @@ class Now
 
     public function isLastYear(): bool
     {
-        return (int) $this->current('Y', time()) - 1 == $this->year;
+        $time = strtotime('last year');
+
+        return $this->current('Y', $time) == $this->year;
     }
 
     public function isLastMonth(): bool
     {
-        $time = strtotime('next month');
+        $time = strtotime('last month');
 
         return $this->current('m', $time) == $this->month;
     }
 
     public function isLastDay(): bool
     {
-        $time = strtotime('next day');
+        $time = strtotime('last day');
 
         return $this->current('d', $time) == $this->day;
     }
 
     public function isLastHour(): bool
     {
-        $time = strtotime('next hour');
+        $time = strtotime('last hour');
 
         return $this->current('H', $time) == $this->hour;
     }
 
     public function isLastMinute(): bool
     {
-        $time = strtotime('next minute');
+        $time = strtotime('last minute');
 
         return $this->current('i', $time) == $this->minute;
     }
