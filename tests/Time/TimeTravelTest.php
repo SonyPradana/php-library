@@ -249,4 +249,12 @@ final class TimeTravelTest extends TestCase
 
         $this->assertEquals('2023-01-29', $now->format('Y-m-d'));
     }
+
+    /** @test */
+    public function itCanReturnFormatedTimeWithStandartTime()
+    {
+        $now = new Now('29-01-2023', 'UTC');
+
+        $this->assertEquals('Sunday, 29-Jan-2023 00:00:00 UTC', $now->formatCOOKIE());
+    }
 }
