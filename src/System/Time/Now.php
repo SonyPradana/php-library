@@ -6,6 +6,7 @@ namespace System\Time;
 
 use System\Time\Exceptions\PropertyNotExist;
 use System\Time\Exceptions\PropertyNotSetAble;
+use System\Time\Traits\DateTimeFormatTrait;
 
 /**
  * @property int    $timestamp
@@ -23,6 +24,8 @@ use System\Time\Exceptions\PropertyNotSetAble;
  */
 class Now
 {
+    use DateTimeFormatTrait;
+
     private \DateTime $date;
 
     /** @var int|false */
