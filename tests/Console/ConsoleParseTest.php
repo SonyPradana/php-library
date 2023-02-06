@@ -64,7 +64,7 @@ class ConsoleParseTest extends TestCase
         // parse long param
         $this->assertEquals(
             'children',
-            $cli->whois,
+            $cli->__get('who-is'),
             'valid parse from long param: --who-is'
         );
     }
