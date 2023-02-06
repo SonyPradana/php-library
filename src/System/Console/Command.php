@@ -99,7 +99,7 @@ class Command
         foreach ($argv as $key => $option) {
             if ($this->isCommmadParam($option)) {
                 $key_value = explode('=', $option);
-                $name      = preg_replace('/-(.*?)/', '', $key_value[0]);
+                $name      = preg_replace('/^(-{1,2})/', '', $key_value[0]);
 
                 // param have value
                 if (isset($key_value[1])) {
