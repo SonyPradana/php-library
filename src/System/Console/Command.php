@@ -166,7 +166,7 @@ class Command implements \ArrayAccess
     }
 
     /**
-     * @param mixed $offset — Check parse commandline parameters.
+     * @param mixed $offset — Check parse commandline parameters
      */
     public function offsetExists($offset): bool
     {
@@ -174,7 +174,7 @@ class Command implements \ArrayAccess
     }
 
     /**
-     * @param mixed $offset — Check parse commandline parameters.
+     * @param mixed $offset — Check parse commandline parameters
      */
     public function offsetGet($offset)
     {

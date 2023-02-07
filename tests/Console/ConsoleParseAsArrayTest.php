@@ -5,7 +5,6 @@ use System\Console\Command;
 
 class ConsoleParseAsArrayTest extends TestCase
 {
-
     /** @test */
     public function itCanParseNormalCommandWithSpace()
     {
