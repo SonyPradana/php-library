@@ -10,7 +10,7 @@ use System\Text\Str;
  *
  * @property string $name Get argument name
  */
-class Command
+class Command implements \ArrayAccess
 {
     /**
      * Commandline input.
@@ -163,6 +163,32 @@ class Command
     public function __get($name)
     {
         return $this->option($name);
+    }
+
+    /**
+     * @param mixed $offset — Check parse commandline parameters
+     */
+    public function offsetExists($offset): bool
+    {
+        return array_key_exists($offset, $this->option_mapper);
+    }
+
+    /**
+     * @param mixed $offset — Check parse commandline parameters
+     */
+    public function offsetGet($offset)
+    {
+        return $this->option($offset);
+    }
+
+    public function offsetSet($offset, $value): void
+    {
+        throw new \Exception('Command cant be modify');
+    }
+
+    public function offsetUnset($offset): void
+    {
+        throw new \Exception('Command cant be modify');
     }
 
     /**
