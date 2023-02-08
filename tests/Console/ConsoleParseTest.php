@@ -19,6 +19,11 @@ class ConsoleParseTest extends TestCase
             $cli->name,
             'valid parse name'
         );
+        $this->assertEquals(
+            'test',
+            $cli->_,
+            'valid parse name'
+        );
 
         // parse long param
         $this->assertEquals(
@@ -48,6 +53,11 @@ class ConsoleParseTest extends TestCase
             'test',
             $cli->name,
             'valid parse name: test'
+        );
+        $this->assertEquals(
+            'test',
+            $cli->_,
+            'valid parse name'
         );
 
         // parse short param

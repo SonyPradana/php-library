@@ -8,7 +8,7 @@ use System\Text\Str;
  * Add costumize terminal style by adding trits:
  * - TraitCommand (optional).
  *
- * @property string $name Get argument name
+ * @property string $_ Get argument name
  */
 class Command implements \ArrayAccess
 {
@@ -94,7 +94,7 @@ class Command implements \ArrayAccess
     private function option_mapper(array $argv): array
     {
         $options         = [];
-        $options['name'] = $argv[0] ?? '';
+        $options['_']    = $options['name'] = $argv[0] ?? '';
 
         foreach ($argv as $key => $option) {
             if ($this->isCommmadParam($option)) {
