@@ -183,12 +183,12 @@ class Command implements \ArrayAccess
 
     public function offsetSet($offset, $value): void
     {
-        throw new \Exception('Conmmand cant be modify');
+        throw new \Exception('Command cant be modify');
     }
 
     public function offsetUnset($offset): void
     {
-        throw new \Exception('Conmmand cant be modify');
+        throw new \Exception('Command cant be modify');
     }
 
     /**
