@@ -176,27 +176,33 @@ final class Application extends Container
     /**
      * Load and set Configuration to application.
      *
-     * @param string $base_path Base path
-     *
-     * @return void
+     * @param string                         $base_path      Base path
+     * @param array<string, string|string[]> $configs_option
      */
-    public function loadConfig(string $base_path)
+    public function loadConfig(string $base_path, array $configs_option = []): void
     {
+        // default
+        $configs_option = array_merge(
+            [
+                'path'  => $base_path . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR,
+                'paths' => [
+                    'app.config.php',
+                    'database.config.php',
+                    'pusher.config.php',
+                    'cachedriver.config.php',
+                ],
+            ],
+            $configs_option
+        );
+
         // set base path
         $this->setBasePath($base_path);
         $this->setAppPath($base_path);
-        $config_path = $base_path . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR;
 
         // check file exis
         $configs = $this->defaultConfigs();
-        $paths   = [
-           'app.config.php',
-           'database.config.php',
-           'pusher.config.php',
-           'cachedriver.config.php',
-        ];
-        foreach ($paths as $path) {
-            $file_path = $config_path . $path;
+        foreach ($configs_option['paths'] as $path) {
+            $file_path = $configs_option['path'] . $path;
 
             if (file_exists($file_path)) {
                 $config     = include $file_path;
