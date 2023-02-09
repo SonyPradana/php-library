@@ -102,6 +102,11 @@ final class Application extends Container
      */
     private $view_path;
 
+    /**
+     * View path.
+     */
+    private string $migraton_path;
+
     // property ------------------------------
 
     /**
@@ -214,6 +219,7 @@ final class Application extends Container
         $this->setConfigPath($configs['CONFIG']);
         $this->setMiddlewarePath($configs['MIDDLEWARE']);
         $this->setProviderPath($configs['SERVICE_PROVIDER']);
+        $this->setMigrationPath($configs['MIGRATION_PATH']);
         // pusher config
         $this->set('config.pusher_id', $configs['PUSHER_APP_ID']);
         $this->set('config.pusher_key', $configs['PUSHER_APP_KEY']);
@@ -250,6 +256,7 @@ final class Application extends Container
             'CONFIG'                => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR,
             'MIDDLEWARE'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'middleware' . DIRECTORY_SEPARATOR,
             'SERVICE_PROVIDER'      => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Providers' . DIRECTORY_SEPARATOR,
+            'MIGRATION_PATH'        => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migration' . DIRECTORY_SEPARATOR,
 
             'PROVIDERS'             => [
                 // provider class name
@@ -478,6 +485,17 @@ final class Application extends Container
         return $this;
     }
 
+    /**
+     * Set serviece provider path.
+     */
+    public function setMigrationPath(string $path): self
+    {
+        $this->migraton_path = $this->base_path . $path;
+        $this->set('path.migration', $this->migraton_path);
+
+        return $this;
+    }
+
     // getter region ---------------------------------------------
 
     /**
@@ -598,6 +616,14 @@ final class Application extends Container
     public function provider_path()
     {
         return $this->get('path.provider');
+    }
+
+    /**
+     * Get migration path.
+     */
+    public function migration_path(): string
+    {
+        return $this->get('path.migration');
     }
 
     /**

@@ -173,6 +173,15 @@ if (!function_exists('provider_path')) {
     }
 }
 
+if (!function_exists('migration_path')) {
+    function migration_path(string $surfix_path = ''): string
+    {
+        $path = app()->migration_path() . $surfix_path;
+
+        return $path;
+    }
+}
+
 if (!function_exists('base_path')) {
     /**
      * Get base path.
