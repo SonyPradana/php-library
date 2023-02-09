@@ -5,7 +5,6 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use System\Console\Command;
 use System\Console\Style\Style;
-use System\Console\Traits\CommandTrait;
 use System\Console\Traits\ValidateCommandTrait;
 use System\Text\Str;
 use Validator\Rule\ValidPool;
