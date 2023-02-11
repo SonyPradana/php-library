@@ -12,24 +12,28 @@ use System\Console\Style\Style;
  */
 class Prompt
 {
-    private string $title;
+    /**
+     * @var string|Style
+     */
+    private $title;
 
     /**
-     * @var array<string, callback>
+     * @var array<string, callable>
      */
     private array $options;
 
     private string $default;
 
     /**
-     * @var string[]
+     * @var string[]|Style[]
      */
     private array $selection;
 
     /**
-     * @param array<string, callback> $options
+     * @param string|Style            $title
+     * @param array<string, callable> $options
      */
-    public function __construct(string $title, array $options = [], string $default = '')
+    public function __construct($title, array $options = [], string $default = '')
     {
         $this->title     = $title;
         $this->options   = array_merge(['' => fn () => false], $options);
@@ -104,10 +108,10 @@ class Prompt
         return ($this->options[$this->default])();
     }
 
-    public function text(callable $callback): mixed
+    public function text(callable $callable): mixed
     {
         (new Style($this->title))->out();
 
-        return ($callback)($this->getInput());
+        return ($callable)($this->getInput());
     }
 }
