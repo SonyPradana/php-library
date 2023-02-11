@@ -73,3 +73,37 @@ if (!function_exists('ok')) {
         return \System\Console\Style\Alert::render()->ok($text);
     }
 }
+
+if (!function_exists('option')) {
+    /**
+     * Command Prompt input option.
+     *
+     * @param array<string, callback> $options
+     */
+    function option(string $title, array $options): void
+    {
+        (new Prompt($title, $options))->option();
+    }
+}
+
+if (!function_exists('select')) {
+    /**
+     * Command Prompt input selection.
+     *
+     * @param array<string, callback> $options
+     */
+    function select(string $title, array $options): void
+    {
+        (new Prompt($title, $options))->select();
+    }
+}
+
+if (!function_exists('text')) {
+    /**
+     * Command Prompt input text.
+     */
+    function text(string $title, callable $callback): mixed
+    {
+        return (new Prompt($title))->text($callback);
+    }
+}
