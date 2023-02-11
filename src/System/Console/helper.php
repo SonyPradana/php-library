@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace System\Console;
 
+use System\Console\Style\Style;
+
 if (!function_exists('style')) {
     /**
      * Render text with terminal style (chain way).
@@ -71,5 +73,43 @@ if (!function_exists('ok')) {
     function ok($text)
     {
         return \System\Console\Style\Alert::render()->ok($text);
+    }
+}
+
+if (!function_exists('option')) {
+    /**
+     * Command Prompt input option.
+     *
+     * @param string|Style            $title
+     * @param array<string, callable> $options
+     */
+    function option($title, array $options): mixed
+    {
+        return (new Prompt($title, $options))->option();
+    }
+}
+
+if (!function_exists('select')) {
+    /**
+     * Command Prompt input selection.
+     *
+     * @param string|Style            $title
+     * @param array<string, callable> $options
+     */
+    function select($title, array $options): mixed
+    {
+        return (new Prompt($title, $options))->select();
+    }
+}
+
+if (!function_exists('text')) {
+    /**
+     * Command Prompt input text.
+     *
+     * @param string|Style $title
+     */
+    function text($title, callable $callable): mixed
+    {
+        return (new Prompt($title))->text($callable);
     }
 }
