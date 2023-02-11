@@ -22,13 +22,19 @@ class Prompt
     private string $default;
 
     /**
+     * @var string[]
+     */
+    private array $selection;
+
+    /**
      * @param array<string, callback> $options
      */
     public function __construct(string $title, array $options = [], string $default = '')
     {
-        $this->title   = $title;
-        $this->options = $options;
-        $this->default = $default;
+        $this->title     = $title;
+        $this->options   = array_merge(['' => fn () => false], $options);
+        $this->default   = $default;
+        $this->selection = array_keys($options);
     }
 
     private function getInput(): string
@@ -42,28 +48,48 @@ class Prompt
         return trim($input);
     }
 
-    public function option(): void
+    /**
+     * @param string[] $selection
+     */
+    public function selection(array $selection): self
+    {
+        $this->selection = $selection;
+
+        return $this;
+    }
+
+    public function option(): mixed
     {
         $style = new Style();
         $style->push($this->title)->push(' ');
-        foreach ($this->options as $option => $callback) {
-            $style->push("{$option} ");
+        foreach ($this->selection as $option) {
+            if ($option instanceof Style) {
+                $style->tap($option);
+            } else {
+                $style->push("{$option} ");
+            }
         }
 
         $style->out();
         $input = $this->getInput();
         if (array_key_exists($input, $this->options)) {
-            ($this->options[$input])();
+            return ($this->options[$input])();
         }
+
+        return ($this->options[$this->default])();
     }
 
-    public function select(): void
+    public function select(): mixed
     {
         $style = new Style();
         $style->push($this->title);
         $i = 0;
-        foreach ($this->options as $option => $callback) {
-            $style->new_lines()->push("> {$i} {$option}");
+        foreach ($this->selection as $option) {
+            if ($option instanceof Style) {
+                $style->tap($option);
+            } else {
+                $style->new_lines()->push("> {$i} {$option}");
+            }
             $i++;
         }
 
@@ -72,8 +98,10 @@ class Prompt
         $select = array_values($this->options);
 
         if (array_key_exists($input, $select)) {
-            ($select[$input])();
+            return ($select[$input])();
         }
+
+        return ($this->options[$this->default])();
     }
 
     public function text(callable $callback): mixed

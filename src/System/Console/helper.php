@@ -80,7 +80,7 @@ if (!function_exists('option')) {
      *
      * @param array<string, callback> $options
      */
-    function option(string $title, array $options): void
+    function option(string $title, array $options): mixed
     {
         (new Prompt($title, $options))->option();
     }
@@ -92,7 +92,7 @@ if (!function_exists('select')) {
      *
      * @param array<string, callback> $options
      */
-    function select(string $title, array $options): void
+    function select(string $title, array $options): mixed
     {
         (new Prompt($title, $options))->select();
     }
