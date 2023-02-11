@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Console;
 
 use System\Console\Style\Style;
@@ -53,9 +55,9 @@ class Prompt
     }
 
     /**
-     * @param string[] $selection
+     * @param string[]|Style[] $selection
      */
-    public function selection(array $selection): self
+    public function selection($selection): self
     {
         $this->selection = $selection;
 
