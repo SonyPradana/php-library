@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### [0.17.0] - 2023-02-14
+### Added
+- Added `Now::class` formated standart date.
+- Added `ValidationCommandTrait::trait`, validation command input with display error in console.
+- Added `Appcliaction::migration_path`.
+- Added Command Prompt class to interact with console input `select`, `option`, `text`.
+
+### Changed
+- `Now::class` support costume timezone.
+- `Command::option_maper` parse include minus sign `-` in parameter key.
+- `Command:class` implement array access, get parse agrv using command.
+- Property `Command::name` change to `Command::_`.
+
 ### [0.16.0] - 2023-01-21
 ### Added
 - Added `\System\Database\MySchema\Create::class`, `\System\Database\MySchema\Drop::class`, `\System\Database\MySchema\Truncate::class` to crate/drop database or table. Or using shorthand 'MySchema::class`.
