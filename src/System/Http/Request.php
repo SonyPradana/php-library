@@ -438,6 +438,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
      *
      * @return string|null
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->__get($offset);

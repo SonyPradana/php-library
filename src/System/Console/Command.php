@@ -176,6 +176,7 @@ class Command implements \ArrayAccess
     /**
      * @param mixed $offset — Check parse commandline parameters
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->option($offset);

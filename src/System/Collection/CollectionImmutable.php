@@ -13,6 +13,7 @@ class CollectionImmutable extends AbstractCollectionImmutable
         return $this->has($offset);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->__get($offset);

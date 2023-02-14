@@ -96,6 +96,7 @@ class Route implements \ArrayAccess
      *
      * @return string|null Can return all value types
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return isset($this->route[$offset]) ? $this->route[$offset] : null;
