@@ -238,10 +238,11 @@ class Collection extends AbstractCollectionImmutable
        return $this->has($offset);
    }
 
-    public function offsetGet($offset)
-    {
-        return $this->__get($offset);
-    }
+   #[\ReturnTypeWillChange]
+   public function offsetGet($offset)
+   {
+       return $this->__get($offset);
+   }
 
     public function offsetSet($offset, $value): void
     {
