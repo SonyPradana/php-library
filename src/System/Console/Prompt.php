@@ -116,4 +116,32 @@ class Prompt
 
         return ($callable)($this->getInput());
     }
+
+    public function password(callable $callable, string $mask = ''): mixed
+    {
+        (new Style($this->title))->out();
+
+        $userline = [];
+        readline_callback_handler_install('', function () {});
+        while (true) {
+            $keystroke = stream_get_contents(STDIN, 1);
+
+            switch (ord($keystroke)) {
+                case 10:
+                    break 2;
+                case 127:
+                    array_pop($userline);
+                    fwrite(STDOUT, chr(8));
+                    fwrite(STDOUT, "\033[0K");
+                    break;
+
+                default:
+                    $userline[] = $keystroke;
+                    fwrite(STDOUT, $mask);
+                    break;
+            }
+        }
+
+        return ($callable)(join($userline));
+    }
 }
