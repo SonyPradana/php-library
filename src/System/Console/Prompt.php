@@ -129,6 +129,7 @@ class Prompt
             switch (ord($keystroke)) {
                 case 10:
                     break 2;
+
                 case 127:
                     array_pop($userline);
                     fwrite(STDOUT, chr(8));
@@ -143,5 +144,14 @@ class Prompt
         }
 
         return ($callable)(join($userline));
+    }
+
+    public function anyKey(callable $callable): mixed
+    {
+        $prompt = (string) $this->title;
+        readline_callback_handler_install($prompt, function () {});
+        $keystroke = stream_get_contents(STDIN, 1);
+
+        return ($callable)($keystroke);
     }
 }
