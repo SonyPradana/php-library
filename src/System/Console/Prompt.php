@@ -64,7 +64,10 @@ class Prompt
         return $this;
     }
 
-    public function option(): mixed
+    /**
+     * @return mixed
+     */
+    public function option()
     {
         $style = new Style();
         $style->push($this->title)->push(' ');
@@ -85,16 +88,19 @@ class Prompt
         return ($this->options[$this->default])();
     }
 
-    public function select(): mixed
+    /**
+     * @return mixed
+     */
+    public function select()
     {
         $style = new Style();
         $style->push($this->title);
-        $i = 0;
+        $i = 1;
         foreach ($this->selection as $option) {
             if ($option instanceof Style) {
                 $style->tap($option);
             } else {
-                $style->new_lines()->push("> {$i} {$option}");
+                $style->new_lines()->push("[{$i}] {$option}");
             }
             $i++;
         }
@@ -110,14 +116,20 @@ class Prompt
         return ($this->options[$this->default])();
     }
 
-    public function text(callable $callable): mixed
+    /**
+     * @return mixed
+     */
+    public function text(callable $callable)
     {
         (new Style($this->title))->out();
 
         return ($callable)($this->getInput());
     }
 
-    public function password(callable $callable, string $mask = ''): mixed
+    /**
+     * @return mixed
+     */
+    public function password(callable $callable, string $mask = '')
     {
         (new Style($this->title))->out();
 
@@ -146,7 +158,10 @@ class Prompt
         return ($callable)(join($userline));
     }
 
-    public function anyKey(callable $callable): mixed
+    /**
+     * @return mixed
+     */
+    public function anyKey(callable $callable)
     {
         $prompt = (string) $this->title;
         readline_callback_handler_install($prompt, function () {});
