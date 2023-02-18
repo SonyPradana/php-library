@@ -1,0 +1,23 @@
+#!/usr/bin/env php
+<?php
+
+use System\Console\Command;
+use System\Console\Prompt;
+
+require_once dirname(__DIR__, 3) . '/vendor/autoload.php';
+
+$command = new class($argv) extends Command {
+  public function main()
+  {    
+    $prompt = new Prompt('test', [
+      'test_1' => function () {
+        echo "ok";
+      }
+    ]);      
+    $prompt->text(function($input) {
+      echo $input;
+    });
+  }
+};
+
+$command->main();
