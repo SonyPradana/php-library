@@ -5,8 +5,6 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use System\Text\Str;
 
-use function System\Console\warn;
-
 final class PromptTest extends TestCase
 {
     private function runCommand($command, $input)
