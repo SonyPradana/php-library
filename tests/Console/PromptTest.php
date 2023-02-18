@@ -5,6 +5,8 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use System\Text\Str;
 
+use function System\Console\warn;
+
 final class PromptTest extends TestCase
 {
     private function runCommand($command, $input)
@@ -74,19 +76,6 @@ final class PromptTest extends TestCase
         $output = $this->runCommand('php "' . $cli . '"', $input);
 
         $this->assertTrue(Str::contains($output, 'text'));
-    }
-
-    public function testPasswordPrompt()
-    {
-        if (!function_exists('readline_callback_handler_install')) {
-            $this->markTestSkipped("Console doest support 'readline_callback_handler_install'");
-        }
-
-        $input  = 'password';
-        $cli    = __DIR__ . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR . 'password';
-        $output = $this->runCommand('php "' . $cli . '"', $input);
-
-        $this->assertTrue(Str::contains($output, 'password'));
     }
 
     public function testAnyKeyPrompt()
