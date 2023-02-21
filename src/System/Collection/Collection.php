@@ -4,9 +4,13 @@ namespace System\Collection;
 
 class Collection extends AbstractCollectionImmutable
 {
-    public function __set($name, $value)
+    /**
+     * @param TKey   $name
+     * @param TValue $value
+     */
+    public function __set($name, $value): void
     {
-        return $this->set($name, $value);
+        $this->set($name, $value);
     }
 
     /**
@@ -19,23 +23,29 @@ class Collection extends AbstractCollectionImmutable
         return $this;
     }
 
-    public function clear()
+    public function clear(): self
     {
         $this->collection = [];
 
         return $this;
     }
 
-    public function add(array $params)
+    /**
+     * @param iterable<TKey, TValue>|null $collection
+     */
+    public function add(array $collection): self
     {
-        foreach ($params as $key => $item) {
+        foreach ($collection as $key => $item) {
             $this->set($key, $item);
         }
 
         return $this;
     }
 
-    public function remove(string $name)
+    /**
+     * @param TKey $name
+     */
+    public function remove($name): self
     {
         if ($this->has($name)) {
             unset($this->collection[$name]);
@@ -44,14 +54,21 @@ class Collection extends AbstractCollectionImmutable
         return $this;
     }
 
-    public function set(string $name, $value)
+    /**
+     * @param TKey   $name
+     * @param TValue $value
+     */
+    public function set($name, $value)
     {
         parent::set($name, $value);
 
         return $this;
     }
 
-    public function replace(array $new_collection)
+    /**
+     * @param iterable<TKey, TValue>|null $new_collection
+     */
+    public function replace(array $new_collection): self
     {
         $this->collection = [];
         foreach ($new_collection as $key => $item) {
@@ -61,7 +78,10 @@ class Collection extends AbstractCollectionImmutable
         return $this;
     }
 
-    public function map(callable $callable)
+    /**
+     * @param callable(TValue, TKey) $callable
+     */
+    public function map(callable $callable): self
     {
         if (!is_callable($callable)) {
             return $this;
@@ -77,7 +97,10 @@ class Collection extends AbstractCollectionImmutable
         return $this;
     }
 
-    public function filter(callable $condition_true)
+    /**
+     * @param callable(TValue, TKey) $condition_true
+     */
+    public function filter(callable $condition_true): self
     {
         if (!is_callable($condition_true)) {
             return $this;
@@ -98,7 +121,10 @@ class Collection extends AbstractCollectionImmutable
         return $this;
     }
 
-    public function reject(callable $condition_true)
+    /**
+     * @param callable(TValue, TKey) $condition_true
+     */
+    public function reject(callable $condition_true): self
     {
         if (!is_callable($condition_true)) {
             return $this;
@@ -119,52 +145,52 @@ class Collection extends AbstractCollectionImmutable
         return $this;
     }
 
-    public function reverse()
+    public function reverse(): self
     {
         return $this->replace(array_reverse($this->collection));
     }
 
-    public function sort()
+    public function sort(): self
     {
         asort($this->collection);
 
         return $this;
     }
 
-    public function sortDesc()
+    public function sortDesc(): self
     {
         arsort($this->collection);
 
         return $this;
     }
 
-    public function sortBy(callable $callable)
+    public function sortBy(callable $callable): self
     {
         uasort($this->collection, $callable);
 
         return $this;
     }
 
-    public function sortByDecs(callable $callable)
+    public function sortByDecs(callable $callable): self
     {
         return $this->sortBy($callable)->reverse();
     }
 
-    public function sortKey()
+    public function sortKey(): self
     {
         ksort($this->collection);
 
         return $this;
     }
 
-    public function sortKeyDesc()
+    public function sortKeyDesc(): self
     {
         krsort($this->collection);
 
         return $this;
     }
 
-    public function clone()
+    public function clone(): Collection
     {
         return new Collection($this->collection);
     }
@@ -183,14 +209,20 @@ class Collection extends AbstractCollectionImmutable
         return $this->chunk($lenght);
     }
 
-    public function except(array $excepts)
+    /**
+     * @param array<TKey, TValue> $excepts
+     */
+    public function except(array $excepts): self
     {
         $this->filter(fn ($item, $key) => !in_array($key, $excepts));
 
         return $this;
     }
 
-    public function only(array $only)
+    /**
+     * @param array<TKey, TValue> $excepts
+     */
+    public function only(array $only): self
     {
         $this->filter(fn ($item, $key) => in_array($key, $only));
 
