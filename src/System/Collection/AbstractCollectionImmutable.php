@@ -18,7 +18,7 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
     /**
      * @param iterable<TKey, TValue>|null $collection
      */
-    public function __construct(array $collection)
+    public function __construct($collection)
     {
         foreach ($collection as $key => $item) {
             $this->set($key, $item);
@@ -30,7 +30,7 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
      *
      * @param TKey $name
      *
-     * @return TValue|TGetDefault
+     * @return TValue|TGetDefault|null
      */
     public function __get($name)
     {
@@ -51,7 +51,7 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
      * @param TKey             $name
      * @param TGetDefault|null $default
      *
-     * @return TValue|TGetDefault
+     * @return TValue|TGetDefault|null
      */
     public function get($name, $default = null)
     {
@@ -107,7 +107,7 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
     }
 
     /**
-     * @param callable(TValue, TKey) $condition
+     * @param callable(TValue, TKey=): bool $condition
      */
     public function countIf(callable $condition): int
     {
@@ -130,7 +130,7 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
     }
 
     /**
-     * @param callable(TValue, TKey) $condition
+     * @param callable(TValue, TKey=): bool $callable
      */
     public function each(callable $callable): self
     {
@@ -158,7 +158,7 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
     }
 
     /**
-     * @param callable(TValue, TKey) $condition
+     * @param callable(TValue, TKey=): bool $condition
      */
     public function some(callable $condition): bool
     {
@@ -174,7 +174,7 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
     }
 
     /**
-     * @param callable(TValue, TKey) $condition
+     * @param callable(TValue, TKey=): bool $condition
      */
     public function every(callable $condition): bool
     {
@@ -195,6 +195,8 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
     }
 
     /**
+     * @template TGetDefault
+     * 
      * @param TGetDefault|null $default
      *
      * @return TValue|TGetDefault|null
@@ -207,6 +209,8 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
     }
 
     /**
+     * @template TGetDefault
+     * 
      * @param TGetDefault|null $default
      *
      * @return TValue|TGetDefault|null
@@ -219,7 +223,9 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
     }
 
     /**
-     * @return KValue
+     * @template TGetDefault
+     * 
+     * @return TValue|TGetDefault|null
      */
     public function current()
     {
@@ -227,7 +233,9 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
     }
 
     /**
-     * @return KValue
+     * @template TGetDefault
+     * 
+     * @return TValue|TGetDefault|null
      */
     public function next()
     {
@@ -235,7 +243,9 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
     }
 
     /**
-     * @return KValue
+     * @template TGetDefault
+     * 
+     * @return TValue|TGetDefault|null
      */
     public function prev()
     {
@@ -243,7 +253,9 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
     }
 
     /**
-     * @return KValue
+     * @template TGetDefault
+     * 
+     * @return TValue|TGetDefault|null
      */
     public function rand()
     {
