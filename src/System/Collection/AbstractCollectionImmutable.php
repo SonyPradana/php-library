@@ -7,6 +7,7 @@ namespace System\Collection;
  * @template TValue
  *
  * @implements \ArrayAccess<TKey, TValue>
+ * @implements \IteratorAggregate<TKey, TValue>
  */
 abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAggregate, \Countable
 {
@@ -16,7 +17,7 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
     protected array $collection = [];
 
     /**
-     * @param iterable<TKey, TValue>|null $collection
+     * @param iterable<TKey, TValue> $collection
      */
     public function __construct($collection)
     {
@@ -60,7 +61,7 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
      * @param TKey   $name
      * @param TValue $value
      */
-    protected function set($name, $value)
+    protected function set($name, $value): self
     {
         $this->collection[$name] = $value;
 

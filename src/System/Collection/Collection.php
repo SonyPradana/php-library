@@ -62,7 +62,7 @@ class Collection extends AbstractCollectionImmutable
      * @param TKey   $name
      * @param TValue $value
      */
-    public function set($name, $value)
+    public function set($name, $value): self
     {
         parent::set($name, $value);
 
@@ -235,6 +235,9 @@ class Collection extends AbstractCollectionImmutable
         return $this;
     }
 
+    /**
+     * @param int|float $depth
+     */
     public function flatten($depth = INF): self
     {
         $flatten = $this->flatten_recursing($this->collection, $depth);
@@ -243,6 +246,12 @@ class Collection extends AbstractCollectionImmutable
         return $this;
     }
 
+    /**
+     * @param array<TKey, TValue> $array
+     * @param int|float           $depth
+     *
+     * @return array<TKey, TValue>
+     */
     private function flatten_recursing(array $array, $depth = INF): array
     {
         $result = [];
@@ -254,8 +263,8 @@ class Collection extends AbstractCollectionImmutable
                 $result[$key] = $item;
             } else {
                 $values = $depth === 1
-          ? array_values($item)
-          : $this->flatten_recursing($item, $depth - 1);
+                    ? array_values($item)
+                    : $this->flatten_recursing($item, $depth - 1);
 
                 foreach ($values as $key_dept => $value) {
                     $result[$key_dept] = $value;
@@ -292,6 +301,9 @@ class Collection extends AbstractCollectionImmutable
         $this->remove($offset);
     }
 
+    /**
+     * @return \ArrayIterator<TKey, TValue>
+     */
     public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->all());

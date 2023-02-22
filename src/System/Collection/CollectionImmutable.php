@@ -33,6 +33,9 @@ class CollectionImmutable extends AbstractCollectionImmutable
         throw new NoModify();
     }
 
+    /**
+     * @return \ArrayIterator<TKey, TValue>
+     */
     public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->all());
