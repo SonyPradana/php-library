@@ -196,7 +196,7 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
 
     /**
      * @template TGetDefault
-     * 
+     *
      * @param TGetDefault|null $default
      *
      * @return TValue|TGetDefault|null
@@ -210,7 +210,7 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
 
     /**
      * @template TGetDefault
-     * 
+     *
      * @param TGetDefault|null $default
      *
      * @return TValue|TGetDefault|null
@@ -224,7 +224,7 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
 
     /**
      * @template TGetDefault
-     * 
+     *
      * @return TValue|TGetDefault|null
      */
     public function current()
@@ -234,7 +234,7 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
 
     /**
      * @template TGetDefault
-     * 
+     *
      * @return TValue|TGetDefault|null
      */
     public function next()
@@ -244,7 +244,7 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
 
     /**
      * @template TGetDefault
-     * 
+     *
      * @return TValue|TGetDefault|null
      */
     public function prev()
@@ -254,7 +254,7 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
 
     /**
      * @template TGetDefault
-     * 
+     *
      * @return TValue|TGetDefault|null
      */
     public function rand()
