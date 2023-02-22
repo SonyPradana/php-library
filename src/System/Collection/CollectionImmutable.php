@@ -4,6 +4,10 @@ namespace System\Collection;
 
 use System\Collection\Exceptions\NoModify;
 
+/**
+ * @template TKey of array-key
+ * @template TValue
+ */
 class CollectionImmutable extends AbstractCollectionImmutable
 {
     // same as perent

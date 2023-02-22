@@ -2,6 +2,10 @@
 
 namespace System\Collection;
 
+/**
+ * @template TKey of array-key
+ * @template TValue
+ */
 class Collection extends AbstractCollectionImmutable
 {
     /**
@@ -31,7 +35,7 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param iterable<TKey, TValue>|null $collection
+     * @param array<TKey, TValue> $collection
      */
     public function add(array $collection): self
     {
@@ -66,7 +70,7 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param iterable<TKey, TValue>|null $new_collection
+     * @param array<TKey, TValue> $new_collection
      */
     public function replace(array $new_collection): self
     {
@@ -79,7 +83,7 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param callable(TValue, TKey) $callable
+     * @param callable(TValue, TKey=): TValue $callable
      */
     public function map(callable $callable): self
     {
@@ -98,7 +102,7 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param callable(TValue, TKey) $condition_true
+     * @param callable(TValue, TKey=): bool $condition_true
      */
     public function filter(callable $condition_true): self
     {
@@ -122,7 +126,7 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param callable(TValue, TKey) $condition_true
+     * @param callable(TValue, TKey=): bool $condition_true
      */
     public function reject(callable $condition_true): self
     {
@@ -210,20 +214,22 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param array<TKey, TValue> $excepts
+     * @param TKey[] $excepts
      */
     public function except(array $excepts): self
     {
+        /* @phpstan-ignore-next-line */
         $this->filter(fn ($item, $key) => !in_array($key, $excepts));
 
         return $this;
     }
 
     /**
-     * @param array<TKey, TValue> $excepts
+     * @param TKey[] $only
      */
     public function only(array $only): self
     {
+        /* @phpstan-ignore-next-line */
         $this->filter(fn ($item, $key) => in_array($key, $only));
 
         return $this;

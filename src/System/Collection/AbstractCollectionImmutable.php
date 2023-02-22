@@ -26,11 +26,9 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
     }
 
     /**
-     * @template TGetDefault
-     *
      * @param TKey $name
      *
-     * @return TValue|TGetDefault|null
+     * @return TValue|null
      */
     public function __get($name)
     {
@@ -122,7 +120,7 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
     }
 
     /**
-     * @return array<Tkey, int>
+     * @return array<TKey, int>
      */
     public function countBy(): array
     {
@@ -223,9 +221,7 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
     }
 
     /**
-     * @template TGetDefault
-     *
-     * @return TValue|TGetDefault|null
+     * @return TValue
      */
     public function current()
     {
@@ -233,9 +229,7 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
     }
 
     /**
-     * @template TGetDefault
-     *
-     * @return TValue|TGetDefault|null
+     * @return TValue
      */
     public function next()
     {
@@ -243,9 +237,7 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
     }
 
     /**
-     * @template TGetDefault
-     *
-     * @return TValue|TGetDefault|null
+     * @return TValue
      */
     public function prev()
     {
@@ -253,9 +245,7 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
     }
 
     /**
-     * @template TGetDefault
-     *
-     * @return TValue|TGetDefault|null
+     * @return TValue
      */
     public function rand()
     {
