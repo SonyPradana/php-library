@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace System\Collection\Interfaces;
 
 /**
- * @template TKey of array-key
- * @template TValue
+ * @template T
  *
- * @extends \ArrayAccess<TKey, TValue>
- * @extends \IteratorAggregate<TKey, TValue>
+ * @extends \ArrayAccess<array-key, T>
+ * @extends \IteratorAggregate<T>
  */
 interface CollectionInterface extends \ArrayAccess, \IteratorAggregate, \Countable
 {

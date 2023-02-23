@@ -5,10 +5,9 @@ namespace System\Collection;
 use System\Collection\Exceptions\NoModify;
 
 /**
- * @template TKey of array-key
- * @template TValue
+ * @template T
  *
- * @extends AbstractCollectionImmutable<TKey, TValue>
+ * @extends AbstractCollectionImmutable<T>
  */
 class CollectionImmutable extends AbstractCollectionImmutable
 {
@@ -36,7 +35,7 @@ class CollectionImmutable extends AbstractCollectionImmutable
     }
 
     /**
-     * @return \ArrayIterator<TKey, TValue>
+     * @return \ArrayIterator<array-key, T>
      */
     public function getIterator(): \Traversable
     {

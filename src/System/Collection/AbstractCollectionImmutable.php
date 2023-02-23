@@ -5,20 +5,19 @@ namespace System\Collection;
 use System\Collection\Interfaces\CollectionInterface;
 
 /**
- * @template TKey of array-key
- * @template TValue
+ * @template T
  *
- * @implements CollectionInterface<TKey, TValue>
+ * @implements CollectionInterface<T>
  */
 abstract class AbstractCollectionImmutable implements CollectionInterface
 {
     /**
-     * @var array<TKey, TValue>
+     * @var array<array-key, T>
      */
     protected array $collection = [];
 
     /**
-     * @param iterable<TKey, TValue> $collection
+     * @param iterable<array-key, T> $collection
      */
     public function __construct($collection)
     {
@@ -28,9 +27,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param TKey $name
+     * @param array-key $name
      *
-     * @return TValue|null
+     * @return T|null
      */
     public function __get($name)
     {
@@ -38,7 +37,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return array<TKey, TValue>
+     * @return array<array-key, T>
      */
     public function all(): array
     {
@@ -48,10 +47,10 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     /**
      * @template TGetDefault
      *
-     * @param TKey             $name
+     * @param array-key        $name
      * @param TGetDefault|null $default
      *
-     * @return TValue|TGetDefault|null
+     * @return T|TGetDefault|null
      */
     public function get($name, $default = null)
     {
@@ -59,10 +58,10 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param TKey   $name
-     * @param TValue $value
+     * @param array-key $name
+     * @param T         $value
      *
-     * @return self<TKey, TValue>
+     * @return self<T>
      */
     protected function set($name, $value): self
     {
@@ -72,7 +71,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param TKey $key
+     * @param array-key $key
      */
     public function has($key): bool
     {
@@ -80,7 +79,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param TValue $item
+     * @param T $item
      */
     public function contain($item): bool
     {
@@ -88,7 +87,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TKey[]
+     * @return array-key[]
      */
     public function keys(): array
     {
@@ -96,7 +95,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TValue[]
+     * @return T[]
      */
     public function items(): array
     {
@@ -109,7 +108,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param callable(TValue, TKey=): bool $condition
+     * @param callable(T, array-key=): bool $condition
      */
     public function countIf(callable $condition): int
     {
@@ -124,7 +123,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return array<TKey, int>
+     * @return array<array-key, int>
      */
     public function countBy(): array
     {
@@ -132,9 +131,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param callable(TValue, TKey=): bool $callable
+     * @param callable(T, array-key=): bool $callable
      *
-     * @return self<TKey, TValue>
+     * @return self<T>
      */
     public function each(callable $callable): self
     {
@@ -155,7 +154,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return self<TKey, TValue>
+     * @return self<T>
      */
     public function dumb(): self
     {
@@ -165,7 +164,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param callable(TValue, TKey=): bool $condition
+     * @param callable(T, array-key=): bool $condition
      */
     public function some(callable $condition): bool
     {
@@ -181,7 +180,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param callable(TValue, TKey=): bool $condition
+     * @param callable(T, array-key=): bool $condition
      */
     public function every(callable $condition): bool
     {
@@ -206,7 +205,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
      *
      * @param TGetDefault|null $default
      *
-     * @return TValue|TGetDefault|null
+     * @return T|TGetDefault|null
      */
     public function first($default = null)
     {
@@ -220,7 +219,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
      *
      * @param TGetDefault|null $default
      *
-     * @return TValue|TGetDefault|null
+     * @return T|TGetDefault|null
      */
     public function last($default = null)
     {
@@ -230,7 +229,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TValue
+     * @return T
      */
     public function current()
     {
@@ -238,7 +237,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TValue
+     * @return T
      */
     public function next()
     {
@@ -246,7 +245,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TValue
+     * @return T
      */
     public function prev()
     {
@@ -254,7 +253,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TValue
+     * @return T
      */
     public function rand()
     {

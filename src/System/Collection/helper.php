@@ -8,12 +8,12 @@ if (!function_exists('collection')) {
     /**
      * Helper, array collection class.
      *
-     * @template TKey of array-key
-     * @template TValue
+
+     * @template T
      *
-     * @param iterable<TKey, TValue> $collection Array collection
+     * @param iterable<array-key, T> $collection Array collection
      *
-     * @return Collection<TKey, TValue>
+     * @return Collection<T>
      */
     function collection($collection = []): Collection
     {
@@ -25,12 +25,11 @@ if (!function_exists('collection_immutable')) {
     /**
      * Helper, array immutable collection class.
      *
-     * @template TKey of array-key
-     * @template TValue
+     * @template T
      *
-     * @param iterable<TKey, TValue> $collection Array collection
+     * @param iterable<array-key, T> $collection Array collection
      *
-     * @return Collection<TKey, TValue>
+     * @return Collection<T>
      */
     function collection_immutable($collection = []): Collection
     {
