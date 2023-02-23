@@ -7,6 +7,8 @@ use System\Collection\Exceptions\NoModify;
 /**
  * @template TKey of array-key
  * @template TValue
+ *
+ * @extends AbstractCollectionImmutable<TKey, TValue>
  */
 class CollectionImmutable extends AbstractCollectionImmutable
 {

@@ -12,6 +12,8 @@ if (!function_exists('collection')) {
      * @template TValue
      *
      * @param iterable<TKey, TValue> $collection Array collection
+     *
+     * @return Collection<TKey, TValue>
      */
     function collection($collection = []): Collection
     {
@@ -27,6 +29,8 @@ if (!function_exists('collection_immutable')) {
      * @template TValue
      *
      * @param iterable<TKey, TValue> $collection Array collection
+     *
+     * @return Collection<TKey, TValue>
      */
     function collection_immutable($collection = []): Collection
     {

@@ -2,14 +2,15 @@
 
 namespace System\Collection;
 
+use System\Collection\Interfaces\CollectionInterface;
+
 /**
  * @template TKey of array-key
  * @template TValue
  *
- * @implements \ArrayAccess<TKey, TValue>
- * @implements \IteratorAggregate<TKey, TValue>
+ * @implements CollectionInterface<TKey, TValue>
  */
-abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAggregate, \Countable
+abstract class AbstractCollectionImmutable implements CollectionInterface
 {
     /**
      * @var array<TKey, TValue>
@@ -60,6 +61,8 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
     /**
      * @param TKey   $name
      * @param TValue $value
+     *
+     * @return self<TKey, TValue>
      */
     protected function set($name, $value): self
     {
@@ -130,6 +133,8 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
 
     /**
      * @param callable(TValue, TKey=): bool $callable
+     *
+     * @return self<TKey, TValue>
      */
     public function each(callable $callable): self
     {
@@ -149,6 +154,9 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
         return $this;
     }
 
+    /**
+     * @return self<TKey, TValue>
+     */
     public function dumb(): self
     {
         var_dump($this->collection);
