@@ -13,4 +13,6 @@ namespace System\Collection\Interfaces;
  */
 interface CollectionInterface extends \ArrayAccess, \IteratorAggregate, \Countable
 {
+    /** @return array<TKey, TValue> */
+    public function toArray(): array;
 }

@@ -342,33 +342,12 @@ class Collection extends AbstractCollectionImmutable
         return new CollectionImmutable($this->collection);
     }
 
-   public function offsetExists($offset): bool
-   {
-       return $this->has($offset);
-   }
-
-   #[\ReturnTypeWillChange]
-   public function offsetGet($offset)
-   {
-       return $this->__get($offset);
-   }
-
-    public function offsetSet($offset, $value): void
-    {
-        $this->set($offset, $value);
-    }
-
+    /**
+     * {@inheritdoc}
+     */
     public function offsetUnset($offset): void
     {
         $this->remove($offset);
-    }
-
-    /**
-     * @return \ArrayIterator<TKey, TValue>
-     */
-    public function getIterator(): \Traversable
-    {
-        return new \ArrayIterator($this->all());
     }
 
     /**

@@ -46,6 +46,14 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function toArray(): array
+    {
+        return $this->collection;
+    }
+
+    /**
      * @template TGetDefault
      *
      * @param TKey             $name
@@ -281,5 +289,43 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     public function avg(): int
     {
         return $this->sum() / $this->count();
+    }
+
+    // array able
+
+   /**
+    * @param TKey $offset
+    */
+   public function offsetExists($offset): bool
+   {
+       return $this->has($offset);
+   }
+
+   /**
+    * @param TKey $offset
+    *
+    * @return TValue|null
+    */
+   #[\ReturnTypeWillChange]
+   public function offsetGet($offset)
+   {
+       return $this->__get($offset);
+   }
+
+    public function offsetSet($offset, $value): void
+    {
+        $this->set($offset, $value);
+    }
+
+    public function offsetUnset($offset): void
+    {
+    }
+
+    /**
+     * @return \Traversable<TKey, TValue>
+     */
+    public function getIterator(): \Traversable
+    {
+        return new \ArrayIterator($this->all());
     }
 }
