@@ -2,54 +2,110 @@
 
 namespace System\Collection;
 
-abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAggregate, \Countable
+use System\Collection\Interfaces\CollectionInterface;
+
+/**
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @implements CollectionInterface<TKey, TValue>
+ */
+abstract class AbstractCollectionImmutable implements CollectionInterface
 {
+    /**
+     * @var array<TKey, TValue>
+     */
     protected array $collection = [];
 
-    public function __construct(array $collection)
+    /**
+     * @param iterable<TKey, TValue> $collection
+     */
+    public function __construct($collection)
     {
         foreach ($collection as $key => $item) {
             $this->set($key, $item);
         }
     }
 
+    /**
+     * @param TKey $name
+     *
+     * @return TValue|null
+     */
     public function __get($name)
     {
         return $this->get($name);
     }
 
+    /**
+     * @return array<TKey, TValue>
+     */
     public function all(): array
     {
         return $this->collection;
     }
 
-    public function get(string $name, $default = null)
+    /**
+     * {@inheritdoc}
+     */
+    public function toArray(): array
+    {
+        return $this->collection;
+    }
+
+    /**
+     * @template TGetDefault
+     *
+     * @param TKey             $name
+     * @param TGetDefault|null $default
+     *
+     * @return TValue|TGetDefault|null
+     */
+    public function get($name, $default = null)
     {
         return $this->collection[$name] ?? $default;
     }
 
-    protected function set(string $name, $value)
+    /**
+     * @param TKey   $name
+     * @param TValue $value
+     *
+     * @return self<TKey, TValue>
+     */
+    protected function set($name, $value): self
     {
         $this->collection[$name] = $value;
 
         return $this;
     }
 
-    public function has(string $key)
+    /**
+     * @param TKey $key
+     */
+    public function has($key): bool
     {
         return array_key_exists($key, $this->collection);
     }
 
-    public function contain($item)
+    /**
+     * @param TValue $item
+     */
+    public function contain($item): bool
     {
         return in_array($item, $this->collection);
     }
 
+    /**
+     * @return TKey[]
+     */
     public function keys(): array
     {
         return array_keys($this->collection);
     }
 
+    /**
+     * @return TValue[]
+     */
     public function items(): array
     {
         return array_values($this->collection);
@@ -60,6 +116,9 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
         return count($this->collection);
     }
 
+    /**
+     * @param callable(TValue, TKey=): bool $condition
+     */
     public function countIf(callable $condition): int
     {
         $count = 0;
@@ -72,12 +131,20 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
         return $count;
     }
 
+    /**
+     * @return array<TKey, int>
+     */
     public function countBy(): array
     {
         return array_count_values($this->collection);
     }
 
-    public function each(callable $callable)
+    /**
+     * @param callable(TValue, TKey=): bool $callable
+     *
+     * @return self<TKey, TValue>
+     */
+    public function each(callable $callable): self
     {
         if (!is_callable($callable)) {
             return $this;
@@ -95,13 +162,19 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
         return $this;
     }
 
-    public function dumb()
+    /**
+     * @return self<TKey, TValue>
+     */
+    public function dumb(): self
     {
         var_dump($this->collection);
 
         return $this;
     }
 
+    /**
+     * @param callable(TValue, TKey=): bool $condition
+     */
     public function some(callable $condition): bool
     {
         foreach ($this->collection as $key => $item) {
@@ -115,6 +188,9 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
         return false;
     }
 
+    /**
+     * @param callable(TValue, TKey=): bool $condition
+     */
     public function every(callable $condition): bool
     {
         foreach ($this->collection as $key => $item) {
@@ -133,6 +209,13 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
         return json_encode($this->collection);
     }
 
+    /**
+     * @template TGetDefault
+     *
+     * @param TGetDefault|null $default
+     *
+     * @return TValue|TGetDefault|null
+     */
     public function first($default = null)
     {
         $key = array_key_first($this->collection) ?? 0;
@@ -140,6 +223,13 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
         return $this->collection[$key] ?? $default;
     }
 
+    /**
+     * @template TGetDefault
+     *
+     * @param TGetDefault|null $default
+     *
+     * @return TValue|TGetDefault|null
+     */
     public function last($default = null)
     {
         $key = array_key_last($this->collection);
@@ -147,21 +237,33 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
         return $this->collection[$key] ?? $default;
     }
 
+    /**
+     * @return TValue
+     */
     public function current()
     {
         return current($this->collection);
     }
 
+    /**
+     * @return TValue
+     */
     public function next()
     {
         return next($this->collection);
     }
 
+    /**
+     * @return TValue
+     */
     public function prev()
     {
         return prev($this->collection);
     }
 
+    /**
+     * @return TValue
+     */
     public function rand()
     {
         $rand = array_rand($this->collection);
@@ -187,5 +289,43 @@ abstract class AbstractCollectionImmutable implements \ArrayAccess, \IteratorAgg
     public function avg(): int
     {
         return $this->sum() / $this->count();
+    }
+
+    // array able
+
+   /**
+    * @param TKey $offset
+    */
+   public function offsetExists($offset): bool
+   {
+       return $this->has($offset);
+   }
+
+   /**
+    * @param TKey $offset
+    *
+    * @return TValue|null
+    */
+   #[\ReturnTypeWillChange]
+   public function offsetGet($offset)
+   {
+       return $this->__get($offset);
+   }
+
+    public function offsetSet($offset, $value): void
+    {
+        $this->set($offset, $value);
+    }
+
+    public function offsetUnset($offset): void
+    {
+    }
+
+    /**
+     * @return \Traversable<TKey, TValue>
+     */
+    public function getIterator(): \Traversable
+    {
+        return new \ArrayIterator($this->all());
     }
 }
