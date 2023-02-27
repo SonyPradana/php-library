@@ -127,4 +127,15 @@ class DataType
 
         return $this->datatype = new Constraint("blob($lenght)");
     }
+
+    /**
+     * @param string[] $enums
+     */
+    public function enum(array $enums): Constraint
+    {
+        $enums = array_map(fn ($item) => "'{$item}'", $enums);
+        $enum  = implode(', ', $enums);
+
+        return $this->datatype = new Constraint("ENUM ({$enum})");
+    }
 }
