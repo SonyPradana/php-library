@@ -70,7 +70,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
      * @param TKey   $name
      * @param TValue $value
      *
-     * @return self<TKey, TValue>
+     * @return $this
      */
     protected function set($name, $value): self
     {
@@ -142,7 +142,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     /**
      * @param callable(TValue, TKey=): bool $callable
      *
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function each(callable $callable): self
     {
@@ -163,7 +163,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function dumb(): self
     {

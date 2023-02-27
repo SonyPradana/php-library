@@ -24,7 +24,7 @@ class Collection extends AbstractCollectionImmutable
      *
      * @param AbstractCollectionImmutable<TKey, TValue> $collection
      *
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function ref(AbstractCollectionImmutable $collection): self
     {
@@ -34,7 +34,7 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function clear(): self
     {
@@ -46,7 +46,7 @@ class Collection extends AbstractCollectionImmutable
     /**
      * @param array<TKey, TValue> $collection
      *
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function add(array $collection): self
     {
@@ -60,7 +60,7 @@ class Collection extends AbstractCollectionImmutable
     /**
      * @param TKey $name
      *
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function remove($name): self
     {
@@ -75,7 +75,7 @@ class Collection extends AbstractCollectionImmutable
      * @param TKey   $name
      * @param TValue $value
      *
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function set($name, $value): self
     {
@@ -87,7 +87,7 @@ class Collection extends AbstractCollectionImmutable
     /**
      * @param array<TKey, TValue> $new_collection
      *
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function replace(array $new_collection): self
     {
@@ -102,7 +102,7 @@ class Collection extends AbstractCollectionImmutable
     /**
      * @param callable(TValue, TKey=): TValue $callable
      *
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function map(callable $callable): self
     {
@@ -123,7 +123,7 @@ class Collection extends AbstractCollectionImmutable
     /**
      * @param callable(TValue, TKey=): bool $condition_true
      *
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function filter(callable $condition_true): self
     {
@@ -149,7 +149,7 @@ class Collection extends AbstractCollectionImmutable
     /**
      * @param callable(TValue, TKey=): bool $condition_true
      *
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function reject(callable $condition_true): self
     {
@@ -173,7 +173,7 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function reverse(): self
     {
@@ -181,7 +181,7 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function sort(): self
     {
@@ -191,7 +191,7 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function sortDesc(): self
     {
@@ -201,7 +201,7 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function sortBy(callable $callable): self
     {
@@ -211,7 +211,7 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function sortByDecs(callable $callable): self
     {
@@ -219,7 +219,7 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function sortKey(): self
     {
@@ -229,7 +229,7 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function sortKeyDesc(): self
     {
@@ -247,7 +247,7 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function chunk(int $lenght, bool $preserve_keys = true): self
     {
@@ -257,7 +257,7 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function split(int $count, bool $preserve_keys = true): self
     {
@@ -269,7 +269,7 @@ class Collection extends AbstractCollectionImmutable
     /**
      * @param TKey[] $excepts
      *
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function except(array $excepts): self
     {
@@ -282,7 +282,7 @@ class Collection extends AbstractCollectionImmutable
     /**
      * @param TKey[] $only
      *
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function only(array $only): self
     {
@@ -295,7 +295,7 @@ class Collection extends AbstractCollectionImmutable
     /**
      * @param int|float $depth
      *
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function flatten($depth = INF): self
     {
@@ -351,7 +351,7 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @return self<TKey, TValue>
+     * @return $this
      */
     public function shuffle(): self
     {
