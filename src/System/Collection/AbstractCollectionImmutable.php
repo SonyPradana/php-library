@@ -90,9 +90,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     /**
      * @param TValue $item
      */
-    public function contain($item): bool
+    public function contain($item, bool $strict = false): bool
     {
-        return in_array($item, $this->collection);
+        return in_array($item, $this->collection, $strict);
     }
 
     /**
