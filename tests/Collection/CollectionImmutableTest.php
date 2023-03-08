@@ -1,6 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use System\Collection\Collection;
 use System\Collection\CollectionImmutable;
 use System\Collection\Exceptions\NoModify;
 
@@ -157,5 +158,18 @@ class CollectionImmutableTest extends TestCase
         $this->assertEquals(1, $coll->current());
         $this->assertEquals(2, $coll->next());
         $this->assertEquals(1, $coll->prev());
+    }
+
+    /** @test */
+    public function itCanFilterUsingStrictType()
+    {
+        $coll = new CollectionImmutable(['one' => 1, 'two' => '2', 'three' => 3]);
+
+        $this->assertTrue(
+            $coll->contain(1, false)
+        );
+        $this->assertFalse(
+            $coll->contain('1', true)
+        );
     }
 }
