@@ -4,45 +4,60 @@ declare(strict_types=1);
 
 namespace System\Database\MyModel;
 
+use System\Collection\Collection;
 use System\Collection\CollectionImmutable;
 use System\Database\MyPDO;
 use System\Database\MyQuery;
 use System\Database\MyQuery\Join\InnerJoin;
 
-use function DI\value;
-
 final class ORM
 {
     /** @var MyPDO */
-    protected $pdo;
+    private $pdo;
 
-    protected string $table_name;
-    protected string $primery_key;
+    private string $table_name;
+
+    private string $primery_key;
 
     /** @var array<string, mixed> */
-    protected $columns = [];
+    private $columns = [];
 
     /** @var array<string, string> */
-    protected $indentifer = [];
+    private $indentifer = [];
 
     /** @var string[] Hide from shoing column */
-    protected $stash;
+    private $stash;
 
     /** @var string[] Set Column cant be modify */
-    protected $resistant;
+    private $resistant;
 
     /** @var array<string, mixed> orginal data from database */
-    protected $fresh;
+    private $fresh;
 
     // magic ----------------------
 
     /**
      * @param array<string, string> $indentifer
+     * @param array<string, mixed>  $column
+     * @param string[]              $stash
+     * @param string[]              $resistant
      */
-    public function __construct(array $indentifer, MyPDO $pdo)
-    {
-        $this->indentifer = $indentifer;
-        $this->pdo = $pdo;
+    public function __construct(
+        string $table,
+        array $column,
+        MyPDO $pdo,
+        array $indentifer = [],
+        string $primery_key = 'id',
+        array $stash = [],
+        array $resistant = []
+    ) {
+        $this->table_name  = $table;
+        $this->columns     = $this->fresh = $column;
+        $this->pdo         = $pdo;
+        $this->indentifer  = $indentifer;
+        $this->primery_key = $primery_key;
+        $this->stash       = $stash;
+        $this->resistant   = $resistant;
     }
 
     /**
@@ -58,7 +73,7 @@ final class ORM
     /**
      * Setter.
      *
-     * @param mixed  $value
+     * @param mixed $value
      *
      * @return self
      */
@@ -71,6 +86,7 @@ final class ORM
     {
         return array_key_exists($name, $this->columns);
     }
+
     /**
      * Setter.
      *
@@ -78,7 +94,7 @@ final class ORM
      *
      * @return self
      */
-    protected function setter(string $key, $val)
+    private function setter(string $key, $val)
     {
         if (key_exists($key, $this->columns) && !isset($this->resistant[$key])) {
             $this->columns[$key] = $val;
@@ -94,9 +110,18 @@ final class ORM
      *
      * @return mixed
      */
-    protected function getter(string $key, $defaul = null)
+    private function getter(string $key, $defaul = null)
     {
         return $this->columns[$key] ?? $defaul;
+    }
+
+    // core -----------------------------
+
+    public function get(): Collection
+    {
+        return (new Collection($this->columns))
+            ->except($this->stash)
+        ;
     }
 
     public function read(): bool
@@ -108,13 +133,13 @@ final class ORM
             $read->equal($key, $value);
         }
 
-        $read->single();
+        $first = $read->single();
 
-        if ([] === $read) {
+        if ([] === $first) {
             return false;
         }
 
-        $this->columns = $this->fresh = $read;
+        $this->columns = $this->fresh = $first;
 
         return true;
     }
@@ -122,7 +147,10 @@ final class ORM
     public function update(): bool
     {
         $update = MyQuery::from($this->table_name, $this->pdo)
-            ->update();
+            ->update()
+            ->values(
+                $this->changes()
+            );
 
         foreach ($this->indentifer as $key => $value) {
             $update->equal($key, $value);
@@ -146,7 +174,7 @@ final class ORM
     /**
      * @return CollectionImmutable<string, mixed>
      */
-    protected function hasOne(string $table, string $ref = 'id')
+    public function hasOne(string $table, string $ref = 'id')
     {
         $ref = MyQuery::from($this->table_name, $this->pdo)
             ->select([$table . '.*'])
@@ -161,7 +189,7 @@ final class ORM
     /**
      * @return CollectionImmutable<string|int, mixed>
      */
-    protected function hasMany(string $table, string $ref = 'id')
+    public function hasMany(string $table, string $ref = 'id')
     {
         $ref = MyQuery::from($this->table_name, $this->pdo)
             ->select([$table . '.*'])
@@ -172,16 +200,6 @@ final class ORM
         ;
 
         return new CollectionImmutable($ref);
-    }
-    // private --------------------
-
-    private function changing(bool $change): bool
-    {
-        if ($change) {
-            $this->fresh = $this->columns;
-        }
-
-        return $change;
     }
 
     public function isClean(string $column = null): bool
@@ -200,5 +218,29 @@ final class ORM
     public function isDirty(string $column = null): bool
     {
         return !$this->isClean($column);
+    }
+
+    public function changes(): array
+    {
+        $change = [];
+
+        foreach ($this->columns as $key => $value) {
+            if ($this->fresh[$key] !== $value) {
+                $change[$key] = $value;
+            }
+        }
+
+        return $change;
+    }
+
+    // private --------------------
+
+    private function changing(bool $change): bool
+    {
+        if ($change) {
+            $this->fresh = $this->columns;
+        }
+
+        return $change;
     }
 }
