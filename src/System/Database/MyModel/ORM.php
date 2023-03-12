@@ -183,7 +183,9 @@ final class ORM
             ->single()
         ;
 
-        return new CollectionImmutable($ref);
+        return (new Collection($ref))
+            ->add($this->columns)
+            ->immutable();
     }
 
     /**
@@ -191,7 +193,7 @@ final class ORM
      */
     public function hasMany(string $table, string $ref = 'id')
     {
-        $ref = MyQuery::from($this->table_name, $this->pdo)
+        $res = MyQuery::from($this->table_name, $this->pdo)
             ->select([$table . '.*'])
             ->join(InnerJoin::ref($table, $this->primery_key, $ref))
             ->equal($this->primery_key, $this->indentifer[$this->primery_key])
@@ -199,7 +201,9 @@ final class ORM
             ->immutable()
         ;
 
-        return new CollectionImmutable($ref);
+        return (new Collection($this->columns))
+            ->set($table, $res->toArray())
+            ->immutable();
     }
 
     public function isClean(string $column = null): bool
