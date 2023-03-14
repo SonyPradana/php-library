@@ -96,7 +96,7 @@ final class ORM
      */
     private function setter(string $key, $val)
     {
-        if (key_exists($key, $this->columns) && !isset($this->resistant[$key])) {
+        if (key_exists($key, $this->columns) && !in_array($key, $this->resistant)) {
             $this->columns[$key] = $val;
         }
 
@@ -112,6 +112,10 @@ final class ORM
      */
     private function getter(string $key, $defaul = null)
     {
+        if (array_key_exists($key, $this->stash)) {
+            throw new \Exception("Cant read this colum `{$key}`");
+        }
+
         return $this->columns[$key] ?? $defaul;
     }
 
@@ -183,9 +187,7 @@ final class ORM
             ->single()
         ;
 
-        return (new Collection($ref))
-            ->add($this->columns)
-            ->immutable();
+        return new CollectionImmutable($ref);
     }
 
     /**
@@ -193,7 +195,7 @@ final class ORM
      */
     public function hasMany(string $table, string $ref = 'id')
     {
-        $res = MyQuery::from($this->table_name, $this->pdo)
+        $ref = MyQuery::from($this->table_name, $this->pdo)
             ->select([$table . '.*'])
             ->join(InnerJoin::ref($table, $this->primery_key, $ref))
             ->equal($this->primery_key, $this->indentifer[$this->primery_key])
@@ -201,9 +203,7 @@ final class ORM
             ->immutable()
         ;
 
-        return (new Collection($this->columns))
-            ->set($table, $res->toArray())
-            ->immutable();
+        return new CollectionImmutable($ref);
     }
 
     public function isClean(string $column = null): bool
@@ -212,8 +212,8 @@ final class ORM
             return $this->columns === $this->fresh;
         }
 
-        if (isset($this->fresh[$column])) {
-            return false;
+        if (!array_key_exists($column, $this->columns) || !array_key_exists($column, $this->fresh)) {
+            throw new \Exception("Column `{$column}` is not in table `{$this->table_name}`");
         }
 
         return $this->columns[$column] === $this->fresh[$column];
@@ -229,7 +229,7 @@ final class ORM
         $change = [];
 
         foreach ($this->columns as $key => $value) {
-            if ($this->fresh[$key] !== $value) {
+            if ($this->fresh[$key] !== $value && array_key_exists($key, $this->fresh)) {
                 $change[$key] = $value;
             }
         }

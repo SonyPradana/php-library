@@ -126,8 +126,6 @@ final class ORMTest extends \RealDatabaseConnectionTest
             [
                 'user'      => 'taylor',
                 'real_name' => 'taylor otwell',
-                'pwd'       => 'secret',
-                'stat'      => 99,
             ],
             $orm->hasOne('profiles', 'user')->toArray()
         );
@@ -146,18 +144,92 @@ final class ORMTest extends \RealDatabaseConnectionTest
         $orm->read();
         $this->assertEquals(
             [
-                'user'      => 'taylor',
-                'pwd'       => 'secret',
-                'stat'      => 99,
-                'comments'  => [
-                    [
-                        'id'      => 1,
-                        'user'    => 'taylor',
-                        'comment' => 'test123',
-                    ],
+                [
+                    'id'      => 1,
+                    'user'    => 'taylor',
+                    'comment' => 'test123',
                 ],
             ],
             $orm->hasMany('comments', 'user')->toArray()
         );
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itOrmCheckCleanRecords()
+    {
+        $orm = new ORM('users', [], $this->pdo, ['user' => 'taylor'], 'user');
+
+        $this->assertTrue($orm->read());
+        $this->assertTrue($orm->isClean());
+        $this->assertTrue($orm->isClean('stat'));
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itOrmCheckDirtyRecords()
+    {
+        $orm = new ORM('users', [], $this->pdo, ['user' => 'taylor'], 'user');
+        $orm->read();
+        $orm->stat = 50;
+        $this->assertTrue($orm->isDirty());
+        $this->assertTrue($orm->isDirty('stat'));
+        $this->assertFalse($orm->isDirty('pwd'));
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itOrmCheckChangesRecords()
+    {
+        $orm = new ORM('users', [], $this->pdo, ['user' => 'taylor'], 'user');
+        $orm->read();
+        $orm->stat = 50;
+        $this->assertEquals(
+            [
+                'stat' => 50,
+            ],
+            $orm->changes());
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itOrmCheckChangesRecordsWithResistenColumn()
+    {
+        $orm = new ORM('users', [], $this->pdo, ['user' => 'taylor'], 'user', [], ['pwd']);
+        $orm->read();
+        $orm->stat = 50;
+        $orm->pwd  = 'public';
+        $this->assertEquals(
+            [
+                'stat' => 50,
+            ],
+            $orm->changes());
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itOrmCanReadHideColumn()
+    {
+        $orm = new ORM('users', [], $this->pdo, ['user' => 'taylor'], 'user', ['pwd']);
+
+        $this->assertTrue($orm->read());
+        $this->assertTrue($orm->get()->has('user'));
+        $this->assertTrue($orm->get()->has('stat'));
+        $this->assertFalse($orm->get()->has('pwd'));
     }
 }
