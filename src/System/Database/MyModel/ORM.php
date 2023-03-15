@@ -11,9 +11,10 @@ use System\Database\MyPDO;
 use System\Database\MyQuery;
 use System\Database\MyQuery\Join\InnerJoin;
 
-final class ORM extends ORMAbstract implements ORMInterface
+class ORM extends ORMAbstract implements ORMInterface
 {
     // magic ----------------------
+
     /**
      * @param array<string, string> $indentifer
      * @param array<string, mixed>  $column
@@ -32,14 +33,20 @@ final class ORM extends ORMAbstract implements ORMInterface
         $this->setUp($table, $column, $pdo, $indentifer, $primery_key, $stash, $resistant);
     }
 
+    /**
+     * @param array<string, string> $indentifer
+     * @param array<string, mixed>  $column
+     * @param string[]              $stash
+     * @param string[]              $resistant
+     */
     public function setUp(
         string $table,
         array $column,
         MyPDO $pdo,
-        array $indentifer = [],
-        string $primery_key = 'id',
-        array $stash = [],
-        array $resistant = []
+        array $indentifer,
+        string $primery_key,
+        array $stash,
+        array $resistant
     ): self {
         $this->table_name  = $table;
         $this->columns     = $this->fresh = $column;

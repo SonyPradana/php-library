@@ -5,22 +5,22 @@ declare(strict_types=1);
 namespace System\Test\Database\RealDatabase;
 
 use System\Database\MyModel\Model;
-use System\Database\MyModel\ORM;
 use System\Database\MyQuery;
 
 final class ModelTest extends \RealDatabaseConnectionTest
 {
-    private Model $model;
+    private $model;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->model = new class($this->pdo) extends Model {
             protected string $table_name = 'users';
+            protected $resistant         = ['pwd'];
 
-            public function profile()
+            public function profiles()
             {
-                return $this->single->hasOne('profiles', 'user');
+                return $this->hasOne('profiles', 'user');
             }
         };
     }
@@ -135,18 +135,17 @@ final class ModelTest extends \RealDatabaseConnectionTest
      */
     public function itOrmCanGetHasOne()
     {
-        $this->markTestIncomplete('wait for high oder call fininsh to solve the probelm');
         $this->profileFactory();
         $orm = $this->model->where('user', 'taylor');
         $orm->read();
 
-        // $this->assertEquals(
-        //     [
-        //         'user'      => 'taylor',
-        //         'real_name' => 'taylor otwell',
-        //     ],
-        //     $orm->profile()->toArray()
-        // );
+        $this->assertEquals(
+            [
+                'user'      => 'taylor',
+                'real_name' => 'taylor otwell',
+            ],
+            $orm->profiles()->toArray()
+        );
     }
 
     /**
@@ -179,7 +178,7 @@ final class ModelTest extends \RealDatabaseConnectionTest
      */
     public function itOrmCheckCleanRecords()
     {
-        $orm = new ORM('users', [], $this->pdo, ['user' => 'taylor'], 'user');
+        $orm = $this->model->where('user', 'taylor');
 
         $this->assertTrue($orm->read());
         $this->assertTrue($orm->isClean());
@@ -193,7 +192,8 @@ final class ModelTest extends \RealDatabaseConnectionTest
      */
     public function itOrmCheckDirtyRecords()
     {
-        $orm = new ORM('users', [], $this->pdo, ['user' => 'taylor'], 'user');
+        $orm = $this->model->where('user', 'taylor');
+
         $orm->read();
         $orm->stat = 50;
         $this->assertTrue($orm->isDirty());
@@ -208,7 +208,8 @@ final class ModelTest extends \RealDatabaseConnectionTest
      */
     public function itOrmCheckChangesRecords()
     {
-        $orm = new ORM('users', [], $this->pdo, ['user' => 'taylor'], 'user');
+        $orm = $this->model->where('user', 'taylor');
+
         $orm->read();
         $orm->stat = 50;
         $this->assertEquals(
@@ -225,7 +226,8 @@ final class ModelTest extends \RealDatabaseConnectionTest
      */
     public function itOrmCheckChangesRecordsWithResistenColumn()
     {
-        $orm = new ORM('users', [], $this->pdo, ['user' => 'taylor'], 'user', [], ['pwd']);
+        $orm = $this->model->where('user', 'taylor');
+
         $orm->read();
         $orm->stat = 50;
         $orm->pwd  = 'public';
@@ -243,7 +245,16 @@ final class ModelTest extends \RealDatabaseConnectionTest
      */
     public function itOrmCanReadHideColumn()
     {
-        $orm = new ORM('users', [], $this->pdo, ['user' => 'taylor'], 'user', ['pwd']);
+        $orm = new class($this->pdo) extends Model {
+            protected string $table_name = 'users';
+            protected $resistant         = ['pwd'];
+            protected $stash             = ['pwd'];
+
+            public function profiles()
+            {
+                return $this->hasOne('profiles', 'user');
+            }
+        };
 
         $this->assertTrue($orm->read());
         $this->assertTrue($orm->get()->has('user'));

@@ -6,8 +6,9 @@ namespace System\Database\MyModel;
 
 use System\Database\MyPDO;
 
-abstract class Model extends ORMAbstract
+abstract class Model extends ORM
 {
+    /** Share orm (self) */
     public ORM $single;
 
     /** @var ModelCollention<int, ORM> */
@@ -17,7 +18,7 @@ abstract class Model extends ORMAbstract
     {
         $this->pdo        = $pdo;
         $this->table_name ??= strtolower(__CLASS__);
-        $this->single = new ORM($this->table_name, [], $pdo);
+        $this->single = $this;
     }
 
     /**
@@ -40,33 +41,9 @@ abstract class Model extends ORMAbstract
         $this->setter($name, $value);
     }
 
-    /**
-     * Setter.
-     *
-     * @param mixed $val
-     */
-    public function setter(string $key, $val): self
+    public function find($id): self
     {
-        $this->single->setter($key, $val);
-
-        return $this;
-    }
-
-    /**
-     * Getter.
-     *
-     * @param mixed|null $defaul
-     *
-     * @return mixed
-     */
-    public function getter(string $key, $defaul = null)
-    {
-        return $this->single->getter($key, $defaul);
-    }
-
-    public function find($id): ORM
-    {
-        return new ORM(
+        return $this->single = $this->setUp(
             $this->table_name,
             $this->columns,
             $this->pdo,
@@ -77,16 +54,16 @@ abstract class Model extends ORMAbstract
         );
     }
 
-    public function where(string $column, $value): ORM
-    {
-        return $this->single->setUp(
-            $this->table_name,
-            $this->columns,
-            $this->pdo,
-            [$column => $value],
-            $column,
-            $this->stash,
-            $this->resistant
-        );
-    }
+   public function where(string $column, $value): self
+   {
+       return $this->single = $this->setUp(
+           $this->table_name,
+           $this->columns,
+           $this->pdo,
+           [$column => $value],
+           $column,
+           $this->stash,
+           $this->resistant
+       );
+   }
 }

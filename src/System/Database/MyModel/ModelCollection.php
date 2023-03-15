@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Database\MyModel;
 
-use System\Collection\CollectionImmutable;
+use System\Collection\AbstractCollectionImmutable;
 
 /**
  * @template TKey of int
@@ -12,6 +12,6 @@ use System\Collection\CollectionImmutable;
  *
  * @extends AbstractCollectionImmutable<int, ORM>
  */
-final class ModelCollention extends CollectionImmutable
+final class ModelCollention extends AbstractCollectionImmutable
 {
 }
