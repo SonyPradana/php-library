@@ -6,36 +6,14 @@ namespace System\Database\MyModel;
 
 use System\Collection\Collection;
 use System\Collection\CollectionImmutable;
+use System\Database\MyModel\Interfaces\ORMInterface;
 use System\Database\MyPDO;
 use System\Database\MyQuery;
 use System\Database\MyQuery\Join\InnerJoin;
 
-final class ORM
+final class ORM extends ORMAbstract implements ORMInterface
 {
-    /** @var MyPDO */
-    private $pdo;
-
-    private string $table_name;
-
-    private string $primery_key;
-
-    /** @var array<string, mixed> */
-    private $columns = [];
-
-    /** @var array<string, string> */
-    private $indentifer = [];
-
-    /** @var string[] Hide from shoing column */
-    private $stash;
-
-    /** @var string[] Set Column cant be modify */
-    private $resistant;
-
-    /** @var array<string, mixed> orginal data from database */
-    private $fresh;
-
     // magic ----------------------
-
     /**
      * @param array<string, string> $indentifer
      * @param array<string, mixed>  $column
@@ -51,6 +29,18 @@ final class ORM
         array $stash = [],
         array $resistant = []
     ) {
+        $this->setUp($table, $column, $pdo, $indentifer, $primery_key, $stash, $resistant);
+    }
+
+    public function setUp(
+        string $table,
+        array $column,
+        MyPDO $pdo,
+        array $indentifer = [],
+        string $primery_key = 'id',
+        array $stash = [],
+        array $resistant = []
+    ): self {
         $this->table_name  = $table;
         $this->columns     = $this->fresh = $column;
         $this->pdo         = $pdo;
@@ -58,6 +48,8 @@ final class ORM
         $this->primery_key = $primery_key;
         $this->stash       = $stash;
         $this->resistant   = $resistant;
+
+        return $this;
     }
 
     /**
@@ -74,15 +66,13 @@ final class ORM
      * Setter.
      *
      * @param mixed $value
-     *
-     * @return self
      */
     public function __set(string $name, $value)
     {
-        return $this->setter($name, $value);
+        $this->setter($name, $value);
     }
 
-    public function __isset(string $name)
+    public function __isset(string $name): bool
     {
         return array_key_exists($name, $this->columns);
     }
@@ -91,10 +81,8 @@ final class ORM
      * Setter.
      *
      * @param mixed $val
-     *
-     * @return self
      */
-    private function setter(string $key, $val)
+    public function setter(string $key, $val): self
     {
         if (key_exists($key, $this->columns) && !in_array($key, $this->resistant)) {
             $this->columns[$key] = $val;
@@ -110,7 +98,7 @@ final class ORM
      *
      * @return mixed
      */
-    private function getter(string $key, $defaul = null)
+    public function getter(string $key, $defaul = null)
     {
         if (array_key_exists($key, $this->stash)) {
             throw new \Exception("Cant read this colum `{$key}`");
