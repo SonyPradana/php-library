@@ -20,7 +20,7 @@ abstract class RealDatabaseConnectionTest extends TestCase
     protected function setUp(): void
     {
         $this->env = [
-            'host'           => '192.168.1.99',
+            'host'           => 'localhost',
             'user'           => 'root',
             'password'       => '',
             'database_name'  => 'testing_db',
