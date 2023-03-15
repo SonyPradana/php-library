@@ -41,7 +41,7 @@ abstract class Model extends ORM
         $this->setter($name, $value);
     }
 
-    public function find($id): self
+    public function find($id): ORM
     {
         return $this->single = $this->setUp(
             $this->table_name,
@@ -54,7 +54,7 @@ abstract class Model extends ORM
         );
     }
 
-   public function where(string $column, $value): self
+   public function where(string $column, $value): ORM
    {
        return $this->single = $this->setUp(
            $this->table_name,
