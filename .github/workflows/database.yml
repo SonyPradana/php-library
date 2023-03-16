@@ -1,6 +1,14 @@
 name: databases
 
-on: ['push', 'pull_request']
+on: 
+  push:
+    paths:
+      - "src/System/Database"
+      - "tests/DataBase"
+  pull_request:
+    paths:
+      - "src/System/Database"
+      - "tests/DataBase"
 
 jobs:
   mysql_57:
