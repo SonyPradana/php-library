@@ -1,0 +1,29 @@
+name: Database
+
+on: ['push', 'pull_request']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [7.4]
+
+    name: Tests PHP ${{ matrix.php }}
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '7.4'
+    
+    - name: Install extentions
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libzip-dev
+        sudo docker-php-ext-install zip pdo_mysql mysqli
+
+    - name: Run database test
+      run: ./vendor/bin/phpunit tests/
