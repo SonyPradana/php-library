@@ -3,12 +3,12 @@ name: databases
 on: 
   push:
     paths:
-      - "src/System/Database"
-      - "tests/DataBase"
+      - "src/System/Database/**"
+      - "tests/DataBase/**"
   pull_request:
     paths:
-      - "src/System/Database"
-      - "tests/DataBase"
+      - "src/System/Database/**"
+      - "tests/DataBase/**"
 
 jobs:
   mysql_57:
