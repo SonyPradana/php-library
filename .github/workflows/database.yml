@@ -1,12 +1,16 @@
-name: databases
+name: Database
 
 on: 
   push:
     paths:
+      - ".github/workflows/database.yml"
       - "src/System/Database/**"
       - "tests/DataBase/**"
+    branches:
+      - master
   pull_request:
     paths:
+      - ".github/workflows/database.yml"
       - "src/System/Database/**"
       - "tests/DataBase/**"
 
