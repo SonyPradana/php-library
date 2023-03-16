@@ -1,0 +1,59 @@
+name: Database
+
+on: 
+  push:
+    paths:
+      - ".github/workflows/database.yml"
+      - "src/System/Database/**"
+      - "tests/DataBase/**"
+    branches:
+      - master
+  pull_request:
+    paths:
+      - ".github/workflows/database.yml"
+      - "src/System/Database/**"
+      - "tests/DataBase/**"
+
+jobs:
+  mysql_57:
+    runs-on: ubuntu-22.04
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: forge
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    strategy:
+      fail-fast: true
+
+    name: MySQL 5.7
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.1
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, pdo_mysql
+          tools: composer:v2
+          coverage: none
+
+      - name: Install dependencies
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 5
+          max_attempts: 5
+          command: composer update --prefer-stable --prefer-dist --no-interaction --no-progress
+
+      - name: Execute tests
+        run: vendor/bin/phpunit tests/DataBase
+        env:
+          DB_CONNECTION: mysql
+          DB_USERNAME: root
