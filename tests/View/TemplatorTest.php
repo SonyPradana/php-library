@@ -64,5 +64,4 @@ class TemplatorTest extends TestCase
 
         $this->assertEquals('<html><head></head><body>123</body></html>', trim($out));
     }
-
 }

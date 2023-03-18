@@ -30,6 +30,8 @@ class Templator
         if (file_exists($cachePath) && filemtime($cachePath) >= filemtime($templatePath)) {
             extract($data);
             include $cachePath;
+
+            /* @phpstan-ignore-next-line */
             return trim($output);
         }
 
@@ -48,11 +50,14 @@ class Templator
 
         extract($data);
         include $cachePath;
+
+        /* @phpstan-ignore-next-line */
         return trim($output);
     }
 
-    private function templateInclude($template) {
-        return preg_replace_callback('/{%\s*include\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/', function($matches) {            
+    private function templateInclude($template)
+    {
+        return preg_replace_callback('/{%\s*include\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/', function ($matches) {
             $templatePath = $this->templateDir . '/' . $matches[1];
 
             if (!file_exists($templatePath)) {
@@ -60,6 +65,7 @@ class Templator
             }
 
             $includedTemplate = file_get_contents($templatePath);
+
             return trim($includedTemplate, "\n");
         }, $template);
     }
@@ -83,5 +89,4 @@ class Templator
     {
         return preg_replace('/{%\s*foreach\s+([^%]+)\s+as\s+([^%]+)\s*%}(.*?){%\s*endforeach\s*%}/s', '<?php foreach ($$1 as $$2): ?>$3<?php endforeach; ?>', $template);
     }
-
 }
