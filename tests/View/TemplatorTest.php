@@ -5,6 +5,16 @@ use System\View\Templator;
 
 class TemplatorTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        $files = glob(__DIR__ . '/caches/*.php');
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                unlink($file);
+            }
+        }
+    }
+
     /** @test */
     public function itCanRenderPhpTemplate(): void
     {
