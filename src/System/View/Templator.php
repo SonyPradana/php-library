@@ -77,7 +77,10 @@ class Templator
 
     private function templateName(string $template): string
     {
-        return preg_replace('/{{\s*([^}]+)\s*}}/', '<?php echo htmlspecialchars($$1); ?>', $template);
+        return preg_replace('/{{\s*([^}]+)\s*\?\?\s*([^:}]+)\s*:\s*([^}]+)\s*}}/',
+            '<?php echo ($1 !== null) ? $1 : $3; ?>',
+            preg_replace('/{{\s*([^}]+)\s*}}/', '<?php echo htmlspecialchars($$1); ?>', $template)
+        );
     }
 
     private function templatePhp(string $template): string

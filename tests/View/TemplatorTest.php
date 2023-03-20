@@ -70,6 +70,22 @@ class TemplatorTest extends TestCase
     }
 
     /** @test */
+    public function itCanRenderNameTemplateWithTernary(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator($loader, $cache);
+        $out  = $view->render('naming-ternary.php', ['age' => false]);
+
+        $this->assertEquals('<html><head></head><body><h1>your nuno, ages 28 </h1></body></html>', trim($out));
+
+        // without cache
+        $out  = $view->render('naming-ternary.php', ['age' => false], false);
+        $this->assertEquals('<html><head></head><body><h1>your nuno, ages 28 </h1></body></html>', trim($out));
+    }
+
+    /** @test */
     public function itCanRenderNameTemplateInSubFolder(): void
     {
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
