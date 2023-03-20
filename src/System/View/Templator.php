@@ -17,8 +17,9 @@ class Templator
         $this->cacheDir    = $cacheDir;
     }
 
-    public function render(string $templateName, array $data): string
+    public function render(string $templateName, array $data, bool $cache = true): string
     {
+        $output       = '';
         $templatePath = $this->templateDir . '/' . $templateName;
 
         if (!file_exists($templatePath)) {
@@ -27,32 +28,36 @@ class Templator
 
         $cachePath = $this->cacheDir . '/' . md5($templateName) . '.php';
 
-        if (file_exists($cachePath) && filemtime($cachePath) >= filemtime($templatePath)) {
+        if ($cache && file_exists($cachePath) && filemtime($cachePath) >= filemtime($templatePath)) {
             extract($data);
             include $cachePath;
 
-            /* @phpstan-ignore-next-line */
             return trim($output);
         }
 
         $template = file_get_contents($templatePath);
-
-        $template = $this->templateInclude($template);
-        $template = $this->templatePhp($template);
-        $template = $this->templateName($template);
-        $template = $this->templateIf($template);
-        $template = $this->templateEach($template);
+        $template = $this->templates($template);
 
         // Generate PHP code
-        $phpCode = '<?php ob_start(); ?>' . $template . '<?php $output = ob_get_clean(); ?>' . PHP_EOL;
+        $phpCode = '<?php ob_start(); ?>' . $template . '<?php $output = ob_get_clean(); ?>';
 
         file_put_contents($cachePath, $phpCode);
 
         extract($data);
         include $cachePath;
 
-        /* @phpstan-ignore-next-line */
         return trim($output);
+    }
+
+    private function templates(string $template): string
+    {
+        $template = $this->templateInclude($template);
+        $template = $this->templatePhp($template);
+        $template = $this->templateName($template);
+        $template = $this->templateIf($template);
+        $template = $this->templateEach($template);
+
+        return $template;
     }
 
     private function templateInclude($template)
