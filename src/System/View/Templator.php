@@ -10,6 +10,7 @@ class Templator
 {
     private $templateDir;
     private $cacheDir;
+    private $sections = [];
 
     public function __construct(string $templateDir, string $cacheDir)
     {
@@ -51,6 +52,27 @@ class Templator
 
     private function templates(string $template): string
     {
+        $template = preg_replace_callback(
+            '/{%\s*section\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\,\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}(.*?){%\s*endsection\s*%}/s',
+            function ($matches) {
+                $this->sections[$matches[2]] = [
+                    'name' => trim($matches[3]),
+                    'loc'  => $matches[1],
+                ];
+
+                return trim($matches[3]);
+            }, $template);
+
+        $layouts = [];
+        foreach ($this->sections as $name => $content) {
+            if (!array_key_exists($content['loc'], $layouts)) {
+                $templatePath             = $this->templateDir . '/' . $content['loc'];
+                $layouts[$content['loc']] = file_get_contents($templatePath);
+            }
+
+            $template = $layouts[$content['loc']] = str_replace("@yield('$name')", $content['name'], $layouts[$content['loc']]);
+        }
+
         $template = $this->templateInclude($template);
         $template = $this->templatePhp($template);
         $template = $this->templateName($template);
