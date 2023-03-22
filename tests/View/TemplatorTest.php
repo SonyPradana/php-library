@@ -16,7 +16,7 @@ class TemplatorTest extends TestCase
         }
     }
 
-    private function assertContain(string $text, string $find)
+    private function assertSee(string $text, string $find)
     {
         $this->assertTrue(Str::contains($text, $find));
     }
@@ -46,11 +46,11 @@ class TemplatorTest extends TestCase
         $view = new Templator($loader, $cache);
         $out  = $view->render('include.php', []);
 
-        $this->assertContain(trim($out), '<p>taylor</p>');
+        $this->assertSee(trim($out), '<p>taylor</p>');
 
         // without cache
         $out  = $view->render('include.php', [], false);
-        $this->assertContain(trim($out), '<p>taylor</p>');
+        $this->assertSee(trim($out), '<p>taylor</p>');
     }
 
     /** @test */
@@ -127,5 +127,45 @@ class TemplatorTest extends TestCase
         // without cache
         $out  = $view->render('each.php', ['numbsers' => [1, 2, 3]], false);
         $this->assertEquals('<html><head></head><body>123</body></html>', trim($out));
+    }
+
+    /**
+     * @test
+     */
+    public function itCanRenderSectionTemplate(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator($loader, $cache);
+        $out  = $view->render('slot.php', [
+            'title'   => 'taylor otwell',
+            'product' => 'laravel',
+            'year'    => 2023,
+        ]);
+
+        $this->assertSee($out, 'taylor otwell');
+        $this->assertSee($out, 'laravel');
+        $this->assertSee($out, 2023);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanRenderTemplate(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator($loader, $cache);
+        $out  = $view->render('portofolio.php', [
+            'title'    => 'cool portofolio',
+            'products' => ['laravel', 'forge'],
+        ]);
+
+        $this->assertSee($out, 'cool portofolio');
+        $this->assertSee($out, 'taylor');
+        $this->assertSee($out, 'laravel');
+        $this->assertSee($out, 'forge');
     }
 }
