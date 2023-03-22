@@ -52,6 +52,18 @@ class Templator
 
     private function templates(string $template): string
     {
+        $template = $this->templateSlot($template);
+        $template = $this->templateInclude($template);
+        $template = $this->templatePhp($template);
+        $template = $this->templateName($template);
+        $template = $this->templateIf($template);
+        $template = $this->templateEach($template);
+
+        return $template;
+    }
+
+    private function templateSlot($template): string
+    {
         $template = preg_replace_callback(
             '/{%\s*section\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\,\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}(.*?){%\s*endsection\s*%}/s',
             function ($matches) {
@@ -70,19 +82,17 @@ class Templator
                 $layouts[$content['loc']] = file_get_contents($templatePath);
             }
 
-            $template = $layouts[$content['loc']] = str_replace("@yield('$name')", $content['name'], $layouts[$content['loc']]);
+            $template = $layouts[$content['loc']] = preg_replace_callback(
+                "/{%\s*yield\(\'(\w+)\'\)\s*%}/",
+                fn ($matches) => str_replace($matches[0], $content['name'], $layouts[$content['loc']]),
+                $layouts[$content['loc']]
+            );
         }
-
-        $template = $this->templateInclude($template);
-        $template = $this->templatePhp($template);
-        $template = $this->templateName($template);
-        $template = $this->templateIf($template);
-        $template = $this->templateEach($template);
 
         return $template;
     }
 
-    private function templateInclude($template)
+    private function templateInclude($template): string
     {
         return preg_replace_callback('/{%\s*include\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/', function ($matches) {
             $templatePath = $this->templateDir . '/' . $matches[1];
