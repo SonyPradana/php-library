@@ -64,30 +64,31 @@ class Templator
 
     private function templateSlot($template): string
     {
-        $template = preg_replace_callback(
-            '/{%\s*section\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\,\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}(.*?){%\s*endsection\s*%}/s',
-            function ($matches) {
-                $this->sections[$matches[2]] = [
-                    'name' => trim($matches[3]),
-                    'loc'  => $matches[1],
-                ];
-
-                return trim($matches[3]);
-            }, $template);
-
-        $layouts = [];
-        foreach ($this->sections as $name => $content) {
-            if (!array_key_exists($content['loc'], $layouts)) {
-                $templatePath             = $this->templateDir . '/' . $content['loc'];
-                $layouts[$content['loc']] = file_get_contents($templatePath);
-            }
-
-            $template = $layouts[$content['loc']] = preg_replace_callback(
-                "/{%\s*yield\(\'(\w+)\'\)\s*%}/",
-                fn ($matches) => str_replace($matches[0], $content['name'], $layouts[$content['loc']]),
-                $layouts[$content['loc']]
-            );
+        preg_match('/{%\s*extend\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/', $template, $matches_layout);
+        if (!array_key_exists(1, $matches_layout)) {
+            return $template;
         }
+        $templatePath = $this->templateDir . '/' . $matches_layout[1];
+
+        if (!file_exists($templatePath)) {
+            throw new \Exception('Template file not found: ' . $matches_layout[1]);
+        }
+
+        $layout = file_get_contents($templatePath);
+
+        $template = preg_replace_callback(
+            '/{%\s*section\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}(.*?){%\s*endsection\s*%}/s',
+            fn ($matches) => $this->sections[$matches[1]] = trim($matches[2]),
+            $template
+        );
+
+        $template = preg_replace_callback(
+            "/{%\s*yield\(\'(\w+)\'\)\s*%}/",
+            fn ($matches) => array_key_exists($matches[1], $this->sections)
+                ? $this->sections[$matches[1]]
+                : throw new \Exception("Slot with extends '{$matches_layout[1]}' required '{$matches[1]}'"),
+            $layout
+        );
 
         return $template;
     }
@@ -122,7 +123,15 @@ class Templator
 
     private function templateIf(string $template): string
     {
-        return preg_replace('/{%\s*if\s+([^%]+)\s*%}(.*?){%\s*endif\s*%}/s', '<?php if ($1): ?>$2<?php endif; ?>', $template);
+        return preg_replace(
+            '/{%\s*if\s+([^%]+)\s*%}(.*?){%\s*endif\s*%}/s',
+            '<?php if ($1): ?>$2<?php endif; ?>',
+            preg_replace(
+                '/{%\s*if\s+([^%]+)\s*%}(.*?){%\s*else\s*%}(.*?){%\s*endif\s*%}/s',
+                '<?php if ($1): ?>$2<?php else: ?>$3<?php endif; ?>',
+                $template
+            )
+        );
     }
 
     private function templateEach(string $template): string
