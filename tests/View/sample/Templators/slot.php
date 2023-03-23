@@ -1,12 +1,13 @@
-{% section('Slots/layout.php', 'title') %}
+{% extend('Slots/layout.php') %}
+
+{% section('title') %}
 {{ title }}
 {% endsection %}
 
-
-{% section('Slots/layout.php', 'content') %}
+{% section('content') %}
 <p>{{ product }}</p>
 {% endsection %}
 
-{% section('Slots/layout.php', 'header') %}
+{% section('header') %}
 <i>{{ year }}</i>
 {% endsection %}

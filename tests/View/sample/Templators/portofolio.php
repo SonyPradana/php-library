@@ -1,8 +1,10 @@
-{% section('Slots/layout2.php', 'title') %}
+{% extend('Slots/layout2.php') %}
+
+{% section('title') %}
 {{ title }} | website
 {% endsection %}
 
-{% section('Slots/layout2.php', 'body') %}
+{% section('body') %}
     {% php %}
         $correct = true;
     {% endphp %}
