@@ -123,7 +123,15 @@ class Templator
 
     private function templateIf(string $template): string
     {
-        return preg_replace('/{%\s*if\s+([^%]+)\s*%}(.*?){%\s*endif\s*%}/s', '<?php if ($1): ?>$2<?php endif; ?>', $template);
+        return preg_replace(
+            '/{%\s*if\s+([^%]+)\s*%}(.*?){%\s*endif\s*%}/s',
+            '<?php if ($1): ?>$2<?php endif; ?>',
+            preg_replace(
+                '/{%\s*if\s+([^%]+)\s*%}(.*?){%\s*else\s*%}(.*?){%\s*endif\s*%}/s',
+                '<?php if ($1): ?>$2<?php else: ?>$3<?php endif; ?>',
+                $template
+            )
+        );
     }
 
     private function templateEach(string $template): string

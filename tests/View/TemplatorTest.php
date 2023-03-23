@@ -114,6 +114,22 @@ class TemplatorTest extends TestCase
     }
 
     /** @test */
+    public function itCanRenderElseIfTemplate(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator($loader, $cache);
+        $out  = $view->render('else.php', ['true' => false]);
+
+        $this->assertEquals('<html><head></head><body><h1> hide </body></html>', trim($out));
+
+        // without cache
+        $out  = $view->render('else.php', ['true' => false], false);
+        $this->assertEquals('<html><head></head><body><h1> hide </body></html>', trim($out));
+    }
+
+    /** @test */
     public function itCanRenderEachTemplate(): void
     {
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
