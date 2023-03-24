@@ -189,8 +189,9 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
-        $view = new Templator($loader, $cache);
-        $out  = $view->render('portofolio.php', [
+        $view         = new Templator($loader, $cache);
+        $view->suffix = '.php';
+        $out          = $view->render('portofolio', [
             'title'    => 'cool portofolio',
             'products' => ['laravel', 'forge'],
         ]);

@@ -10,7 +10,8 @@ class Templator
 {
     private $templateDir;
     private $cacheDir;
-    private $sections = [];
+    private $sections     = [];
+    public string $suffix = '';
 
     public function __construct(string $templateDir, string $cacheDir)
     {
@@ -21,7 +22,7 @@ class Templator
     public function render(string $templateName, array $data, bool $cache = true): string
     {
         $output       = '';
-        $templatePath = $this->templateDir . '/' . $templateName;
+        $templatePath = $this->templateDir . '/' . $templateName . $this->suffix;
 
         if (!file_exists($templatePath)) {
             throw new ViewFileNotFound($templatePath);
