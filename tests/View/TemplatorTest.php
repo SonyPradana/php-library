@@ -21,6 +21,11 @@ class TemplatorTest extends TestCase
         $this->assertTrue(Str::contains($text, $find));
     }
 
+    private function assertBlind(string $text, string $find)
+    {
+        $this->assertTrue(!Str::contains($text, $find));
+    }
+
     /** @test */
     public function itCanRenderPhpTemplate(): void
     {
@@ -50,6 +55,22 @@ class TemplatorTest extends TestCase
 
         // without cache
         $out  = $view->render('include.php', [], false);
+        $this->assertSee(trim($out), '<p>taylor</p>');
+    }
+
+    /** @test */
+    public function itCanRenderIncludeNestingTemplate(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator($loader, $cache);
+        $out  = $view->render('nesting.include.php', []);
+
+        $this->assertSee(trim($out), '<p>taylor</p>');
+
+        // without cache
+        $out  = $view->render('nesting.include.php', [], false);
         $this->assertSee(trim($out), '<p>taylor</p>');
     }
 
@@ -173,8 +194,9 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
-        $view = new Templator($loader, $cache);
-        $out  = $view->render('portofolio.php', [
+        $view         = new Templator($loader, $cache);
+        $view->suffix = '.php';
+        $out          = $view->render('portofolio', [
             'title'    => 'cool portofolio',
             'products' => ['laravel', 'forge'],
         ]);
@@ -183,5 +205,21 @@ class TemplatorTest extends TestCase
         $this->assertSee($out, 'taylor');
         $this->assertSee($out, 'laravel');
         $this->assertSee($out, 'forge');
+    }
+
+    /** @test */
+    public function itCanRenderCommentTemplate(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator($loader, $cache);
+        $out  = $view->render('comment.php', []);
+
+        $this->assertBlind($out, 'this a comment');
+
+        // without cache
+        $out  = $view->render('comment.php', [], false);
+        $this->assertBlind($out, 'this a comment');
     }
 }
