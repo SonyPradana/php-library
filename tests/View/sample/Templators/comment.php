@@ -1,1 +1,1 @@
-<html><head></head><body><h1>{{-- comment appare here --}}</h1></body></html>
+<html><head></head><body>{# this a comment #}</body></html>

@@ -59,6 +59,7 @@ class Templator
         $template = $this->templateName($template);
         $template = $this->templateIf($template);
         $template = $this->templateEach($template);
+        $template = $this->templateComment($template);
 
         return $template;
     }
@@ -139,5 +140,10 @@ class Templator
     private function templateEach(string $template): string
     {
         return preg_replace('/{%\s*foreach\s+([^%]+)\s+as\s+([^%]+)\s*%}(.*?){%\s*endforeach\s*%}/s', '<?php foreach ($$1 as $$2): ?>$3<?php endforeach; ?>', $template);
+    }
+
+    public function templateComment(string $template): string
+    {
+        return preg_replace('/{#\s*(.*?)\s*#}/', '<?php // $1 ?>', $template);
     }
 }
