@@ -103,8 +103,9 @@ class Templator
             }
 
             $includedTemplate = file_get_contents($templatePath);
+            $includedTemplate = $this->templateInclude($includedTemplate);
 
-            return trim($includedTemplate, "\n");
+            return trim($includedTemplate);
         }, $template);
     }
 

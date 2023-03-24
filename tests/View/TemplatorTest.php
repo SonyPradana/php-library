@@ -54,6 +54,22 @@ class TemplatorTest extends TestCase
     }
 
     /** @test */
+    public function itCanRenderIncludeNestingTemplate(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator($loader, $cache);
+        $out  = $view->render('nesting.include.php', []);
+
+        $this->assertSee(trim($out), '<p>taylor</p>');
+
+        // without cache
+        $out  = $view->render('nesting.include.php', [], false);
+        $this->assertSee(trim($out), '<p>taylor</p>');
+    }
+
+    /** @test */
     public function itCanRenderNameTemplate(): void
     {
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
