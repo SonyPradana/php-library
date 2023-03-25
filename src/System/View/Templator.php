@@ -21,8 +21,9 @@ class Templator
 
     public function render(string $templateName, array $data, bool $cache = true): string
     {
-        $output       = '';
-        $templatePath = $this->templateDir . '/' . $templateName . $this->suffix;
+        $templateName .= $this->suffix;
+        $output        = '';
+        $templatePath  = $this->templateDir . '/' . $templateName;
 
         if (!file_exists($templatePath)) {
             throw new ViewFileNotFound($templatePath);
@@ -54,7 +55,7 @@ class Templator
     private function templates(string $template): string
     {
         $template = $this->templateSlot($template);
-        $template = $this->templateInclude($template);
+        $template = $this->templateInclude($template, 5);
         $template = $this->templatePhp($template);
         $template = $this->templateName($template);
         $template = $this->templateIf($template);
@@ -95,20 +96,26 @@ class Templator
         return $template;
     }
 
-    private function templateInclude($template): string
+    private function templateInclude(string $template, int $maks_dept): string
     {
-        return preg_replace_callback('/{%\s*include\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/', function ($matches) {
-            $templatePath = $this->templateDir . '/' . $matches[1];
+        return preg_replace_callback(
+            '/{%\s*include\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/',
+            function ($matches) use ($maks_dept) {
+                $templatePath = $this->templateDir . '/' . $matches[1];
 
-            if (!file_exists($templatePath)) {
-                throw new \Exception('Template file not found: ' . $matches[1]);
-            }
+                if (!file_exists($templatePath)) {
+                    throw new \Exception('Template file not found: ' . $matches[1]);
+                }
 
-            $includedTemplate = file_get_contents($templatePath);
-            $includedTemplate = $this->templateInclude($includedTemplate);
+                $includedTemplate = file_get_contents($templatePath);
+                if ($maks_dept === 0) {
+                    return $includedTemplate;
+                }
 
-            return trim($includedTemplate);
-        }, $template);
+                return trim($this->templateInclude($includedTemplate, --$maks_dept));
+            },
+            $template
+        );
     }
 
     private function templateName(string $template): string
