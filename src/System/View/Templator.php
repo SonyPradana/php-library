@@ -12,6 +12,7 @@ class Templator
     private $cacheDir;
     private $sections     = [];
     public string $suffix = '';
+    public int $max_depth = 5;
 
     public function __construct(string $templateDir, string $cacheDir)
     {
@@ -55,7 +56,7 @@ class Templator
     private function templates(string $template): string
     {
         $template = $this->templateSlot($template);
-        $template = $this->templateInclude($template, 5);
+        $template = $this->templateInclude($template, $this->max_depth);
         $template = $this->templatePhp($template);
         $template = $this->templateName($template);
         $template = $this->templateIf($template);
