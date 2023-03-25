@@ -222,4 +222,20 @@ class TemplatorTest extends TestCase
         $out  = $view->render('comment.php', [], false);
         $this->assertBlind($out, 'this a comment');
     }
+
+    /** @test */
+    public function itCanRenderRepeatTemplate(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator($loader, $cache);
+        $out  = $view->render('repeat.include.php', []);
+
+        $this->assertEquals(6, substr_count($out, 'some text'));
+
+        // without cache
+        $out  = $view->render('repeat.include.php', [], false);
+        $this->assertEquals(6, substr_count($out, 'some text'));
+    }
 }
