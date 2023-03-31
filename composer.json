@@ -27,7 +27,6 @@
         },
         "files": [
           "src/System/Collection/helper.php",
-          "src/System/Integrate/helper.php",
           "src/System/Console/helper.php",
           "src/System/Text/helper.php",
           "src/System/Time/helper.php"
@@ -35,6 +34,7 @@
     },
     "autoload-dev": {
         "files": [
+            "src/System/Integrate/helper.php",
             "tests/DataBase/QueryStringTest.php",
             "tests/DataBase/RealDatabaseConnectionTest.php"
         ]
@@ -47,6 +47,13 @@
         },
         "branch-alias": {
             "dev-master": "0.x-dev"
+        },
+        "optional": {
+            "autoload": {
+                "files": [
+                  "src/System/Integrate/helper.php"
+                ]
+            }
         }
     },
     "minimum-stability": "dev",
