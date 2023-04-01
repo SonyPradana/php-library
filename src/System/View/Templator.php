@@ -23,7 +23,6 @@ class Templator
     public function render(string $templateName, array $data, bool $cache = true): string
     {
         $templateName .= $this->suffix;
-        $output        = '';
         $templatePath  = $this->templateDir . '/' . $templateName;
 
         if (!file_exists($templatePath)) {
@@ -33,24 +32,37 @@ class Templator
         $cachePath = $this->cacheDir . '/' . md5($templateName) . '.php';
 
         if ($cache && file_exists($cachePath) && filemtime($cachePath) >= filemtime($templatePath)) {
-            extract($data);
-            include $cachePath;
-
-            return trim($output);
+            return $this->getView($cachePath, $data);
         }
 
         $template = file_get_contents($templatePath);
         $template = $this->templates($template);
 
-        // Generate PHP code
-        $phpCode = '<?php ob_start(); ?>' . $template . '<?php $output = ob_get_clean(); ?>';
+        file_put_contents($cachePath, $template);
 
-        file_put_contents($cachePath, $phpCode);
+        return $this->getView($cachePath, $data);
+    }
 
-        extract($data);
-        include $cachePath;
+    private function getView(string $tempalte_path, array $data): string
+    {
+        $level = ob_get_level();
 
-        return trim($output);
+        ob_start();
+
+        try {
+            extract($data);
+            include $tempalte_path;
+        } catch (\Throwable $th) {
+            while (ob_get_level() > $level) {
+                ob_end_clean();
+            }
+
+            throw $th;
+        }
+
+        $out = ob_get_clean();
+
+        return $out === false ? '' : ltrim($out);
     }
 
     private function templates(string $template): string
