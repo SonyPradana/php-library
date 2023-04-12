@@ -12,9 +12,23 @@ class Crypt
 
     public function __construct(string $passphrase, string $cipher_algo)
     {
-        $this->cipher_algo = $cipher_algo;
-        $this->iv          = str_repeat((string) 0x0, 16);
-        $this->hash        = $this->hash($passphrase);
+        [$this->cipher_algo, $chars] = $this->algoParse($cipher_algo);
+        $this->iv                    = random_bytes($chars);
+        $this->hash                  = $this->hash($passphrase);
+    }
+
+    /**
+     * @return string[]|int[]
+     */
+    private function algoParse(string $chiper_algo): array
+    {
+        $parse = explode(';', $chiper_algo);
+
+        if (count($parse) < 2) {
+            throw new \Exception('Chiper algo must provide chars length');
+        }
+
+        return [(string) $parse[0], (int) $parse[1]];
     }
 
     public function hash(string $passphrase): string

@@ -6,5 +6,6 @@ namespace System\Security;
 
 class Algo
 {
-    public const AES_256_CBC = 'aes-256-cbc';
+    public const AES_128_CBC = 'aes-256-cbc;16';
+    public const AES_256_CBC = 'aes-256-cbc;16';
 }
