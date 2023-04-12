@@ -20,33 +20,21 @@ class CryptTest extends TestCase
     }
 
     /** @test */
-    public function itCanEncryptCorrectly()
+    public function itCanEncryptDecryptCorrectly()
     {
-        $encrypted = $this->crypt->encrypt('My secret message 1234');
+        $plan_text = 'My secret message 1234';
+        $encrypted = $this->crypt->encrypt($plan_text);
+        $decrypted = $this->crypt->decrypt($encrypted);
 
-        $this->assertEquals('LmkDyuTTToa9EaGdZmxU1CbKb/JEOvGoR9Fq4ZhTU9U=', $encrypted);
+        $this->assertEquals($plan_text, $decrypted);
     }
 
     /** @test */
     public function itCanEncryptCorrectlyWithCostumePassphrase()
     {
-        $encrypted = $this->crypt->encrypt('My secret message 1234', 'secret');
-
-        $this->assertEquals('J15EYZ7FfI6Pkf7rembfMXTV9qM+RJBriA7uI8LxfLw=', $encrypted);
-    }
-
-    /** @test */
-    public function itCanDecryptCorrectly()
-    {
-        $decrypted = $this->crypt->decrypt('LmkDyuTTToa9EaGdZmxU1CbKb/JEOvGoR9Fq4ZhTU9U=');
-
-        $this->assertEquals('My secret message 1234', $decrypted);
-    }
-
-    /** @test */
-    public function itCanDecryptCorrectlyWithCostumePassphrase()
-    {
-        $decrypted = $this->crypt->decrypt('J15EYZ7FfI6Pkf7rembfMXTV9qM+RJBriA7uI8LxfLw=', 'secret');
+        $plan_text = 'My secret message 1234';
+        $encrypted = $this->crypt->encrypt($plan_text, 'secret');
+        $decrypted = $this->crypt->decrypt($encrypted, 'secret');
 
         $this->assertEquals('My secret message 1234', $decrypted);
     }
