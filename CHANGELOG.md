@@ -6,7 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### [0.17.0] - 2023-02-14
+## [0.18.0] - 2023-04-13
+### Added
+- Added support encrypt decrypt plain text.
+- Added new html/php template engine `Templator::class`.
+- Added support command prompt inputs.
+
+### Changed
+- Generic type Collection.
+
+### Fixed
+-  Update `ColorVariant` Colors Varian.
+
+## [0.17.0] - 2023-02-14
 ### Added
 - Added `Now::class` formated standart date.
 - Added `ValidationCommandTrait::trait`, validation command input with display error in console.
