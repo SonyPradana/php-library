@@ -178,11 +178,11 @@ final class StyleTest extends TestCase
     {
         $text = (new Style('text'))->text_red_500();
 
-        $this->assertEquals(sprintf('%s[38;2;244;67;54;49mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
+        $this->assertEquals(sprintf('%s[38;2;239;68;68;49mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
 
         $text = (new Style('text'))->bg_blue_500();
 
-        $this->assertEquals(sprintf('%s[39;48;2;33;150;243mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
+        $this->assertEquals(sprintf('%s[39;48;2;59;130;246mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
     }
 
     /** @test */
