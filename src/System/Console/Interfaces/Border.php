@@ -25,4 +25,6 @@ interface Border
     public function bottomRight(): bool;
 
     public function bottomLeft(): bool;
+
+    public function corner(): array;
 }

@@ -6,29 +6,22 @@ namespace System\Console\Style;
 
 use System\Console\Interfaces\Border;
 use System\Console\Interfaces\BoxSize;
-use System\Console\Interfaces\RuleInterface;
-use System\Console\Style\Color\BackgroundColor;
-use System\Console\Style\Color\ForegroundColor;
-use System\Console\Traits\CommandTrait;
-use System\Text\Str;
-
-use function System\Text\text;
 
 class Box
 {
     private string $text;
     private BoxSize $boxSize;
     private Border $border;
-    private int $left;
+    private int $left = 0;
 
     public function __construct(
         string $text,
         BoxSize $boxSize,
         Border $border
     ) {
-        $this->text = $text;
+        $this->text    = $text;
         $this->boxSize = $boxSize;
-        $this->border = $border;
+        $this->border  = $border;
     }
 
     public function left(int $left): self
@@ -42,32 +35,70 @@ class Box
     {
         $box_style = new Style();
         foreach ($this->renderLines() as $style) {
-            $box_style->tabs($style);
+            // var_dump($style);
+            $box_style->tap($style);
         }
 
         return $box_style;
     }
 
-    /** 
-     * array 0: margin top
-     * array 1: border
-     * array 2: padding
-     * 
+    /**
+     * Order
+     * - margin top
+     * - border
+     * - padding.
+     *
      * @return Style[]
      */
     public function renderLines(): array
     {
         $lines = [];
 
-        // true size
-        $width = $this->left + $this->boxSize->width();
-
         // render margin top
-        $margin = $this->boxSize->margin()[0];
-        foreach (range(0, $margin) as $m_top) {
-            $lines[] = (new Style)->repeat(' ', $width);
+        $margin = $this->boxSize->margin()->top();
+        $margin_top = new Style;
+        foreach (range(1, $margin) as $m_top) {
+            $margin_top
+                ->repeat(' ', $this->left)
+                ->repeat(' ', $this->boxSize->margin()->left())
+                ->repeat(' ', $this->boxSize->width())
+                ->new_lines()
+            ;
         }
 
-        return $lines;
+        // render border
+        $border_top = (new Style())
+            ->repeat(' ', $this->left)
+            ->repeat(' ', $this->boxSize->margin()->left())
+            ->push($this->border->corner()[3])
+            ->repeat('─', $this->boxSize->width() - 2)
+            ->push($this->border->corner()[0])
+            ->repeat(' ', $this->boxSize->margin()->right())
+            ->new_lines()
+        ;
+
+        // content
+        $content = (new Style())
+            ->repeat(' ', $this->left)
+            ->repeat(' ', $this->boxSize->margin()->left())
+            ->push('│')
+            ->repeat(' ', $this->boxSize->padding()->left())
+            ->push($this->text)
+            ->push('│')
+            ->new_lines()
+        ;
+
+        // bottom
+        $border_bottom = (new Style())
+            ->repeat(' ', $this->left)
+            ->repeat(' ', $this->boxSize->margin()->left())
+            ->push($this->border->corner()[2])
+            ->repeat('─', $this->boxSize->width() - 2)
+            ->push($this->border->corner()[1])
+            ->repeat(' ', $this->boxSize->margin()->right())
+            ->new_lines()
+        ;
+
+        return [$margin_top, $border_top, $content, $border_bottom, $margin_top];
     }
 }

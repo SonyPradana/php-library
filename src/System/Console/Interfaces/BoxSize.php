@@ -2,21 +2,15 @@
 
 namespace System\Console\Interfaces;
 
+use System\Console\ValueObjects\Direction;
+
 interface BoxSize
 {
     public function width(): int;
 
     public function height(): int;
 
-    /**
-     * @return int[] order: top, right, bottom, left
-     */
-    public function margin(): array;
+    public function margin(): Direction;
 
-    /**
-     * @return int[] order: top, right, bottom, left
-     */
-    public function padding(): array;
-
-    public function border(): Border;
+    public function padding(): Direction;
 }

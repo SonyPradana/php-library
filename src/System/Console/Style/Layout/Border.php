@@ -17,7 +17,7 @@ class Border implements InterfacesBorder
     private bool $left;
 
     /** @var string[] */
-    private array $corner;
+    private array $corner = ['╮', '╯' , '╰', '╭'];
 
     public function __construct(
         ForegroundColor $color,
@@ -83,8 +83,8 @@ class Border implements InterfacesBorder
      * 0: top-right
      * 1: bottom-right
      * 2: bottom-left
-     * 3: top-left
-     * 
+     * 3: top-left.
+     *
      * @param string[] $corner
      */
     public function cornerStyle(array $corner): self
@@ -92,5 +92,10 @@ class Border implements InterfacesBorder
         $this->corner = $corner;
 
         return $this;
+    }
+
+    public function corner(): array
+    {
+        return $this->corner;
     }
 }
