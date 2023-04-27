@@ -73,8 +73,11 @@ class Box
             ->repeat(' ', $this->left)
             ->repeat(' ', $this->boxSize->margin()->left())
             ->push($this->border->corner()[3])
+            ->textColor($this->border->color())
             ->repeat('─', $this->boxSize->width() - 2)
+            ->textColor($this->border->color())
             ->push($this->border->corner()[0])
+            ->textColor($this->border->color())
             ->repeat(' ', $this->boxSize->margin()->right())
             ->new_lines()
         ;
@@ -84,9 +87,11 @@ class Box
             ->repeat(' ', $this->left)
             ->repeat(' ', $this->boxSize->margin()->left())
             ->push('│')
+            ->textColor($this->border->color())
             ->repeat(' ', $this->boxSize->padding()->left())
             ->push($this->text)
             ->push('│')
+            ->textColor($this->border->color())
             ->new_lines()
         ;
 
@@ -95,8 +100,11 @@ class Box
             ->repeat(' ', $this->left)
             ->repeat(' ', $this->boxSize->margin()->left())
             ->push($this->border->corner()[2])
+            ->textColor($this->border->color())
             ->repeat('─', $this->boxSize->width() - 2)
+            ->textColor($this->border->color())
             ->push($this->border->corner()[1])
+            ->textColor($this->border->color())
             ->repeat(' ', $this->boxSize->margin()->right())
             ->new_lines()
         ;
