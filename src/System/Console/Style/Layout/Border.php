@@ -17,7 +17,7 @@ class Border implements InterfacesBorder
     private bool $left;
 
     /** @var string[] */
-    private array $corner = ['╮', '╯' , '╰', '╭'];
+    private array $corner = ['╮', '╯', '╰', '╭'];
 
     public function __construct(
         ForegroundColor $color,
