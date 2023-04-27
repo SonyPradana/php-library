@@ -144,6 +144,12 @@ class Box
             ->new_lines()
         ;
 
-        return [$margin_top, $border_top, $content, $border_bottom, $margin_top];
+        return [
+            'margin_top'    => $margin_top,
+            'border_top'    => $border_top,
+            'content'       => $content,
+            'border_bottom' => $border_bottom,
+            'margin_bottom' => $margin_top,
+        ];
     }
 }
