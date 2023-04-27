@@ -52,11 +52,13 @@ class Box
      */
     public function renderLines(): array
     {
-        $lines = [];
+        $margin_top = new Style;
+        $border_top = new Style;
+        $content = new Style;
+        $border_bottom = new Style;
 
         // render margin top
         $margin = $this->boxSize->margin()->top();
-        $margin_top = new Style;
         foreach (range(1, $margin) as $m_top) {
             $margin_top
                 ->repeat(' ', $this->left)
@@ -67,7 +69,7 @@ class Box
         }
 
         // render border
-        $border_top = (new Style())
+        $border_top
             ->repeat(' ', $this->left)
             ->repeat(' ', $this->boxSize->margin()->left())
             ->push($this->border->corner()[3])
@@ -78,7 +80,7 @@ class Box
         ;
 
         // content
-        $content = (new Style())
+        $content
             ->repeat(' ', $this->left)
             ->repeat(' ', $this->boxSize->margin()->left())
             ->push('│')
@@ -89,7 +91,7 @@ class Box
         ;
 
         // bottom
-        $border_bottom = (new Style())
+        $border_bottom
             ->repeat(' ', $this->left)
             ->repeat(' ', $this->boxSize->margin()->left())
             ->push($this->border->corner()[2])
