@@ -60,11 +60,13 @@
         "test:types": "phpstan analyse --ansi --memory-limit=-1 --debug",
         "test:unit": "phpunit --testdox --exclude-group database",
         "test:dev": [
+            "@test:refacto",
             "@test:lint",
             "@test:types",
             "@test:unit"
         ],
         "test": [
+            "rector --dry-run",
             "php-cs-fixer fix -v",
             "phpstan analyse --ansi --memory-limit=-1",
             "phpunit --exclude-group database"
