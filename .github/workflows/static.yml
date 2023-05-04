@@ -60,7 +60,7 @@ jobs:
       matrix:
         dependency-version: [prefer-stable]
 
-    name: PHPStan ${{ matrix.dependency-version }}
+    name: Rector ${{ matrix.dependency-version }}
 
     steps:
     - name: Checkout
