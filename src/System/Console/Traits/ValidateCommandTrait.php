@@ -33,7 +33,7 @@ trait ValidateCommandTrait
 
     protected function getValidateMessage(Style $style): Style
     {
-        foreach ($this->validate->get_error() as $input => $message) {
+        foreach ($this->validate->get_error() as $message) {
             $style->tap(
                 Alert::render()->warn($message)
             );

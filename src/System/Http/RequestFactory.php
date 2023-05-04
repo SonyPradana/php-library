@@ -62,7 +62,7 @@ class RequestFactory
             $method === 'POST'
             && preg_match('#^[A-Z]+$#D', $_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'] ?? '')
         ) {
-            $method = $_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'];
+            return $_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'];
         }
 
         return $method;
