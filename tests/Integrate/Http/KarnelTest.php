@@ -33,7 +33,19 @@ final class KarnelTest extends TestCase
                         new class() {
                             public function handle(Request $request, Closure $next): Response
                             {
+                                return $next($request);
+                            }
+                        },
+                        new class() {
+                            public function handle(Request $request, Closure $next): Response
+                            {
                                 return new Response('redirect', 303);
+                            }
+                        },
+                        new class() {
+                            public function handle(Request $request, Closure $next): Response
+                            {
+                                return $next($request);
                             }
                         },
                     ],
