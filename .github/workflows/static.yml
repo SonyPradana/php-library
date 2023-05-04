@@ -53,3 +53,28 @@ jobs:
 
     - name: Run PHPStan
       run: vendor/bin/phpstan analyse --no-progress --debug --ansi
+      
+  refacto:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dependency-version: [prefer-stable]
+
+    name: PHPStan ${{ matrix.dependency-version }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 8.0
+        tools: composer:v2
+        coverage: none
+
+    - name: Install Dependencies
+      run: composer update --no-interaction --no-progress --ansi
+
+    - name: Run PHPStan
+      run: vendor/bin/rector --dry-run
