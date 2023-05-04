@@ -9,7 +9,7 @@ class Portal
      *
      * @var array<string, mixed>
      */
-    private array $items;
+    private array $items = [];
 
     /**
      * Set portal items.

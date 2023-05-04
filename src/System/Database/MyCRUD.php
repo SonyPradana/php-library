@@ -26,10 +26,10 @@ abstract class MyCRUD
     protected $IDENTIFER = '';
 
     /** @var string[] set Column cant be modify */
-    protected $RESISTANT;
+    protected $RESISTANT = [];
 
     /** @var array<string, mixed> orginal data from database */
-    protected $FRESH;
+    protected $FRESH = [];
 
     /**
      * @return string|int

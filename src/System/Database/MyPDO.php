@@ -16,7 +16,7 @@ class MyPDO
      *
      * @var array<string, string>
      */
-    protected $configs;
+    protected $configs = [];
 
     /**
      * @param array<string, string> $configs

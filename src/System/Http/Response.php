@@ -57,7 +57,7 @@ class Response
      *
      * @var array<string, string>
      */
-    private $headers;
+    private $headers = [];
 
     /**
      * List header to be hide/remove to client.

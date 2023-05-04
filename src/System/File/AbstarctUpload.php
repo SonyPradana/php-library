@@ -15,7 +15,7 @@ abstract class AbstarctUpload
      *
      * @var array<string, array<int, string>|string>
      */
-    protected $_files;
+    protected $_files = [];
 
     /**
      *  File upload status.
@@ -48,17 +48,17 @@ abstract class AbstarctUpload
     // property file --------------------------------------------
 
     /** @var string[] */
-    protected $file_name;
+    protected $file_name = [];
     /** @var string[] Original file category */
-    protected $file_type;
+    protected $file_type = [];
     /** @var string[] Original file temp location */
-    protected $file_tmp;
+    protected $file_tmp = [];
     /** @var int[] Original file error status code */
-    protected $file_error;
+    protected $file_error = [];
     /** @var int[] Original file size in byte */
-    protected $file_size;
+    protected $file_size = [];
     /** @var string[] Original file extension */
-    protected $file_extension;
+    protected $file_extension = [];
 
     // property upload ------------------------------------------
 

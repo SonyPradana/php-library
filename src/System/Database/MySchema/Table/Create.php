@@ -21,13 +21,13 @@ class Create extends Query
     public const FEDERATED = 'FEDERATED';
 
     /** @var Column[]|DataType[] */
-    private $columns;
+    private $columns = [];
 
     /** @var string[] */
-    private $primaryKeys;
+    private $primaryKeys = [];
 
     /** @var string[] */
-    private $uniques;
+    private $uniques = [];
 
     /** @var string */
     private $store_engine;

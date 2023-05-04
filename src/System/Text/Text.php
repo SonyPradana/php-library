@@ -27,7 +27,7 @@ class Text
      *
      * @var array<string, array<string, string>>
      */
-    private $_latest;
+    private $_latest = [];
 
     /**
      * Throw when string method return 'false' instance 'string'.

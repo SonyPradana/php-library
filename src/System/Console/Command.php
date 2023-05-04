@@ -24,7 +24,7 @@ class Command implements \ArrayAccess
      *
      * @var array<int, string>
      */
-    protected $OPTION;
+    protected $OPTION = [];
 
     /**
      * Base dir.
@@ -38,7 +38,7 @@ class Command implements \ArrayAccess
      *
      * @var array<string, string|bool|int|null>
      */
-    protected $option_mapper;
+    protected $option_mapper = [];
 
     /**
      * Option describe for print.

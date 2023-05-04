@@ -13,7 +13,7 @@ abstract class Color implements RuleInterface
      *
      * @var array<int, int>
      */
-    protected $rule;
+    protected $rule = [];
 
     /**
      * @param array<int, int> $rule

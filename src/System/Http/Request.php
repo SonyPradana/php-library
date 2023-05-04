@@ -40,7 +40,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
      *
      * @var array<string, string|int|bool>
      */
-    private array $attributes;
+    private array $attributes = [];
 
     /**
      * Request post ($_POST).
@@ -52,21 +52,21 @@ class Request implements \ArrayAccess, \IteratorAggregate
      *
      * @var array<string, array<int, string>|string>
      */
-    private array $files;
+    private array $files = [];
 
     /**
      * Request cookies ($_COOKIES).
      *
      * @var array<string, string>
      */
-    private array $cookies;
+    private array $cookies = [];
 
     /**
      * Request header.
      *
      * @var array<string, string>
      */
-    private array $headers;
+    private array $headers = [];
 
     /**
      * Request remote addres (IP).

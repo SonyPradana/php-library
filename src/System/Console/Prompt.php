@@ -22,14 +22,14 @@ class Prompt
     /**
      * @var array<string, callable>
      */
-    private array $options;
+    private array $options = [];
 
     private string $default;
 
     /**
      * @var string[]|Style[]
      */
-    private array $selection;
+    private array $selection = [];
 
     /**
      * @param string|Style            $title

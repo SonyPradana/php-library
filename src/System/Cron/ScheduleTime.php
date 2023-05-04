@@ -35,7 +35,7 @@ class ScheduleTime
      *
      * @var array<int, array<string, int|string>|int>
      */
-    private $time_exect;
+    private $time_exect = [];
 
     /**
      * Cron time name.

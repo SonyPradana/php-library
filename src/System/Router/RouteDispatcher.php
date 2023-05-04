@@ -27,7 +27,7 @@ final class RouteDispatcher
     private $multimatch             = false;
 
     /** @var array */
-    private $trigger;
+    private $trigger = [];
     /** @var Route */
     private $current;
 
