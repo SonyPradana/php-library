@@ -45,7 +45,11 @@ final class KarnelTest extends TestCase
                         new class() {
                             public function handle(Request $request, Closure $next): Response
                             {
-                                return $next($request);
+                                if ($respone = $next($request)) {
+                                    return $respone;
+                                }
+
+                                return new Respones('forbidden', 403);
                             }
                         },
                     ],
