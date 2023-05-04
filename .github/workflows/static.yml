@@ -76,5 +76,5 @@ jobs:
     - name: Install Dependencies
       run: composer update --no-interaction --no-progress --ansi
 
-    - name: Run PHPStan
+    - name: Run Rector
       run: vendor/bin/rector --dry-run
