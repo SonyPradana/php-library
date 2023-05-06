@@ -189,6 +189,25 @@ class TemplatorTest extends TestCase
     /**
      * @test
      */
+    public function itCanThrowErrorSectionTemplate(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator($loader, $cache);
+
+        $this->expectErrorMessage("Slot with extends 'Slots/layout.php' required 'title'");
+
+        $view->render('slot_miss.php', [
+            'title'   => 'taylor otwell',
+            'product' => 'laravel',
+            'year'    => 2023,
+        ]);
+    }
+
+    /**
+     * @test
+     */
     public function itCanRenderTemplate(): void
     {
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
