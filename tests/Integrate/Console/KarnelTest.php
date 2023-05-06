@@ -34,11 +34,6 @@ final class KarnelTest extends TestCase
                     // ])
                 ];
             }
-
-            public function test(): void
-            {
-                echo 'ok';
-            }
         };
     }
 
@@ -49,7 +44,7 @@ final class KarnelTest extends TestCase
     }
 
     /** @test */
-    public function itCanRedirectByMiddleware()
+    public function itCanCallCorrectCommandBestOnArgrumentsGiven()
     {
         $respone = $this->app->make(System\Integrate\Console\Karnel::class);
         ob_start();
