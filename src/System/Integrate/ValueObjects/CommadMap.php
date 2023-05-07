@@ -65,7 +65,8 @@ class CommadMap implements \ArrayAccess
         return array_key_exists($offset, $this->command);
     }
 
-    public function offsetGet($offset): mixed
+    #[\ReturnTypeWillChange]
+    public function offsetGet($offset): string
     {
         return $this->command[$offset];
     }
