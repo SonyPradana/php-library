@@ -100,9 +100,13 @@ class Templator
 
         $template = preg_replace_callback(
             "/{%\s*yield\(\'(\w+)\'\)\s*%}/",
-            fn ($matches) => array_key_exists($matches[1], $this->sections)
-                ? $this->sections[$matches[1]]
-                : throw new \Exception("Slot with extends '{$matches_layout[1]}' required '{$matches[1]}'"),
+            function ($matches) use ($matches_layout) {
+                if (array_key_exists($matches[1], $this->sections)) {
+                    return $this->sections[$matches[1]];
+                }
+
+                throw new \Exception("Slot with extends '{$matches_layout[1]}' required '{$matches[1]}'");
+            },
             $layout
         );
 
