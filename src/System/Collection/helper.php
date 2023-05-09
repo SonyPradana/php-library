@@ -42,15 +42,18 @@ if (!function_exists('data_get')) {
     /**
      * Get array-value using dot notation.
      *
-     * @param array<string, mixed> $array
-     * @param string               $key
-     * @param mixed                $default
+     * @template TValue
+     * @template TGetDefault
      *
-     * @return mixed|array<string, mixed>|null
+     * @param array<array-key, TValue> $array
+     * @param array-key                $key     String of dot array key
+     * @param TGetDefault              $default
+     *
+     * @return TGetDefault|array<array-key, TValue>|null
      */
     function data_get($array, $key, $default = null)
     {
-        $segments = explode('.', $key);
+        $segments = explode('.', (string) $key);
         foreach ($segments as $segment) {
             if (array_key_exists($segment, $array)) {
                 $array = $array[$segment];

@@ -44,4 +44,13 @@ class DataGetTest extends TestCase
             ['rust', 'php'],
         ], data_get($this->array, '*.lang'));
     }
+
+    /** @test */
+    public function itcanGeKeysAsInteger()
+    {
+        $array5 = ['foo', 'bar', 'baz'];
+        $this->assertEquals('bar', data_get($array5, 1));
+        $this->assertNull(data_get($array5, 3));
+        $this->assertEquals('qux', data_get($array5, 3, 'qux'));
+    }
 }
