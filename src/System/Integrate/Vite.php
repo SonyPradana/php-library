@@ -6,18 +6,18 @@ namespace System\Integrate;
 
 class Vite
 {
-    private string $path;
+    private string $build_path;
     private string $manifest_name;
 
-    public function __construct(string $path, string $manifest_name)
+    public function __construct(string $build_path, string $manifest_name)
     {
-        $this->path          = $path;
-        $this->manifest_name = $manifest_name;
+        $this->build_path          = $build_path;
+        $this->manifest_name       = $manifest_name;
     }
 
     public function loader(): array
     {
-        $file_name = $this->path . $this->manifest_name;
+        $file_name = "{$this->build_path}/{$this->manifest_name}";
         if (!file_exists($file_name)) {
             throw new \Exception("Manifest file not found {$file_name}");
         }
@@ -41,5 +41,32 @@ class Vite
         }
 
         return $asset[$resource_name]['file'];
+    }
+
+    /**
+     * @param string[] $resource_names
+     *
+     * @return array<string, string>
+     */
+    public function gets($resource_names)
+    {
+        $asset = $this->loader();
+
+        $resources = [];
+        foreach ($resource_names as $resource) {
+            if (array_key_exists($resource, $asset)) {
+                $resources[$resource] = $asset[$resource]['file'];
+            }
+        }
+
+        return $resources;
+    }
+
+    /**
+     * Determine if the HMR server is running.
+     */
+    public function isRunningHRM(string $public_path): bool
+    {
+        return is_file("{$public_path}/hot");
     }
 }
