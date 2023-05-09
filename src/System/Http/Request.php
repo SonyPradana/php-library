@@ -148,6 +148,61 @@ class Request implements \ArrayAccess, \IteratorAggregate
         return $this;
     }
 
+    /**
+     * Initial request.
+     *
+     * @param array<string, string>|null $query
+     * @param array<string, string>|null $post
+     * @param array<string, string>|null $attributes
+     * @param array<string, string>|null $cookies
+     * @param array<string, string>|null $files
+     * @param array<string, string>|null $headers
+     *
+     * @return self
+     */
+    public function duplicate(
+        array $query = null,
+        array $post = null,
+        array $attributes = null,
+        array $cookies = null,
+        array $files = null,
+        array $headers = null
+    ): static {
+        $dupplicate = clone $this;
+
+        if (null !== $query) {
+            $dupplicate->query = new Collection($query);
+        }
+        if (null !== $post) {
+            $dupplicate->post = new Collection($post);
+        }
+        if (null !== $attributes) {
+            $dupplicate->attributes = $attributes;
+        }
+        if (null !== $cookies) {
+            $dupplicate->cookies = $cookies;
+        }
+        if (null !== $files) {
+            $dupplicate->files = $files;
+        }
+        if (null !== $headers) {
+            $dupplicate->headers = $headers;
+        }
+
+        return $dupplicate;
+    }
+
+    public function __clone()
+    {
+        $this->query      = clone $this->query;
+        $this->post       = clone $this->post;
+        // cloning as array
+        $this->attributes = json_decode(json_encode($this->attributes), true);
+        $this->cookies    = json_decode(json_encode($this->cookies), true);
+        $this->files      = json_decode(json_encode($this->files), true);
+        $this->headers    = json_decode(json_encode($this->headers), true);
+    }
+
     public function getUrl(): string
     {
         return $this->url;
