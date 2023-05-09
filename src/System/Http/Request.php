@@ -32,6 +32,8 @@ class Request implements \ArrayAccess, \IteratorAggregate
 
     /**
      * Request query ($_GET).
+     *
+     * @var Collection<string, string>
      */
     private Collection $query;
 
@@ -44,6 +46,8 @@ class Request implements \ArrayAccess, \IteratorAggregate
 
     /**
      * Request post ($_POST).
+     *
+     * @var Collection<string, string>
      */
     private Collection $post;
 
@@ -82,6 +86,8 @@ class Request implements \ArrayAccess, \IteratorAggregate
 
     /**
      * Json body rendered.
+     *
+     * @var Collection<string, string>
      */
     private Collection $json;
 
@@ -157,8 +163,6 @@ class Request implements \ArrayAccess, \IteratorAggregate
      * @param array<string, string>|null $cookies
      * @param array<string, string>|null $files
      * @param array<string, string>|null $headers
-     *
-     * @return self
      */
     public function duplicate(
         array $query = null,
@@ -197,10 +201,10 @@ class Request implements \ArrayAccess, \IteratorAggregate
         $this->query      = clone $this->query;
         $this->post       = clone $this->post;
         // cloning as array
-        $this->attributes = json_decode(json_encode($this->attributes), true);
-        $this->cookies    = json_decode(json_encode($this->cookies), true);
-        $this->files      = json_decode(json_encode($this->files), true);
-        $this->headers    = json_decode(json_encode($this->headers), true);
+        $this->attributes = (new Collection($this->attributes))->all();
+        $this->cookies    = (new Collection($this->cookies))->all();
+        $this->files      = (new Collection($this->files))->all();
+        $this->headers    = (new Collection($this->headers))->all();
     }
 
     public function getUrl(): string
@@ -210,6 +214,8 @@ class Request implements \ArrayAccess, \IteratorAggregate
 
     /**
      * Get query ($_GET).
+     *
+     * @return CollectionImmutable<string, string>
      */
     public function query(): CollectionImmutable
     {
@@ -232,6 +238,8 @@ class Request implements \ArrayAccess, \IteratorAggregate
 
     /**
      * Get post ($_POST).
+     *
+     * @return CollectionImmutable<string, string>
      */
     public function post(): CollectionImmutable
     {
@@ -396,9 +404,12 @@ class Request implements \ArrayAccess, \IteratorAggregate
      */
     public function all()
     {
+        /** @var Collection<string, string> */
+        $input = $this->input();
+
         $all = array_merge(
             $this->headers,
-            $this->input()->all(),
+            $input->toArray(),
             $this->attributes,
             $this->cookies,
             [
@@ -440,6 +451,9 @@ class Request implements \ArrayAccess, \IteratorAggregate
         return Str::contains($content_type, '/json') || Str::contains($content_type, '+json');
     }
 
+    /**
+     * @return Collection<string, string>
+     */
     public function json(): Collection
     {
         if (!isset($this->json)) {
@@ -452,9 +466,13 @@ class Request implements \ArrayAccess, \IteratorAggregate
     /**
      * Compine all request input.
      *
-     * @param mixed $default
+     * @template TGetDefault
+     *
+     * @param TGetDefault $default
+     *
+     * @return Collection<string, string>|string|TGetDefault
      */
-    public function input(string $key = null, $default = null): Collection
+    public function input(string $key = null, $default = null)
     {
         $input = $this->source()->add($this->query->all());
         if (null === $key) {
@@ -466,6 +484,8 @@ class Request implements \ArrayAccess, \IteratorAggregate
 
     /**
      * Get input resource base on method type.
+     *
+     * @return Collection<string, string>
      */
     private function source(): Collection
     {
