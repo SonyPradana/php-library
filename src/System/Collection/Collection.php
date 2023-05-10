@@ -243,7 +243,7 @@ class Collection extends AbstractCollectionImmutable
      */
     public function clone(): Collection
     {
-        return new Collection($this->collection);
+        return clone $this;
     }
 
     /**

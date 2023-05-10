@@ -355,4 +355,25 @@ class CollectionTest extends TestCase
             $this->assertArrayHasKey($key, $coll);
         }
     }
+
+    /** @test */
+    public function itCanCloneColection()
+    {
+        $ori = new Collection([
+            'one' => 'one',
+            'two' => [
+                'one',
+                'two' => [1, 2],
+            ],
+            'three' => new Collection([]),
+        ]);
+
+        $clone = clone $ori;
+
+        $ori->set('one', 'uno');
+        $this->assertEquals('one', $clone->get('one'));
+
+        $clone->set('one', 1);
+        $this->assertEquals('uno', $ori->get('one'));
+    }
 }
