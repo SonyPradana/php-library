@@ -268,10 +268,12 @@ if (!function_exists('view')) {
     /**
      * Render with costume template engine, wrap in `Route\Controller`.
      */
-    function view(string $view_path, array $data = []): Response
+    function view(string $view_path, array $data = [], array $options = []): Response
     {
-        $content = app()->call(['view.response', 'renderView'], [$view_path, $data]);
+        $content     = app()->call(['view.response', 'renderView'], [$view_path, $data]);
+        $status_code = $options['status'] ?? Response::HTTP_OK;
+        $headers     = $options['headers'] ?? [];
 
-        return new Response($content);
+        return new Response($content, $status_code, $headers);
     }
 }
