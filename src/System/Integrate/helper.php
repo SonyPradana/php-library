@@ -2,6 +2,7 @@
 
 // path aplication
 
+use System\Http\Response;
 use System\Integrate\Exceptions\ApplicationNotAvailable;
 
 if (!function_exists('app_path')) {
@@ -260,5 +261,17 @@ if (!function_exists('config')) {
     function config()
     {
         return new System\Collection\CollectionImmutable(app()->get('config'));
+    }
+}
+
+if (!function_exists('view')) {
+    /**
+     * Render with costume template engine, wrap in `Route\Controller`.
+     */
+    function view(string $view_path, array $data = []): Response
+    {
+        $content = app()->call(['view.response', 'renderView'], [$view_path, $data]);
+
+        return new Response($content);
     }
 }
