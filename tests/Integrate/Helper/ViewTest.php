@@ -25,8 +25,8 @@ final class ViewTest extends TestCase
                         )
         );
 
-        $view = view('test.php', []);
-        $this->assertEquals(200, $view->getStatusCode());
+        $view = view('test.php', [], ['status' => 500]);
+        $this->assertEquals(500, $view->getStatusCode());
         $this->assertTrue(
             Str::contains($view->getContent(), 'savanna')
         );
