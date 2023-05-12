@@ -2,7 +2,6 @@
 
 // path aplication
 
-use System\Http\Response;
 use System\Integrate\Exceptions\ApplicationNotAvailable;
 
 if (!function_exists('app_path')) {
@@ -268,12 +267,11 @@ if (!function_exists('view')) {
     /**
      * Render with costume template engine, wrap in `Route\Controller`.
      */
-    function view(string $view_path, array $data = [], array $options = []): Response
+    function view(string $view_path, array $data = []): System\Http\Response
     {
-        $content     = app()->call(['view.response', 'renderView'], [$view_path, $data]);
-        $status_code = $options['status'] ?? Response::HTTP_OK;
-        $headers     = $options['headers'] ?? [];
+        /** @var System\Http\Response */
+        $view = app()->get('view.response');
 
-        return new Response($content, $status_code, $headers);
+        return $view($view_path, $data);
     }
 }
