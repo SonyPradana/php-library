@@ -262,3 +262,20 @@ if (!function_exists('config')) {
         return new System\Collection\CollectionImmutable(app()->get('config'));
     }
 }
+
+if (!function_exists('view')) {
+    /**
+     * Render with costume template engine, wrap in `Route\Controller`.
+     */
+    function view(string $view_path, array $data = [], array $option = []): System\Http\Response
+    {
+        /** @var System\Http\Response */
+        $view        = app()->get('view.response');
+        $status_code = $option['status'] ?? 200;
+        $headers     = $option['header'] ?? [];
+
+        return $view($view_path, $data)
+            ->setResponeCode($status_code)
+            ->setHeaders($headers);
+    }
+}

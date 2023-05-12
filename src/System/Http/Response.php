@@ -391,6 +391,19 @@ class Response
         return $this->headers;
     }
 
+    public function getStatusCode(): int
+    {
+        return $this->respone_code;
+    }
+
+    /**
+     * @return string|array<mixed, mixed>
+     */
+    public function getContent()
+    {
+        return $this->content;
+    }
+
     /**
      * Prepare response to send header to client.
      *
