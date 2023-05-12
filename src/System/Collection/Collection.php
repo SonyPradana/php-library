@@ -369,12 +369,16 @@ class Collection extends AbstractCollectionImmutable
     /**
      * Convert array, key and value from item (also key).
      *
-     * @param callable(TValue, TKey=): TValue $callable With single key/value pair per element
+     * @template TKeyItem of array-key
+     * @template TValueItem
+     *
+     * @param callable(TValue, TKey=): array<TKeyItem, TValueItem> $callable With single key/value pair per element
      *
      * @return $this
      */
     public function assocBy(callable $callable): self
     {
+        /** @var array<TKeyItem, TValueItem> */
         $new_collection = [];
         foreach ($this->collection as $key => $item) {
             $array_assoc = call_user_func($callable, $item, $key);
