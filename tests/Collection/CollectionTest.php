@@ -357,6 +357,27 @@ class CollectionTest extends TestCase
     }
 
     /** @test */
+    public function itCanMapWithKeys()
+    {
+        $arr = new Collection([
+            [
+                'name'  => 'taylor',
+                'email' => 'taylor@laravel.com',
+            ], [
+                'name'  => 'pradana',
+                'email' => 'pradana@savanna.com',
+            ],
+        ]);
+
+        $assocBy = $arr->assocBy(fn ($item) => [$item['name'], $item['email']]);
+
+        $this->assertEquals([
+            'taylor'  => 'taylor@laravel.com',
+            'pradana' => 'pradana@savanna.com',
+        ], $assocBy->toArray());
+    }
+
+    /** @test */
     public function itCanCloneColection()
     {
         $ori = new Collection([
