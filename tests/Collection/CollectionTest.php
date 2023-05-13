@@ -369,7 +369,7 @@ class CollectionTest extends TestCase
             ],
         ]);
 
-        $assocBy = $arr->assocBy(fn ($item) => [$item['name'], $item['email']]);
+        $assocBy = $arr->assocBy(fn ($item) => [$item['name'] => $item['email']]);
 
         $this->assertEquals([
             'taylor'  => 'taylor@laravel.com',
