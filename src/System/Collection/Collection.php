@@ -381,9 +381,9 @@ class Collection extends AbstractCollectionImmutable
         /** @var array<TKeyItem, TValueItem> */
         $new_collection = [];
         foreach ($this->collection as $key => $item) {
-            $array_assoc = call_user_func($callable, $item, $key);
-            if (array_key_exists(0, $array_assoc) && array_key_exists(1, $array_assoc)) {
-                $new_collection[$array_assoc[0]] = $array_assoc[1];
+            if (is_array($array_assoc = call_user_func($callable, $item, $key))) {
+                $key                  = array_key_first($array_assoc);
+                $new_collection[$key] = $array_assoc[$key];
             }
         }
 
