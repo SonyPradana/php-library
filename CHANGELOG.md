@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.19.0] - 2023-05-12
+### Changed
+- Refactor the http kernel to handle middleware in a way that allows for short-circuiting and early return of a response.
+- Refactor console karnel, with new pipeline provide by library.
+- Refactor `Collection::___clone()` cloning collection using deep cloning array.
+
+### Added
+- Added a new method called Request::duplicate, which allows for modification of an incoming request by creating a duplicate request object.
+- Added new method `Response::getStatusCode` and `Response::getContent` to provide information usefull for testing or middleware during handle.
+- Added global function to find in array by using dot keys `data_get()`.
+- Added global function to render template as response `view()`.
+- Added a new method called Collection::assocBy(), which allows for modifying an item in an array with a new item that includes a new key.
+
 ## [0.18.0] - 2023-04-13
 ### Added
 - Added support encrypt decrypt plain text.
