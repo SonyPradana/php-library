@@ -132,4 +132,20 @@ class ResponseTest extends TestCase
 
         $this->assertEquals('test', $get_header);
     }
+
+    /** @test */
+    public function itCanGetResponeStatusCode()
+    {
+        $res = new Response('content', 200);
+
+        $this->assertEquals(200, $res->getStatusCode());
+    }
+
+    /** @test */
+    public function itCanGetResponeContent()
+    {
+        $res = new Response('content', 200);
+
+        $this->assertEquals('content', $res->getContent());
+    }
 }

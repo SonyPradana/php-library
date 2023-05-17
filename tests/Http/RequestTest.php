@@ -416,4 +416,16 @@ class RequestTest extends TestCase
 
         $this->assertTrue($upload->success());
     }
+
+    /**
+     * @test
+     */
+    public function itCanModifeRequest()
+    {
+        $request  = new Request('test.test', ['query' => 'old'], [], [], [], [], ['content-type' => 'app/json'], 'PUT', '::1', '');
+        $request2 = $request->duplicate(['query' => 'new']);
+
+        $this->assertEquals('old', $request->getQuery('query'));
+        $this->assertEquals('new', $request2->getQuery('query'));
+    }
 }

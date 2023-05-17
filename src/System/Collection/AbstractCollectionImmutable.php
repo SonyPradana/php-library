@@ -328,4 +328,34 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     {
         return new \ArrayIterator($this->all());
     }
+
+    public function __clone()
+    {
+        $this->collection = $this->deepClone($this->collection);
+    }
+
+    /**
+     * @param array<TKey, TValue> $collection
+     *
+     * @return array<TKey, TValue>
+     */
+    protected function deepClone($collection)
+    {
+        $clone = [];
+        foreach ($collection as $key => $value) {
+            if (is_array($value)) {
+                $clone[$key] = $this->deepClone($value);
+                continue;
+            }
+
+            if (is_object($value)) {
+                $clone[$key] = clone $value;
+                continue;
+            }
+
+            $clone[$key] = $value;
+        }
+
+        return $clone;
+    }
 }

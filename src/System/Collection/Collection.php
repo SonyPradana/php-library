@@ -243,7 +243,7 @@ class Collection extends AbstractCollectionImmutable
      */
     public function clone(): Collection
     {
-        return new Collection($this->collection);
+        return clone $this;
     }
 
     /**
@@ -364,5 +364,29 @@ class Collection extends AbstractCollectionImmutable
         }
 
         return $this->replace($reordered);
+    }
+
+    /**
+     * Convert array, key and value from item (also key).
+     *
+     * @template TKeyItem of array-key
+     * @template TValueItem
+     *
+     * @param callable(TValue, TKey=): array<TKeyItem, TValueItem> $callable With single key/value pair per element
+     *
+     * @return $this
+     */
+    public function assocBy(callable $callable): self
+    {
+        /** @var array<TKeyItem, TValueItem> */
+        $new_collection = [];
+        foreach ($this->collection as $key => $item) {
+            if (is_array($array_assoc = call_user_func($callable, $item, $key))) {
+                $key                  = array_key_first($array_assoc);
+                $new_collection[$key] = $array_assoc[$key];
+            }
+        }
+
+        return $this->replace($new_collection);
     }
 }

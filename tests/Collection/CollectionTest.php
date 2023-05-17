@@ -355,4 +355,46 @@ class CollectionTest extends TestCase
             $this->assertArrayHasKey($key, $coll);
         }
     }
+
+    /** @test */
+    public function itCanMapWithKeys()
+    {
+        $arr = new Collection([
+            [
+                'name'  => 'taylor',
+                'email' => 'taylor@laravel.com',
+            ], [
+                'name'  => 'pradana',
+                'email' => 'pradana@savanna.com',
+            ],
+        ]);
+
+        $assocBy = $arr->assocBy(fn ($item) => [$item['name'] => $item['email']]);
+
+        $this->assertEquals([
+            'taylor'  => 'taylor@laravel.com',
+            'pradana' => 'pradana@savanna.com',
+        ], $assocBy->toArray());
+    }
+
+    /** @test */
+    public function itCanCloneColection()
+    {
+        $ori = new Collection([
+            'one' => 'one',
+            'two' => [
+                'one',
+                'two' => [1, 2],
+            ],
+            'three' => new Collection([]),
+        ]);
+
+        $clone = clone $ori;
+
+        $ori->set('one', 'uno');
+        $this->assertEquals('one', $clone->get('one'));
+
+        $clone->set('one', 1);
+        $this->assertEquals('uno', $ori->get('one'));
+    }
 }
