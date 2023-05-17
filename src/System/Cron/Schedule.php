@@ -2,7 +2,10 @@
 
 namespace System\Cron;
 
-class Schedule
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+
+class Schedule implements LoggerAwareInterface
 {
     /** @var int|null */
     protected $time;
@@ -10,9 +13,12 @@ class Schedule
     /** @var ScheduleTime[] */
     protected array $pools = [];
 
-    public function __construct(int $time = null)
+    private ?LoggerInterface $logger;
+
+    public function __construct(int $time, LoggerInterface $logger)
     {
-        $this->time = $time ?? time();
+        $this->time   = $time;
+        $this->logger = $logger;
     }
 
     /**
@@ -36,6 +42,7 @@ class Schedule
     public function execute(): void
     {
         foreach ($this->pools as $cron) {
+            $cron->setLogger($this->logger);
             do {
                 $cron->exect();
             } while ($cron->retryAtempts() > 0);
@@ -44,5 +51,10 @@ class Schedule
                 $cron->exect();
             }
         }
+    }
+
+    public function setLogger(LoggerInterface $logger): void
+    {
+        $this->logger = $logger;
     }
 }
