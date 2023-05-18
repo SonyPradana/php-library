@@ -389,4 +389,21 @@ class Collection extends AbstractCollectionImmutable
 
         return $this->replace($new_collection);
     }
+
+    /**
+     * Reduce items.
+     *
+     * @param callable(TValue, TValue): TValue $callable
+     * @param TValue|null                      $carry
+     *
+     * @return TValue|null
+     */
+    public function reduse(callable $callable, $carry = null)
+    {
+        foreach ($this->collection as $item) {
+            $carry = $callable($carry, $item);
+        }
+
+        return $carry;
+    }
 }
