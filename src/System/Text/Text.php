@@ -377,6 +377,19 @@ class Text
         return $this;
     }
 
+    /**
+     * Get text after text finded.
+     */
+    public function after(string $find): self
+    {
+        $this->execute(
+            Str::after($this->_current, $find),
+            __FUNCTION__
+        );
+
+        return $this;
+    }
+
     // int -----------------------------------------------
 
     /**
