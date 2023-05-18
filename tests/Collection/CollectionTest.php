@@ -397,4 +397,14 @@ class CollectionTest extends TestCase
         $clone->set('one', 1);
         $this->assertEquals('uno', $ori->get('one'));
     }
+
+    /** @test */
+    public function itCanGetSumUsingReduce()
+    {
+        $collection = new Collection([1, 2, 3, 4]);
+
+        $sum = $collection->reduse(fn ($carry, $item) => $carry + $item);
+
+        $this->assertTrue($sum === 10);
+    }
 }
