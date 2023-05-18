@@ -13,8 +13,7 @@
         "php": "^7.4 || ^8.0",
         "ext-mbstring": "*",
         "php-di/php-di": "^6.4 || ^7.0",
-        "sonypradana/validator": "^0.8",
-        "psr/log": "^2.0 || ^3.0"
+        "sonypradana/validator": "^0.8"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.6",

@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace System\Cron;
 
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerInterface;
-
-class ScheduleTime implements LoggerAwareInterface
+class ScheduleTime
 {
     /**
      * Closure to call if due the time.
@@ -65,7 +62,7 @@ class ScheduleTime implements LoggerAwareInterface
      */
     private bool $retry_condition = false;
 
-    private ?LoggerInterface $logger;
+    private ?InterpolateInterface $logger;
 
     /**
      * Contructor.
@@ -180,7 +177,7 @@ class ScheduleTime implements LoggerAwareInterface
             // send command log
             if (!$this->animusly) {
                 if (null !== $this->logger) {
-                    $this->logger->info(
+                    $this->logger->interpolate(
                         $this->event_name,
                         [
                             'excute_time'   => $watch_end,
@@ -203,7 +200,7 @@ class ScheduleTime implements LoggerAwareInterface
         // do stuff
     }
 
-    public function setLogger(LoggerInterface $logger): void
+    public function setLogger(InterpolateInterface $logger): void
     {
         $this->logger = $logger;
     }

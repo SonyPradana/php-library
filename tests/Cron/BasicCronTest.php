@@ -1,52 +1,20 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
+use System\Cron\InterpolateInterface;
 use System\Cron\Schedule;
 use System\Cron\ScheduleTime;
 
 final class BasicCronTest extends TestCase
 {
-    private ?LoggerInterface $logger;
+    private ?InterpolateInterface $logger;
 
     protected function setUp(): void
     {
-        $this->logger = new class() implements LoggerInterface {
-            public function emergency(string|Stringable $message, array $context = []): void
-            {
-            }
-
-            public function critical(string|Stringable $message, array $context = []): void
-            {
-            }
-
-            public function error(string|Stringable $message, array $context = []): void
-            {
-            }
-
-            public function warning(string|Stringable $message, array $context = []): void
-            {
-            }
-
-            public function notice(string|Stringable $message, array $context = []): void
-            {
-            }
-
-            public function debug(string|Stringable $message, array $context = []): void
-            {
-            }
-
-            public function alert(string|Stringable $message, array $context = []): void
-            {
-            }
-
-            public function info(string|Stringable $message, array $context = []): void
+        $this->logger = new class() implements InterpolateInterface {
+            public function interpolate(string $message, array $context = []): void
             {
                 echo 'works';
-            }
-
-            public function log($level, string|Stringable $message, array $context = []): void
-            {
             }
         };
     }
