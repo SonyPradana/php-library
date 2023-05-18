@@ -62,6 +62,8 @@ class ScheduleTime
      */
     private bool $retry_condition = false;
 
+    private ?InterpolateInterface $logger;
+
     /**
      * Contructor.
      *
@@ -174,12 +176,18 @@ class ScheduleTime
 
             // send command log
             if (!$this->animusly) {
-                $this->interpolate($out_put, [
-                    'excute_time' => $watch_end,
-                    'cron_time'   => $this->time,
-                    'event_name'  => $this->event_name,
-                    'atempts'     => $this->retry_atempts,
-                ]);
+                if (null !== $this->logger) {
+                    $this->logger->interpolate(
+                        $this->event_name,
+                        [
+                            'excute_time'   => $watch_end,
+                            'cron_time'     => $this->time,
+                            'event_name'    => $this->event_name,
+                            'atempts'       => $this->retry_atempts,
+                            'error_message' => $out_put,
+                        ]
+                    );
+                }
             }
         }
     }
@@ -190,6 +198,11 @@ class ScheduleTime
     protected function interpolate($message, array $contex): void
     {
         // do stuff
+    }
+
+    public function setLogger(InterpolateInterface $logger): void
+    {
+        $this->logger = $logger;
     }
 
     public function isDue(): bool
