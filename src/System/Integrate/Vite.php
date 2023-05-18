@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace System\Integrate;
 
+use System\Collection\Collection;
+
 class Vite
 {
     private string $build_path;
@@ -71,6 +73,43 @@ class Vite
         }
 
         return $resources;
+    }
+
+    /**
+     * Get hot url (if hot not found will return with manifest).
+     */
+    public function getHotUrl(string $public_path, string $resource_name): string
+    {
+        if (!$this->isRunningHRM($public_path)) {
+            return $this->get($resource_name);
+        }
+
+        $hot = file_get_contents("{$public_path}/hot");
+        $hot = rtrim($hot);
+
+        return $hot . $resource_name;
+    }
+
+    /**
+     * Get hot url (if hot not found will return with manifest).
+     *
+     * @param string[] $resource_names
+     *
+     * @return array<string, string>
+     */
+    public function getsHotUrl(string $public_path, $resource_names)
+    {
+        if (!$this->isRunningHRM($public_path)) {
+            return $this->gets($resource_names);
+        }
+
+        $hot = file_get_contents("{$public_path}/hot");
+        $hot = rtrim($hot);
+
+        return (new Collection($resource_names))
+            ->assocBy(fn ($item) => [$item => $hot . $item])
+            ->toArray()
+        ;
     }
 
     /**

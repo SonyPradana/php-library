@@ -42,4 +42,32 @@ final class ViteTest extends TestCase
 
         $this->assertFalse($asset->isRunningHRM(__DIR__ . '/assets'));
     }
+
+    /** @test */
+    public function itCanGetHotFileResoureName()
+    {
+        $asset = new Vite(__DIR__ . '/assets', 'manifest.json');
+
+        $file = $asset->getHotUrl(__DIR__ . '/assets/public', 'resources/css/app.css');
+
+        $this->assertEquals('http://localhost:3000/resources/css/app.css', $file);
+    }
+
+    /** @test */
+    public function itCanGetHotFileResoureNames()
+    {
+        $asset = new Vite(__DIR__ . '/assets', 'manifest.json');
+
+        $files = $asset->getsHotUrl(
+            __DIR__ . '/assets/public', [
+                'resources/css/app.css',
+                'resources/js/app.js',
+            ]
+        );
+
+        $this->assertEquals([
+            'resources/css/app.css' => 'http://localhost:3000/resources/css/app.css',
+            'resources/js/app.js'   => 'http://localhost:3000/resources/js/app.js',
+        ], $files);
+    }
 }
