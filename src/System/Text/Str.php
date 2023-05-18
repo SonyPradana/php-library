@@ -186,6 +186,19 @@ final class Str
         return mb_strtoupper($text);
     }
 
+    /**
+     * Get string after find text find.
+     */
+    public static function after(string $text, string $find): string
+    {
+        $length = strlen($find);
+        if (false === ($pos = static::indexOf($text, $find))) {
+            return $text;
+        }
+
+        return mb_substr($text, $pos + $length);
+    }
+
     // additional ------------------------------
 
     /**

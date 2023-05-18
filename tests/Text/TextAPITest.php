@@ -176,4 +176,10 @@ class TextAPITest extends TestCase
     {
         $this->assertEquals('laravel...', $this->text->limit(7));
     }
+
+    /** @test */
+    public function itCanReturnAfetText()
+    {
+        $this->assertEquals('symfony', $this->text->after('love ')->__toString());
+    }
 }
