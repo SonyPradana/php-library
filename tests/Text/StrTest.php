@@ -327,4 +327,22 @@ final class StrTest extends TestCase
     {
         $this->assertEquals('laravel best...', Str::limit('laravel best framework', 12));
     }
+
+    /** @test */
+    public function itCanGetTextAfter()
+    {
+        $this->assertEquals(
+            '//localhost:8000/test',
+            Str::after('https://localhost:8000/test', ':')
+        );
+    }
+
+    /** @test */
+    public function itCanGetTextAfterMustReturnBack()
+    {
+        $this->assertEquals(
+            'https://localhost:8000/test',
+            Str::after('https://localhost:8000/test', '~')
+        );
+    }
 }
