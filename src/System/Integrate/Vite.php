@@ -12,8 +12,8 @@ class Vite
     private string $build_path;
     private string $manifest_name;
     private int $cache_time = 0;
-    /** @var array<string, string> */
-    private static array $cache = [];
+    /** @var array<string, array> */
+    public static array $cache = [];
 
     public function __construct(string $public_path, string $build_path)
     {

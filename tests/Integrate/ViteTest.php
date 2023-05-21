@@ -81,4 +81,13 @@ final class ViteTest extends TestCase
             'resources/js/app.js'   => 'http://localhost:3000/resources/js/app.js',
         ], $files);
     }
+
+    /** @test */
+    public function itCanUsingCache()
+    {
+        $asset = new Vite(__DIR__ . '/assets/manifest/public', 'build/');
+        $asset->get('resources/css/app.css');
+
+        $this->assertCount(1, Vite::$cache);
+    }
 }
