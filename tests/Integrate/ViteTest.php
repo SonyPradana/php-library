@@ -12,7 +12,7 @@ final class ViteTest extends TestCase
     /** @test */
     public function itCanGetFileResoureName()
     {
-        $asset = new Vite(__DIR__ . '/assets', 'manifest.json');
+        $asset = new Vite(__DIR__ . '/assets/manifest/public', 'build/');
 
         $file = $asset->get('resources/css/app.css');
 
@@ -22,7 +22,7 @@ final class ViteTest extends TestCase
     /** @test */
     public function itCanGetFileResoureNames()
     {
-        $asset = new Vite(__DIR__ . '/assets', 'manifest.json');
+        $asset = new Vite(__DIR__ . '/assets/manifest/public', 'build/');
 
         $files = $asset->gets([
             'resources/css/app.css',
@@ -36,19 +36,27 @@ final class ViteTest extends TestCase
     }
 
     /** @test */
-    public function itCanCheckRunningHRM()
+    public function itCanCheckRunningHRMExist()
     {
-        $asset = new Vite(__DIR__ . '/assets', 'manifest.json');
+        $asset = new Vite(__DIR__ . '/assets/hot/public', 'build/');
 
-        $this->assertFalse($asset->isRunningHRM(__DIR__ . '/assets'));
+        $this->assertTrue($asset->isRunningHRM());
+    }
+
+    /** @test */
+    public function itCanCheckRunningHRMDoestExist()
+    {
+        $asset = new Vite(__DIR__ . '/assets/manifest/public', 'build/');
+
+        $this->assertFalse($asset->isRunningHRM());
     }
 
     /** @test */
     public function itCanGetHotFileResoureName()
     {
-        $asset = new Vite(__DIR__ . '/assets', 'manifest.json');
+        $asset = new Vite(__DIR__ . '/assets/hot/public', 'build/');
 
-        $file = $asset->getHotUrl(__DIR__ . '/assets/public', 'resources/css/app.css');
+        $file = $asset->get('resources/css/app.css');
 
         $this->assertEquals('http://localhost:3000/resources/css/app.css', $file);
     }
@@ -56,14 +64,12 @@ final class ViteTest extends TestCase
     /** @test */
     public function itCanGetHotFileResoureNames()
     {
-        $asset = new Vite(__DIR__ . '/assets', 'manifest.json');
+        $asset = new Vite(__DIR__ . '/assets/hot/public', 'build/');
 
-        $files = $asset->getsHotUrl(
-            __DIR__ . '/assets/public', [
-                'resources/css/app.css',
-                'resources/js/app.js',
-            ]
-        );
+        $files = $asset->gets([
+            'resources/css/app.css',
+            'resources/js/app.js',
+        ]);
 
         $this->assertEquals([
             'resources/css/app.css' => 'http://localhost:3000/resources/css/app.css',
