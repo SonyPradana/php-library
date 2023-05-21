@@ -9,6 +9,11 @@ use System\Integrate\Vite;
 
 final class ViteTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        Vite::flush();
+    }
+
     /** @test */
     public function itCanGetFileResoureName()
     {

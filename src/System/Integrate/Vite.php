@@ -12,6 +12,8 @@ class Vite
     private string $build_path;
     private string $manifest_name;
     private int $cache_time = 0;
+    /** @var array<string, string> */
+    private static array $cache = [];
 
     public function __construct(string $public_path, string $build_path)
     {
@@ -25,6 +27,11 @@ class Vite
         $this->manifest_name = $manifest_name;
 
         return $this;
+    }
+
+    public static function flush(): void
+    {
+        static::$cache = [];
     }
 
     /**
@@ -43,6 +50,10 @@ class Vite
     {
         $file_name = $this->manifest();
 
+        if (array_key_exists($file_name, static::$cache)) {
+            return static::$cache[$file_name];
+        }
+
         $this->cache_time = $this->manifestTime();
         $load             = file_get_contents($file_name);
         $json             = json_decode($load, true);
@@ -51,7 +62,7 @@ class Vite
             throw new \Exception('Manifest doest support');
         }
 
-        return $json;
+        return static::$cache[$file_name] = $json;
     }
 
     public function getManifest(string $resource_name): string
