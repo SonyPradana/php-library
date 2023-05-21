@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace System\Integrate;
 
 use System\Collection\Collection;
-use System\Text\Str;
 
 class Vite
 {
@@ -24,11 +23,7 @@ class Vite
      */
     public function manifest(): string
     {
-        if (Str::startsWith($path = $this->build_path, '/')) {
-            $path = Str::after($path, '/');
-        }
-
-        if (file_exists($file_name = "{$path}/{$this->manifest_name}")) {
+        if (file_exists($file_name = "{$this->build_path}/{$this->manifest_name}")) {
             return $file_name;
         }
 
