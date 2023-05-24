@@ -17,8 +17,6 @@ abstract class Facade
 
     /**
      * Instance accessor.
-     *
-     * @var mixed
      */
     protected static $instance;
 
@@ -46,8 +44,6 @@ abstract class Facade
 
     /**
      * Faced.
-     *
-     * @return mixed
      */
     protected static function getFacede()
     {
@@ -58,8 +54,6 @@ abstract class Facade
      * Faced.
      *
      * @param string|class-string $name Entry name or a class name
-     *
-     * @return mixed
      */
     protected static function getFacedeBase(string $name)
     {
@@ -75,8 +69,6 @@ abstract class Facade
      *
      * @param string            $name
      * @param array<int, mixed> $arguments
-     *
-     * @return mixed
      *
      * @throws \RuntimeException
      */

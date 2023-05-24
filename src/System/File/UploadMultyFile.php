@@ -8,12 +8,8 @@ use System\File\Exceptions\FileNotExists;
 use System\File\Exceptions\FileNotUploaded;
 use System\File\Exceptions\FolderNotExists;
 
-/** {@inheritDoc} */
 final class UploadMultyFile extends AbstarctUpload
 {
-    /**
-     * {@inheritDoc}
-     */
     public function setFileName(string $file_name): self
     {
         // file name without extension
@@ -23,9 +19,6 @@ final class UploadMultyFile extends AbstarctUpload
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setFolderLocation(string $folder_location): self
     {
         if (!is_dir($folder_location)) {
@@ -37,9 +30,6 @@ final class UploadMultyFile extends AbstarctUpload
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setFileTypes(array $extensions): self
     {
         $this->upload_types = $extensions;
@@ -47,9 +37,6 @@ final class UploadMultyFile extends AbstarctUpload
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setMimeTypes(array $mimes): self
     {
         $this->upload_mime = $mimes;
@@ -57,9 +44,6 @@ final class UploadMultyFile extends AbstarctUpload
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function setMaxFileSize(int $byte): self
     {
         $this->upload_size_max = $byte;
@@ -67,9 +51,6 @@ final class UploadMultyFile extends AbstarctUpload
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function markTest(bool $mark_upload_test): self
     {
         $this->_test = $mark_upload_test;
@@ -77,9 +58,6 @@ final class UploadMultyFile extends AbstarctUpload
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function __construct(array $files)
     {
         parent::__construct($files);

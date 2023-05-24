@@ -11,9 +11,6 @@ use Validator\Validator;
 
 class IntegrateServiceProvider extends ServiceProvider
 {
-    /**
-     * {@inheritDoc}
-     */
     public function register()
     {
         Request::macro(
