@@ -95,7 +95,6 @@ class MyPDO
      * Menggantikan paramater input dari user dengan sebuah placeholder.
      *
      * @param int|string $param
-     * @param mixed      $value
      * @param int|null   $type
      */
     public function bind($param, $value, $type = null): self
@@ -149,8 +148,6 @@ class MyPDO
 
     /**
      * Mengembalikan hasil dari query, ditampilkan hanya satu baris data saja.
-     *
-     * @return mixed
      */
     public function single()
     {

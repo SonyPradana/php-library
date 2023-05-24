@@ -53,7 +53,7 @@ abstract class Query
      *
      * @var string|null
      */
-    protected $_group_by = null;
+    protected $_group_by;
 
     /**
      * Multy filter with strict mode.

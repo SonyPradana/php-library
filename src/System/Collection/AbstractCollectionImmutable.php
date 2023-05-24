@@ -45,9 +45,6 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
         return $this->collection;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function toArray(): array
     {
         return $this->collection;

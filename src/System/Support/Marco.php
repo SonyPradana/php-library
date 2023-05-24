@@ -32,8 +32,6 @@ trait Marco
      * @param string             $method     Method name
      * @param array<int, string> $parameters Parameters
      *
-     * @return mixed
-     *
      * @throw MacroNotFound
      */
     public static function __callStatic(string $method, array $parameters)
@@ -57,8 +55,6 @@ trait Marco
      *
      * @param string             $method     Method name
      * @param array<int, string> $parameters Parameters
-     *
-     * @return mixed
      *
      * @throw MacroNotFound
      */

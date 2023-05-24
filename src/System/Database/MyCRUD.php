@@ -54,8 +54,6 @@ abstract class MyCRUD
     /**
      * Setter.
      *
-     * @param mixed $val
-     *
      * @return self
      */
     protected function setter(string $key, $val)
@@ -72,8 +70,6 @@ abstract class MyCRUD
      *
      * @param string     $key
      * @param mixed|null $defaul
-     *
-     * @return mixed
      */
     protected function getter($key, $defaul = null)
     {
@@ -84,8 +80,6 @@ abstract class MyCRUD
      * Getter.
      *
      * @param string $name
-     *
-     * @return mixed
      */
     public function __get($name)
     {
@@ -96,7 +90,6 @@ abstract class MyCRUD
      * Setter.
      *
      * @param string $name
-     * @param mixed  $value
      *
      * @return self
      */

@@ -13,8 +13,6 @@ use System\Collection\Exceptions\NoModify;
 class CollectionImmutable extends AbstractCollectionImmutable
 {
     /**
-     * {@inheritdoc}
-     *
      * @throws NoModify
      */
     public function offsetSet($offset, $value): void
@@ -23,8 +21,6 @@ class CollectionImmutable extends AbstractCollectionImmutable
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @throws NoModify
      */
     public function offsetUnset($offset): void

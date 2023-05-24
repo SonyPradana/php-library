@@ -354,7 +354,7 @@ class RequestTest extends TestCase
     {
         Request::macro(
             'validate',
-            fn (?\Closure $rule = null, ?\Closure $filter = null) => Validator::make($this->{'all'}(), $rule, $filter)
+            fn (\Closure $rule = null, \Closure $filter = null) => Validator::make($this->{'all'}(), $rule, $filter)
         );
 
         // get

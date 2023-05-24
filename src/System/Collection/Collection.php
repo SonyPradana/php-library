@@ -342,9 +342,6 @@ class Collection extends AbstractCollectionImmutable
         return new CollectionImmutable($this->collection);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function offsetUnset($offset): void
     {
         $this->remove($offset);
