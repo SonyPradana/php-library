@@ -79,8 +79,6 @@ class Now
      * Get private property.
      *
      * @param string $name
-     *
-     * @return mixed
      */
     public function __get($name)
     {
@@ -95,7 +93,6 @@ class Now
      * Set property by pase the `refresh` logic.
      *
      * @param string $name
-     * @param mixed  $value
      *
      * @return self
      */

@@ -64,9 +64,6 @@ class Prompt
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function option()
     {
         $style = new Style();
@@ -88,9 +85,6 @@ class Prompt
         return ($this->options[$this->default])();
     }
 
-    /**
-     * @return mixed
-     */
     public function select()
     {
         $style = new Style();
@@ -116,9 +110,6 @@ class Prompt
         return ($this->options[$this->default])();
     }
 
-    /**
-     * @return mixed
-     */
     public function text(callable $callable)
     {
         (new Style($this->title))->out();
@@ -126,9 +117,6 @@ class Prompt
         return ($callable)($this->getInput());
     }
 
-    /**
-     * @return mixed
-     */
     public function password(callable $callable, string $mask = '')
     {
         (new Style($this->title))->out();
@@ -158,9 +146,6 @@ class Prompt
         return ($callable)(join($userline));
     }
 
-    /**
-     * @return mixed
-     */
     public function anyKey(callable $callable)
     {
         $prompt = (string) $this->title;

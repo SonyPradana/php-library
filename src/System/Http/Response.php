@@ -367,7 +367,7 @@ class Response
      *
      * @return self
      */
-    public function header(string $header, ?string $value = null)
+    public function header(string $header, string $value = null)
     {
         $header_name = $header;
         $header_val  = $value;

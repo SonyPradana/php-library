@@ -11,14 +11,11 @@ use Validator\Validator;
 
 class IntegrateServiceProvider extends ServiceProvider
 {
-    /**
-     * {@inheritDoc}
-     */
     public function register()
     {
         Request::macro(
             'validate',
-            fn (?\Closure $rule = null, ?\Closure $filter = null) => Validator::make($this->{'all'}(), $rule, $filter)
+            fn (\Closure $rule = null, \Closure $filter = null) => Validator::make($this->{'all'}(), $rule, $filter)
         );
 
         Request::macro(

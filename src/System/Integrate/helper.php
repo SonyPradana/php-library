@@ -182,6 +182,15 @@ if (!function_exists('migration_path')) {
     }
 }
 
+if (!function_exists('public_path')) {
+    function public_path(string $surfix_path = ''): string
+    {
+        $path = app()->public_path() . $surfix_path;
+
+        return $path;
+    }
+}
+
 if (!function_exists('base_path')) {
     /**
      * Get base path.
