@@ -8,8 +8,8 @@ class Router
 {
     /** @var Route[] */
     private static $routes           = [];
-    private static $pathNotFound     = null;
-    private static $methodNotAllowed = null;
+    private static $pathNotFound;
+    private static $methodNotAllowed;
     public static $group             = [
         'prefix'     => '',
         'middleware' => [],
