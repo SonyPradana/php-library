@@ -110,7 +110,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
         array $headers = [],
         string $method = 'GET',
         string $remoteAddress = '::1',
-        ?string $rawBody = null
+        string $rawBody = null
     ) {
         $this->initialize($url, $query, $post, $attributes, $cookies, $files, $headers, $method, $remoteAddress, $rawBody);
     }
@@ -138,7 +138,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
         array $headers = [],
         string $method = 'GET',
         string $remoteAddress = '::1',
-        ?string $rawBody = null
+        string $rawBody = null
     ) {
         $this->url             = $url;
         $this->query           = new Collection($query);
