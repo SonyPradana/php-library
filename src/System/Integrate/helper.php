@@ -279,3 +279,20 @@ if (!function_exists('view')) {
             ->setHeaders($headers);
     }
 }
+
+if (!function_exists('vite')) {
+    /**
+     * Get resource using entri ponit(s).
+     *
+     * @param string $entry_ponits
+     *
+     * @return array<string, string>|string
+     */
+    function vite(...$entry_ponits)
+    {
+        /** @var System\Integrate\Vite */
+        $vite = app()->get('vite.gets');
+
+        return $vite(...$entry_ponits);
+    }
+}
