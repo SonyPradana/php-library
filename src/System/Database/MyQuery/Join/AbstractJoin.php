@@ -55,7 +55,7 @@ abstract class AbstractJoin
      *
      * @return AbstractJoin
      */
-    public static function ref(string $ref_table, string $id, ?string $ref_id = null)
+    public static function ref(string $ref_table, string $id, string $ref_id = null)
     {
         /* @phpstan-ignore-next-line */
         return (new static())

@@ -16,9 +16,9 @@ final class RouteDispatcher
 
     // callback ------------------
     /** @var callable */
-    private $found              = null;
-    private $not_found          = null;
-    private $method_not_allowed = null;
+    private $found;
+    private $not_found;
+    private $method_not_allowed;
 
     // setup --------------------
     private $basepath               = '';

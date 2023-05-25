@@ -103,9 +103,14 @@ final class Application extends Container
     private $view_path;
 
     /**
-     * View path.
+     * Migration path.
      */
     private string $migraton_path;
+
+    /**
+     * Public path.
+     */
+    private string $public_path;
 
     // property ------------------------------
 
@@ -257,6 +262,7 @@ final class Application extends Container
             'MIDDLEWARE'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'middleware' . DIRECTORY_SEPARATOR,
             'SERVICE_PROVIDER'      => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Providers' . DIRECTORY_SEPARATOR,
             'MIGRATION_PATH'        => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migrations' . DIRECTORY_SEPARATOR,
+            'PUBLIC_PATH'           => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR,
 
             'PROVIDERS'             => [
                 // provider class name
@@ -486,12 +492,23 @@ final class Application extends Container
     }
 
     /**
-     * Set serviece provider path.
+     * Set migration path.
      */
     public function setMigrationPath(string $path): self
     {
         $this->migraton_path = $this->base_path . $path;
         $this->set('path.migration', $this->migraton_path);
+
+        return $this;
+    }
+
+    /**
+     * Set public path.
+     */
+    public function setPublicPath(string $path): self
+    {
+        $this->public_path = $this->base_path . $path;
+        $this->set('path.public', $this->public_path);
 
         return $this;
     }
@@ -624,6 +641,14 @@ final class Application extends Container
     public function migration_path(): string
     {
         return $this->get('path.migration');
+    }
+
+    /**
+     * Get public path.
+     */
+    public function public_path(): string
+    {
+        return $this->get('path.public');
     }
 
     /**
