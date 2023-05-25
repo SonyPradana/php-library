@@ -90,4 +90,56 @@ final class ViteTest extends TestCase
 
         $this->assertCount(1, Vite::$cache);
     }
+
+    /** @test */
+    public function itCanGetFileResouresUsingInvoke()
+    {
+        $asset = new Vite(__DIR__ . '/assets/manifest/public', 'build/');
+
+        $file = $asset('resources/css/app.css');
+
+        $this->assertEquals('assets/app-4ed993c7.js', $file);
+    }
+
+    /** @test */
+    public function itCanGetFileResoureUsingInvoke()
+    {
+        $asset = new Vite(__DIR__ . '/assets/manifest/public', 'build/');
+
+        $files = $asset(
+            'resources/css/app.css',
+            'resources/js/app.js'
+        );
+
+        $this->assertEquals([
+            'resources/css/app.css' => 'assets/app-4ed993c7.js',
+            'resources/js/app.js'   => 'assets/app-0d91dc04.js',
+        ], $files);
+    }
+
+    /** @test */
+    public function itCanGetHotResouresUsingInvoke()
+    {
+        $asset = new Vite(__DIR__ . '/assets/hot/public', 'build/');
+
+        $file = $asset('resources/css/app.css');
+
+        $this->assertEquals('http://localhost:3000/resources/css/app.css', $file);
+    }
+
+    /** @test */
+    public function itCanGetHotResoureUsingInvoke()
+    {
+        $asset = new Vite(__DIR__ . '/assets/hot/public', 'build/');
+
+        $files = $asset(
+            'resources/css/app.css',
+            'resources/js/app.js'
+        );
+
+        $this->assertEquals([
+            'resources/css/app.css' => 'http://localhost:3000/resources/css/app.css',
+            'resources/js/app.js'   => 'http://localhost:3000/resources/js/app.js',
+        ], $files);
+    }
 }

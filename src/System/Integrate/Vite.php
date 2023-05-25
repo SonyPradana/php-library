@@ -22,6 +22,23 @@ class Vite
         $this->manifest_name        = 'manifest.json';
     }
 
+    /**
+     * Get resource using entri ponit(s).
+     *
+     * @param string $entry_ponits
+     *
+     * @return array<string, string>|string
+     *                                      If entry point is string will return string,
+     *                                      otherwise if entry point is array return as array
+     */
+    public function __invoke(...$entry_ponits)
+    {
+        $resource = $this->gets($entry_ponits);
+        $first    = array_key_first($resource);
+
+        return 1 === count($resource) ? $resource[$first] : $resource;
+    }
+
     public function manifestName(string $manifest_name): self
     {
         $this->manifest_name = $manifest_name;
