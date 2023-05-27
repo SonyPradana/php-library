@@ -90,7 +90,7 @@ class Vite
             throw new \Exception("Resoure file not found {$resource_name}");
         }
 
-        return $asset[$resource_name]['file'];
+        return $this->build_path . $asset[$resource_name]['file'];
     }
 
     /**
@@ -105,7 +105,7 @@ class Vite
         $resources = [];
         foreach ($resource_names as $resource) {
             if (array_key_exists($resource, $asset)) {
-                $resources[$resource] = $asset[$resource]['file'];
+                $resources[$resource] = $this->build_path . $asset[$resource]['file'];
             }
         }
 
