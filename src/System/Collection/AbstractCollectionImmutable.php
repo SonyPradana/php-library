@@ -224,6 +224,16 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
+     * @param positive-int $take
+     *
+     * @return array<TKey, TValue>
+     */
+    public function firsts(int $take)
+    {
+        return array_slice($this->collection, 0, (int) $take);
+    }
+
+    /**
      * @template TGetDefault
      *
      * @param TGetDefault|null $default
@@ -235,6 +245,16 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
         $key = array_key_last($this->collection);
 
         return $this->collection[$key] ?? $default;
+    }
+
+    /**
+     * @param positive-int $take
+     *
+     * @return array<TKey, TValue>
+     */
+    public function lasts(int $take)
+    {
+        return array_slice($this->collection, -$take, (int) $take);
     }
 
     /**

@@ -204,4 +204,20 @@ class CollectionImmutableTest extends TestCase
 
         $this->assertEquals(null, $coll->lastKey());
     }
+
+    /** @test */
+    public function itCanGetFirts()
+    {
+        $coll = new CollectionImmutable([10, 20, 30, 40, 50, 60, 70, 80, 90]);
+
+        $this->assertEquals([10, 20], $coll->firsts(2));
+    }
+
+    /** @test */
+    public function itCanGetLasts()
+    {
+        $coll = new CollectionImmutable([10, 20, 30, 40, 50, 60, 70, 80, 90]);
+
+        $this->assertEquals([80, 90], $coll->lasts(2));
+    }
 }
