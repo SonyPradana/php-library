@@ -414,12 +414,11 @@ class Style
     /**
      * Add raw terminal code.
      *
-     * @param RuleInterface|string $raw   Raw terminal code
-     * @param int|null             $reset Raw reset terminal code
+     * @param RuleInterface|string $raw Raw terminal code
      *
      * @return self
      */
-    public function raw($raw, $reset = null)
+    public function raw($raw)
     {
         if ($raw instanceof ForegroundColor) {
             $this->text_color_rule = $raw->get();
@@ -434,9 +433,6 @@ class Style
         }
 
         $this->raw_rules[] = [$raw];
-        if (null !== $reset) {
-            $this->reset_rules[] = $reset;
-        }
 
         return $this;
     }
