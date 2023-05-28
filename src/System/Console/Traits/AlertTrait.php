@@ -2,6 +2,7 @@
 
 namespace System\Console\Traits;
 
+use System\Console\Style\Decorate;
 use System\Console\Style\Style;
 
 trait AlertTrait
@@ -37,7 +38,7 @@ trait AlertTrait
             ->repeat(' ', $this->margin_left)
             ->push(' info ')
             ->bold()
-            ->reset()
+            ->rawReset([Decorate::RESET_BOLD_DIM])
             ->bgBlue()
             ->push(' ')
             ->push($info)
@@ -59,7 +60,7 @@ trait AlertTrait
             ->repeat(' ', $this->margin_left)
             ->push(' warn ')
             ->bold()
-            ->reset()
+            ->rawReset([Decorate::RESET_BOLD_DIM])
             ->bgYellow()
             ->push(' ')
             ->push($warn)
@@ -81,7 +82,7 @@ trait AlertTrait
             ->repeat(' ', $this->margin_left)
             ->push(' fail ')
             ->bold()
-            ->reset()
+            ->rawReset([Decorate::RESET_BOLD_DIM])
             ->bgRed()
             ->push(' ')
             ->push($fail)
@@ -103,7 +104,7 @@ trait AlertTrait
             ->repeat(' ', $this->margin_left)
             ->push(' ok ')
             ->bold()
-            ->reset()
+            ->rawReset([Decorate::RESET_BOLD_DIM])
             ->bgGreen()
             ->push(' ')
             ->push($ok)
