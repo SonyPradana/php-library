@@ -335,11 +335,11 @@ class Style
     // style ------------------------------------------
 
     /**
-     * Reset all attributes (decorate).
+     * Reset all attributes (set reset decorate to be 0).
      *
      * @return self
      */
-    public function reset()
+    public function resetDecorate()
     {
         $this->reset_rules = [Decorate::RESET];
 
@@ -414,11 +414,12 @@ class Style
     /**
      * Add raw terminal code.
      *
-     * @param RuleInterface|string $raw Raw terminal code
+     * @param RuleInterface|string $raw   Raw terminal code
+     * @param int|null             $reset Raw reset terminal code
      *
      * @return self
      */
-    public function raw($raw)
+    public function raw($raw, $reset = null)
     {
         if ($raw instanceof ForegroundColor) {
             $this->text_color_rule = $raw->get();
@@ -433,6 +434,21 @@ class Style
         }
 
         $this->raw_rules[] = [$raw];
+        if (null !== $reset) {
+            $this->reset_rules[] = $reset;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param int[] $reset rules reset
+     *
+     * @return self
+     */
+    public function rawReset($reset)
+    {
+        $this->reset_rules = $reset;
 
         return $this;
     }
