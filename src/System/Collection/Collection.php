@@ -406,4 +406,20 @@ class Collection extends AbstractCollectionImmutable
 
         return $carry;
     }
+
+    /**
+     * @return $this
+     */
+    public function take(int $limit): self
+    {
+        if ($limit < 0) {
+            return $this->replace(
+                array_slice($this->collection, $limit, abs($limit))
+            );
+        }
+
+        return $this->replace(
+            array_slice($this->collection, 0, $limit)
+        );
+    }
 }
