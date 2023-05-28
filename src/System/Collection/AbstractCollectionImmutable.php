@@ -238,6 +238,22 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
+     * @return TKey|null
+     */
+    public function firstKey()
+    {
+        return array_key_first($this->collection);
+    }
+
+    /**
+     * @return TKey|null
+     */
+    public function lastKey($default = null)
+    {
+        return array_key_last($this->collection);
+    }
+
+    /**
      * @return TValue
      */
     public function current()
