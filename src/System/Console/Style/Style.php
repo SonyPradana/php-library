@@ -335,6 +335,18 @@ class Style
     // style ------------------------------------------
 
     /**
+     * Reset all attributes (set reset decorate to be 0).
+     *
+     * @return self
+     */
+    public function resetDecorate()
+    {
+        $this->reset_rules = [Decorate::RESET];
+
+        return $this;
+    }
+
+    /**
      * Text decorate bold.
      *
      * @return self
@@ -421,6 +433,18 @@ class Style
         }
 
         $this->raw_rules[] = [$raw];
+
+        return $this;
+    }
+
+    /**
+     * @param int[] $reset rules reset
+     *
+     * @return self
+     */
+    public function rawReset($reset)
+    {
+        $this->reset_rules = $reset;
 
         return $this;
     }

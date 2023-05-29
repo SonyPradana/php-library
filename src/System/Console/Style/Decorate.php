@@ -50,6 +50,7 @@ class Decorate
     // reset
     public const RESET           = 0;
     public const RESET_BOLD      = 21;
+    public const RESET_BOLD_DIM  = 22;
     public const RESET_UNDERLINE = 24;
     public const RESET_BLINK     = 25;
     public const RESET_REVERSE   = 27;

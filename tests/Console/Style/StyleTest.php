@@ -237,4 +237,22 @@ final class StyleTest extends TestCase
             $text
         );
     }
+
+    /** @test */
+    public function itCanRenderAndResetDecorate()
+    {
+        $cmd  = new Style('text');
+        $text = $cmd->textBlue()->resetDecorate();
+
+        $this->assertEquals(sprintf('%s[34;49mtext%s[0m', chr(27), chr(27)), $text, 'text must return blue text terminal code');
+    }
+
+    /** @test */
+    public function itCanRenderAndResetDecorateUsingRawReset()
+    {
+        $cmd  = new Style('text');
+        $text = $cmd->textBlue()->rawReset([0, 22]);
+
+        $this->assertEquals(sprintf('%s[34;49mtext%s[0;22m', chr(27), chr(27)), $text, 'text must return blue text terminal code');
+    }
 }
