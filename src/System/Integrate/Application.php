@@ -225,6 +225,7 @@ final class Application extends Container
         $this->setMiddlewarePath($configs['MIDDLEWARE']);
         $this->setProviderPath($configs['SERVICE_PROVIDER']);
         $this->setMigrationPath($configs['MIGRATION_PATH']);
+        $this->setPublicPath($configs['PUBLIC_PATH']);
         // pusher config
         $this->set('config.pusher_id', $configs['PUSHER_APP_ID']);
         $this->set('config.pusher_key', $configs['PUSHER_APP_KEY']);
@@ -262,7 +263,7 @@ final class Application extends Container
             'MIDDLEWARE'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'middleware' . DIRECTORY_SEPARATOR,
             'SERVICE_PROVIDER'      => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Providers' . DIRECTORY_SEPARATOR,
             'MIGRATION_PATH'        => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migrations' . DIRECTORY_SEPARATOR,
-            'PUBLIC_PATH'           => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR,
+            'PUBLIC_PATH'           => DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR,
 
             'PROVIDERS'             => [
                 // provider class name
