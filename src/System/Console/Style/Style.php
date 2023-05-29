@@ -323,6 +323,21 @@ class Style
     }
 
     /**
+     * Print to terminal and continue.
+     *
+     * @return self
+     */
+    public function yeild()
+    {
+        echo $this;
+        $this->text   = '';
+        $this->length = 0;
+        $this->flush();
+
+        return $this;
+    }
+
+    /**
      * Print terminal style.
      *
      * @return void
