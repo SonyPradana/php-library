@@ -327,7 +327,7 @@ class Style
      *
      * @return self
      */
-    public function yeild()
+    public function yield()
     {
         echo $this;
         $this->text   = '';

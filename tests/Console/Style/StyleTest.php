@@ -257,7 +257,7 @@ final class StyleTest extends TestCase
     }
 
     /** @test */
-    public function itCanPrintUsingYeild()
+    public function itCanPrintUsingYield()
     {
         $cmd = new Style('text');
 
@@ -268,14 +268,14 @@ final class StyleTest extends TestCase
             ->textRed()
             ->push('php')
             ->textBlue()
-            ->yeild();
+            ->yield();
         $text = ob_get_clean();
 
         $this->assertEquals(sprintf('%s[2;49mi%s[0m%s[31;49mlove%s[0m%s[34;49mphp%s[0m', chr(27), chr(27), chr(27), chr(27), chr(27), chr(27)), $text, 'text must return blue text terminal code');
     }
 
     /** @test */
-    public function itCanPrintUsingYeildAndContinue()
+    public function itCanPrintUsingYieldAndContinue()
     {
         $cmd = new Style('text');
 
@@ -284,7 +284,7 @@ final class StyleTest extends TestCase
             ->textDim()
             ->push('love')
             ->textRed()
-            ->yeild()
+            ->yield()
             ->push('php')
             ->textBlue()
         ;
@@ -294,7 +294,7 @@ final class StyleTest extends TestCase
     }
 
      /** @test */
-     public function itCanPrintUsingYeildContinueAndOut()
+     public function itCanPrintUsingYieldContinueAndOut()
      {
          $cmd = new Style('text');
 
@@ -303,7 +303,7 @@ final class StyleTest extends TestCase
              ->textDim()
              ->push('love')
              ->textRed()
-             ->yeild()
+             ->yield()
              ->push('php')
              ->textBlue()
              ->out(false)
