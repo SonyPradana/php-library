@@ -407,4 +407,20 @@ class CollectionTest extends TestCase
 
         $this->assertTrue($sum === 10);
     }
+
+    /** @test */
+    public function itCanGetTakeFirst()
+    {
+        $coll = new Collection([10, 20, 30, 40, 50, 60, 70, 80, 90]);
+
+        $this->assertEquals([10, 20], $coll->take(2)->toArray());
+    }
+
+    /** @test */
+    public function itCanGetTakeLast()
+    {
+        $coll = new Collection([10, 20, 30, 40, 50, 60, 70, 80, 90]);
+
+        $this->assertEquals([80, 90], $coll->take(-2)->toArray());
+    }
 }

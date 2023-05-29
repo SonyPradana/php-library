@@ -172,4 +172,52 @@ class CollectionImmutableTest extends TestCase
             $coll->contain('1', true)
         );
     }
+
+    /** @test */
+    public function itCanGetFirstKey()
+    {
+        $coll = new CollectionImmutable(['one' => 1, 'two' => '2', 'three' => 3]);
+
+        $this->assertEquals('one', $coll->firstKey());
+    }
+
+    /** @test */
+    public function itCanGetFirstKeyNull()
+    {
+        $coll = new CollectionImmutable([]);
+
+        $this->assertEquals(null, $coll->firstKey());
+    }
+
+    /** @test */
+    public function itCanGetlastKey()
+    {
+        $coll = new CollectionImmutable(['one' => 1, 'two' => '2', 'three' => 3]);
+
+        $this->assertEquals('three', $coll->lastKey());
+    }
+
+    /** @test */
+    public function itCanGetLastKeyNull()
+    {
+        $coll = new CollectionImmutable([]);
+
+        $this->assertEquals(null, $coll->lastKey());
+    }
+
+    /** @test */
+    public function itCanGetFirts()
+    {
+        $coll = new CollectionImmutable([10, 20, 30, 40, 50, 60, 70, 80, 90]);
+
+        $this->assertEquals([10, 20], $coll->firsts(2));
+    }
+
+    /** @test */
+    public function itCanGetLasts()
+    {
+        $coll = new CollectionImmutable([10, 20, 30, 40, 50, 60, 70, 80, 90]);
+
+        $this->assertEquals([80, 90], $coll->lasts(2));
+    }
 }
