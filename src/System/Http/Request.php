@@ -163,6 +163,8 @@ class Request implements \ArrayAccess, \IteratorAggregate
      * @param array<string, string>|null $cookies
      * @param array<string, string>|null $files
      * @param array<string, string>|null $headers
+     *
+     * @return static
      */
     public function duplicate(
         array $query = null,
@@ -171,7 +173,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
         array $cookies = null,
         array $files = null,
         array $headers = null
-    ): static {
+    ) {
         $dupplicate = clone $this;
 
         if (null !== $query) {
