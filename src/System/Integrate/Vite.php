@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Integrate;
 
 use System\Collection\Collection;
+use System\Text\Str;
 
 class Vite
 {
@@ -124,7 +125,9 @@ class Vite
         $hot = file_get_contents("{$this->public_path}/hot");
         $hot = rtrim($hot);
 
-        return $hot . $resource_name;
+        $dash = Str::endsWith($hot, '/') ? '' : '/';
+
+        return $hot . $dash . $resource_name;
     }
 
     /**
@@ -140,11 +143,12 @@ class Vite
             return $this->getsManifest($resource_names);
         }
 
-        $hot = file_get_contents("{$this->public_path}/hot");
-        $hot = rtrim($hot);
+        $hot  = file_get_contents("{$this->public_path}/hot");
+        $hot  = rtrim($hot);
+        $dash = Str::endsWith($hot, '/') ? '' : '/';
 
         return (new Collection($resource_names))
-            ->assocBy(fn ($item) => [$item => $hot . $item])
+            ->assocBy(fn ($asset) => [$asset => $hot . $dash . $asset])
             ->toArray()
         ;
     }
