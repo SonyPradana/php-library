@@ -63,7 +63,7 @@ final class ViteTest extends TestCase
 
         $file = $asset->get('resources/css/app.css');
 
-        $this->assertEquals('http://localhost:3000/resources/css/app.css', $file);
+        $this->assertEquals('http://[::1]:5173/resources/css/app.css', $file);
     }
 
     /** @test */
@@ -77,8 +77,8 @@ final class ViteTest extends TestCase
         ]);
 
         $this->assertEquals([
-            'resources/css/app.css' => 'http://localhost:3000/resources/css/app.css',
-            'resources/js/app.js'   => 'http://localhost:3000/resources/js/app.js',
+            'resources/css/app.css' => 'http://[::1]:5173/resources/css/app.css',
+            'resources/js/app.js'   => 'http://[::1]:5173/resources/js/app.js',
         ], $files);
     }
 
@@ -124,7 +124,7 @@ final class ViteTest extends TestCase
 
         $file = $asset('resources/css/app.css');
 
-        $this->assertEquals('http://localhost:3000/resources/css/app.css', $file);
+        $this->assertEquals('http://[::1]:5173/resources/css/app.css', $file);
     }
 
     /** @test */
@@ -138,8 +138,30 @@ final class ViteTest extends TestCase
         );
 
         $this->assertEquals([
-            'resources/css/app.css' => 'http://localhost:3000/resources/css/app.css',
-            'resources/js/app.js'   => 'http://localhost:3000/resources/js/app.js',
+            'resources/css/app.css' => 'http://[::1]:5173/resources/css/app.css',
+            'resources/js/app.js'   => 'http://[::1]:5173/resources/js/app.js',
         ], $files);
+    }
+
+    /** @test */
+    public function itCanGetHotUrl()
+    {
+        $asset = new Vite(__DIR__ . '/assets/hot/public', 'build/');
+
+        $this->assertEquals(
+            'http://[::1]:5173/',
+            $asset->getHRMUrl()
+        );
+    }
+
+    /** @test */
+    public function itCanGetHrmScript()
+    {
+        $asset = new Vite(__DIR__ . '/assets/hot/public', 'build/');
+
+        $this->assertEquals(
+            '<script type="module" src="http://[::1]:5173/@vite/client"></script>',
+            $asset->getHRMScript()
+        );
     }
 }

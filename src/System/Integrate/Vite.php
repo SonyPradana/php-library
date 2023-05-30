@@ -15,6 +15,7 @@ class Vite
     private int $cache_time = 0;
     /** @var array<string, array> */
     public static array $cache = [];
+    public static ?string $hot = null;
 
     public function __construct(string $public_path, string $build_path)
     {
@@ -50,6 +51,7 @@ class Vite
     public static function flush(): void
     {
         static::$cache = [];
+        static::$hot   = null;
     }
 
     /**
@@ -122,12 +124,9 @@ class Vite
             return $this->getManifest($resource_name);
         }
 
-        $hot = file_get_contents("{$this->public_path}/hot");
-        $hot = rtrim($hot);
+        $hot = $this->getHRMUrl();
 
-        $dash = Str::endsWith($hot, '/') ? '' : '/';
-
-        return $hot . $dash . $resource_name;
+        return $hot . $resource_name;
     }
 
     /**
@@ -143,12 +142,10 @@ class Vite
             return $this->getsManifest($resource_names);
         }
 
-        $hot  = file_get_contents("{$this->public_path}/hot");
-        $hot  = rtrim($hot);
-        $dash = Str::endsWith($hot, '/') ? '' : '/';
+        $hot  = $this->getHRMUrl();
 
         return (new Collection($resource_names))
-            ->assocBy(fn ($asset) => [$asset => $hot . $dash . $asset])
+            ->assocBy(fn ($asset) => [$asset => $hot . $asset])
             ->toArray()
         ;
     }
@@ -159,6 +156,27 @@ class Vite
     public function isRunningHRM(): bool
     {
         return is_file("{$this->public_path}/hot");
+    }
+
+    /**
+     * Get hot url.
+     */
+    public function getHRMUrl(): string
+    {
+        if (!is_null(static::$hot)) {
+            return static::$hot;
+        }
+
+        $hot  = file_get_contents("{$this->public_path}/hot");
+        $hot  = rtrim($hot);
+        $dash = Str::endsWith($hot, '/') ? '' : '/';
+
+        return static::$hot = $hot . $dash;
+    }
+
+    public function getHRMScript()
+    {
+        return '<script type="module" src="' . $this->getHRMUrl() . '@vite/client"></script>';
     }
 
     public function cacheTime(): int
