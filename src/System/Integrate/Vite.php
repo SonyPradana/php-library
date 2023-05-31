@@ -124,7 +124,7 @@ class Vite
             return $this->getManifest($resource_name);
         }
 
-        $hot = $this->getHRMUrl();
+        $hot = $this->getHmrUrl();
 
         return $hot . $resource_name;
     }
@@ -142,7 +142,7 @@ class Vite
             return $this->getsManifest($resource_names);
         }
 
-        $hot  = $this->getHRMUrl();
+        $hot  = $this->getHmrUrl();
 
         return (new Collection($resource_names))
             ->assocBy(fn ($asset) => [$asset => $hot . $asset])
@@ -161,7 +161,7 @@ class Vite
     /**
      * Get hot url.
      */
-    public function getHRMUrl(): string
+    public function getHmrUrl(): string
     {
         if (!is_null(static::$hot)) {
             return static::$hot;
@@ -174,9 +174,9 @@ class Vite
         return static::$hot = $hot . $dash;
     }
 
-    public function getHRMScript()
+    public function getHmrScript()
     {
-        return '<script type="module" src="' . $this->getHRMUrl() . '@vite/client"></script>';
+        return '<script type="module" src="' . $this->getHmrUrl() . '@vite/client"></script>';
     }
 
     public function cacheTime(): int

@@ -150,18 +150,18 @@ final class ViteTest extends TestCase
 
         $this->assertEquals(
             'http://[::1]:5173/',
-            $asset->getHRMUrl()
+            $asset->getHmrUrl()
         );
     }
 
     /** @test */
-    public function itCanGetHrmScript()
+    public function itCangetHmrScript()
     {
         $asset = new Vite(__DIR__ . '/assets/hot/public', 'build/');
 
         $this->assertEquals(
             '<script type="module" src="http://[::1]:5173/@vite/client"></script>',
-            $asset->getHRMScript()
+            $asset->getHmrScript()
         );
     }
 }
