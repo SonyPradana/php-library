@@ -97,12 +97,10 @@ abstract class MyCRUD
      *
      * @param string $name
      * @param mixed  $value
-     *
-     * @return self
      */
     public function __set($name, $value)
     {
-        return $this->setter($name, $value);
+        $this->setter($name, $value);
     }
 
     public function read(): bool
