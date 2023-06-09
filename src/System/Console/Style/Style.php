@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Console\Style;
 
+use System\Console\Interfaces\DecorateInterface;
 use System\Console\Interfaces\RuleInterface;
 use System\Console\Style\Color\BackgroundColor;
 use System\Console\Style\Color\ForegroundColor;
@@ -43,7 +44,7 @@ use function System\Text\text;
  * @method self bgLightCyan()
  * @method self bgWhite()
  */
-class Style
+class Style implements DecorateInterface
 {
     use CommandTrait;
 
@@ -348,6 +349,46 @@ class Style
     }
 
     // style ------------------------------------------
+
+    /**
+     * Apply current text with rule.
+     */
+    public function apply(Rule $rule): self
+    {
+        [
+            'text_color_rule' => $this->text_color_rule,
+            'bg_color_rule'   => $this->bg_color_rule,
+            'decorate_rules'  => $this->decorate_rules,
+            'reset_rules'     => $this->reset_rules,
+            'raw_rules'       => $this->raw_rules
+        ] = $rule->getRules();
+
+        return $this;
+    }
+
+    /**
+     * Apply some text with rule.
+     *
+     * @param string[]    $texts
+     * @param Rule|Rule[] $rules
+     */
+    public function applys(array $texts, $rules): self
+    {
+        $default = new Rule();
+        $array   = is_array($rules);
+
+        foreach ($texts as $key => $text) {
+            if (!$array) {
+                $this->push($text)->apply($rules);
+                continue;
+            }
+
+            $rule = $rules[$key] ?? $default;
+            $this->push($text)->apply($rule);
+        }
+
+        return $this;
+    }
 
     /**
      * Reset all attributes (set reset decorate to be 0).
