@@ -97,7 +97,7 @@ class Now
      * @param string $name
      * @param mixed  $value
      */
-    public function __set($name, $value): void
+    public function __set($name, $value)
     {
         if (method_exists($this, $name) && property_exists($this, $name)) {
             $this->{$name}($value);
