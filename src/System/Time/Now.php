@@ -96,15 +96,13 @@ class Now
      *
      * @param string $name
      * @param mixed  $value
-     *
-     * @return self
      */
-    public function __set($name, $value)
+    public function __set($name, $value): void
     {
         if (method_exists($this, $name) && property_exists($this, $name)) {
             $this->{$name}($value);
 
-            return $this;
+            return;
         }
 
         throw new PropertyNotSetAble($name);
