@@ -59,7 +59,7 @@ class Rule implements DecorateInterface
     protected $decorate_rules = [];
 
     /**
-     * @return array<string, int[]>
+     * @return array<string, int[]|string[]>
      */
     public function getRules(): array
     {
@@ -183,6 +183,10 @@ class Rule implements DecorateInterface
 
             return $this;
         }
+
+        $this->raw_rules[] = [$raw];
+
+        return $this;
     }
 
     public function rawReset($reset)
