@@ -2,8 +2,15 @@
 
 namespace System\Console\Interfaces;
 
+use System\Console\ValueObjects\Style\Rule;
+
 interface DecorateInterface
 {
+    /**
+     * Get value object of all rule set.
+     */
+    public function getRules(): Rule;
+
     /**
      * Reset all attributes (set reset decorate to be 0).
      *
@@ -65,7 +72,7 @@ interface DecorateInterface
     /**
      * Set text color.
      *
-     * @param ForegroundColor|string $color
+     * @param \System\Console\Style\Color\ForegroundColor|string $color
      *
      * @return self
      */
@@ -74,7 +81,7 @@ interface DecorateInterface
     /**
      * Set Background color.
      *
-     * @param BackgroundColor|string $color
+     * @param \System\Console\Style\Color\BackgroundColor|string $color
      *
      * @return self
      */

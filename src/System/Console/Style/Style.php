@@ -9,6 +9,7 @@ use System\Console\Interfaces\RuleInterface;
 use System\Console\Style\Color\BackgroundColor;
 use System\Console\Style\Color\ForegroundColor;
 use System\Console\Traits\CommandTrait;
+use System\Console\ValueObjects\Style\Rule as ObejctRule;
 use System\Text\Str;
 
 use function System\Text\text;
@@ -353,15 +354,15 @@ class Style implements DecorateInterface
     /**
      * Apply current text with rule.
      */
-    public function apply(Rule $rule): self
+    public function apply(DecorateInterface $rule): self
     {
-        [
-            'text_color_rule' => $this->text_color_rule,
-            'bg_color_rule'   => $this->bg_color_rule,
-            'decorate_rules'  => $this->decorate_rules,
-            'reset_rules'     => $this->reset_rules,
-            'raw_rules'       => $this->raw_rules
-        ] = $rule->getRules();
+        $rules = $rule->getRules();
+
+        $this->text_color_rule = $rules->TextColorRule();
+        $this->bg_color_rule   = $rules->BackgroundColorRule();
+        $this->decorate_rules  = $rules->DecorateRules();
+        $this->reset_rules     = $rules->ResetRules();
+        $this->raw_rules       = $rules->RawRules();
 
         return $this;
     }
@@ -369,8 +370,8 @@ class Style implements DecorateInterface
     /**
      * Apply some text with rule.
      *
-     * @param string[]    $texts
-     * @param Rule|Rule[] $rules
+     * @param string[]                              $texts
+     * @param DecorateInterface|DecorateInterface[] $rules
      */
     public function applys(array $texts, $rules): self
     {
@@ -577,5 +578,16 @@ class Style implements DecorateInterface
     public function tabs($repeat = 1)
     {
         return $this->repeat("\t", $repeat);
+    }
+
+    public function getRules(): ObejctRule
+    {
+        return new ObejctRule(
+            $this->text_color_rule,
+            $this->bg_color_rule,
+            $this->decorate_rules,
+            $this->reset_rules,
+            $this->raw_rules,
+        );
     }
 }

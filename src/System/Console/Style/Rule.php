@@ -8,6 +8,7 @@ use System\Console\Interfaces\DecorateInterface;
 use System\Console\Style\Color\BackgroundColor;
 use System\Console\Style\Color\ForegroundColor;
 use System\Console\Traits\PrinterTrait;
+use System\Console\ValueObjects\Style\Rule as ObejctRule;
 use System\Text\Str;
 
 use function System\Text\text;
@@ -58,18 +59,15 @@ class Rule implements DecorateInterface
      */
     protected $decorate_rules = [];
 
-    /**
-     * @return array<string, int[]|string[]>
-     */
-    public function getRules(): array
+    public function getRules(): ObejctRule
     {
-        return [
-            'text_color_rule' => $this->text_color_rule,
-            'bg_color_rule'   => $this->bg_color_rule,
-            'decorate_rules'  => $this->decorate_rules,
-            'reset_rules'     => $this->reset_rules,
-            'raw_rules'       => $this->raw_rules,
-        ];
+        return new ObejctRule(
+            $this->text_color_rule,
+            $this->bg_color_rule,
+            $this->decorate_rules,
+            $this->reset_rules,
+            $this->raw_rules,
+        );
     }
 
     public function flush(): self
