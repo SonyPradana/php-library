@@ -7,6 +7,7 @@ namespace System\Console\Style;
 use System\Console\Interfaces\DecorateInterface;
 use System\Console\Style\Color\BackgroundColor;
 use System\Console\Style\Color\ForegroundColor;
+use System\Console\Traits\CommandTrait;
 use System\Console\Traits\PrinterTrait;
 use System\Console\ValueObjects\Style\Rule as ObejctRule;
 use System\Text\Str;
@@ -15,6 +16,7 @@ use function System\Text\text;
 
 class Rule implements DecorateInterface
 {
+    use CommandTrait;
     use PrinterTrait;
 
     /**
@@ -58,6 +60,38 @@ class Rule implements DecorateInterface
      * @var array<int, int>
      */
     protected $decorate_rules = [];
+
+    public function toArray(): array
+    {
+        $rules = [];
+
+        // font color
+        foreach ($this->text_color_rule as $text_color) {
+            $rules[] = $text_color;
+        }
+
+        // bg color
+        foreach ($this->bg_color_rule as $bg_color) {
+            $rules[] = $bg_color;
+        }
+
+        // decorate
+        foreach ($this->decorate_rules as $decorate) {
+            $rules[] = $decorate;
+        }
+
+        // raw
+        foreach ($this->raw_rules as $raws) {
+            foreach ($raws as $raw) {
+                $rules[] = $raw;
+            }
+        }
+
+        return [
+            $rules,
+            $this->reset_rules,
+        ];
+    }
 
     public function getRules(): ObejctRule
     {
