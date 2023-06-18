@@ -19,6 +19,9 @@ class Alter extends Query
     /** @var string[] */
     private $drop_columns = [];
 
+    /** @var array<string, string> */
+    private $rename_columns = [];
+
     /** @var string */
     private $table_name;
 
@@ -51,6 +54,11 @@ class Alter extends Query
         return $this->alter_columns[] = (new Column())->column($column_name);
     }
 
+    public function rename(string $from, string $to)
+    {
+        return $this->rename_columns[$from] = $to;
+    }
+
     protected function builder(): string
     {
         $query = [];
@@ -65,6 +73,9 @@ class Alter extends Query
         $drops = array_map(fn ($column) => "DROP COLUMN `{$column}`;", $this->drop_columns);
         $query = array_merge($query, $drops);
 
+        // rename
+        $query = array_merge($query, $this->getRename());
+
         $query = implode(' ', $query);
 
         return "ALTER TABLE {$this->table_name} {$query}";
@@ -77,6 +88,18 @@ class Alter extends Query
 
         foreach ($this->alter_columns as $attribute) {
             $res[] = "MODIFY COLUMN {$attribute->__toString()};";
+        }
+
+        return $res;
+    }
+
+    /** @return string[] */
+    private function getRename(): array
+    {
+        $res = [];
+
+        foreach ($this->rename_columns as $old => $new) {
+            $res[] = "RENAME COLUMN `{$old}` TO `{$new}`;";
         }
 
         return $res;

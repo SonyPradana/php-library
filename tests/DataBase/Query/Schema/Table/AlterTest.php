@@ -48,6 +48,19 @@ final class AlterTest extends \QueryStringTest
     }
 
     /** @test */
+    public function itCanGenerateQueryUsingRenameColumn()
+    {
+        $schema = new Alter('testing_db', 'test', $this->pdo_schame);
+        $schema->rename('PersonID', 'person_id');
+
+        $this->assertEquals(
+            // ALTER TABLE table_name RENAME COLUMN old_col_name TO new_col_name
+            'ALTER TABLE testing_db.test RENAME COLUMN `PersonID` TO `person_id`;',
+            $schema->__toString()
+        );
+    }
+
+    /** @test */
     public function itCanGenerateQueryUsingAltersColumn()
     {
         $schema = new Alter('testing_db', 'test', $this->pdo_schame);
