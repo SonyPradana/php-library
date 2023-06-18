@@ -7,6 +7,7 @@ namespace System\Database;
 use System\Database\MySchema\Create;
 use System\Database\MySchema\Drop;
 use System\Database\MySchema\MyPDO;
+use System\Database\MySchema\Table\Alter;
 use System\Database\MySchema\Table\Create as CreateTable;
 use System\Database\MySchema\Table\Truncate;
 
@@ -41,6 +42,21 @@ class MySchema
     {
         $database_name = $this->pdo->configs()['database_name'];
         $columns       = new CreateTable($database_name, $table_name, $this->pdo);
+        $blueprint($columns);
+
+        return $columns;
+    }
+
+    /**
+     * Update table structur.
+     *
+     * @param string                $table_name Target table name
+     * @param callable(Alter): void $blueprint
+     */
+    public function alter(string $table_name, callable $blueprint): Alter
+    {
+        $database_name = $this->pdo->configs()['database_name'];
+        $columns       = new Alter($database_name, $table_name, $this->pdo);
         $blueprint($columns);
 
         return $columns;
