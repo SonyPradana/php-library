@@ -116,6 +116,7 @@ final class AlterTest extends \RealDatabaseConnectionTest
         $schema->column('user')->varchar(15);
         $schema->add('PersonID')->int();
         $schema->drop('create_at');
+        $schema->rename('stat', 'take');
 
         $this->assertTrue($schema->execute());
     }
