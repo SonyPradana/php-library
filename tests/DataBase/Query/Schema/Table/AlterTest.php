@@ -87,4 +87,30 @@ final class AlterTest extends \QueryStringTest
             $schema->__toString()
         );
     }
+
+    /** @test */
+    public function itCanGenerateQueryUsingModifyColumnAndOrderit()
+    {
+        $schema = new Alter('testing_db', 'test', $this->pdo_schame);
+        $schema->column('uuid')->int(17)->first();
+        $schema->column('create_add')->after('id');
+
+        $this->assertEquals(
+            'ALTER TABLE testing_db.test MODIFY COLUMN `uuid` int(17) FIRST; MODIFY COLUMN `create_add` AFTER `id`;',
+            $schema->__toString()
+        );
+    }
+
+    /** @test */
+    public function itCanGenerateQueryUsingAddColumnAndOrderit()
+    {
+        $schema = new Alter('testing_db', 'test', $this->pdo_schame);
+        $schema->add('uuid')->int(17)->first();
+        $schema->add('create_add')->int(17)->after('id');
+
+        $this->assertEquals(
+            'ALTER TABLE testing_db.test ADD `uuid` int(17) FIRST; ADD `create_add` int(17) AFTER `id`;',
+            $schema->__toString()
+        );
+    }
 }

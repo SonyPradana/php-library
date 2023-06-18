@@ -9,7 +9,7 @@ class DataType
     /** @var string */
     private $name;
     /** @var string|Constraint */
-    private $datatype;
+    protected $datatype;
 
     public function __construct(string $column_name)
     {

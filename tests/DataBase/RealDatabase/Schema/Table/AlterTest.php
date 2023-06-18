@@ -131,4 +131,40 @@ final class AlterTest extends \RealDatabaseConnectionTest
 
         $this->assertTrue($schema->execute());
     }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanExcuteQueryUsingModifyAddWithOrder()
+    {
+        $schema = new Alter(
+            $this->pdo_schema->configs()['database_name'],
+            'profiles',
+            $this->pdo_schema
+        );
+        $schema->add('uuid')->varchar(15)->first();
+        $schema->add('last_name')->varchar(32)->after('name');
+
+        $this->assertTrue($schema->execute());
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanExcuteQueryUsingModifyColumnWithOrder()
+    {
+        $schema = new Alter(
+            $this->pdo_schema->configs()['database_name'],
+            'profiles',
+            $this->pdo_schema
+        );
+        $schema('create_at')->varchar(15)->after('user');
+        $schema->column('update_at')->varchar(15)->after('user');
+
+        $this->assertTrue($schema->execute());
+    }
 }

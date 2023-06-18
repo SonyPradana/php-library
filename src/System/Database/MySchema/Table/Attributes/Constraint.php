@@ -15,6 +15,8 @@ class Constraint
     /** @var string */
     private $auto_increment;
     /** @var string */
+    private $order;
+    /** @var string */
     private $raw;
 
     public function __construct(string $data_type)
@@ -24,6 +26,7 @@ class Constraint
         $this->default        = '';
         $this->auto_increment = '';
         $this->raw            = '';
+        $this->order          = '';
     }
 
     public function __toString()
@@ -39,6 +42,7 @@ class Constraint
             $this->default,
             $this->auto_increment,
             $this->raw,
+            $this->order,
         ];
 
         return implode(' ', array_filter($collumn, fn ($item) => $item !== ''));
@@ -75,6 +79,26 @@ class Constraint
         return $this->autoIncrement($incremnet);
     }
 
+    public function after(string $column): self
+    {
+        $this->order = "AFTER `{$column}`";
+
+        return $this;
+    }
+
+    /**
+     * Only use on Alter Column.
+     */
+    public function first(): self
+    {
+        $this->order = 'FIRST';
+
+        return $this;
+    }
+
+    /**
+     * Only use on Alter Column.
+     */
     public function raw(string $raw): self
     {
         $this->raw = $raw;
