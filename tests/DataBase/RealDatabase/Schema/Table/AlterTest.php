@@ -6,8 +6,6 @@ namespace System\Test\Database\RealDatabase\Schema\Table;
 
 use System\Database\MySchema\Table\Alter;
 
-use function System\Console\warn;
-
 final class AlterTest extends \RealDatabaseConnectionTest
 {
     protected function setUp(): void
@@ -86,17 +84,30 @@ final class AlterTest extends \RealDatabaseConnectionTest
      */
     public function itCanExcuteQueryUsingRenameColumn()
     {
-        $this->markTestSkipped('dont know it work if rename method combine with other methot ex: add()');
         $schema = new Alter(
             $this->pdo_schema->configs()['database_name'],
             'profiles',
             $this->pdo_schema
         );
         $schema->rename('stat', 'take');
-        // its work if combin with other method
-        // $schema->add('hellow')->varchar(12);
 
-        warn($schema->__toString())->out();
+        $this->assertTrue($schema->execute());
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanExcuteQueryUsingRenamesColumn()
+    {
+        $schema = new Alter(
+            $this->pdo_schema->configs()['database_name'],
+            'profiles',
+            $this->pdo_schema
+        );
+        $schema->rename('stat', 'take');
+        $schema->rename('update_at', 'modify_at');
 
         $this->assertTrue($schema->execute());
     }

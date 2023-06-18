@@ -99,7 +99,7 @@ class Alter extends Query
         $res = [];
 
         foreach ($this->rename_columns as $old => $new) {
-            $res[] = "RENAME COLUMN `{$old}` TO `{$new}`;";
+            $res[] = "; RENAME COLUMN `{$old}` TO `{$new}`;";
         }
 
         return $res;

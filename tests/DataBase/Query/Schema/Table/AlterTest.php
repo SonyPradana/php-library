@@ -54,9 +54,23 @@ final class AlterTest extends \QueryStringTest
         $schema->rename('PersonID', 'person_id');
 
         $this->assertEquals(
-            // ALTER TABLE table_name RENAME COLUMN old_col_name TO new_col_name
-            'ALTER TABLE testing_db.test RENAME COLUMN `PersonID` TO `person_id`;',
-            $schema->__toString()
+            'ALTER TABLE testing_db.test ; RENAME COLUMN `PersonID` TO `person_id`;',
+            $schema->__toString(),
+            'use start ; to prevent sql error'
+        );
+    }
+
+    /** @test */
+    public function itCanGenerateQueryUsingRenameColumnMultyple()
+    {
+        $schema = new Alter('testing_db', 'test', $this->pdo_schame);
+        $schema->rename('PersonID', 'person');
+        $schema->rename('PersonID', 'person_id');
+
+        $this->assertEquals(
+            'ALTER TABLE testing_db.test ; RENAME COLUMN `PersonID` TO `person_id`;',
+            $schema->__toString(),
+            'multy rename column will use last rename'
         );
     }
 
