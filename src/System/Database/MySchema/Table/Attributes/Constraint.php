@@ -7,17 +7,17 @@ namespace System\Database\MySchema\Table\Attributes;
 class Constraint
 {
     /** @var string */
-    private $data_type;
+    protected $data_type;
     /** @var string */
-    private $null_able;
+    protected $null_able;
     /** @var string */
-    private $default;
+    protected $default;
     /** @var string */
-    private $auto_increment;
+    protected $auto_increment;
     /** @var string */
-    private $order;
+    protected $order;
     /** @var string */
-    private $raw;
+    protected $raw;
 
     public function __construct(string $data_type)
     {
@@ -79,26 +79,6 @@ class Constraint
         return $this->autoIncrement($incremnet);
     }
 
-    public function after(string $column): self
-    {
-        $this->order = "AFTER `{$column}`";
-
-        return $this;
-    }
-
-    /**
-     * Only use on Alter Column.
-     */
-    public function first(): self
-    {
-        $this->order = 'FIRST';
-
-        return $this;
-    }
-
-    /**
-     * Only use on Alter Column.
-     */
     public function raw(string $raw): self
     {
         $this->raw = $raw;

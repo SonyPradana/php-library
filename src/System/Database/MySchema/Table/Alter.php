@@ -6,8 +6,7 @@ namespace System\Database\MySchema\Table;
 
 use System\Database\MySchema\MyPDO;
 use System\Database\MySchema\Query;
-use System\Database\MySchema\Table\Attributes\AlterDataType;
-use System\Database\MySchema\Table\Attributes\DataType;
+use System\Database\MySchema\Table\Attributes\Alter\DataType;
 
 class Alter extends Query
 {
@@ -42,7 +41,7 @@ class Alter extends Query
 
     public function add(string $column_name): DataType
     {
-        return $this->add_columns[] = (new Column())->column($column_name);
+        return $this->add_columns[] = (new Column())->alterColumn($column_name);
     }
 
     public function drop(string $column_name)
@@ -50,7 +49,7 @@ class Alter extends Query
         return $this->drop_columns[] = $column_name;
     }
 
-    public function column(string $column_name): AlterDataType
+    public function column(string $column_name): DataType
     {
         return $this->alter_columns[] = (new Column())->alterColumn($column_name);
     }

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace System\Database\MySchema\Table;
 
-use System\Database\MySchema\Table\Attributes\AlterDataType;
+use System\Database\MySchema\Table\Attributes\Alter\DataType as AlterDataType;
 use System\Database\MySchema\Table\Attributes\DataType;
 
 class Column
 {
-    /** @var string|DataType */
+    /** @var string|DataType|AlterDataType */
     protected $query;
 
     public function __toString()

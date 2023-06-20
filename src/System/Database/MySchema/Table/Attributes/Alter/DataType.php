@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Database\MySchema\Table\Attributes;
+namespace System\Database\MySchema\Table\Attributes\Alter;
 
 class DataType
 {
@@ -137,5 +137,15 @@ class DataType
         $enum  = implode(', ', $enums);
 
         return $this->datatype = new Constraint("ENUM ({$enum})");
+    }
+
+    public function after(string $column)
+    {
+        $this->datatype = "AFTER `{$column}`";
+    }
+
+    public function first()
+    {
+        $this->datatype = 'FIRST';
     }
 }
