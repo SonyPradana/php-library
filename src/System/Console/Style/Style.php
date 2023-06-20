@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace System\Console\Style;
 
+use System\Console\Interfaces\DecorateInterface;
 use System\Console\Interfaces\RuleInterface;
 use System\Console\Style\Color\BackgroundColor;
 use System\Console\Style\Color\ForegroundColor;
 use System\Console\Traits\CommandTrait;
+use System\Console\ValueObjects\Style\Rule as ObejctRule;
 use System\Text\Str;
 
 use function System\Text\text;
@@ -43,7 +45,7 @@ use function System\Text\text;
  * @method self bgLightCyan()
  * @method self bgWhite()
  */
-class Style
+class Style implements DecorateInterface
 {
     use CommandTrait;
 
@@ -350,6 +352,46 @@ class Style
     // style ------------------------------------------
 
     /**
+     * Apply current text with rule.
+     */
+    public function apply(DecorateInterface $rule): self
+    {
+        $rules = $rule->getRules();
+
+        $this->text_color_rule = $rules->TextColorRule();
+        $this->bg_color_rule   = $rules->BackgroundColorRule();
+        $this->decorate_rules  = $rules->DecorateRules();
+        $this->reset_rules     = $rules->ResetRules();
+        $this->raw_rules       = $rules->RawRules();
+
+        return $this;
+    }
+
+    /**
+     * Apply some text with rule.
+     *
+     * @param string[]                              $texts
+     * @param DecorateInterface|DecorateInterface[] $rules
+     */
+    public function applys(array $texts, $rules): self
+    {
+        $default = new Rule();
+        $array   = is_array($rules);
+
+        foreach ($texts as $key => $text) {
+            if (!$array) {
+                $this->push($text)->apply($rules);
+                continue;
+            }
+
+            $rule = $rules[$key] ?? $default;
+            $this->push($text)->apply($rule);
+        }
+
+        return $this;
+    }
+
+    /**
      * Reset all attributes (set reset decorate to be 0).
      *
      * @return self
@@ -536,5 +578,16 @@ class Style
     public function tabs($repeat = 1)
     {
         return $this->repeat("\t", $repeat);
+    }
+
+    public function getRules(): ObejctRule
+    {
+        return new ObejctRule(
+            $this->text_color_rule,
+            $this->bg_color_rule,
+            $this->decorate_rules,
+            $this->reset_rules,
+            $this->raw_rules,
+        );
     }
 }

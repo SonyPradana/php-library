@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use System\Console\Style\Colors;
+use System\Console\Style\Rule;
 use System\Console\Style\Style;
 
 use function System\Console\style;
@@ -311,5 +312,57 @@ final class StyleTest extends TestCase
          $text = ob_get_clean();
 
          $this->assertEquals(sprintf('%s[2;49mi%s[0m%s[31;49mlove%s[0m%s[34;49mphp%s[0m', chr(27), chr(27), chr(27), chr(27), chr(27), chr(27)), $text, 'text must return blue text terminal code');
+     }
+
+    /** @test */
+    public function itCanApplyFromRuleClass()
+    {
+        $cmd  = new Style('text');
+        $rule = new Rule();
+        $rule->textBlue();
+        $cmd->apply($rule);
+        $text = (string) $cmd;
+
+        $this->assertEquals(sprintf('%s[34;49mtext%s[0m', chr(27), chr(27)), $text, 'text must return blue text terminal code');
+    }
+
+    /** @test */
+    public function itCanApplyFromStyleClass()
+    {
+        $cmd  = new Style('text');
+        $rule = new Style();
+        $rule->textBlue();
+        $cmd->apply($rule);
+        $text = (string) $cmd;
+
+        $this->assertEquals(sprintf('%s[34;49mtext%s[0m', chr(27), chr(27)), $text, 'text must return blue text terminal code');
+    }
+
+     /** @test */
+     public function itCanApplysFromRuleClass()
+     {
+         $cmd  = new Style();
+         $rule = new Rule();
+         $rule->textBlue();
+         $cmd->applys(
+             ['text', 'text2'], $rule
+         );
+         $text = (string) $cmd;
+
+         $this->assertEquals(sprintf('%s[34;49mtext%s[0m%s[34;49mtext2%s[0m', chr(27), chr(27), chr(27), chr(27)), $text);
+     }
+
+     /** @test */
+     public function itCanApplysFromRulesClass()
+     {
+         $cmd   = new Style();
+         $rule  = (new Rule())->textBlue();
+         $rule2 = (new Rule())->textRed();
+         $cmd->applys(
+             ['text', 'text2'], [$rule, $rule2]
+         );
+         $text = (string) $cmd;
+
+         $this->assertEquals(sprintf('%s[34;49mtext%s[0m%s[31;49mtext2%s[0m', chr(27), chr(27), chr(27), chr(27)), $text);
      }
 }
