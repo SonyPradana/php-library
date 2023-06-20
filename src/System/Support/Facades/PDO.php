@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace System\Support\Facades;
 
 /**
- *  @method static \System\Database\MyPDO instance()
+ * @method static \System\Database\MyPDO instance()
  */
 final class PDO extends Facade
 {

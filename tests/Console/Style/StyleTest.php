@@ -293,23 +293,23 @@ final class StyleTest extends TestCase
         $this->assertEquals(sprintf('%s[2;49mi%s[0m%s[31;49mlove%s[0m', chr(27), chr(27), chr(27), chr(27)), $text, 'text must return blue text terminal code');
     }
 
-     /** @test */
-     public function itCanPrintUsingYieldContinueAndOut()
-     {
-         $cmd = new Style('text');
+    /** @test */
+    public function itCanPrintUsingYieldContinueAndOut()
+    {
+        $cmd = new Style('text');
 
-         ob_start();
-         $cmd('i')
-             ->textDim()
-             ->push('love')
-             ->textRed()
-             ->yield()
-             ->push('php')
-             ->textBlue()
-             ->out(false)
-         ;
-         $text = ob_get_clean();
+        ob_start();
+        $cmd('i')
+            ->textDim()
+            ->push('love')
+            ->textRed()
+            ->yield()
+            ->push('php')
+            ->textBlue()
+            ->out(false)
+        ;
+        $text = ob_get_clean();
 
-         $this->assertEquals(sprintf('%s[2;49mi%s[0m%s[31;49mlove%s[0m%s[34;49mphp%s[0m', chr(27), chr(27), chr(27), chr(27), chr(27), chr(27)), $text, 'text must return blue text terminal code');
-     }
+        $this->assertEquals(sprintf('%s[2;49mi%s[0m%s[31;49mlove%s[0m%s[34;49mphp%s[0m', chr(27), chr(27), chr(27), chr(27), chr(27), chr(27)), $text, 'text must return blue text terminal code');
+    }
 }

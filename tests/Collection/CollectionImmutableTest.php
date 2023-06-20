@@ -1,7 +1,6 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use System\Collection\Collection;
 use System\Collection\CollectionImmutable;
 use System\Collection\Exceptions\NoModify;
 

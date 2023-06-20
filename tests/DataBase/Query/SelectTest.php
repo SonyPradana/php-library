@@ -125,27 +125,27 @@ final class SelectTest extends \QueryStringTest
         );
     }
 
-      /** @test */
-      public function itCorrectSelectMultyColumn(): void
-      {
-          $select = MyQuery::from('test', $this->PDO)
-              ->select(['column_1', 'column_2', 'column_3'])
-              ->equal('column_1', 123)
-              ->equal('column_2', 'abc')
-              ->equal('column_3', true);
+    /** @test */
+    public function itCorrectSelectMultyColumn(): void
+    {
+        $select = MyQuery::from('test', $this->PDO)
+            ->select(['column_1', 'column_2', 'column_3'])
+            ->equal('column_1', 123)
+            ->equal('column_2', 'abc')
+            ->equal('column_3', true);
 
-          $this->assertEquals(
-              'SELECT `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (test.column_1 = :column_1) AND (test.column_2 = :column_2) AND (test.column_3 = :column_3) )',
-              $select->__toString(),
-              'select statment must have 3 selected query'
-          );
+        $this->assertEquals(
+            'SELECT `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (test.column_1 = :column_1) AND (test.column_2 = :column_2) AND (test.column_3 = :column_3) )',
+            $select->__toString(),
+            'select statment must have 3 selected query'
+        );
 
-          $this->assertEquals(
-              "SELECT `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (test.column_1 = 123) AND (test.column_2 = 'abc') AND (test.column_3 = true) )",
-              $select->queryBind(),
-              'select statment must have 3 selected query'
-          );
-      }
+        $this->assertEquals(
+            "SELECT `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (test.column_1 = 123) AND (test.column_2 = 'abc') AND (test.column_3 = true) )",
+            $select->queryBind(),
+            'select statment must have 3 selected query'
+        );
+    }
 
     /** @test */
     public function itCorrectSelectWithStrictOff(): void
