@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace System\Integrate;
 
-use System\Container\Container;
-
 abstract class ServiceProvider
 {
     /** @var Application */

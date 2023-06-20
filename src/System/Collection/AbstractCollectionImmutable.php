@@ -329,24 +329,24 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
 
     // array able
 
-   /**
-    * @param TKey $offset
-    */
-   public function offsetExists($offset): bool
-   {
-       return $this->has($offset);
-   }
+    /**
+     * @param TKey $offset
+     */
+    public function offsetExists($offset): bool
+    {
+        return $this->has($offset);
+    }
 
-   /**
-    * @param TKey $offset
-    *
-    * @return TValue|null
-    */
-   #[\ReturnTypeWillChange]
-   public function offsetGet($offset)
-   {
-       return $this->__get($offset);
-   }
+    /**
+     * @param TKey $offset
+     *
+     * @return TValue|null
+     */
+    #[\ReturnTypeWillChange]
+    public function offsetGet($offset)
+    {
+        return $this->__get($offset);
+    }
 
     public function offsetSet($offset, $value): void
     {
