@@ -7,15 +7,17 @@ namespace System\Database\MySchema\Table\Attributes;
 class Constraint
 {
     /** @var string */
-    private $data_type;
+    protected $data_type;
     /** @var string */
-    private $null_able;
+    protected $null_able;
     /** @var string */
-    private $default;
+    protected $default;
     /** @var string */
-    private $auto_increment;
+    protected $auto_increment;
     /** @var string */
-    private $raw;
+    protected $order;
+    /** @var string */
+    protected $raw;
 
     public function __construct(string $data_type)
     {
@@ -24,6 +26,7 @@ class Constraint
         $this->default        = '';
         $this->auto_increment = '';
         $this->raw            = '';
+        $this->order          = '';
     }
 
     public function __toString()
@@ -39,6 +42,7 @@ class Constraint
             $this->default,
             $this->auto_increment,
             $this->raw,
+            $this->order,
         ];
 
         return implode(' ', array_filter($collumn, fn ($item) => $item !== ''));
