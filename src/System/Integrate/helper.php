@@ -2,7 +2,9 @@
 
 // path aplication
 
+use System\Http\Request;
 use System\Integrate\Exceptions\ApplicationNotAvailable;
+use System\Router\Router;
 
 if (!function_exists('app_path')) {
     /**
@@ -277,6 +279,22 @@ if (!function_exists('view')) {
         return $view($view_path, $data)
             ->setResponeCode($status_code)
             ->setHeaders($headers);
+    }
+}
+
+if (!function_exists('redirect')) {
+    function redirect(string $route_name, array $parameter = [])
+    {
+        $route = Router::redirect($route_name);
+
+        $request  = app()->get(Request::class);
+        $pipeline = array_reduce(
+            (array) $route['middleware'],
+            fn ($next, $middleware) => fn ($req) => app()->call([$middleware, 'handle'], ['request' => $req, 'next' => $next]),
+            fn () => app()->call($route['function'], $parameter)
+        );
+
+        return $pipeline($request);
     }
 }
 
