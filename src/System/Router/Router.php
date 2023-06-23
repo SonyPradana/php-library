@@ -206,7 +206,10 @@ class Router
         $route_group->group($group);
     }
 
-    public static function redirect(string $route_name): Route
+    /**
+     * @return Route|false
+     */
+    public static function redirect(string $route_name)
     {
         foreach (self::$routes as $route) {
             if ($route_name === $route['name']) {
@@ -214,7 +217,7 @@ class Router
             }
         }
 
-        return self::$current;
+        return false;
     }
 
     /**
