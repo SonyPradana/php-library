@@ -1,6 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use System\Router\Route;
 use System\Router\Router;
 
 class BasicRouteTest extends TestCase
@@ -9,19 +10,19 @@ class BasicRouteTest extends TestCase
     {
         Router::get('/test', function () {
             echo 'render success';
-        });
+        })->name('route.test');
 
         Router::get('/test/number/(:id)', function ($id) {
             echo 'render success, with id is - ' . $id;
-        });
+        })->name('route.test.number');
 
         Router::get('/test/text/(:text)', function ($id) {
             echo 'render success, with id is - ' . $id;
-        });
+        })->name('route.test.text');
 
         Router::get('/test/any/(:any)', function ($id) {
             echo 'render success, with id is - ' . $id;
-        });
+        })->name('route.test.any');
 
         Router::get('/test/any/(:all)', function ($id) {
             echo 'render success, with id is - ' . $id;
@@ -317,5 +318,16 @@ class BasicRouteTest extends TestCase
         $this->assertEquals(1, TestMiddleware::$last, 'all route must pass global middleware');
 
         TestMiddleware::$last = 0;
+    }
+
+    /**
+     * @test
+     */
+    public function itRouteHasName(): void
+    {
+        $this->registerRouter();
+
+        $this->assertTrue(Router::has('route.test'));
+        $this->assertFalse(Router::has('route.success'));
     }
 }

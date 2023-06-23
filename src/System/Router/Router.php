@@ -206,6 +206,17 @@ class Router
         $route_group->group($group);
     }
 
+    public static function has(string $route_name): bool
+    {
+        foreach (static::$routes as $route) {
+            if ($route_name === $route['name']) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Function used to add a new route.
      *
