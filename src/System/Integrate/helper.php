@@ -287,6 +287,10 @@ if (!function_exists('redirect')) {
     {
         $route = Router::redirect($route_name);
 
+        if (false === $route) {
+            throw new Exception("Route with name {$route_name} not found.");
+        }
+
         $request  = app()->get(Request::class);
         $pipeline = array_reduce(
             (array) $route['middleware'],
