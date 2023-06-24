@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Template\Traits;
 
 /**
@@ -7,25 +9,25 @@ namespace System\Template\Traits;
  */
 trait FormatterTrait
 {
-    protected $tab_size   = 1;
-    protected $tab_indent = "\t";
-    private $customize_template;
+    protected int $tab_size      = 1;
+    protected string $tab_indent = "\t";
+    private string $customize_template;
 
-    public function tabSize(int $tab_size)
+    public function tabSize(int $tab_size): self
     {
         $this->tab_size = $tab_size;
 
         return $this;
     }
 
-    public function tabIndent(string $tab_indent)
+    public function tabIndent(string $tab_indent): self
     {
         $this->tab_indent = $tab_indent;
 
         return $this;
     }
 
-    public function customizeTemplate(string $template)
+    public function customizeTemplate(string $template): self
     {
         $this->customize_template = $template;
 

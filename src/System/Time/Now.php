@@ -111,7 +111,7 @@ class Now
     /**
      * Refresh property with current time.
      */
-    private function refresh()
+    private function refresh(): void
     {
         $this->timestamp = $this->date->getTimestamp();
         $this->year      = (int) $this->date->format('Y');

@@ -8,8 +8,9 @@ use System\View\Exceptions\ViewFileNotFound;
 
 class Templator
 {
-    private $templateDir;
-    private $cacheDir;
+    private string $templateDir;
+    private string $cacheDir;
+    /** @var array<string, mixed> */
     private $sections     = [];
     public string $suffix = '';
     public int $max_depth = 5;
@@ -20,6 +21,9 @@ class Templator
         $this->cacheDir    = $cacheDir;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function render(string $templateName, array $data, bool $cache = true): string
     {
         $templateName .= $this->suffix;
@@ -43,6 +47,9 @@ class Templator
         return $this->getView($cachePath, $data);
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     private function getView(string $tempalte_path, array $data): string
     {
         $level = ob_get_level();
@@ -78,7 +85,7 @@ class Templator
         return $template;
     }
 
-    private function templateSlot($template): string
+    private function templateSlot(string $template): string
     {
         preg_match('/{%\s*extend\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/', $template, $matches_layout);
         if (!array_key_exists(1, $matches_layout)) {
