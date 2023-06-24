@@ -1,7 +1,6 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use System\Router\Route;
 use System\Router\Router;
 
 class BasicRouteTest extends TestCase

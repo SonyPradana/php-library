@@ -208,7 +208,7 @@ class Router
 
     public static function has(string $route_name): bool
     {
-        foreach (static::$routes as $route) {
+        foreach (self::$routes as $route) {
             if ($route_name === $route['name']) {
                 return true;
             }
