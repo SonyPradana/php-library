@@ -154,8 +154,7 @@ class Generate
                 }
             }
 
-            // insert new line if have a const
-            $consts[] = count($consts) === 0 ?: '';
+            $consts[] = '';
         }
         $body[] = implode("\n", $consts);
 
@@ -172,8 +171,7 @@ class Generate
                 }
             }
 
-            // insert new line if have a const
-            $propertys[] = count($propertys) === 0 ?: '';
+            $propertys[] = '';
         }
         $body[] = implode("\n", $propertys);
 
@@ -190,7 +188,7 @@ class Generate
                 }
             }
 
-            $methods[] = count($methods) === 0 ?: '';
+            $methods[] = '';
         }
         $body[] = implode("\n\n", array_filter($methods));
 
