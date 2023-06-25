@@ -17,8 +17,8 @@ class Constant
     public const PRIVATE_       = 1;
     public const PROTECTED_     = 2;
 
-    private string $name;
-    private string $expecting;
+    private ?string $name      = null;
+    private ?string $expecting = null;
 
     public function __construct(string $name)
     {

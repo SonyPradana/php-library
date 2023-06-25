@@ -80,7 +80,7 @@ class Property
 
         // generate value or expecting
         $expecting = '';
-        if ($this->expecting != null) {
+        if ($this->expecting !== null) {
             $single_line  = $this->expecting[0] ?? '';
             $multy_line   = implode(
                 "\n" . $tab_dept(1),

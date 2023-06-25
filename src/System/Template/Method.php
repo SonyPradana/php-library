@@ -22,8 +22,8 @@ class Method
 
     private string $name;
     /** @var string[] */
-    private $params = [];
-    private string $return_type;
+    private $params              = [];
+    private ?string $return_type = null;
     /** @var string[] */
     private $body = [];
 

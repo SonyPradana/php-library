@@ -21,11 +21,11 @@ class Generate
     public const SET_TRAIT         = 2;
 
     // builder property
-    private string $name;
-    private string $namespace;
+    private ?string $name      = null;
+    private ?string $namespace = null;
     /** @var string[] */
-    private $uses = [];
-    private string $extend;
+    private $uses           = [];
+    private ?string $extend = null;
     /** @var string[] */
     private $implements = [];
     /** @var string[] */
@@ -85,12 +85,12 @@ class Generate
 
         // scope: before
         $before = [];
-        if ($this->namespace != null || count($this->uses) > 0) {
+        if ($this->namespace !== null || count($this->uses) > 0) {
             $before[] = '';
         }
 
         // generte namespace
-        if ($this->namespace != null) {
+        if ($this->namespace !== null) {
             $before[] = 'namespace ' . $this->namespace . ";\n";
         }
 
@@ -123,7 +123,7 @@ class Generate
         $head[] = $this->name;
 
         // generte extend
-        if ($this->extend != null) {
+        if ($this->extend !== null) {
             $head[] = 'extends ' . $this->extend;
         }
 
@@ -155,9 +155,7 @@ class Generate
             }
 
             // insert new line if have a const
-            if (0 === count($consts)) {
-                $consts[] = '';
-            }
+            $consts[] = count($consts) === 0 ?: '';
         }
         $body[] = implode("\n", $consts);
 
@@ -175,9 +173,7 @@ class Generate
             }
 
             // insert new line if have a const
-            if (0 === count($propertys)) {
-                $propertys[] = '';
-            }
+            $propertys[] = count($propertys) === 0 ?: '';
         }
         $body[] = implode("\n", $propertys);
 
@@ -194,9 +190,7 @@ class Generate
                 }
             }
 
-            if (0 === count($methods)) {
-                $methods[] = '';
-            }
+            $methods[] = count($methods) === 0 ?: '';
         }
         $body[] = implode("\n\n", array_filter($methods));
 
