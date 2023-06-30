@@ -5,6 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.20.0] - 2023-06-30
+### Added
+- Added `Collection::reduse()` method.
+- Added `Str::after()` finder and get text after some text.
+- Added `public_path()` to get public path.
+- Added `Vite::class` to access vite manifest (FE).
+- Added `Style::rawReset()`, `Style::resetDecorate()` to change style reset rule.
+- Added `Collection::firstKey()`, `Collection::lastKey()`, `Collection::firsts()`, `Collection::lasts` and `Collection::take` to get kay first and last in collection.
+- Added `Style::yield()` to print output and continue write style.
+- Added database alter table (modify database table) (#181).
+- Added `Route::has()` to check route name exist or not.
+
+### Changed
+- Make Schedule logging with interface schedule instead of creating custom class (extends).
 
 ## [0.19.0] - 2023-05-12
 ### Changed
