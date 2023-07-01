@@ -13,7 +13,7 @@ class Vite
     private string $build_path;
     private string $manifest_name;
     private int $cache_time = 0;
-    /** @var array<string, array> */
+    /** @var array<string, array<string, array<string, string>>> */
     public static array $cache = [];
     public static ?string $hot = null;
 
@@ -66,6 +66,9 @@ class Vite
         throw new \Exception("Manifest file not found {$file_name}");
     }
 
+    /**
+     * @return array<string, array<string, string>>
+     */
     public function loader(): array
     {
         $file_name = $this->manifest();
@@ -174,7 +177,7 @@ class Vite
         return static::$hot = $hot . $dash;
     }
 
-    public function getHmrScript()
+    public function getHmrScript(): string
     {
         return '<script type="module" src="' . $this->getHmrUrl() . '@vite/client"></script>';
     }

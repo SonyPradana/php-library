@@ -16,6 +16,8 @@ final class Bind
 
     /**
      * Bind value (required).
+     *
+     * @var mixed
      */
     private $bind_value;
 
@@ -33,7 +35,10 @@ final class Bind
      */
     private $prefix_bind;
 
-    public function __construct(string $bind, $value, $column_name = '')
+    /**
+     * @param mixed $value
+     */
+    public function __construct(string $bind, $value, string $column_name = '')
     {
         $this->bind        = $bind;
         $this->bind_value  = $value;
@@ -41,7 +46,10 @@ final class Bind
         $this->prefix_bind = ':';
     }
 
-    public static function set(string $bind, $value, $column_name = '')
+    /**
+     * @param mixed $value
+     */
+    public static function set(string $bind, $value, string $column_name = ''): self
     {
         return new static($bind, $value, $column_name);
     }
@@ -60,7 +68,7 @@ final class Bind
         return $this;
     }
 
-    public function setValue($bind_value): self
+    public function setValue(mixed $bind_value): self
     {
         $this->bind_value = $bind_value;
 
@@ -79,6 +87,9 @@ final class Bind
         return $this->prefix_bind . $this->bind;
     }
 
+    /**
+     * @return mixed
+     */
     public function getValue()
     {
         return $this->bind_value;

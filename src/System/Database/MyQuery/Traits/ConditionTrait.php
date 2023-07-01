@@ -46,7 +46,7 @@ trait ConditionTrait
      * Insert 'where' condition in (query bulider).
      *
      * @param string $where_condition Spesific column name
-     * @param array  $binder          Bind and value (use for 'in')
+     * @param array<int, mixed>  $binder          Bind and value (use for 'in')
      *
      * @return self
      */

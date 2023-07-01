@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace System\Integrate\ValueObjects;
 
+/**
+ * @implements \ArrayAccess<string, string|string[]>
+ */
 class CommadMap implements \ArrayAccess
 {
+    /** @var array<string, string|string[]> */
     private $command = [
       'cmd'       => '',
       'mode'      => '',
@@ -13,6 +17,9 @@ class CommadMap implements \ArrayAccess
       'fn'        => '',
     ];
 
+    /**
+     * @param array<string, string|string[]> $command
+     */
     public function __construct(array $command)
     {
         $this->command = $command;

@@ -52,8 +52,10 @@ class Karnel
     }
 
     /**
-     * @param callable|array|string $callable   function to call
-     * @param array                 $parameters parameters to use
+     * @param callable|mixed[]|string $callable   function to call
+     * @param mixed[]                 $parameters parameters to use
+     *
+     * @throws \Exception
      */
     private function responesType($callable, $parameters): Response
     {
@@ -73,6 +75,9 @@ class Karnel
         throw new \Exception('Content must return as respone|string|array');
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function dispatcher(Request $request): array
     {
         return ['callable' => new Response(), 'parameters' => [], 'middleware'];

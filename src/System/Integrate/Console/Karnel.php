@@ -70,7 +70,7 @@ class Karnel
         return $this->exit_code = 0;
     }
 
-    private function alias($argument, $alias, $mode): bool
+    private function alias(string $argument, string $alias, string $mode): bool
     {
         return 'full' === $mode
           ? $argument === $alias

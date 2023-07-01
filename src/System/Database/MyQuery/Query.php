@@ -205,6 +205,7 @@ abstract class Query
                 return 'false';
             }
 
+            /** @phpstan-ignore-next-line */
             return $value;
         }, $values);
 
@@ -216,6 +217,9 @@ abstract class Query
         return '';
     }
 
+    /**
+     * @return array<int, string[]|bool[]>>
+     */
     public function bindsDestructur(): array
     {
         $bind_name = [];
@@ -236,6 +240,7 @@ abstract class Query
         return [$bind_name, $value, $columns];
     }
 
+    /** @return Bind[]  */
     public function getBinds()
     {
         return $this->_binds;
