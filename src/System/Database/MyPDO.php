@@ -43,7 +43,10 @@ class MyPDO
         return $this;
     }
 
-    protected function useDsn(string $dsn, string $user, string $pass)
+    /**
+     * @throws \Exception
+     */
+    protected function useDsn(string $dsn, string $user, string $pass): self
     {
         $option = [
             \PDO::ATTR_PERSISTENT => true,

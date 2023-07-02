@@ -9,6 +9,8 @@ use System\Text\Str;
  * - TraitCommand (optional).
  *
  * @property string $_ Get argument name
+ *
+ * @implements \ArrayAccess<string, string|bool|int|null>
  */
 class Command implements \ArrayAccess
 {

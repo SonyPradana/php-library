@@ -7,22 +7,46 @@ use System\Database\MyQuery\Select;
 
 abstract class MyModel
 {
-    /** kumpulan array filter */
+    /**
+     * Kumpulan array filter.
+     *
+     * @var array<int, array<string, string[]|bool>>
+     */
     protected $_GROUP_FILTER = [];
-    /** primery filter */
+
+    /**
+     * Primery filter.
+     *
+     * @var string[]
+     */
     protected $_FILTERS = [];
     /** duplicate filter for where statmment */
-    protected $_ALLOW_DUPLICATE_FILTERS = true;
-    /** table yang dugunakan */
+    protected bool $_ALLOW_DUPLICATE_FILTERS = true;
+
+    /**
+     * Table yang dugunakan.
+     *
+     * @var string[]
+     */
     protected $_TABELS  = [];
-    /** column yang dugunaka */
+
+    /** column yang dugunaka.
+     * @var array<int|string, string>
+     */
     protected $_COLUMNS = ['*'];
+
     /** column order */
-    protected $_SORT_ORDER = 'id DESC';
-    /** logica where stactment [AND / OR] */
-    protected $_STRICT_SEARCH = true;
-    /** costume where optional added to where statment */
+    protected string $_SORT_ORDER = 'id DESC';
+    /** Logica where stactment [AND / OR] */
+    protected bool $_STRICT_SEARCH = true;
+
+    /**
+     * costume where optional added to where statment.
+     *
+     * @var array<int, array<string, array<string|int, string>>>
+     */
     protected $_COSTUME_WHERE = [];
+
     /** @var int Limit start from */
     protected $_limit_start = 0;
     /** @var int Limit end to */
@@ -39,7 +63,7 @@ abstract class MyModel
     protected $PDO;
 
     // setter
-    public function setStrictSearch(bool $strict_mode)
+    public function setStrictSearch(bool $strict_mode): self
     {
         $this->_STRICT_SEARCH = $strict_mode;
 
@@ -51,7 +75,7 @@ abstract class MyModel
      *
      * @param int $val limit start default is 0
      */
-    public function limitStart(int $val)
+    public function limitStart(int $val): self
     {
         $this->_limit_start = $val;
 
@@ -64,7 +88,7 @@ abstract class MyModel
      *
      * @param int $val limit start default
      */
-    public function limitEnd(int $val)
+    public function limitEnd(int $val): self
     {
         $this->_limit_end = $val;
 
@@ -75,7 +99,7 @@ abstract class MyModel
      * Set sort column and order
      * column name must register.
      */
-    public function order(string $column_name, int $order_using = MyModel::ORDER_ASC)
+    public function order(string $column_name, int $order_using = MyModel::ORDER_ASC): self
     {
         $order             = $order_using == 0 ? 'ASC' : 'DESC';
         $this->_SORT_ORDER = "$column_name $order";
@@ -86,15 +110,15 @@ abstract class MyModel
     /**
      * Add costume where to query.
      *
-     * @param string $statment Where query statment
-     * @param array  $bind     Where query bind
+     * @param string                $statment Where query statment
+     * @param array<string, string> $bind     Where query bind
      */
-    public function costumeWhere(string $statment, array $bind)
+    public function costumeWhere(string $statment, array $bind): self
     {
         $this->_COSTUME_WHERE[] = [
-      'statment' => "($statment)",
-      'bind'     => $bind,
-    ];
+            'statment' => "($statment)",
+            'bind'     => $bind,
+        ];
 
         return $this;
     }
@@ -103,7 +127,7 @@ abstract class MyModel
      * reset value of filters andor costume where,
      * to prevent duplicate.
      */
-    public function reset(bool $costumeWhere = true)
+    public function reset(bool $costumeWhere = true): void
     {
         $this->_FILTERS      = [];
         $this->_GROUP_FILTER = [];
@@ -118,7 +142,7 @@ abstract class MyModel
      * @param AbstractJoin $join             Type of join
      * @param bool         $use_parent_table True will replace perent table to this table
      */
-    public function join(AbstractJoin $join, bool $use_parent_table = true)
+    public function join(AbstractJoin $join, bool $use_parent_table = true): self
     {
         // rewrite table relation with this current table
         if ($use_parent_table) {
@@ -139,7 +163,7 @@ abstract class MyModel
 
     /**
      * Get only where statment query.
-     * */
+     */
     public function getWhere(): string
     {
         return $this->grupQueryFilters($this->mergeFilters());
@@ -148,7 +172,7 @@ abstract class MyModel
     /**
      * Get filter array and groups filter.
      *
-     * @return array Groups array
+     * @return array<int, array<string, array<string, array<string, string>>|bool>> Groups array
      */
     public function getMegerFilters(): array
     {
@@ -199,7 +223,7 @@ abstract class MyModel
      * menggabungkan primery filter array dengan groups filter, tanpa merubah isi groups class.
      * karean query di-runing dalam bentuk group filter.
      *
-     * @return array New Groups array
+     * @return array<int, array<string, array<string, array<string, string>>|bool>> New Groups array
      */
     protected function mergeFilters(): array
     {
@@ -207,18 +231,21 @@ abstract class MyModel
         // menambahkan filter group yg sudah ada, dengan filter
         if (empty($this->_FILTERS) == false) {
             $new_grups_filters[] = [
-        'filters' => $this->_FILTERS,
-        'strict'  => $this->_STRICT_SEARCH,
-      ];
+                'filters' => $this->_FILTERS,
+                'strict'  => $this->_STRICT_SEARCH,
+            ];
         }
         // membuat group filter baru tanpa merubah grups filter dr classs
         return $new_grups_filters;
     }
 
-    protected function grupQueryFilters(array $grup_fillters)
+    /**
+     * @param array<int, array<string, array<string, array<string, string>>|bool>> $grup_fillters
+     */
+    protected function grupQueryFilters(array $grup_fillters): string
     {
+        /** @var string[] */
         $where_statment = array_values(array_column($this->_COSTUME_WHERE, 'statment'));
-        // var_dump($where_statment);exit;
         foreach ($grup_fillters as $filter) {
             $query = $this->queryfilters($filter['filters'], $filter['strict']);
             if (!empty($query)) {
@@ -229,7 +256,10 @@ abstract class MyModel
         return implode(' AND ', $where_statment);
     }
 
-    protected function queryfilters(array $filters, bool $strict = true)
+    /**
+     * @param array<string, array<string, string>> $filters
+     */
+    protected function queryfilters(array $filters, bool $strict = true): string
     {
         $querys   = [];
         // identitas
@@ -251,13 +281,16 @@ abstract class MyModel
         return $strict ? implode(' AND ', $arr_query) : implode(' OR ', $arr_query);
     }
 
-    protected function queryBuilder($key, $val, array $option = ['imperssion' => ["'%", "%'"], 'operator' => 'LIKE'])
+    /**
+     * @param array<string, string|string[]> $option
+     */
+    protected function queryBuilder(string $key, ?string $val, array $option = ['imperssion' => ["'%", "%'"], 'operator' => 'LIKE']): string
     {
         $column   = $option['column'] != '' ? $option['column'] . '.' : '';
         $operator = $option['operator'];
         $sur      = $option['imperssion'][0];
         $pre      = $option['imperssion'][1];
-        if (isset($val) && $val != '') {
+        if (null !== $val && '' !== $val) {
             return "($column$key $operator $sur$val$pre)";
         }
 
@@ -265,7 +298,7 @@ abstract class MyModel
     }
 
     /** Bind this query with set value from filter */
-    protected function bindingFilters()
+    protected function bindingFilters(): void
     {
         // binding from filter
         foreach ($this->mergeFilters() as $filters) {
@@ -295,11 +328,11 @@ abstract class MyModel
     /**
      * Menapilakan single data dari query.
      *
-     * @return array|bool False jika data tidak ditemukan
+     * @return mixed
      */
     public function single()
     {
-        if ($this->PDO == null) {
+        if ($this->PDO === null) {
             return [];
         }
         $this->PDO->query($this->query());
@@ -311,9 +344,9 @@ abstract class MyModel
     /**
      * Menampilkan data dari hasil query yang ditentukan sebelumnya.
      *
-     * @return array Single result array
+     * @return mixed[]|false Single result array
      */
-    public function result(): array
+    public function result()
     {
         if ($this->PDO == null) {
             return [];
@@ -327,9 +360,9 @@ abstract class MyModel
     /**
      * Menmpilkan semua data yang tersedia.
      *
-     * @return array Return data without using filter
+     * @return mixed[]|false Return data without using filter
      */
-    public function resultAll(): array
+    public function resultAll()
     {
         if ($this->PDO == null) {
             return [];
@@ -363,7 +396,7 @@ abstract class MyModel
      *
      * @param MyPDO $pdo PDO DI
      */
-    public static function call(MyPDO $pdo = null)
+    public static function call(MyPDO $pdo = null): self
     {
         /* @phpstan-ignore-next-line */
         return new static($pdo);
@@ -373,7 +406,7 @@ abstract class MyModel
      * Its like costumeWhere() but more elegant syntax.
      * Intreget with Select() class.
      */
-    public function select()
+    public function select(): Select
     {
         return new Select($this->_TABELS[0], $this->_COLUMNS, $this->PDO, ['query' => $this->query()]);
     }

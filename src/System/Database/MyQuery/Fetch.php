@@ -13,9 +13,10 @@ abstract class Fetch extends Query
      */
     public function get(): ?Collection
     {
-        if ( false === ($items = $this->all()) ) {
+        if (false === ($items = $this->all())) {
             $items = [];
         }
+
         return new Collection($items);
     }
 

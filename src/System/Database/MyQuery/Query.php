@@ -205,7 +205,7 @@ abstract class Query
                 return 'false';
             }
 
-            /** @phpstan-ignore-next-line */
+            /* @phpstan-ignore-next-line */
             return $value;
         }, $values);
 
