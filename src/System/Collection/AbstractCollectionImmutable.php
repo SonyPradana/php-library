@@ -268,7 +268,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     /**
      * @return TKey|null
      */
-    public function lastKey($default = null)
+    public function lastKey()
     {
         return array_key_last($this->collection);
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Template;
 
 use System\Template\Traits\CommentTrait;
@@ -10,13 +12,13 @@ class Constant
     use FormatterTrait;
     use CommentTrait;
 
-    private $visibility     = self::PUBLIC_;
-    public const PUBLIC_    = 0;
-    public const PRIVATE_   = 1;
-    public const PROTECTED_ = 2;
+    private int $visibility     = self::PUBLIC_;
+    public const PUBLIC_        = 0;
+    public const PRIVATE_       = 1;
+    public const PROTECTED_     = 2;
 
-    private $name;
-    private $expecting;
+    private ?string $name      = null;
+    private ?string $expecting = null;
 
     public function __construct(string $name)
     {
@@ -29,7 +31,7 @@ class Constant
         return $this->generate();
     }
 
-    public static function new(string $name)
+    public static function new(string $name): self
     {
         return new self($name);
     }
@@ -46,8 +48,8 @@ class Constant
 
         $comment = $this->generateComment(1, $this->tab_indent);
         $comment = count($this->comments) > 0
-      ? $comment . "\n" . $tab_dept(1)
-      : $comment;
+            ? $comment . "\n" . $tab_dept(1)
+            : $comment;
 
         // generate visibility
         $visibility = '';
@@ -67,8 +69,8 @@ class Constant
 
         // generate value or expecting
         $expecting = $this->expecting == null
-      ? ' = null'
-      : ' ' . $this->expecting;
+            ? ' = null'
+            : ' ' . $this->expecting;
 
         // final
         return str_replace(
@@ -80,28 +82,28 @@ class Constant
 
     // setter
 
-    public function visibility(int $visibility = self::PUBLIC_)
+    public function visibility(int $visibility = self::PUBLIC_): self
     {
         $this->visibility = $visibility;
 
         return $this;
     }
 
-    public function name(string $name)
+    public function name(string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    public function expecting(string $expecting)
+    public function expecting(string $expecting): self
     {
         $this->expecting = $expecting;
 
         return $this;
     }
 
-    public function equal(string $expecting_with)
+    public function equal(string $expecting_with): self
     {
         $this->expecting = '= ' . $expecting_with;
 

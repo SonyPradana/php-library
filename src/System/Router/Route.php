@@ -4,11 +4,18 @@ namespace System\Router;
 
 use ArrayAccess;
 
+/**
+ * @implements \ArrayAccess<string, mixed>
+ */
 class Route implements \ArrayAccess
 {
+    /** @var array<string, mixed> */
     private $route;
-    private $prefix_name;
+    private string $prefix_name;
 
+    /**
+     * @param array<string, mixed> $route
+     */
     public function __construct(array $route)
     {
         $this->prefix_name = Router::$group['as'] ?? '';
@@ -16,11 +23,19 @@ class Route implements \ArrayAccess
         $this->route       = $route;
     }
 
+    /**
+     * @param string   $name
+     * @param string[] $arguments
+     *
+     * @return array<string, mixed>
+     */
     public function __call($name, $arguments)
     {
         if ($name === 'route') {
             return $this->route;
         }
+
+        throw new \Exception("Route {$name} not registered.");
     }
 
     /**
@@ -59,7 +74,7 @@ class Route implements \ArrayAccess
      * Assigns a value to the specified offset.
      *
      * @param string $offset the offset to assign the value to
-     * @param string $value  the value to set
+     * @param mixed  $value  the value to set
      */
     public function offsetSet($offset, $value): void
     {
@@ -94,7 +109,7 @@ class Route implements \ArrayAccess
      *
      * @param string $offset the offset to retrieve
      *
-     * @return string|null Can return all value types
+     * @return mixed|null Can return all value types
      */
     #[\ReturnTypeWillChange]
     public function offsetGet($offset)

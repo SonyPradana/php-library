@@ -139,12 +139,12 @@ class DataType
         return $this->datatype = new Constraint("ENUM ({$enum})");
     }
 
-    public function after(string $column)
+    public function after(string $column): void
     {
         $this->datatype = "AFTER `{$column}`";
     }
 
-    public function first()
+    public function first(): void
     {
         $this->datatype = 'FIRST';
     }

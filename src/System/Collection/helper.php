@@ -60,6 +60,7 @@ if (!function_exists('data_get')) {
             } elseif ('*' === $segment) {
                 $values = [];
                 foreach ($array as $item) {
+                    /** @phpstan-ignore-next-line */
                     $value = data_get($item, implode('.', array_slice($segments, 1)));
                     if (null !== $value) {
                         $values[] = $value;

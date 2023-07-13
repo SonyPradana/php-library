@@ -8,9 +8,16 @@ use System\Collection\Collection;
 
 abstract class Fetch extends Query
 {
+    /**
+     * @return Collection<string|int, mixed>
+     */
     public function get(): ?Collection
     {
-        return new Collection($this->all());
+        if (false === ($items = $this->all())) {
+            $items = [];
+        }
+
+        return new Collection($items);
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Template;
 
 use System\Template\Traits\CommentTrait;
@@ -14,13 +16,15 @@ class Method
     public const PRIVATE_   = 1;
     public const PROTECTED_ = 2;
 
-    private $visibility = -1;
-    private $is_final   = false;
-    private $is_static  = false;
+    private int $visibility  = -1;
+    private bool $is_final   = false;
+    private bool $is_static  = false;
 
-    private $name;
-    private $params = [];
-    private $return_type;
+    private string $name;
+    /** @var string[] */
+    private $params              = [];
+    private ?string $return_type = null;
+    /** @var string[] */
     private $body = [];
 
     public function __construct(string $name)
@@ -33,7 +37,7 @@ class Method
         return $this->generate();
     }
 
-    public static function new(string $name)
+    public static function new(string $name): self
     {
         return new self($name);
     }
@@ -53,8 +57,8 @@ class Method
         // comment
         $comment = $this->generateComment(1, $this->tab_indent);
         $comment = count($this->comments) > 0
-    ? $comment . $new_line
-    : $comment;
+            ? $comment . $new_line
+            : $comment;
 
         $pre = [];
         // final
@@ -108,49 +112,52 @@ class Method
         );
     }
 
-    public function name(string $name)
+    public function name(string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    public function visibility(int $visibility = self::PUBLIC_)
+    public function visibility(int $visibility = self::PUBLIC_): self
     {
         $this->visibility = $visibility;
 
         return $this;
     }
 
-    public function isFinal(bool $is_final = true)
+    public function isFinal(bool $is_final = true): self
     {
         $this->is_final = $is_final;
 
         return $this;
     }
 
-    public function isStatic(bool $is_static = true)
+    public function isStatic(bool $is_static = true): self
     {
         $this->is_static = $is_static;
 
         return $this;
     }
 
-    public function params(?array $params)
+    /**
+     * @param string[]|null $params
+     */
+    public function params(?array $params): self
     {
         $this->params = $params ?? [];
 
         return $this;
     }
 
-    public function addParams(string $param)
+    public function addParams(string $param): self
     {
         $this->params[] = $param;
 
         return $this;
     }
 
-    public function setReturnType(?string $return_type)
+    public function setReturnType(?string $return_type): self
     {
         $this->return_type = $return_type ?? '';
 
@@ -158,15 +165,15 @@ class Method
     }
 
     /**
-     * @param array|string|null $body Raw string body (delimete multy line with array)
+     * @param string|string[]|null $body Raw string body (delimete multy line with array)
      */
-    public function body($body)
+    public function body($body): self
     {
         $body = $body ?? [];
 
         $this->body = is_array($body)
-      ? $body
-      : [$body];
+            ? $body
+            : [$body];
 
         return $this;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Template;
 
 use System\Template\Traits\CommentTrait;
@@ -11,26 +13,35 @@ class Generate
     use CommentTrait;
 
     // for config
-    private $is_final = false;
-    private $rule;
-    private $end_with_newline = false;
-    public const SET_CLASS    = 0;
-    public const SET_ABSTRACT = 1;
-    public const SET_TRAIT    = 2;
+    private bool $is_final = false;
+    private int $rule;
+    private bool $end_with_newline = false;
+    public const SET_CLASS         = 0;
+    public const SET_ABSTRACT      = 1;
+    public const SET_TRAIT         = 2;
 
     // builder property
-    private $name;
-    private $namespace;
-    private $uses = [];
-    private $extend;
+    private ?string $name      = null;
+    private ?string $namespace = null;
+    /** @var string[] */
+    private $uses           = [];
+    private ?string $extend = null;
+    /** @var string[] */
     private $implements = [];
+    /** @var string[] */
     private $traits     = [];
+    /** @var string[] */
     private $consts     = [];
+    /** @var string[] */
     private $propertys  = [];
+    /** @var string[] */
     private $methods    = [];
+    /** @var string[] */
     private $body       = [];
 
+    /** @var string[][] */
     private $pre_replace = [[], []];
+    /** @var string[][] */
     private $replace     = [[], []];
 
     public function __construct(string $name = 'NewClass')
@@ -39,14 +50,14 @@ class Generate
         $this->rule = Generate::SET_CLASS;
     }
 
-    public function __invoke(string $name)
+    public function __invoke(string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    public static function static(string $name)
+    public static function static(string $name): self
     {
         return new self($name);
     }
@@ -74,12 +85,12 @@ class Generate
 
         // scope: before
         $before = [];
-        if ($this->namespace != null || count($this->uses) > 0) {
+        if ($this->namespace !== null || count($this->uses) > 0) {
             $before[] = '';
         }
 
         // generte namespace
-        if ($this->namespace != null) {
+        if ($this->namespace !== null) {
             $before[] = 'namespace ' . $this->namespace . ";\n";
         }
 
@@ -96,13 +107,13 @@ class Generate
 
         // genarete class rule
         $rule = $this->rule == 0
-      ? ''
-      : $this->ruleText() . ' ';
+            ? ''
+            : $this->ruleText() . ' ';
 
         // generate final
         $rule = !$this->is_final
-      ? $rule
-      : 'final ' . $rule;
+            ? $rule
+            : 'final ' . $rule;
 
         // scope: head
         // genrete class name
@@ -112,7 +123,7 @@ class Generate
         $head[] = $this->name;
 
         // generte extend
-        if ($this->extend != null) {
+        if ($this->extend !== null) {
             $head[] = 'extends ' . $this->extend;
         }
 
@@ -134,16 +145,16 @@ class Generate
         $consts = [];
         if (count($this->consts) > 0) {
             foreach ($this->consts as $const) {
+                /* @phpstan-ignore-next-line */
                 if ($const instanceof Constant) {
                     $const
-            ->tabSize($this->tab_size)
-            ->tabIndent($this->tab_indent);
+                        ->tabSize($this->tab_size)
+                        ->tabIndent($this->tab_indent);
                     $consts[] = $tab_dept(1) . $const->generate();
                 }
             }
 
-            // insert new line if have a const
-            $consts[] = count($consts) == 0 ?: '';
+            $consts[] = '';
         }
         $body[] = implode("\n", $consts);
 
@@ -151,16 +162,16 @@ class Generate
         $propertys = [];
         if (count($this->propertys) > 0) {
             foreach ($this->propertys as $property) {
+                /* @phpstan-ignore-next-line */
                 if ($property instanceof Property) {
                     $property
-            ->tabSize($this->tab_size)
-            ->tabIndent($this->tab_indent);
+                        ->tabSize($this->tab_size)
+                        ->tabIndent($this->tab_indent);
                     $propertys[] = $tab_dept(1) . $property->generate();
                 }
             }
 
-            // insert new line if have a const
-            $propertys[] = count($propertys) == 0 ?: '';
+            $propertys[] = '';
         }
         $body[] = implode("\n", $propertys);
 
@@ -168,15 +179,16 @@ class Generate
         $methods = [];
         if (count($this->methods) > 0) {
             foreach ($this->methods as $method) {
+                /* @phpstan-ignore-next-line */
                 if ($method instanceof Method) {
                     $method
-            ->tabSize($this->tab_size)
-            ->tabIndent($this->tab_indent);
+                        ->tabSize($this->tab_size)
+                        ->tabIndent($this->tab_indent);
                     $methods[] = $tab_dept(1) . $method->generate();
                 }
             }
 
-            $methods[] = count($methods) == 0 ?: '';
+            $methods[] = '';
         }
         $body[] = implode("\n\n", array_filter($methods));
 
@@ -216,6 +228,9 @@ class Generate
         }
     }
 
+    /**
+     * @return int|false
+     */
     public function save(string $path_to_save)
     {
         return file_put_contents($path_to_save . '/' . $this->name . '.php', $this->generate());
@@ -223,21 +238,21 @@ class Generate
 
     // setter property
 
-    public function rule(int $rule = self::SET_CLASS)
+    public function rule(int $rule = self::SET_CLASS): self
     {
         $this->rule = $rule;
 
         return $this;
     }
 
-    public function setFinal(bool $isFinal = true)
+    public function setFinal(bool $isFinal = true): self
     {
         $this->is_final = $isFinal;
 
         return $this;
     }
 
-    public function setEndWithNewLine(bool $enable = true)
+    public function setEndWithNewLine(bool $enable = true): self
     {
         $this->end_with_newline = $enable;
 
@@ -246,70 +261,79 @@ class Generate
 
     // setter
 
-    public function name(string $name)
+    public function name(string $name): self
     {
         $this->name = $name;
 
         return $this;
     }
 
-    public function namespace(string $namespace)
+    public function namespace(string $namespace): self
     {
         $this->namespace = $namespace;
 
         return $this;
     }
 
-    public function use(string $use_namespace)
+    public function use(string $use_namespace): self
     {
         $this->uses[] = $use_namespace;
 
         return $this;
     }
 
-    public function uses(array $uses_namespace)
+    /**
+     * @param string[] $uses_namespace
+     */
+    public function uses(array $uses_namespace): self
     {
         $this->uses = $uses_namespace;
 
         return $this;
     }
 
-    public function extend(string $extend)
+    public function extend(string $extend): self
     {
         $this->extend = $extend;
 
         return $this;
     }
 
-    public function implement(string $implement)
+    public function implement(string $implement): self
     {
         $this->implements[] = $implement;
 
         return $this;
     }
 
-    public function implements(array $implements)
+    /**
+     * @param string[] $implements
+     */
+    public function implements(array $implements): self
     {
         $this->implements = $implements;
 
         return $this;
     }
 
-    public function trait(string $trait)
+    public function trait(string $trait): self
     {
         $this->traits[] = $trait;
 
         return $this;
     }
 
-    public function traits(array $traits)
+    /**
+     * @param string[] $traits
+     */
+    public function traits(array $traits): self
     {
         $this->traits = $traits;
 
         return $this;
     }
 
-    public function body(string $raw_body)
+    public function body(string $raw_body): self
     {
         $this->body[] = $raw_body;
 
@@ -317,15 +341,15 @@ class Generate
     }
 
     // setter - other
-    public function addConst(string $name = 'NEW_CONST')
+    public function addConst(string $name = 'NEW_CONST'): Constant
     {
         return $this->consts[] = new Constant($name);
     }
 
     /**
-     * @param callable|Constant|ConstPool $new_const callabe with param pools constan, single constans or constPool
+     * @param callable(ConstPool): void|Constant|ConstPool $new_const callabe with param pools constan, single constans or constPool
      */
-    public function consts($new_const)
+    public function consts($new_const): self
     {
         // detect if single const
         if ($new_const instanceof Constant) {
@@ -357,15 +381,15 @@ class Generate
         return $this;
     }
 
-    public function addProperty(string $name = 'new_property')
+    public function addProperty(string $name = 'new_property'): Property
     {
         return $this->propertys[] = new Property($name);
     }
 
     /**
-     * @param callable|Property|PropertyPool $new_property callabe with param pools constan or single property
+     * @param callable(PropertyPool): void|Property|PropertyPool $new_property callabe with param pools constan or single property
      */
-    public function propertys($new_property)
+    public function propertys($new_property): self
     {
         // detect if single propertys
         if ($new_property instanceof Property) {
@@ -397,15 +421,15 @@ class Generate
         return $this;
     }
 
-    public function addMethod(string $name = 'new_method')
+    public function addMethod(string $name = 'new_method'): Method
     {
         return $this->methods[] = new Method($name);
     }
 
     /**
-     * @param callable|Method|MethodPool $new_method callabe with param pools constan or single property
+     * @param callable(MethodPool): void|Method|MethodPool $new_method callabe with param pools constan or single property
      */
-    public function methods($new_method)
+    public function methods($new_method): self
     {
         // detect if single propertys
         if ($new_method instanceof Method) {
@@ -437,10 +461,10 @@ class Generate
     }
 
     /**
-     * @param array|string $search  Text to replace
-     * @param array|string $replace Text replacer
+     * @param string|string[] $search  Text to replace
+     * @param string|string[] $replace Text replacer
      */
-    public function preReplace($search, $replace)
+    public function preReplace($search, $replace): self
     {
         $search  = is_array($search) ? $search : [$search];
         $replace = is_array($replace) ? $replace : [$replace];
@@ -451,10 +475,10 @@ class Generate
     }
 
     /**
-     * @param array|string $search  Text to replace
-     * @param array|string $replace Text replacer
+     * @param string|string[] $search  Text to replace
+     * @param string|string[] $replace Text replacer
      */
-    public function replace($search, $replace)
+    public function replace($search, $replace): self
     {
         $search  = is_array($search) ? $search : [$search];
         $replace = is_array($replace) ? $replace : [$replace];

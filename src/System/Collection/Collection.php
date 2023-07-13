@@ -133,8 +133,7 @@ class Collection extends AbstractCollectionImmutable
 
         $new_collection = [];
         foreach ($this->collection as $key => $item) {
-            $call      = call_user_func($condition_true, $item, $key);
-            $condition = is_bool($call) ? $call : false;
+            $condition = $condition_true($item, $key);
 
             if ($condition === true) {
                 $new_collection[$key] = $item;
@@ -159,8 +158,7 @@ class Collection extends AbstractCollectionImmutable
 
         $new_collection = [];
         foreach ($this->collection as $key => $item) {
-            $call      = call_user_func($condition_true, $item, $key);
-            $condition = is_bool($call) ? $call : false;
+            $condition = $condition_true($item, $key);
 
             if ($condition === false) {
                 $new_collection[$key] = $item;
@@ -381,10 +379,9 @@ class Collection extends AbstractCollectionImmutable
         /** @var array<TKeyItem, TValueItem> */
         $new_collection = [];
         foreach ($this->collection as $key => $item) {
-            if (is_array($array_assoc = call_user_func($callable, $item, $key))) {
-                $key                  = array_key_first($array_assoc);
-                $new_collection[$key] = $array_assoc[$key];
-            }
+            $array_assoc          = $callable($item, $key);
+            $key                  = array_key_first($array_assoc);
+            $new_collection[$key] = $array_assoc[$key];
         }
 
         return $this->replace($new_collection);

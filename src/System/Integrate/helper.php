@@ -255,7 +255,7 @@ if (!function_exists('config')) {
     /**
      * Get Application Configuration.
      *
-     * @return System\Collection\CollectionImmutable Configs
+     * @return System\Collection\CollectionImmutable<string, mixed>
      */
     function config()
     {
@@ -266,6 +266,9 @@ if (!function_exists('config')) {
 if (!function_exists('view')) {
     /**
      * Render with costume template engine, wrap in `Route\Controller`.
+     *
+     * @param array<string, mixed> $data
+     * @param array<string, mixed> $option
      */
     function view(string $view_path, array $data = [], array $option = []): System\Http\Response
     {

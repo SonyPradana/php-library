@@ -44,7 +44,7 @@ class Alter extends Query
         return $this->add_columns[] = (new Column())->alterColumn($column_name);
     }
 
-    public function drop(string $column_name)
+    public function drop(string $column_name): string
     {
         return $this->drop_columns[] = $column_name;
     }
@@ -54,7 +54,7 @@ class Alter extends Query
         return $this->alter_columns[] = (new Column())->alterColumn($column_name);
     }
 
-    public function rename(string $from, string $to)
+    public function rename(string $from, string $to): string
     {
         return $this->rename_columns[$from] = $to;
     }

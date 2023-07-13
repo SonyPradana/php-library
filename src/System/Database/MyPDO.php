@@ -43,7 +43,10 @@ class MyPDO
         return $this;
     }
 
-    protected function useDsn(string $dsn, string $user, string $pass)
+    /**
+     * @throws \Exception
+     */
+    protected function useDsn(string $dsn, string $user, string $pass): self
     {
         $option = [
             \PDO::ATTR_PERSISTENT => true,
@@ -94,9 +97,9 @@ class MyPDO
     /**
      * Menggantikan paramater input dari user dengan sebuah placeholder.
      *
-     * @param int|string $param
-     * @param mixed      $value
-     * @param int|null   $type
+     * @param int|string|bool|null $param
+     * @param mixed                $value
+     * @param int|string|bool|null $type
      */
     public function bind($param, $value, $type = null): self
     {

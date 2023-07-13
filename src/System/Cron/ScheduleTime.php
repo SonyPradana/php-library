@@ -122,17 +122,17 @@ class ScheduleTime
         return $this->time_exect;
     }
 
-    public function isFail()
+    public function isFail(): bool
     {
         return $this->is_fail;
     }
 
-    public function retryAtempts()
+    public function retryAtempts(): int
     {
         return $this->retry_atempts;
     }
 
-    public function retry($atempt): self
+    public function retry(int $atempt): self
     {
         $this->retry_atempts = $atempt;
 
@@ -195,7 +195,7 @@ class ScheduleTime
     /**
      * @param array<string, mixed> $contex
      */
-    protected function interpolate($message, array $contex): void
+    protected function interpolate(string $message, array $contex): void
     {
         // do stuff
     }
