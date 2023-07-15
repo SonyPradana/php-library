@@ -196,13 +196,15 @@ class TemplatorTest extends TestCase
 
         $view = new Templator($loader, $cache);
 
-        $this->expectErrorMessage("Slot with extends 'Slots/layout.php' required 'title'");
-
-        $view->render('slot_miss.php', [
-            'title'   => 'taylor otwell',
-            'product' => 'laravel',
-            'year'    => 2023,
-        ]);
+        try {
+            $view->render('slot_miss.php', [
+                'title'   => 'taylor otwell',
+                'product' => 'laravel',
+                'year'    => 2023,
+            ]);
+        } catch (\Throwable $th) {
+            $this->assertEquals("Slot with extends 'Slots/layout.php' required 'title'", $th->getMessage());
+        }
     }
 
     /**

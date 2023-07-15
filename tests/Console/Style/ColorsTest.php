@@ -13,11 +13,17 @@ final class ColorsTest extends TestCase
         $this->assertEquals('38;2;255;255;255', Colors::hexText('#ffffff')->raw());
         $this->assertEquals('38;2;255;255;255', Colors::hexText('#FFFFFF')->raw());
 
-        $this->expectErrorMessage('Hex code not found.');
-        $this->assertEquals('38;5;231', Colors::hexText('ffffff'));
+        try {
+            $this->assertEquals('38;5;231', Colors::hexText('ffffff'));
+        } catch (\Throwable $th) {
+            $this->assertEquals('Hex code not found.', $th->getMessage());
+        }
 
-        $this->expectErrorMessage('Hex code not found.');
-        $this->assertEquals('38;5;231', Colors::hexText('#badas'));
+        try {
+            $this->assertEquals('38;5;231', Colors::hexText('#badas'));
+        } catch (\Throwable $th) {
+            $this->assertEquals('Hex code not found.', $th->getMessage());
+        }
     }
 
     /** @test */
@@ -26,11 +32,17 @@ final class ColorsTest extends TestCase
         $this->assertEquals('48;2;255;255;255', Colors::hexBg('#ffffff')->raw());
         $this->assertEquals('48;2;255;255;255', Colors::hexBg('#FFFFFF')->raw());
 
-        $this->expectErrorMessage('Hex code not found.');
-        $this->assertEquals('48;5;231', Colors::hexBg('ffffff')->raw());
+        try {
+            $this->assertEquals('48;5;231', Colors::hexBg('ffffff')->raw());
+        } catch (\Throwable $th) {
+            $this->assertEquals('Hex code not found.', $th->getMessage());
+        }
 
-        $this->expectErrorMessage('Hex code not found.');
-        $this->assertEquals('48;5;231', Colors::hexBg('#badas')->raw());
+        try {
+            $this->assertEquals('48;5;231', Colors::hexBg('#badas')->raw());
+        } catch (\Throwable $th) {
+            $this->assertEquals('Hex code not found.', $th->getMessage());
+        }
     }
 
     /** @test */
