@@ -349,12 +349,14 @@ class Request implements \ArrayAccess, \IteratorAggregate
     /**
      * Gets format using mimetype.
      *
+     * @param string|null $mime_type
+     *
      * @return string|null
      */
-    public function getFormat(string $mimeType)
+    public function getFormat($mime_type)
     {
-        foreach ($this->formats as $format => $mimeTypes) {
-            if (in_array($mimeType, $mimeTypes)) {
+        foreach ($this->formats as $format => $mime_types) {
+            if (in_array($mime_type, $mime_types)) {
                 return $format;
             }
         }

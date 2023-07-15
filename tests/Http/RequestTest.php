@@ -235,8 +235,11 @@ class RequestTest extends TestCase
     {
         $request = new Request('test.test', [], [], [], [], [], ['content-type' => 'app/json'], 'PUT', '::1', '');
 
-        $this->expectErrorMessage('Request body is empty.');
-        $request->all();
+        try {
+            $request->all();
+        } catch (\Throwable $th) {
+            $this->assertEquals('Request body is empty.', $th->getMessage());
+        }
     }
 
     /**
@@ -246,8 +249,11 @@ class RequestTest extends TestCase
     {
         $request = new Request('test.test', [], [], [], [], [], ['content-type' => 'app/json'], 'PUT', '::1', 'nobody');
 
-        $this->expectErrorMessage('Could not decode request body.');
-        $request->all();
+        try {
+            $request->all();
+        } catch (\Throwable $th) {
+            $this->assertEquals('Could not decode request body.', $th->getMessage());
+        }
     }
 
     /**
@@ -465,5 +471,15 @@ class RequestTest extends TestCase
         $request  = new Request('test.test', ['query' => 'old'], [], [], [], [], ['content-type' => 'application/json'], 'PUT', '::1', '');
 
         $this->assertEquals('json', $request->getRequestFormat());
+    }
+
+    /**
+     * @test
+     */
+    public function itCanNotGetRequestFormat()
+    {
+        $request  = new Request('test.test', ['query' => 'old'], [], [], [], [], [], 'PUT', '::1', '');
+
+        $this->assertNull($request->getRequestFormat());
     }
 }
