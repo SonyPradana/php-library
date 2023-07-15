@@ -92,6 +92,27 @@ class Request implements \ArrayAccess, \IteratorAggregate
     private Collection $json;
 
     /**
+     * Initialize mime format.
+     *
+     * @var array<string, string[]>
+     *
+     * @see https://github.com/symfony/symfony/blob/5.4/src/Symfony/Component/HttpFoundation/Request.php
+     */
+    protected array $formats = [
+        'html'   => ['text/html', 'application/xhtml+xml'],
+        'txt'    => ['text/plain'],
+        'js'     => ['application/javascript', 'application/x-javascript', 'text/javascript'],
+        'css'    => ['text/css'],
+        'json'   => ['application/json', 'application/x-json'],
+        'jsonld' => ['application/ld+json'],
+        'xml'    => ['text/xml', 'application/xml', 'application/x-xml'],
+        'rdf'    => ['application/rdf+xml'],
+        'atom'   => ['application/atom+xml'],
+        'rss'    => ['application/rss+xml'],
+        'form'   => ['application/x-www-form-urlencoded', 'multipart/form-data'],
+    ];
+
+    /**
      * @param array<string, string> $query
      * @param array<string, string> $post
      * @param array<string, string> $attributes
@@ -313,6 +334,44 @@ class Request implements \ArrayAccess, \IteratorAggregate
         }
 
         return $this->headers[$header] ?? null;
+    }
+
+    /**
+     * Gets the mime types associated with the format.
+     *
+     * @return string[]
+     */
+    public function getMimeTypes(string $format): array
+    {
+        return $this->formats[$format] ?? [];
+    }
+
+    /**
+     * Gets format using mimetype.
+     *
+     * @return string|null
+     */
+    public function getFormat(string $mimeType)
+    {
+        foreach ($this->formats as $format => $mimeTypes) {
+            if (in_array($mimeType, $mimeTypes)) {
+                return $format;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets format type from request header.
+     *
+     * @return string|null
+     */
+    public function getRequestFormat()
+    {
+        $content_type = $this->getHeaders('content-type');
+
+        return $this->getFormat($content_type);
     }
 
     public function isHeader(string $header_key, string $header_val): bool

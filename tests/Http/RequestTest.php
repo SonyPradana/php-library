@@ -428,4 +428,42 @@ class RequestTest extends TestCase
         $this->assertEquals('old', $request->getQuery('query'));
         $this->assertEquals('new', $request2->getQuery('query'));
     }
+
+    /**
+     * @test
+     */
+    public function itCanGetMimeType()
+    {
+        $request  = new Request('test.test', ['query' => 'old'], [], [], [], [], ['content-type' => 'app/json'], 'PUT', '::1', '');
+
+        $mimetypes = $request->getMimeTypes('html');
+        $this->assertEquals(['text/html', 'application/xhtml+xml'], $mimetypes);
+
+        $mimetypes = $request->getMimeTypes('php');
+        $this->assertEquals([], $mimetypes, 'php format is not exists');
+    }
+
+    /**
+     * @test
+     */
+    public function itCanGetFormat()
+    {
+        $request  = new Request('test.test', ['query' => 'old'], [], [], [], [], ['content-type' => 'app/json'], 'PUT', '::1', '');
+
+        $format = $request->getFormat('text/html');
+        $this->assertEquals('html', $format);
+
+        $format = $request->getFormat('text/php');
+        $this->assertNull($format, 'php format not exist');
+    }
+
+    /**
+     * @test
+     */
+    public function itCanGetRequestFormat()
+    {
+        $request  = new Request('test.test', ['query' => 'old'], [], [], [], [], ['content-type' => 'application/json'], 'PUT', '::1', '');
+
+        $this->assertEquals('json', $request->getRequestFormat());
+    }
 }
