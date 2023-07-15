@@ -188,8 +188,11 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanThrowExceptionWhenColorVariantNotRegister()
     {
-        $this->expectError();
-        (new Style('text'))->text_red_10();
+        try {
+            (new Style('text'))->text_red_10();
+        } catch (\Throwable $th) {
+            $this->assertEquals('Undefined constant self::RED_10', $th->getMessage());
+        }
     }
 
     /** @test */

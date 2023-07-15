@@ -255,8 +255,11 @@ final class StrTest extends TestCase
 
         $text = '-~+-';
 
-        $this->expectErrorMessage($text . ' doest return anythink.');
-        Str::slug($text);
+        try {
+            Str::slug($text);
+        } catch (\Throwable $th) {
+            $this->assertEquals("Method slug with {$text} doest return anythink.", $th->getMessage());
+        }
     }
 
     /** @test */

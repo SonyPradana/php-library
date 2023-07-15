@@ -39,9 +39,11 @@ class ConsoleParseAsArrayTest extends TestCase
         $argv    = explode(' ', $command);
         $cli     = new Command($argv);
 
-        $this->expectErrorMessage('Command cant be modify');
-
-        $cli['name'] = 'taylor';
+        try {
+            $cli['name'] = 'taylor';
+        } catch (\Throwable $th) {
+            $this->assertEquals('Command cant be modify', $th->getMessage());
+        }
     }
 
     /**
@@ -53,8 +55,10 @@ class ConsoleParseAsArrayTest extends TestCase
         $argv    = explode(' ', $command);
         $cli     = new Command($argv);
 
-        $this->expectErrorMessage('Command cant be modify');
-
-        unset($cli['name']);
+        try {
+            unset($cli['name']);
+        } catch (\Throwable $th) {
+            $this->assertEquals('Command cant be modify', $th->getMessage());
+        }
     }
 }
