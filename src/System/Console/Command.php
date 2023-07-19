@@ -38,7 +38,7 @@ class Command implements \ArrayAccess
     /**
      * Option object mapper.
      *
-     * @var array<string, string|bool|int|null>
+     * @var array<string, string|string[]|bool|int|null>
      */
     protected $option_mapper;
 
@@ -95,8 +95,9 @@ class Command implements \ArrayAccess
      */
     private function option_mapper(array $argv): array
     {
-        $options         = [];
-        $options['_']    = $options['name'] = $argv[0] ?? '';
+        $options      = [];
+        $options['_'] = $options['name'] = $argv[0] ?? '';
+        $last_option  = null;
 
         foreach ($argv as $key => $option) {
             if ($this->isCommmadParam($option)) {
@@ -118,10 +119,15 @@ class Command implements \ArrayAccess
                 }
 
                 $next           = $argv[$next_key];
-                $options[$name] = $this->isCommmadParam($next)
-                    ? true
-                    : $this->removeQuote($next);
+                if ($this->isCommmadParam($next)) {
+                    $options[$name] = true;
+                }
+
+                $last_option = $name;
+                continue;
             }
+
+            $options[$last_option][] = $this->removeQuote($option);
         }
 
         return $options;
@@ -146,13 +152,31 @@ class Command implements \ArrayAccess
     /**
      * Get parse commandline parameters (name, value).
      *
-     * @param string|bool|int|null $default Default if parameter not found
+     * @param string|string[]|bool|int|null $default Default if parameter not found
      *
-     * @return string|bool|int|null
+     * @return string|string[]|bool|int|null
      */
     protected function option(string $name, $default = null)
     {
-        return $this->option_mapper[$name] ?? $default;
+        if (!array_key_exists($name, $this->option_mapper)) {
+            return $default;
+        }
+        $option = $this->option_mapper[$name];
+        if (is_array($option) && 1 === count($option)) {
+            return $option[0];
+        }
+
+        return $option;
+    }
+
+    /**
+     * Get all option array positional.
+     *
+     * @return string[]
+     */
+    protected function optionPosition()
+    {
+        return $this->option_mapper[''];
     }
 
     /**

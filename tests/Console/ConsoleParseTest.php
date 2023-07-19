@@ -139,4 +139,44 @@ class ConsoleParseTest extends TestCase
             'valid parse from short param with sparte space: --n and double quote'
         );
     }
+
+    /** @test */
+    public function itCanParseMultyNormalCommand()
+    {
+        $command = 'php app --cp /path/to/inputfile /path/to/ouputfile --dry-run';
+        $argv    = explode(' ', $command);
+        $cli     = new Command($argv);
+
+        $this->assertEquals([
+            '/path/to/inputfile',
+            '/path/to/ouputfile',
+        ], $cli->cp);
+        $this->assertTrue($cli->__get('dry-run'));
+    }
+
+    /** @test */
+    public function itCanParseMultyNormalCommandWithoutArgument()
+    {
+        $command = 'php cp /path/to/inputfile /path/to/ouputfile';
+        $argv    = explode(' ', $command);
+        $cli     = new class($argv) extends Command {
+            /**
+             * @return string[]
+             */
+            public function getPosition()
+            {
+                return $this->optionPosition();
+            }
+        };
+
+        $this->assertEquals([
+            '/path/to/inputfile',
+            '/path/to/ouputfile',
+        ], $cli->__get(''));
+
+        $this->assertEquals([
+            '/path/to/inputfile',
+            '/path/to/ouputfile',
+        ], $cli->getPosition());
+    }
 }
