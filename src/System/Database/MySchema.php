@@ -9,6 +9,7 @@ use System\Database\MySchema\Drop;
 use System\Database\MySchema\MyPDO;
 use System\Database\MySchema\Table\Alter;
 use System\Database\MySchema\Table\Create as CreateTable;
+use System\Database\MySchema\Table\Raw;
 use System\Database\MySchema\Table\Truncate;
 
 class MySchema
@@ -60,5 +61,13 @@ class MySchema
         $blueprint($columns);
 
         return $columns;
+    }
+
+    /**
+     * Run raw table.
+     */
+    public function raw(string $raw): Raw
+    {
+        return new Raw($raw, $this->pdo);
     }
 }
