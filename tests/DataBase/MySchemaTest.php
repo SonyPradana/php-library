@@ -26,4 +26,17 @@ final class MySchemaTest extends \RealDatabaseConnectionTest
 
         $this->assertTrue($alter->execute());
     }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanExecuteUsingRawQuery()
+    {
+        $schema = new MySchema($this->pdo_schema);
+        $raw    = $schema->raw('ALTER TABLE testing_db.users MODIFY COLUMN `user` varchar(20); ADD `status` int(3); DROP COLUMN `stat`');
+
+        $this->assertTrue($raw->execute());
+    }
 }
