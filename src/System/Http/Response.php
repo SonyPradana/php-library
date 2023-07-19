@@ -198,8 +198,20 @@ class Response
 
         if (\function_exists('fastcgi_finish_request')) {
             fastcgi_finish_request();
-        } elseif (!\in_array(\PHP_SAPI, ['cli', 'phpdbg'], true)) {
+
+            return $this;
+        }
+
+        if (\function_exists('litespeed_finish_request')) {
+            \litespeed_finish_request();
+
+            return $this;
+        }
+
+        if (!\in_array(\PHP_SAPI, ['cli', 'phpdbg'], true)) {
             static::closeOutputBuffers(0, true);
+
+            return $this;
         }
 
         return $this;
