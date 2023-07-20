@@ -210,6 +210,7 @@ class Response
 
         if (!\in_array(\PHP_SAPI, ['cli', 'phpdbg'], true)) {
             static::closeOutputBuffers(0, true);
+            flush();
 
             return $this;
         }
