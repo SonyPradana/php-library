@@ -98,11 +98,19 @@ class Command implements \ArrayAccess
         $options      = [];
         $options['_'] = $options['name'] = $argv[0] ?? '';
         $last_option  = null;
+        $alias        = [];
 
         foreach ($argv as $key => $option) {
             if ($this->isCommmadParam($option)) {
                 $key_value = explode('=', $option);
                 $name      = preg_replace('/^(-{1,2})/', '', $key_value[0]);
+
+                // alias check
+                if (preg_match('/^-(?!-)([a-zA-Z]+)$/', $key_value[0], $single_dash)) {
+                    $alias[$name] = array_key_exists($name, $alias)
+                        ? array_merge($alias[$name], str_split($name))
+                        : str_split($name);
+                }
 
                 // param have value
                 if (isset($key_value[1])) {
@@ -128,6 +136,19 @@ class Command implements \ArrayAccess
             }
 
             $options[$last_option][] = $this->removeQuote($option);
+        }
+
+        // re-group alias
+        foreach ($alias as $key => $names) {
+            foreach ($names as $name) {
+                if (array_key_exists($name, $options)) {
+                    if (is_int($options[$name])) {
+                        $options[$name]++;
+                    }
+                    continue;
+                }
+                $options[$name] = $options[$key];
+            }
         }
 
         return $options;

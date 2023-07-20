@@ -179,4 +179,50 @@ class ConsoleParseTest extends TestCase
             '/path/to/ouputfile',
         ], $cli->getPosition());
     }
+
+    /** @test */
+    public function itCanParseAlias()
+    {
+        $command = 'php app -io /path/to/inputfile /path/to/ouputfile';
+        $argv    = explode(' ', $command);
+        $cli     = new Command($argv);
+
+        $this->assertEquals([
+            '/path/to/inputfile',
+            '/path/to/ouputfile',
+        ], $cli->io);
+        $this->assertEquals([
+            '/path/to/inputfile',
+            '/path/to/ouputfile',
+        ], $cli->i);
+        $this->assertEquals([
+            '/path/to/inputfile',
+            '/path/to/ouputfile',
+        ], $cli->o);
+    }
+
+    /** @test */
+    public function itCanParseAliasAndCountMultyAlias()
+    {
+        $command = 'php app -ab -y -tt -cd -d -vvv /path/to/inputfile /path/to/ouputfile';
+        $argv    = explode(' ', $command);
+        $cli     = new Command($argv);
+
+        $this->assertTrue($cli->ab, 'group single dash');
+        $this->assertTrue($cli->a, 'split group single dash');
+        $this->assertTrue($cli->b, 'split group single dash');
+        $this->assertTrue($cli->y);
+
+        $this->assertEquals(2, $cli->t, 'count group');
+        $this->assertEquals(2, $cli->d, 'count with diferent argument group');
+
+        $this->assertEquals([
+            '/path/to/inputfile',
+            '/path/to/ouputfile',
+        ], $cli->vvv);
+        $this->assertEquals([
+            '/path/to/inputfile',
+            '/path/to/ouputfile',
+        ], $cli->v);
+    }
 }
