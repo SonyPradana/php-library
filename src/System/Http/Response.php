@@ -155,7 +155,7 @@ class Response
      *
      * @return void
      */
-    private function sendContent()
+    protected function sendContent()
     {
         echo is_array($this->content)
             ? json_encode($this->content, JSON_NUMERIC_CHECK)
