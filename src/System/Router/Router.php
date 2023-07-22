@@ -231,7 +231,10 @@ class Router
     }
 
     /**
-     * @param class-string $class_name
+     * @param class-string            $class_name
+     * @param array<string, string[]> $setup
+     *
+     * @return void
      */
     public static function resource(string $uri, $class_name, array $setup = [])
     {
@@ -245,6 +248,8 @@ class Router
 
         $resource->get()->each(function ($route) {
             self::$routes[] = $route;
+
+            return true;
         });
     }
 

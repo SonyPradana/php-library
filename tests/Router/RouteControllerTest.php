@@ -14,8 +14,6 @@ class RouteControllerTest extends TestCase
     public function __construct()
     {
         parent::__construct();
-        // autoload asset class
-        require_once __DIR__ . '/Assests/RouteClassController.php';
     }
 
     protected function tearDown(): void
@@ -51,40 +49,111 @@ class RouteControllerTest extends TestCase
         return ob_get_clean();
     }
 
-    // /** @test */
-    // public function itCanRouteUsingControllerWithoutMethod()
-    // {
-    //     Router::get('/', RouteClassController::class);
-
-    //     ob_start();
-    //     Router::run('/');
-    //     $out = ob_get_clean();
-
-    //     $this->assertEquals('works', $out);
-    // }
-
     /** @test */
-    public function itCanRouteUsingResourceControllerIndex()
+    public function itCanRouteUsingResourceController()
     {
         Router::resource('/', RouteClassController::class);
 
         $res = $this->dispatcher('/', 'get');
-
         $this->assertEquals('works', $res);
+
+        $res = $this->dispatcher('/create', 'get');
+        $this->assertEquals('works create', $res);
+
+        $res = $this->dispatcher('/', 'post');
+        $this->assertEquals('works store', $res);
+
+        $res = $this->dispatcher('/12', 'get');
+        $this->assertEquals('works show', $res);
+
+        $res = $this->dispatcher('/12/edit', 'get');
+        $this->assertEquals('works edit', $res);
+
+        $res = $this->dispatcher('/12', 'put');
+        $this->assertEquals('works update', $res);
+
+        $res = $this->dispatcher('/12', 'delete');
+        $this->assertEquals('works destroy', $res);
     }
 
-    // /** @test */
-    // public function itCanRouteUsingResourceControllerStore()
-    // {
-    //     $_SERVER['REQUEST_METHOD'] = '/';
-    //     $_SERVER['REQUEST_METHOD'] = 'post';
+    /** @test */
+    public function itCanRouteUsingResourceControllerWithCostumeOnly()
+    {
+        Router::resource('/', RouteClassController::class, [
+            'only' => ['index'],
+        ]);
 
-    //     Router::resource('/', RouteClassController::class);
+        $res = $this->dispatcher('/', 'get');
+        $this->assertEquals('works', $res);
 
-    //     ob_start();
-    //     Router::run('/');
-    //     $out = ob_get_clean();
+        $res = $this->dispatcher('/', 'post');
+        $this->assertEquals('not allowed', $res);
+    }
 
-    //     $this->assertEquals('works', $out);
-    // }
+    /** @test */
+    public function itCanRouteUsingResourceControllerWithCostumeExcept()
+    {
+        Router::resource('/', RouteClassController::class, [
+            'except' => ['store'],
+        ]);
+
+        $res = $this->dispatcher('/', 'get');
+        $this->assertEquals('works', $res);
+
+        $res = $this->dispatcher('/', 'post');
+        $this->assertEquals('not allowed', $res);
+
+        $res = $this->dispatcher('/create', 'get');
+        $this->assertEquals('works create', $res);
+
+        $res = $this->dispatcher('/12', 'get');
+        $this->assertEquals('works show', $res);
+
+        $res = $this->dispatcher('/12/edit', 'get');
+        $this->assertEquals('works edit', $res);
+
+        $res = $this->dispatcher('/12', 'put');
+        $this->assertEquals('works update', $res);
+
+        $res = $this->dispatcher('/12', 'delete');
+        $this->assertEquals('works destroy', $res);
+    }
+}
+
+class RouteClassController
+{
+    public function index()
+    {
+        echo 'works';
+    }
+
+    public function create()
+    {
+        echo 'works create';
+    }
+
+    public function store()
+    {
+        echo 'works store';
+    }
+
+    public function show()
+    {
+        echo 'works show';
+    }
+
+    public function edit()
+    {
+        echo 'works edit';
+    }
+
+    public function update()
+    {
+        echo 'works update';
+    }
+
+    public function destroy()
+    {
+        echo 'works destroy';
+    }
 }
