@@ -6,31 +6,28 @@ namespace System\Time;
 
 use System\Time\Exceptions\PropertyNotExist;
 use System\Time\Exceptions\PropertyNotSetAble;
+use System\Time\Traits\DateTimeFormatTrait;
 
 /**
- * @property int    $timestamp
- * @property int    $year
- * @property int    $month
- * @property int    $day
- * @property int    $hour
- * @property int    $minute
- * @property int    $second
- * @property string $monthName
- * @property string $dayName
- * @property string $shortDay
- * @property string $timeZone
- * @property int    $age
+ * @property int       $timestamp
+ * @property int       $year
+ * @property int       $month
+ * @property int       $day
+ * @property int       $hour
+ * @property int       $minute
+ * @property int       $second
+ * @property string    $monthName
+ * @property string    $dayName
+ * @property string    $shortDay
+ * @property string    $timeZone
+ * @property int|float $age
  */
 class Now
 {
-    /**
-     * Timestime.
-     *
-     * @var int|false
-     */
-    private $time;
+    use DateTimeFormatTrait;
 
-    // public
+    private \DateTime $date;
+
     /** @var int|false */
     private $timestamp;
     /** @var int */
@@ -60,19 +57,21 @@ class Now
     /** @var int|float */
     private $age;
 
-    public function __construct(string $date_format = 'now')
+    public function __construct(string $date_format = 'now', string $time_zone = null)
     {
-        $this->time = strtotime($date_format);
+        if (null !== $time_zone) {
+            $time_zone = new \DateTimeZone($time_zone);
+        }
+        $this->date = new \DateTime($date_format, $time_zone);
 
-        // set porperty
         $this->refresh();
     }
 
     public function __toString()
     {
         return implode('T', [
-            date('Y-m-d', $this->time),
-            date('H:i:s', $this->time),
+            $this->date->format('Y-m-d'),
+            $this->date->format('H:i:s'),
         ]);
     }
 
@@ -97,15 +96,13 @@ class Now
      *
      * @param string $name
      * @param mixed  $value
-     *
-     * @return self
      */
     public function __set($name, $value)
     {
         if (method_exists($this, $name) && property_exists($this, $name)) {
             $this->{$name}($value);
 
-            return $this;
+            return;
         }
 
         throw new PropertyNotSetAble($name);
@@ -113,26 +110,42 @@ class Now
 
     /**
      * Refresh property with current time.
-     *
-     * @return void
      */
-    private function refresh()
+    private function refresh(): void
     {
-        $this->timestamp = $this->time;
-        $this->year      = (int) date('Y', $this->time);
-        $this->month     = (int) date('n', $this->time);
-        $this->day       = (int) date('d', $this->time);
-        $this->hour      = (int) date('H', $this->time);
-        $this->minute    = (int) date('i', $this->time);
-        $this->second    = (int) date('s', $this->time);
+        $this->timestamp = $this->date->getTimestamp();
+        $this->year      = (int) $this->date->format('Y');
+        $this->month     = (int) $this->date->format('n');
+        $this->day       = (int) $this->date->format('d');
+        $this->hour      = (int) $this->date->format('H');
+        $this->minute    = (int) $this->date->format('i');
+        $this->second    = (int) $this->date->format('s');
 
-        $this->monthName = date('F', $this->time);
-        $this->dayName   = date('l', $this->time);
-        $this->timeZone  = date('e', $this->time);
-        $this->shortDay  = date('D', $this->time);
+        $this->monthName = $this->date->format('F');
+        $this->dayName   = $this->date->format('l');
+        $this->timeZone  = $this->date->format('e');
+        $this->shortDay  = $this->date->format('D');
 
-        $age       = time() - $this->time;
+        $age       = time() - $this->date->getTimestamp();
         $this->age = abs(floor($age / (365 * 60 * 60 * 24)));
+    }
+
+    private function current(string $format, int $timestamp): string
+    {
+        $date = $this->date;
+
+        return $date
+            ->setTimestamp($timestamp)
+            ->format($format)
+        ;
+    }
+
+    /**
+     * Get formated date time.
+     */
+    public function format(string $format): string
+    {
+        return $this->date->format($format);
     }
 
     /**
@@ -142,13 +155,16 @@ class Now
      */
     public function year(int $year)
     {
-        $this->time = mktime(
+        $this->date
+        ->setDate(
+            $year,
+            $this->month,
+            $this->day
+        )
+        ->setTime(
             $this->hour,
             $this->minute,
-            $this->second,
-            $this->month,
-            $this->day,
-            $year
+            $this->second
         );
         $this->refresh();
 
@@ -162,13 +178,16 @@ class Now
      */
     public function month(int $month)
     {
-        $this->time = mktime(
+        $this->date
+        ->setDate(
+            $this->year,
+            $month,
+            $this->day
+        )
+        ->setTime(
             $this->hour,
             $this->minute,
-            $this->second,
-            $month,
-            $this->day,
-            $this->year
+            $this->second
         );
         $this->refresh();
 
@@ -182,13 +201,16 @@ class Now
      */
     public function day(int $day)
     {
-        $this->time = mktime(
+        $this->date
+        ->setDate(
+            $this->year,
+            $this->month,
+            $day
+        )
+        ->setTime(
             $this->hour,
             $this->minute,
-            $this->second,
-            $this->month,
-            $day,
-            $this->year
+            $this->second
         );
         $this->refresh();
 
@@ -202,13 +224,16 @@ class Now
      */
     public function hour(int $hour)
     {
-        $this->time = mktime(
+        $this->date
+        ->setDate(
+            $this->year,
+            $this->month,
+            $this->day
+        )
+        ->setTime(
             $hour,
             $this->minute,
-            $this->second,
-            $this->month,
-            $this->day,
-            $this->year
+            $this->second
         );
         $this->refresh();
 
@@ -222,13 +247,16 @@ class Now
      */
     public function minute(int $minute)
     {
-        $this->time = mktime(
+        $this->date
+        ->setDate(
+            $this->year,
+            $this->month,
+            $this->day
+        )
+        ->setTime(
             $this->hour,
             $minute,
-            $this->second,
-            $this->month,
-            $this->day,
-            $this->year
+            $this->second
         );
         $this->refresh();
 
@@ -242,13 +270,16 @@ class Now
      */
     public function second(int $second)
     {
-        $this->time = mktime(
+        $this->date
+        ->setDate(
+            $this->year,
+            $this->month,
+            $this->day
+        )
+        ->setTime(
             $this->hour,
             $this->minute,
-            $second,
-            $this->month,
-            $this->day,
-            $this->year
+            $second
         );
         $this->refresh();
 
@@ -259,168 +290,172 @@ class Now
 
     public function isJan(): bool
     {
-        return date('M', $this->time) === 'Jan';
+        return $this->date->format('M') === 'Jan';
     }
 
     public function isFeb(): bool
     {
-        return date('M', $this->time) === 'Feb';
+        return $this->date->format('M') === 'Feb';
     }
 
     public function isMar(): bool
     {
-        return date('M', $this->time) === 'Mar';
+        return $this->date->format('M') === 'Mar';
     }
 
     public function isApr(): bool
     {
-        return date('M', $this->time) === 'Apr';
+        return $this->date->format('M') === 'Apr';
     }
 
     public function isMay(): bool
     {
-        return date('M', $this->time) === 'May';
+        return $this->date->format('M') === 'May';
     }
 
     public function isJun(): bool
     {
-        return date('M', $this->time) === 'Jun';
+        return $this->date->format('M') === 'Jun';
     }
 
     public function isJul(): bool
     {
-        return date('M', $this->time) === 'Jul';
+        return $this->date->format('M') === 'Jul';
     }
 
     public function isAug(): bool
     {
-        return date('M', $this->time) === 'Aug';
+        return $this->date->format('M') === 'Aug';
     }
 
     public function isSep(): bool
     {
-        return date('M', $this->time) === 'Sep';
+        return $this->date->format('M') === 'Sep';
     }
 
     public function isOct(): bool
     {
-        return date('M', $this->time) === 'Oct';
+        return $this->date->format('M') === 'Oct';
     }
 
     public function isNov(): bool
     {
-        return date('M', $this->time) === 'Nov';
+        return $this->date->format('M') === 'Nov';
     }
 
     //  day
 
     public function isDec(): bool
     {
-        return date('M', $this->time) === 'Dec';
+        return $this->date->format('M') === 'Dec';
     }
 
     public function isMonday(): bool
     {
-        return date('D', $this->time) === 'Mon';
+        return $this->date->format('D') === 'Mon';
     }
 
     public function isTuesday(): bool
     {
-        return date('D', $this->time) === 'Tue';
+        return $this->date->format('D') === 'Tue';
     }
 
     public function isWednesday(): bool
     {
-        return date('D', $this->time) === 'Wed';
+        return $this->date->format('D') === 'Wed';
     }
 
     public function isThursday(): bool
     {
-        return date('D', $this->time) == 'Thu';
+        return $this->date->format('D') == 'Thu';
     }
 
     public function isFriday(): bool
     {
-        return date('D', $this->time) == 'Fri';
+        return $this->date->format('D') == 'Fri';
     }
 
     public function isSaturday(): bool
     {
-        return date('D', $this->time) == 'Sat';
+        return $this->date->format('D') == 'Sat';
     }
 
     public function isSunday(): bool
     {
-        return date('D', $this->time) == 'Sun';
+        return $this->date->format('D') == 'Sun';
     }
 
     // next time
 
     public function isNextYear(): bool
     {
-        return date('Y') + 1 == $this->year;
+        $time = strtotime('next year');
+
+        return $this->current('Y', $time) == $this->year;
     }
 
     public function isNextMonth(): bool
     {
         $time = strtotime('next month');
 
-        return date('n', $time) == $this->month;
+        return $this->current('n', $time) == $this->month;
     }
 
     public function isNextDay(): bool
     {
         $time = strtotime('next day');
 
-        return date('m', $time) == $this->day;
+        return $this->current('d', $time) == $this->day;
     }
 
     public function isNextHour(): bool
     {
         $time = strtotime('next hour');
 
-        return date('H', $time) == $this->hour;
+        return $this->current('H', $time) == $this->hour;
     }
 
     public function isNextMinute(): bool
     {
         $time = strtotime('next minute');
 
-        return date('i', $time) == $this->minute;
+        return $this->current('i', $time) == $this->minute;
     }
 
     // last time
 
     public function isLastYear(): bool
     {
-        return date('Y') - 1 == $this->year;
+        $time = strtotime('last year');
+
+        return $this->current('Y', $time) == $this->year;
     }
 
     public function isLastMonth(): bool
     {
-        $time = strtotime('next month');
+        $time = strtotime('last month');
 
-        return date('m', $time) == $this->month;
+        return $this->current('m', $time) == $this->month;
     }
 
     public function isLastDay(): bool
     {
-        $time = strtotime('next day');
+        $time = strtotime('last day');
 
-        return date('m', $time) == $this->day;
+        return $this->current('d', $time) == $this->day;
     }
 
     public function isLastHour(): bool
     {
-        $time = strtotime('next hour');
+        $time = strtotime('last hour');
 
-        return date('H', $time) == $this->hour;
+        return $this->current('H', $time) == $this->hour;
     }
 
     public function isLastMinute(): bool
     {
-        $time = strtotime('next minute');
+        $time = strtotime('last minute');
 
-        return date('i', $time) == $this->minute;
+        return $this->current('i', $time) == $this->minute;
     }
 }

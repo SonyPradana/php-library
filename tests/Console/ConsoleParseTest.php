@@ -19,6 +19,11 @@ class ConsoleParseTest extends TestCase
             $cli->name,
             'valid parse name'
         );
+        $this->assertEquals(
+            'test',
+            $cli->_,
+            'valid parse name'
+        );
 
         // parse long param
         $this->assertEquals(
@@ -49,6 +54,11 @@ class ConsoleParseTest extends TestCase
             $cli->name,
             'valid parse name: test'
         );
+        $this->assertEquals(
+            'test',
+            $cli->_,
+            'valid parse name'
+        );
 
         // parse short param
         $this->assertEquals(
@@ -64,7 +74,7 @@ class ConsoleParseTest extends TestCase
         // parse long param
         $this->assertEquals(
             'children',
-            $cli->whois,
+            $cli->__get('who-is'),
             'valid parse from long param: --who-is'
         );
     }
@@ -128,5 +138,91 @@ class ConsoleParseTest extends TestCase
             $cli->l,
             'valid parse from short param with sparte space: --n and double quote'
         );
+    }
+
+    /** @test */
+    public function itCanParseMultyNormalCommand()
+    {
+        $command = 'php app --cp /path/to/inputfile /path/to/ouputfile --dry-run';
+        $argv    = explode(' ', $command);
+        $cli     = new Command($argv);
+
+        $this->assertEquals([
+            '/path/to/inputfile',
+            '/path/to/ouputfile',
+        ], $cli->cp);
+        $this->assertTrue($cli->__get('dry-run'));
+    }
+
+    /** @test */
+    public function itCanParseMultyNormalCommandWithoutArgument()
+    {
+        $command = 'php cp /path/to/inputfile /path/to/ouputfile';
+        $argv    = explode(' ', $command);
+        $cli     = new class($argv) extends Command {
+            /**
+             * @return string[]
+             */
+            public function getPosition()
+            {
+                return $this->optionPosition();
+            }
+        };
+
+        $this->assertEquals([
+            '/path/to/inputfile',
+            '/path/to/ouputfile',
+        ], $cli->__get(''));
+
+        $this->assertEquals([
+            '/path/to/inputfile',
+            '/path/to/ouputfile',
+        ], $cli->getPosition());
+    }
+
+    /** @test */
+    public function itCanParseAlias()
+    {
+        $command = 'php app -io /path/to/inputfile /path/to/ouputfile';
+        $argv    = explode(' ', $command);
+        $cli     = new Command($argv);
+
+        $this->assertEquals([
+            '/path/to/inputfile',
+            '/path/to/ouputfile',
+        ], $cli->io);
+        $this->assertEquals([
+            '/path/to/inputfile',
+            '/path/to/ouputfile',
+        ], $cli->i);
+        $this->assertEquals([
+            '/path/to/inputfile',
+            '/path/to/ouputfile',
+        ], $cli->o);
+    }
+
+    /** @test */
+    public function itCanParseAliasAndCountMultyAlias()
+    {
+        $command = 'php app -ab -y -tt -cd -d -vvv /path/to/inputfile /path/to/ouputfile';
+        $argv    = explode(' ', $command);
+        $cli     = new Command($argv);
+
+        $this->assertTrue($cli->ab, 'group single dash');
+        $this->assertTrue($cli->a, 'split group single dash');
+        $this->assertTrue($cli->b, 'split group single dash');
+        $this->assertTrue($cli->y);
+
+        $this->assertEquals(2, $cli->t, 'count group');
+        $this->assertEquals(2, $cli->d, 'count with diferent argument group');
+
+        $this->assertEquals([
+            '/path/to/inputfile',
+            '/path/to/ouputfile',
+        ], $cli->vvv);
+        $this->assertEquals([
+            '/path/to/inputfile',
+            '/path/to/ouputfile',
+        ], $cli->v);
     }
 }

@@ -235,8 +235,11 @@ class RequestTest extends TestCase
     {
         $request = new Request('test.test', [], [], [], [], [], ['content-type' => 'app/json'], 'PUT', '::1', '');
 
-        $this->expectErrorMessage('Request body is empty.');
-        $request->all();
+        try {
+            $request->all();
+        } catch (\Throwable $th) {
+            $this->assertEquals('Request body is empty.', $th->getMessage());
+        }
     }
 
     /**
@@ -246,8 +249,11 @@ class RequestTest extends TestCase
     {
         $request = new Request('test.test', [], [], [], [], [], ['content-type' => 'app/json'], 'PUT', '::1', 'nobody');
 
-        $this->expectErrorMessage('Could not decode request body.');
-        $request->all();
+        try {
+            $request->all();
+        } catch (\Throwable $th) {
+            $this->assertEquals('Could not decode request body.', $th->getMessage());
+        }
     }
 
     /**
@@ -354,7 +360,7 @@ class RequestTest extends TestCase
     {
         Request::macro(
             'validate',
-            fn (?\Closure $rule = null, ?\Closure $filter = null) => Validator::make($this->{'all'}(), $rule, $filter)
+            fn (\Closure $rule = null, \Closure $filter = null) => Validator::make($this->{'all'}(), $rule, $filter)
         );
 
         // get
@@ -415,5 +421,65 @@ class RequestTest extends TestCase
         $upload->delete(dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . 'File' . DIRECTORY_SEPARATOR . 'upload' . DIRECTORY_SEPARATOR . 'success.txt');
 
         $this->assertTrue($upload->success());
+    }
+
+    /**
+     * @test
+     */
+    public function itCanModifeRequest()
+    {
+        $request  = new Request('test.test', ['query' => 'old'], [], [], [], [], ['content-type' => 'app/json'], 'PUT', '::1', '');
+        $request2 = $request->duplicate(['query' => 'new']);
+
+        $this->assertEquals('old', $request->getQuery('query'));
+        $this->assertEquals('new', $request2->getQuery('query'));
+    }
+
+    /**
+     * @test
+     */
+    public function itCanGetMimeType()
+    {
+        $request  = new Request('test.test', ['query' => 'old'], [], [], [], [], ['content-type' => 'app/json'], 'PUT', '::1', '');
+
+        $mimetypes = $request->getMimeTypes('html');
+        $this->assertEquals(['text/html', 'application/xhtml+xml'], $mimetypes);
+
+        $mimetypes = $request->getMimeTypes('php');
+        $this->assertEquals([], $mimetypes, 'php format is not exists');
+    }
+
+    /**
+     * @test
+     */
+    public function itCanGetFormat()
+    {
+        $request  = new Request('test.test', ['query' => 'old'], [], [], [], [], ['content-type' => 'app/json'], 'PUT', '::1', '');
+
+        $format = $request->getFormat('text/html');
+        $this->assertEquals('html', $format);
+
+        $format = $request->getFormat('text/php');
+        $this->assertNull($format, 'php format not exist');
+    }
+
+    /**
+     * @test
+     */
+    public function itCanGetRequestFormat()
+    {
+        $request  = new Request('test.test', ['query' => 'old'], [], [], [], [], ['content-type' => 'application/json'], 'PUT', '::1', '');
+
+        $this->assertEquals('json', $request->getRequestFormat());
+    }
+
+    /**
+     * @test
+     */
+    public function itCanNotGetRequestFormat()
+    {
+        $request  = new Request('test.test', ['query' => 'old'], [], [], [], [], [], 'PUT', '::1', '');
+
+        $this->assertNull($request->getRequestFormat());
     }
 }

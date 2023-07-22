@@ -8,8 +8,11 @@ class Router
 {
     /** @var Route[] */
     private static $routes           = [];
-    private static $pathNotFound     = null;
-    private static $methodNotAllowed = null;
+    /** @var ?callable(string): mixed */
+    private static $pathNotFound;
+    /** @var ?callable(string, string): mixed */
+    private static $methodNotAllowed;
+    /** @var array<string, string|string[]> */
     public static $group             = [
         'prefix'     => '',
         'middleware' => [],
@@ -19,15 +22,17 @@ class Router
 
     /**
      * Alias router param to readable regex url.
+     *
+     * @var array<string, string>
      */
     public static $patterns = [
-    '(:id)'   => '(\d+)',
-    '(:num)'  => '([0-9]*)',
-    '(:text)' => '([a-zA-Z]*)',
-    '(:any)'  => '([0-9a-zA-Z_+-]*)',
-    '(:slug)' => '([0-9a-zA-Z_-]*)',
-    '(:all)'  => '(.*)',
-  ];
+        '(:id)'   => '(\d+)',
+        '(:num)'  => '([0-9]*)',
+        '(:text)' => '([a-zA-Z]*)',
+        '(:any)'  => '([0-9a-zA-Z_+-]*)',
+        '(:slug)' => '([0-9a-zA-Z_-]*)',
+        '(:all)'  => '(.*)',
+    ];
 
     /**
      * Repalce alias to regex.
@@ -47,19 +52,21 @@ class Router
     /**
      * Adding new router using array of router.
      *
-     * @param array $route Router array format (expression, function, method)
+     * @param Route[] $route Router array format (expression, function, method)
      */
-    public static function addRoutes(array $route)
+    public static function addRoutes(array $route): void
     {
         if (isset($route['expression'])
-    && isset($route['function'])
-    && isset($route['method'])) {
+        && isset($route['function'])
+        && isset($route['method'])) {
             self::$routes[] = new Route($route);
         }
     }
 
     /**
      * Merge router array from other router array.
+     *
+     * @param Route[][] $array_routes
      */
     public static function mergeRoutes(array $array_routes): void
     {
@@ -71,7 +78,7 @@ class Router
     /**
      * Get routes array.
      *
-     * @return array Routes array
+     * @return Route[] Routes array
      */
     public static function getRoutes()
     {
@@ -84,6 +91,9 @@ class Router
         return $routes;
     }
 
+    /**
+     * @return Route[]
+     */
     public static function getRoutesRaw()
     {
         return self::$routes;
@@ -100,15 +110,15 @@ class Router
     /**
      * Reset all propery to be null.
      */
-    public static function Reset()
+    public static function Reset(): void
     {
         self::$routes           = [];
         self::$pathNotFound     = null;
         self::$methodNotAllowed = null;
         self::$group            = [
-      'prefix'  => '',
-      'as'      => '',
-    ];
+            'prefix'  => '',
+            'as'      => '',
+        ];
     }
 
     /**
@@ -116,7 +126,7 @@ class Router
      *
      * @param string $prefix Prefix of router exprestion
      */
-    public static function prefix(string $prefix)
+    public static function prefix(string $prefix): RouteGroup
     {
         return new RouteGroup(
             // set up
@@ -135,7 +145,7 @@ class Router
      *
      * @param array<int, class-string> $middlewares Middleware
      */
-    public static function middleware(array $middlewares)
+    public static function middleware(array $middlewares): RouteGroup
     {
         $reset_group = self::$group;
 
@@ -151,7 +161,7 @@ class Router
         );
     }
 
-    public static function name(string $name)
+    public static function name(string $name): RouteGroup
     {
         return new RouteGroup(
             // setup
@@ -165,7 +175,7 @@ class Router
         );
     }
 
-    public static function controller(string $class_name)
+    public static function controller(string $class_name): RouteGroup
     {
         // backup current route
         $reset_group = self::$group;
@@ -184,6 +194,9 @@ class Router
         return $route_group;
     }
 
+    /**
+     * @param array<string, string|string> $setup_group
+     */
     public static function group(array $setup_group, \Closure $group): void
     {
         // backup currect
@@ -204,6 +217,17 @@ class Router
         );
 
         $route_group->group($group);
+    }
+
+    public static function has(string $route_name): bool
+    {
+        foreach (self::$routes as $route) {
+            if ($route_name === $route['name']) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -227,11 +251,11 @@ class Router
     /**
      * Function used to add a new route.
      *
-     * @param array|string          $method   Methods allow
-     * @param string                $uri      Route string or expression
-     * @param callable|array|string $callback Function to call if route with allowed method is found
+     * @param string|string[]          $method   Methods allow
+     * @param string                   $uri      Route string or expression
+     * @param callable|string|string[] $callback Function to call if route with allowed method is found
      */
-    public static function match($method, string $uri, $callback)
+    public static function match($method, string $uri, $callback): Route
     {
         $uri = self::$group['prefix'] . $uri;
         if (isset(self::$group['controller']) && is_string($callback)) {
@@ -240,11 +264,11 @@ class Router
         $middleware = self::$group['middleware'] ?? [];
 
         return self::$routes[] = new Route([
-      'method'      => $method,
-      'expression'  => self::mapPatterns($uri),
-      'function'    => $callback,
-      'middleware'  => $middleware,
-    ]);
+            'method'      => $method,
+            'expression'  => self::mapPatterns($uri),
+            'function'    => $callback,
+            'middleware'  => $middleware,
+        ]);
     }
 
     /**
@@ -253,7 +277,7 @@ class Router
      * @param string   $expression Route string or expression
      * @param callable $function   Function to call if route with allowed method is found
      */
-    public static function any(string $expression, $function)
+    public static function any(string $expression, $function): Route
     {
         return self::match(['get', 'head', 'post', 'put', 'patch', 'delete', 'options'], $expression, $function);
     }
@@ -264,7 +288,7 @@ class Router
      * @param string   $expression Route string or expression
      * @param callable $function   Function to call if route with allowed method is found
      */
-    public static function get(string $expression, $function)
+    public static function get(string $expression, $function): Route
     {
         return self::match(['get', 'head'], $expression, $function);
     }
@@ -275,7 +299,7 @@ class Router
      * @param string   $expression Route string or expression
      * @param callable $function   Function to call if route with allowed method is found
      */
-    public static function post(string $expression, $function)
+    public static function post(string $expression, $function): Route
     {
         return self::match('post', $expression, $function);
     }
@@ -286,7 +310,7 @@ class Router
      * @param string   $expression Route string or expression
      * @param callable $function   Function to call if route with allowed method is found
      */
-    public static function put(string $expression, $function)
+    public static function put(string $expression, $function): Route
     {
         return self::match('put', $expression, $function);
     }
@@ -297,7 +321,7 @@ class Router
      * @param string   $expression Route string or expression
      * @param callable $function   Function to call if route with allowed method is found
      */
-    public static function patch(string $expression, $function)
+    public static function patch(string $expression, $function): Route
     {
         return self::match('patch', $expression, $function);
     }
@@ -308,7 +332,7 @@ class Router
      * @param string   $expression Route string or expression
      * @param callable $function   Function to call if route with allowed method is found
      */
-    public static function delete(string $expression, $function)
+    public static function delete(string $expression, $function): Route
     {
         return self::match('delete', $expression, $function);
     }
@@ -319,7 +343,7 @@ class Router
      * @param string   $expression Route string or expression
      * @param callable $function   Function to call if route with allowed method is found
      */
-    public static function options(string $expression, $function)
+    public static function options(string $expression, $function): Route
     {
         return self::match('options', $expression, $function);
     }
@@ -329,7 +353,7 @@ class Router
      *
      * @param callable $function Function to be Call
      */
-    public static function pathNotFound($function)
+    public static function pathNotFound($function): void
     {
         self::$pathNotFound = $function;
     }
@@ -339,7 +363,7 @@ class Router
      *
      * @param callable $function Function to be Call
      */
-    public static function methodNotAllowed($function)
+    public static function methodNotAllowed($function): void
     {
         self::$methodNotAllowed = $function;
     }
@@ -352,20 +376,20 @@ class Router
      * @param bool   $trailing_slash_matters Trailing slash matters
      * @param bool   $multimatch             Return Multy route
      */
-    public static function run($basepath = '', $case_matters = false, $trailing_slash_matters = false, $multimatch = false)
+    public static function run($basepath = '', $case_matters = false, $trailing_slash_matters = false, $multimatch = false): mixed
     {
         $dispatcher = RouteDispatcher::dispatchFrom($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], self::$routes);
 
         $dispatch = $dispatcher
-        ->basePath($basepath)
-        ->caseMatters($case_matters)
-        ->trailingSlashMatters($trailing_slash_matters)
-        ->multimatch($multimatch)
-        ->run(
-            fn ($current, $params) => call_user_func_array($current, $params),
-            fn ($path) => call_user_func_array(self::$pathNotFound, [$path]),
-            fn ($path, $method) => call_user_func_array(self::$methodNotAllowed, [$path, $method])
-        );
+            ->basePath($basepath)
+            ->caseMatters($case_matters)
+            ->trailingSlashMatters($trailing_slash_matters)
+            ->multimatch($multimatch)
+            ->run(
+                fn ($current, $params) => call_user_func_array($current, $params),
+                fn ($path) => call_user_func_array(self::$pathNotFound, [$path]),
+                fn ($path, $method) => call_user_func_array(self::$methodNotAllowed, [$path, $method])
+            );
 
         self::$current = $dispatcher->current();
 

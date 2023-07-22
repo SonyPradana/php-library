@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
+namespace System\Test\Database\RealDatabase;
+
 use System\Database\MyQuery;
 
-final class InsertTest extends RealDatabaseConnectionTest
+final class InsertTest extends \RealDatabaseConnectionTest
 {
     /**
      * @test
@@ -34,7 +36,7 @@ final class InsertTest extends RealDatabaseConnectionTest
     {
         MyQuery::from('users', $this->pdo)
             ->insert()
-            ->raws([
+            ->rows([
                 [
                     'user' => 'sony',
                     'pwd'  => 'secret',

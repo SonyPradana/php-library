@@ -32,6 +32,9 @@ abstract class Query
     /** @var int Limit end to */
     protected $_limit_end = 0;
 
+    /** @var int offest */
+    protected $_offset = 0;
+
     /** @var string Sort result ASC|DESC */
     protected $_sort_order  = '';
 
@@ -50,7 +53,7 @@ abstract class Query
      *
      * @var string|null
      */
-    protected $_group_by = null;
+    protected $_group_by;
 
     /**
      * Multy filter with strict mode.
@@ -182,12 +185,41 @@ abstract class Query
         return $filters['strict'] ? implode(' AND ', $clear_query) : implode(' OR ', $clear_query);
     }
 
-    // this class must be overvrided
+    /**
+     * Bind query with binding.
+     */
+    public function queryBind(): string
+    {
+        [$binds, $values] = $this->bindsDestructur();
+
+        $quote_values = array_map(function ($value) {
+            if (is_string($value)) {
+                return "'" . $value . "'";
+            }
+
+            if (is_bool($value)) {
+                if ($value === true) {
+                    return 'true';
+                }
+
+                return 'false';
+            }
+
+            /* @phpstan-ignore-next-line */
+            return $value;
+        }, $values);
+
+        return str_replace($binds, $quote_values, $this->builder());
+    }
+
     protected function builder(): string
     {
         return '';
     }
 
+    /**
+     * @return array<int, string[]|bool[]>>
+     */
     public function bindsDestructur(): array
     {
         $bind_name = [];
@@ -208,6 +240,7 @@ abstract class Query
         return [$bind_name, $value, $columns];
     }
 
+    /** @return Bind[]  */
     public function getBinds()
     {
         return $this->_binds;

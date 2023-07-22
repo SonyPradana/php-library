@@ -182,7 +182,7 @@ class Text
      *
      * @return self
      */
-    public function slice(int $start, ?int $length = null)
+    public function slice(int $start, int $length = null)
     {
         $text = Str::slice($this->_current, $start, $length);
 
@@ -373,6 +373,19 @@ class Text
     {
         $text = Str::limit($this->_current, $length, $truncate_caracter);
         $this->execute($text, __FUNCTION__);
+
+        return $this;
+    }
+
+    /**
+     * Get text after text finded.
+     */
+    public function after(string $find): self
+    {
+        $this->execute(
+            Str::after($this->_current, $find),
+            __FUNCTION__
+        );
 
         return $this;
     }

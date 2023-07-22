@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace System\Console;
 
+use System\Console\Style\Style;
+
 if (!function_exists('style')) {
     /**
      * Render text with terminal style (chain way).
@@ -71,5 +73,77 @@ if (!function_exists('ok')) {
     function ok($text)
     {
         return \System\Console\Style\Alert::render()->ok($text);
+    }
+}
+
+if (!function_exists('option')) {
+    /**
+     * Command Prompt input option.
+     *
+     * @param string|Style            $title
+     * @param array<string, callable> $options
+     *
+     * @return mixed
+     */
+    function option($title, array $options)
+    {
+        return (new Prompt($title, $options))->option();
+    }
+}
+
+if (!function_exists('select')) {
+    /**
+     * Command Prompt input selection.
+     *
+     * @param string|Style            $title
+     * @param array<string, callable> $options
+     *
+     * @return mixed
+     */
+    function select($title, array $options)
+    {
+        return (new Prompt($title, $options))->select();
+    }
+}
+
+if (!function_exists('text')) {
+    /**
+     * Command Prompt input text.
+     *
+     * @param string|Style $title
+     *
+     * @return mixed
+     */
+    function text($title, callable $callable)
+    {
+        return (new Prompt($title))->text($callable);
+    }
+}
+
+if (!function_exists('password')) {
+    /**
+     * Command Prompt input password.
+     *
+     * @param string|Style $title
+     *
+     * @return mixed
+     */
+    function password($title, callable $callable, string $mask = '')
+    {
+        return (new Prompt($title))->password($callable, $mask);
+    }
+}
+
+if (!function_exists('any_key')) {
+    /**
+     * Command Prompt detect any key.
+     *
+     * @param string|Style $title
+     *
+     * @return mixed
+     */
+    function any_key($title, callable $callable)
+    {
+        return (new Prompt($title))->anyKey($callable);
     }
 }

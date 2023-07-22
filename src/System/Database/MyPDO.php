@@ -16,7 +16,7 @@ class MyPDO
      *
      * @var array<string, string>
      */
-    private $configs;
+    protected $configs;
 
     /**
      * @param array<string, string> $configs
@@ -29,20 +29,8 @@ class MyPDO
         $pass             = $configs['password'];
 
         $this->configs = $configs;
-
-        // konfigurasi driver
-        $dsn    = "mysql:host=$host;dbname=$database_name";
-        $option = [
-            \PDO::ATTR_PERSISTENT => true,
-            \PDO::ATTR_ERRMODE    => \PDO::ERRMODE_EXCEPTION,
-        ];
-
-        // menjalankan koneksi daabase
-        try {
-            $this->dbh = new \PDO($dsn, $user, $pass, $option);
-        } catch (\PDOException $e) {
-            throw new \Exception($e->getMessage());
-        }
+        $dsn           = "mysql:host=$host;dbname=$database_name";
+        $this->useDsn($dsn, $user, $pass);
     }
 
     /**
@@ -52,6 +40,25 @@ class MyPDO
      */
     public function instance()
     {
+        return $this;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    protected function useDsn(string $dsn, string $user, string $pass): self
+    {
+        $option = [
+            \PDO::ATTR_PERSISTENT => true,
+            \PDO::ATTR_ERRMODE    => \PDO::ERRMODE_EXCEPTION,
+        ];
+
+        try {
+            $this->dbh = new \PDO($dsn, $user, $pass, $option);
+        } catch (\PDOException $e) {
+            throw new \Exception($e->getMessage());
+        }
+
         return $this;
     }
 
@@ -90,9 +97,9 @@ class MyPDO
     /**
      * Menggantikan paramater input dari user dengan sebuah placeholder.
      *
-     * @param int|string $param
-     * @param mixed      $value
-     * @param int|null   $type
+     * @param int|string|bool|null $param
+     * @param mixed                $value
+     * @param int|string|bool|null $type
      */
     public function bind($param, $value, $type = null): self
     {

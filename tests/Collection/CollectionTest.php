@@ -342,4 +342,85 @@ class CollectionTest extends TestCase
             $this->assertEquals($value, $coll[$key]);
         }
     }
+
+    /** @test */
+    public function itCanByShuffle()
+    {
+        $arr  = ['one' => 1, 'two' => 2, 'three' => 3];
+        $coll = new Collection($arr);
+
+        $coll->shuffle();
+
+        foreach ($arr as $key => $val) {
+            $this->assertArrayHasKey($key, $coll);
+        }
+    }
+
+    /** @test */
+    public function itCanMapWithKeys()
+    {
+        $arr = new Collection([
+            [
+                'name'  => 'taylor',
+                'email' => 'taylor@laravel.com',
+            ], [
+                'name'  => 'pradana',
+                'email' => 'pradana@savanna.com',
+            ],
+        ]);
+
+        $assocBy = $arr->assocBy(fn ($item) => [$item['name'] => $item['email']]);
+
+        $this->assertEquals([
+            'taylor'  => 'taylor@laravel.com',
+            'pradana' => 'pradana@savanna.com',
+        ], $assocBy->toArray());
+    }
+
+    /** @test */
+    public function itCanCloneColection()
+    {
+        $ori = new Collection([
+            'one' => 'one',
+            'two' => [
+                'one',
+                'two' => [1, 2],
+            ],
+            'three' => new Collection([]),
+        ]);
+
+        $clone = clone $ori;
+
+        $ori->set('one', 'uno');
+        $this->assertEquals('one', $clone->get('one'));
+
+        $clone->set('one', 1);
+        $this->assertEquals('uno', $ori->get('one'));
+    }
+
+    /** @test */
+    public function itCanGetSumUsingReduce()
+    {
+        $collection = new Collection([1, 2, 3, 4]);
+
+        $sum = $collection->reduse(fn ($carry, $item) => $carry + $item);
+
+        $this->assertTrue($sum === 10);
+    }
+
+    /** @test */
+    public function itCanGetTakeFirst()
+    {
+        $coll = new Collection([10, 20, 30, 40, 50, 60, 70, 80, 90]);
+
+        $this->assertEquals([10, 20], $coll->take(2)->toArray());
+    }
+
+    /** @test */
+    public function itCanGetTakeLast()
+    {
+        $coll = new Collection([10, 20, 30, 40, 50, 60, 70, 80, 90]);
+
+        $this->assertEquals([80, 90], $coll->take(-2)->toArray());
+    }
 }

@@ -32,6 +32,8 @@ class Request implements \ArrayAccess, \IteratorAggregate
 
     /**
      * Request query ($_GET).
+     *
+     * @var Collection<string, string>
      */
     private Collection $query;
 
@@ -44,6 +46,8 @@ class Request implements \ArrayAccess, \IteratorAggregate
 
     /**
      * Request post ($_POST).
+     *
+     * @var Collection<string, string>
      */
     private Collection $post;
 
@@ -82,8 +86,31 @@ class Request implements \ArrayAccess, \IteratorAggregate
 
     /**
      * Json body rendered.
+     *
+     * @var Collection<string, string>
      */
     private Collection $json;
+
+    /**
+     * Initialize mime format.
+     *
+     * @var array<string, string[]>
+     *
+     * @see https://github.com/symfony/symfony/blob/5.4/src/Symfony/Component/HttpFoundation/Request.php
+     */
+    protected array $formats = [
+        'html'   => ['text/html', 'application/xhtml+xml'],
+        'txt'    => ['text/plain'],
+        'js'     => ['application/javascript', 'application/x-javascript', 'text/javascript'],
+        'css'    => ['text/css'],
+        'json'   => ['application/json', 'application/x-json'],
+        'jsonld' => ['application/ld+json'],
+        'xml'    => ['text/xml', 'application/xml', 'application/x-xml'],
+        'rdf'    => ['application/rdf+xml'],
+        'atom'   => ['application/atom+xml'],
+        'rss'    => ['application/rss+xml'],
+        'form'   => ['application/x-www-form-urlencoded', 'multipart/form-data'],
+    ];
 
     /**
      * @param array<string, string> $query
@@ -104,7 +131,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
         array $headers = [],
         string $method = 'GET',
         string $remoteAddress = '::1',
-        ?string $rawBody = null
+        string $rawBody = null
     ) {
         $this->initialize($url, $query, $post, $attributes, $cookies, $files, $headers, $method, $remoteAddress, $rawBody);
     }
@@ -132,7 +159,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
         array $headers = [],
         string $method = 'GET',
         string $remoteAddress = '::1',
-        ?string $rawBody = null
+        string $rawBody = null
     ) {
         $this->url             = $url;
         $this->query           = new Collection($query);
@@ -148,6 +175,61 @@ class Request implements \ArrayAccess, \IteratorAggregate
         return $this;
     }
 
+    /**
+     * Initial request.
+     *
+     * @param array<string, string>|null $query
+     * @param array<string, string>|null $post
+     * @param array<string, string>|null $attributes
+     * @param array<string, string>|null $cookies
+     * @param array<string, string>|null $files
+     * @param array<string, string>|null $headers
+     *
+     * @return static
+     */
+    public function duplicate(
+        array $query = null,
+        array $post = null,
+        array $attributes = null,
+        array $cookies = null,
+        array $files = null,
+        array $headers = null
+    ) {
+        $dupplicate = clone $this;
+
+        if (null !== $query) {
+            $dupplicate->query = new Collection($query);
+        }
+        if (null !== $post) {
+            $dupplicate->post = new Collection($post);
+        }
+        if (null !== $attributes) {
+            $dupplicate->attributes = $attributes;
+        }
+        if (null !== $cookies) {
+            $dupplicate->cookies = $cookies;
+        }
+        if (null !== $files) {
+            $dupplicate->files = $files;
+        }
+        if (null !== $headers) {
+            $dupplicate->headers = $headers;
+        }
+
+        return $dupplicate;
+    }
+
+    public function __clone()
+    {
+        $this->query      = clone $this->query;
+        $this->post       = clone $this->post;
+        // cloning as array
+        $this->attributes = (new Collection($this->attributes))->all();
+        $this->cookies    = (new Collection($this->cookies))->all();
+        $this->files      = (new Collection($this->files))->all();
+        $this->headers    = (new Collection($this->headers))->all();
+    }
+
     public function getUrl(): string
     {
         return $this->url;
@@ -155,6 +237,8 @@ class Request implements \ArrayAccess, \IteratorAggregate
 
     /**
      * Get query ($_GET).
+     *
+     * @return CollectionImmutable<string, string>
      */
     public function query(): CollectionImmutable
     {
@@ -177,6 +261,8 @@ class Request implements \ArrayAccess, \IteratorAggregate
 
     /**
      * Get post ($_POST).
+     *
+     * @return CollectionImmutable<string, string>
      */
     public function post(): CollectionImmutable
     {
@@ -248,6 +334,46 @@ class Request implements \ArrayAccess, \IteratorAggregate
         }
 
         return $this->headers[$header] ?? null;
+    }
+
+    /**
+     * Gets the mime types associated with the format.
+     *
+     * @return string[]
+     */
+    public function getMimeTypes(string $format): array
+    {
+        return $this->formats[$format] ?? [];
+    }
+
+    /**
+     * Gets format using mimetype.
+     *
+     * @param string|null $mime_type
+     *
+     * @return string|null
+     */
+    public function getFormat($mime_type)
+    {
+        foreach ($this->formats as $format => $mime_types) {
+            if (in_array($mime_type, $mime_types)) {
+                return $format;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets format type from request header.
+     *
+     * @return string|null
+     */
+    public function getRequestFormat()
+    {
+        $content_type = $this->getHeaders('content-type');
+
+        return $this->getFormat($content_type);
     }
 
     public function isHeader(string $header_key, string $header_val): bool
@@ -341,9 +467,12 @@ class Request implements \ArrayAccess, \IteratorAggregate
      */
     public function all()
     {
+        /** @var Collection<string, string> */
+        $input = $this->input();
+
         $all = array_merge(
             $this->headers,
-            $this->input()->all(),
+            $input->toArray(),
             $this->attributes,
             $this->cookies,
             [
@@ -385,6 +514,9 @@ class Request implements \ArrayAccess, \IteratorAggregate
         return Str::contains($content_type, '/json') || Str::contains($content_type, '+json');
     }
 
+    /**
+     * @return Collection<string, string>
+     */
     public function json(): Collection
     {
         if (!isset($this->json)) {
@@ -397,9 +529,13 @@ class Request implements \ArrayAccess, \IteratorAggregate
     /**
      * Compine all request input.
      *
-     * @param mixed $default
+     * @template TGetDefault
+     *
+     * @param TGetDefault $default
+     *
+     * @return Collection<string, string>|string|TGetDefault
      */
-    public function input(string $key = null, $default = null): Collection
+    public function input(string $key = null, $default = null)
     {
         $input = $this->source()->add($this->query->all());
         if (null === $key) {
@@ -411,6 +547,8 @@ class Request implements \ArrayAccess, \IteratorAggregate
 
     /**
      * Get input resource base on method type.
+     *
+     * @return Collection<string, string>
      */
     private function source(): Collection
     {
@@ -438,6 +576,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
      *
      * @return string|null
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->__get($offset);

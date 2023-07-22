@@ -12,14 +12,14 @@
     "require": {
         "php": "^7.4 || ^8.0",
         "ext-mbstring": "*",
-        "php-di/php-di": "^6.4",
+        "php-di/php-di": "^6.4 || ^7.0",
         "sonypradana/validator": "^0.8"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5",
+        "phpunit/phpunit": "^9.6",
         "mockery/mockery": "^1.5",
-        "friendsofphp/php-cs-fixer": "^3.13",
-        "phpstan/phpstan": "^1.9"
+        "friendsofphp/php-cs-fixer": "^3.18",
+        "phpstan/phpstan": "^1.10"
     },
     "autoload": {
         "psr-4": {
@@ -35,6 +35,7 @@
     },
     "autoload-dev": {
         "files": [
+            "tests/DataBase/QueryStringTest.php",
             "tests/DataBase/RealDatabaseConnectionTest.php"
         ]
     },

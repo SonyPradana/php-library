@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
+namespace System\Test\Database\RealDatabase;
+
 use System\Database\MyQuery;
 use System\Database\MyQuery\Join\InnerJoin;
 
-final class SelectTest extends RealDatabaseConnectionTest
+final class SelectTest extends \RealDatabaseConnectionTest
 {
     private function profileFactory()
     {
@@ -192,6 +194,43 @@ final class SelectTest extends RealDatabaseConnectionTest
         $users = MyQuery::from('users', $this->pdo)
             ->select()
             ->limit(0, 1)
+            ->all()
+        ;
+
+        $this->assertArrayHasKey('user', $users[0]);
+        $this->assertArrayHasKey('pwd', $users[0]);
+        $this->assertArrayHasKey('stat', $users[0]);
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanSelectQueryWithOffset()
+    {
+        $users = MyQuery::from('users', $this->pdo)
+            ->select()
+            ->limitStart(0)
+            ->offset(1)
+            ->all()
+        ;
+
+        $this->assertArrayHasKey('user', $users[0]);
+        $this->assertArrayHasKey('pwd', $users[0]);
+        $this->assertArrayHasKey('stat', $users[0]);
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanSelectQueryWithLimitOffset()
+    {
+        $users = MyQuery::from('users', $this->pdo)
+            ->select()
+            ->limitOffset(0, 10)
             ->all()
         ;
 

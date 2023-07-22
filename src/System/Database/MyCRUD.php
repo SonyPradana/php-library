@@ -97,12 +97,10 @@ abstract class MyCRUD
      *
      * @param string $name
      * @param mixed  $value
-     *
-     * @return self
      */
     public function __set($name, $value)
     {
-        return $this->setter($name, $value);
+        $this->setter($name, $value);
     }
 
     public function read(): bool
@@ -212,6 +210,9 @@ abstract class MyCRUD
         return $this->COLUMNS;
     }
 
+    /**
+     * @return Collection<string, mixed>
+     */
     public function toCollection(): Collection
     {
         return new Collection($this->COLUMNS);
@@ -238,7 +239,7 @@ abstract class MyCRUD
     }
 
     /**
-     * @return CollectionImmutable
+     * @return CollectionImmutable<int|string, mixed>
      */
     protected function hasOne(string $table, string $ref = 'id')
     {
@@ -254,7 +255,7 @@ abstract class MyCRUD
     }
 
     /**
-     * @return CollectionImmutable
+     * @return CollectionImmutable<int|string, mixed>
      */
     protected function hasMany(string $table, string $ref = 'id')
     {

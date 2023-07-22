@@ -173,6 +173,15 @@ if (!function_exists('provider_path')) {
     }
 }
 
+if (!function_exists('migration_path')) {
+    function migration_path(string $surfix_path = ''): string
+    {
+        $path = app()->migration_path() . $surfix_path;
+
+        return $path;
+    }
+}
+
 if (!function_exists('base_path')) {
     /**
      * Get base path.
@@ -246,10 +255,47 @@ if (!function_exists('config')) {
     /**
      * Get Application Configuration.
      *
-     * @return System\Collection\CollectionImmutable Configs
+     * @return System\Collection\CollectionImmutable<string, mixed>
      */
     function config()
     {
         return new System\Collection\CollectionImmutable(app()->get('config'));
+    }
+}
+
+if (!function_exists('view')) {
+    /**
+     * Render with costume template engine, wrap in `Route\Controller`.
+     *
+     * @param array<string, mixed> $data
+     * @param array<string, mixed> $option
+     */
+    function view(string $view_path, array $data = [], array $option = []): System\Http\Response
+    {
+        /** @var System\Http\Response */
+        $view        = app()->get('view.response');
+        $status_code = $option['status'] ?? 200;
+        $headers     = $option['header'] ?? [];
+
+        return $view($view_path, $data)
+            ->setResponeCode($status_code)
+            ->setHeaders($headers);
+    }
+}
+
+if (!function_exists('vite')) {
+    /**
+     * Get resource using entri ponit(s).
+     *
+     * @param string $entry_ponits
+     *
+     * @return array<string, string>|string
+     */
+    function vite(...$entry_ponits)
+    {
+        /** @var System\Integrate\Vite */
+        $vite = app()->get('vite.gets');
+
+        return $vite(...$entry_ponits);
     }
 }

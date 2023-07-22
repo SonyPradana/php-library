@@ -6,7 +6,9 @@ namespace System\Router;
 
 class RouteGroup
 {
+    /** @var callable */
     private $setup;
+    /** @var callable */
     private $cleanup;
 
     public function __construct(\Closure $setup, \Closure $cleanup)
@@ -15,7 +17,7 @@ class RouteGroup
         $this->cleanup = $cleanup;
     }
 
-    public function group(\Closure $callback)
+    public function group(\Closure $callback): mixed
     {
         call_user_func($this->setup);
         $result = call_user_func($callback);

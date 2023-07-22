@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Template;
 
 use System\Template\Traits\CommentTrait;
@@ -10,14 +12,15 @@ class Property
     use FormatterTrait;
     use CommentTrait;
 
-    private $is_static      = false;
-    private $visibility     = self::PRIVATE_;
-    public const PUBLIC_    = 0;
-    public const PRIVATE_   = 1;
-    public const PROTECTED_ = 2;
+    private bool $is_static      = false;
+    private int $visibility      = self::PRIVATE_;
+    public const PUBLIC_         = 0;
+    public const PRIVATE_        = 1;
+    public const PROTECTED_      = 2;
 
-    private $data_type;
-    private $name;
+    private string $data_type;
+    private string $name;
+    /** @var string[] */
     private $expecting;
 
     public function __construct(string $name)
@@ -30,7 +33,7 @@ class Property
         return $this->generate();
     }
 
-    public static function new(string $name)
+    public static function new(string $name): self
     {
         return new self($name);
     }
@@ -77,7 +80,7 @@ class Property
 
         // generate value or expecting
         $expecting = '';
-        if ($this->expecting != null) {
+        if ($this->expecting !== null) {
             $single_line  = $this->expecting[0] ?? '';
             $multy_line   = implode(
                 "\n" . $tab_dept(1),
@@ -97,28 +100,28 @@ class Property
     }
 
     // setter
-    public function setStatic(bool $is_static = true)
+    public function setStatic(bool $is_static = true): self
     {
         $this->is_static = $is_static;
 
         return $this;
     }
 
-    public function visibility(int $visibility = self::PUBLIC_)
+    public function visibility(int $visibility = self::PUBLIC_): self
     {
         $this->visibility = $visibility;
 
         return $this;
     }
 
-    public function dataType(string $data_type)
+    public function dataType(string $data_type): self
     {
         $this->data_type = $data_type . ' ';
 
         return $this;
     }
 
-    public function name(string $name)
+    public function name(string $name): self
     {
         $this->name = $name;
 
@@ -126,13 +129,13 @@ class Property
     }
 
     /**
-     * @param string|array $expecting Add expecting as string or array for multy line
+     * @param string|string[] $expecting Add expecting as string or array for multy line
      */
-    public function expecting($expecting)
+    public function expecting($expecting): self
     {
         $this->expecting = is_array($expecting)
-      ? $expecting
-      : [$expecting];
+            ? $expecting
+            : [$expecting];
 
         return $this;
     }

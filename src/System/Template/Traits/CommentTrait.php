@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Template\Traits;
 
 /**
@@ -7,21 +9,22 @@ namespace System\Template\Traits;
  */
 trait CommentTrait
 {
+    /** @var string[] */
     private $comments = [];
 
-    public function addComment(?string $comment)
+    public function addComment(?string $comment): self
     {
         $this->comments[] = $comment ?? '';
 
         return $this;
     }
 
-    public function addLineComment()
+    public function addLineComment(): self
     {
         return $this->addComment(null);
     }
 
-    public function addParamComment(string $datatype, string $name, string $description)
+    public function addParamComment(string $datatype, string $name, string $description): self
     {
         $name        = $name == '' ? $name : ' ' . $name;
         $description = $description == '' ? $description : ' ' . $description;
@@ -31,7 +34,7 @@ trait CommentTrait
         return $this;
     }
 
-    public function addVaribaleComment(string $datatype, string $name = '')
+    public function addVaribaleComment(string $datatype, string $name = ''): self
     {
         $name = $name == '' ? $name : ' ' . $name;
 
@@ -40,7 +43,7 @@ trait CommentTrait
         return $this;
     }
 
-    public function addReturnComment(string $datatype, string $name = '', string $description = '')
+    public function addReturnComment(string $datatype, string $name = '', string $description = ''): self
     {
         $name        = $name == '' ? $name : ' ' . $name;
         $description = $description == '' ? $description : ' ' . $description;

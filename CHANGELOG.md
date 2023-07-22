@@ -5,9 +5,74 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.20.0] - 2023-06-30
+### Added
+- Added `Collection::reduse()` method.
+- Added `Str::after()` finder and get text after some text.
+- Added `public_path()` to get public path.
+- Added `Vite::class` to access vite manifest (FE).
+- Added `Style::rawReset()`, `Style::resetDecorate()` to change style reset rule.
+- Added `Collection::firstKey()`, `Collection::lastKey()`, `Collection::firsts()`, `Collection::lasts` and `Collection::take` to get kay first and last in collection.
+- Added `Style::yield()` to print output and continue write style.
+- Added database alter table (modify database table) (#181).
+- Added `Route::has()` to check route name exist or not.
+
+### Changed
+- Make Schedule logging with interface schedule instead of creating custom class (extends).
+
+## [0.19.0] - 2023-05-12
+### Changed
+- Refactor the http kernel to handle middleware in a way that allows for short-circuiting and early return of a response.
+- Refactor console karnel, with new pipeline provide by library.
+- Refactor `Collection::___clone()` cloning collection using deep cloning array.
+
+### Added
+- Added a new method called Request::duplicate, which allows for modification of an incoming request by creating a duplicate request object.
+- Added new method `Response::getStatusCode` and `Response::getContent` to provide information usefull for testing or middleware during handle.
+- Added global function to find in array by using dot keys `data_get()`.
+- Added global function to render template as response `view()`.
+- Added a new method called Collection::assocBy(), which allows for modifying an item in an array with a new item that includes a new key.
+
+## [0.18.0] - 2023-04-13
+### Added
+- Added support encrypt decrypt plain text.
+- Added new html/php template engine `Templator::class`.
+- Added support command prompt inputs.
+
+### Changed
+- Generic type Collection.
+
+### Fixed
+-  Update `ColorVariant` Colors Varian.
+
+## [0.17.0] - 2023-02-14
+### Added
+- Added `Now::class` formated standart date.
+- Added `ValidationCommandTrait::trait`, validation command input with display error in console.
+- Added `Appcliaction::migration_path`.
+- Added Command Prompt class to interact with console input `select`, `option`, `text`.
+
+### Changed
+- `Now::class` support costume timezone.
+- `Command::option_maper` parse include minus sign `-` in parameter key.
+- `Command:class` implement array access, get parse agrv using command.
+- Property `Command::name` change to `Command::_`.
+
+### [0.16.0] - 2023-01-21
+### Added
+- Added `\System\Database\MySchema\Create::class`, `\System\Database\MySchema\Drop::class`, `\System\Database\MySchema\Truncate::class` to crate/drop database or table. Or using shorthand 'MySchema::class`.
+
+### [0.15.0] - 2023-01-10
+### Added
+- Added `Query::queryBind()` method to return query string with the bind's.
+- Added support `Query::class` limit using `offet`.
+- Added `Collection::shuffle()`, `Collection::rand()`, `Collection::current()`, `Collection::next()` and `Collection::prev()`.
+
+### Fixed
+- Fixed concat between join and where condition in query builder.
+- Fixed return query bind boolean return as boolean.
 
 ### [0.14.0] - 2022-12-24
-### Fixed
 - Allowed schadule logging event job execute has error (#90).
 - Fixed query limit less that 0 (#91).
 

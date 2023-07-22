@@ -56,17 +56,13 @@ final class Select extends Fetch
     }
 
     /**
-     * Membuat join table
+     * Join statment:
      *  - inner join
      *  - left join
      *  - right join
      *  - full join.
-     *
-     * @param AbstractJoin $ref_table Configure type of join
-     *
-     * @return self
      */
-    public function join(AbstractJoin $ref_table)
+    public function join(AbstractJoin $ref_table): self
     {
         // overide master table
         $ref_table->table($this->_table);
@@ -76,7 +72,13 @@ final class Select extends Fetch
         return $this;
     }
 
-    // sort, order, grouping
+    private function joinBuilder(): string
+    {
+        return 0 === count($this->_join)
+            ? ''
+            : implode(' ', $this->_join)
+        ;
+    }
 
     /**
      * Set data start for feact all data.
@@ -124,6 +126,31 @@ final class Select extends Fetch
     }
 
     /**
+     * Set offest.
+     *
+     * @param int $value offet
+     *
+     * @return self
+     */
+    public function offset(int $value)
+    {
+        $this->_offset = $value < 0 ? 0 : $value;
+
+        return $this;
+    }
+
+    /**
+     * Set limit using limit and offset.
+     */
+    public function limitOffset(int $limit, int $offset): self
+    {
+        return $this
+            ->limitStart($limit)
+            ->limitEnd(0)
+            ->offset($offset);
+    }
+
+    /**
      * Set sort column and order
      * column name must register.
      *
@@ -139,54 +166,39 @@ final class Select extends Fetch
     }
 
     /**
-     * Setter strict mode.
-     *
-     * True = operator using AND,
-     * False = operator using OR
-     *
-     * @param bool $value True where statment operation using AND
-     *
-     * @return self
-     */
-    public function strictMode(bool $value)
-    {
-        $this->_strict_mode = $value;
-
-        return $this;
-    }
-
-    /**
      * Build SQL query syntac for bind in next step.
      */
     protected function builder(): string
     {
         $column = implode(', ', $this->_column);
 
-        // join
-        $join = count($this->_join) == 0
-            ? ''
-            : implode(' ', $this->_join);
+        $build = [];
 
-        // where
-        $where  = $this->getWhere();
-        $where  = $where == '' && count($this->_join) > 0
-            ? ''
-            : $where;
+        $build['join']       = $this->joinBuilder();
+        $build['where']      = $this->getWhere();
+        $build['sort_order'] = $this->_sort_order;
+        $build['limit']      = $this->getLimit();
 
-        // sort order
-        $sort_order = $this->_sort_order == ''
-            ? ''
-            : " $this->_sort_order";
-
-        // limit
-        $limit = $this->_limit_end > 0 ? " LIMIT $this->_limit_end" : '';
-        $limit = $this->_limit_start > 0
-            ? " LIMIT $this->_limit_start, $this->_limit_end"
-            : $limit
-        ;
-
-        $condition = $join . $where . $sort_order . $limit;
+        $condition = implode(' ', array_filter($build, fn ($item) => $item !== ''));
 
         return $this->_query = "SELECT $column FROM `$this->_table` $condition";
+    }
+
+    /**
+     * Get formated combine limit and offset.
+     */
+    private function getLimit(): string
+    {
+        $limit = $this->_limit_end > 0 ? "LIMIT $this->_limit_end" : '';
+
+        if ($this->_limit_start === 0) {
+            return $limit;
+        }
+
+        if ($this->_limit_end === 0 && $this->_offset > 0) {
+            return "LIMIT $this->_limit_start OFFSET $this->_offset";
+        }
+
+        return "LIMIT $this->_limit_start, $this->_limit_end";
     }
 }

@@ -16,17 +16,19 @@ final class RouteDispatcher
 
     // callback ------------------
     /** @var callable */
-    private $found              = null;
-    private $not_found          = null;
-    private $method_not_allowed = null;
+    private $found;
+    /** @var ?callable(string): mixed */
+    private $not_found;
+    /** @var ?callable(string, string): mixed */
+    private $method_not_allowed;
 
     // setup --------------------
-    private $basepath               = '';
-    private $case_matters           = false;
-    private $trailing_slash_matters = false;
-    private $multimatch             = false;
+    private string $basepath             = '';
+    private bool $case_matters           = false;
+    private bool $trailing_slash_matters = false;
+    private bool $multimatch             = false;
 
-    /** @var array */
+    /** @var array<string, mixed> */
     private $trigger;
     /** @var Route */
     private $current;
@@ -48,7 +50,7 @@ final class RouteDispatcher
      * @param string  $method Method
      * @param Route[] $routes Array of route
      */
-    public static function dispatchFrom(string $uri, string $method, $routes)
+    public static function dispatchFrom(string $uri, string $method, $routes): self
     {
         $create_request = new Request($uri, [], [], [], [], [], [], $method);
 
@@ -130,7 +132,7 @@ final class RouteDispatcher
     /**
      * Setup action and dispatch route.
      *
-     * @return array trigger arction ['callable' => callable, 'param' => param]
+     * @return array<string, mixed> trigger arction ['callable' => callable, 'param' => param]
      */
     public function run(callable $found, callable $not_found, callable $method_not_allowed)
     {
@@ -146,13 +148,11 @@ final class RouteDispatcher
     /**
      * Catch action from callable (found, not_found, method_not_allowed).
      *
-     * @param callable       $callable   Callback
-     * @param array          $params     Callaback params
-     * @param class-string[] $middleware Array of middleware class-name
-     *
-     * @return void
+     * @param callable                   $callable   Callback
+     * @param array<int, mixed|string[]> $params     Callaback params
+     * @param class-string[]             $middleware Array of middleware class-name
      */
-    private function trigger(callable $callable, $params, $middleware = [])
+    private function trigger(callable $callable, $params, $middleware = []): void
     {
         $this->trigger = [
             'callable'      => $callable,
@@ -169,7 +169,7 @@ final class RouteDispatcher
      * @param bool   $trailing_slash_matters Trailing slash matters
      * @param bool   $multimatch             Return Multy route
      */
-    private function dispatch($basepath = '', $case_matters = false, $trailing_slash_matters = false, $multimatch = false)
+    private function dispatch($basepath = '', $case_matters = false, $trailing_slash_matters = false, $multimatch = false): void
     {
         // The basepath never needs a trailing slash
         // Because the trailing slash will be added using the route expressions

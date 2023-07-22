@@ -45,8 +45,8 @@ trait ConditionTrait
     /**
      * Insert 'where' condition in (query bulider).
      *
-     * @param string $where_condition Spesific column name
-     * @param array  $binder          Bind and value (use for 'in')
+     * @param string            $where_condition Spesific column name
+     * @param array<int, mixed> $binder          Bind and value (use for 'in')
      *
      * @return self
      */
@@ -164,6 +164,19 @@ trait ConditionTrait
             'comparation' => $comparation,
             $bindValue,
         ];
+
+        return $this;
+    }
+
+    /**
+     * Setter strict mode.
+     *
+     * True = operator using AND,
+     * False = operator using OR
+     */
+    public function strictMode(bool $strict): self
+    {
+        $this->_strict_mode = $strict;
 
         return $this;
     }

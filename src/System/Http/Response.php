@@ -155,7 +155,7 @@ class Response
      *
      * @return void
      */
-    private function sendContent()
+    protected function sendContent()
     {
         echo is_array($this->content)
             ? json_encode($this->content, JSON_NUMERIC_CHECK)
@@ -198,8 +198,21 @@ class Response
 
         if (\function_exists('fastcgi_finish_request')) {
             fastcgi_finish_request();
-        } elseif (!\in_array(\PHP_SAPI, ['cli', 'phpdbg'], true)) {
+
+            return $this;
+        }
+
+        if (\function_exists('litespeed_finish_request')) {
+            \litespeed_finish_request();
+
+            return $this;
+        }
+
+        if (!\in_array(\PHP_SAPI, ['cli', 'phpdbg'], true)) {
             static::closeOutputBuffers(0, true);
+            flush();
+
+            return $this;
         }
 
         return $this;
@@ -367,7 +380,7 @@ class Response
      *
      * @return self
      */
-    public function header(string $header, ?string $value = null)
+    public function header(string $header, string $value = null)
     {
         $header_name = $header;
         $header_val  = $value;
@@ -389,6 +402,19 @@ class Response
     public function getHeaders()
     {
         return $this->headers;
+    }
+
+    public function getStatusCode(): int
+    {
+        return $this->respone_code;
+    }
+
+    /**
+     * @return string|array<mixed, mixed>
+     */
+    public function getContent()
+    {
+        return $this->content;
     }
 
     /**

@@ -186,6 +186,19 @@ final class Str
         return mb_strtoupper($text);
     }
 
+    /**
+     * Get string after find text find.
+     */
+    public static function after(string $text, string $find): string
+    {
+        $length = strlen($find);
+        if (false === ($pos = static::indexOf($text, $find))) {
+            return $text;
+        }
+
+        return mb_substr($text, $pos + $length);
+    }
+
     // additional ------------------------------
 
     /**
@@ -437,6 +450,7 @@ final class Str
         $start--;
         $arr_text = \preg_split('//', $text, -1, PREG_SPLIT_NO_EMPTY);
         $new      = new Collection($arr_text);
+        /* @phpstan-ignore-next-line */
         $new_text = $new->map(function ($string, $index) use ($mask, $start, $end) {
             if ($index > $start && $index < $end) {
                 return $mask;

@@ -2,15 +2,29 @@
 
 namespace System\Collection;
 
+/**
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @extends AbstractCollectionImmutable<TKey, TValue>
+ */
 class Collection extends AbstractCollectionImmutable
 {
-    public function __set($name, $value)
+    /**
+     * @param TKey   $name
+     * @param TValue $value
+     */
+    public function __set($name, $value): void
     {
-        return $this->set($name, $value);
+        $this->set($name, $value);
     }
 
     /**
      * Add reference from collection.
+     *
+     * @param AbstractCollectionImmutable<TKey, TValue> $collection
+     *
+     * @return $this
      */
     public function ref(AbstractCollectionImmutable $collection): self
     {
@@ -19,23 +33,36 @@ class Collection extends AbstractCollectionImmutable
         return $this;
     }
 
-    public function clear()
+    /**
+     * @return $this
+     */
+    public function clear(): self
     {
         $this->collection = [];
 
         return $this;
     }
 
-    public function add(array $params)
+    /**
+     * @param array<TKey, TValue> $collection
+     *
+     * @return $this
+     */
+    public function add(array $collection): self
     {
-        foreach ($params as $key => $item) {
+        foreach ($collection as $key => $item) {
             $this->set($key, $item);
         }
 
         return $this;
     }
 
-    public function remove(string $name)
+    /**
+     * @param TKey $name
+     *
+     * @return $this
+     */
+    public function remove($name): self
     {
         if ($this->has($name)) {
             unset($this->collection[$name]);
@@ -44,14 +71,25 @@ class Collection extends AbstractCollectionImmutable
         return $this;
     }
 
-    public function set(string $name, $value)
+    /**
+     * @param TKey   $name
+     * @param TValue $value
+     *
+     * @return $this
+     */
+    public function set($name, $value): self
     {
         parent::set($name, $value);
 
         return $this;
     }
 
-    public function replace(array $new_collection)
+    /**
+     * @param array<TKey, TValue> $new_collection
+     *
+     * @return $this
+     */
+    public function replace(array $new_collection): self
     {
         $this->collection = [];
         foreach ($new_collection as $key => $item) {
@@ -61,7 +99,12 @@ class Collection extends AbstractCollectionImmutable
         return $this;
     }
 
-    public function map(callable $callable)
+    /**
+     * @param callable(TValue, TKey=): TValue $callable
+     *
+     * @return $this
+     */
+    public function map(callable $callable): self
     {
         if (!is_callable($callable)) {
             return $this;
@@ -77,7 +120,12 @@ class Collection extends AbstractCollectionImmutable
         return $this;
     }
 
-    public function filter(callable $condition_true)
+    /**
+     * @param callable(TValue, TKey=): bool $condition_true
+     *
+     * @return $this
+     */
+    public function filter(callable $condition_true): self
     {
         if (!is_callable($condition_true)) {
             return $this;
@@ -85,8 +133,7 @@ class Collection extends AbstractCollectionImmutable
 
         $new_collection = [];
         foreach ($this->collection as $key => $item) {
-            $call      = call_user_func($condition_true, $item, $key);
-            $condition = is_bool($call) ? $call : false;
+            $condition = $condition_true($item, $key);
 
             if ($condition === true) {
                 $new_collection[$key] = $item;
@@ -98,7 +145,12 @@ class Collection extends AbstractCollectionImmutable
         return $this;
     }
 
-    public function reject(callable $condition_true)
+    /**
+     * @param callable(TValue, TKey=): bool $condition_true
+     *
+     * @return $this
+     */
+    public function reject(callable $condition_true): self
     {
         if (!is_callable($condition_true)) {
             return $this;
@@ -106,8 +158,7 @@ class Collection extends AbstractCollectionImmutable
 
         $new_collection = [];
         foreach ($this->collection as $key => $item) {
-            $call      = call_user_func($condition_true, $item, $key);
-            $condition = is_bool($call) ? $call : false;
+            $condition = $condition_true($item, $key);
 
             if ($condition === false) {
                 $new_collection[$key] = $item;
@@ -119,56 +170,83 @@ class Collection extends AbstractCollectionImmutable
         return $this;
     }
 
-    public function reverse()
+    /**
+     * @return $this
+     */
+    public function reverse(): self
     {
         return $this->replace(array_reverse($this->collection));
     }
 
-    public function sort()
+    /**
+     * @return $this
+     */
+    public function sort(): self
     {
         asort($this->collection);
 
         return $this;
     }
 
-    public function sortDesc()
+    /**
+     * @return $this
+     */
+    public function sortDesc(): self
     {
         arsort($this->collection);
 
         return $this;
     }
 
-    public function sortBy(callable $callable)
+    /**
+     * @return $this
+     */
+    public function sortBy(callable $callable): self
     {
         uasort($this->collection, $callable);
 
         return $this;
     }
 
-    public function sortByDecs(callable $callable)
+    /**
+     * @return $this
+     */
+    public function sortByDecs(callable $callable): self
     {
         return $this->sortBy($callable)->reverse();
     }
 
-    public function sortKey()
+    /**
+     * @return $this
+     */
+    public function sortKey(): self
     {
         ksort($this->collection);
 
         return $this;
     }
 
-    public function sortKeyDesc()
+    /**
+     * @return $this
+     */
+    public function sortKeyDesc(): self
     {
         krsort($this->collection);
 
         return $this;
     }
 
-    public function clone()
+    /**
+     * @return Collection<TKey, TValue>
+     */
+    public function clone(): Collection
     {
-        return new Collection($this->collection);
+        return clone $this;
     }
 
+    /**
+     * @return $this
+     */
     public function chunk(int $lenght, bool $preserve_keys = true): self
     {
         $this->collection = array_chunk($this->collection, $lenght, $preserve_keys);
@@ -176,6 +254,9 @@ class Collection extends AbstractCollectionImmutable
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     public function split(int $count, bool $preserve_keys = true): self
     {
         $lenght = (int) ceil($this->lenght() / $count);
@@ -183,20 +264,37 @@ class Collection extends AbstractCollectionImmutable
         return $this->chunk($lenght);
     }
 
-    public function except(array $excepts)
+    /**
+     * @param TKey[] $excepts
+     *
+     * @return $this
+     */
+    public function except(array $excepts): self
     {
+        /* @phpstan-ignore-next-line */
         $this->filter(fn ($item, $key) => !in_array($key, $excepts));
 
         return $this;
     }
 
-    public function only(array $only)
+    /**
+     * @param TKey[] $only
+     *
+     * @return $this
+     */
+    public function only(array $only): self
     {
+        /* @phpstan-ignore-next-line */
         $this->filter(fn ($item, $key) => in_array($key, $only));
 
         return $this;
     }
 
+    /**
+     * @param int|float $depth
+     *
+     * @return $this
+     */
     public function flatten($depth = INF): self
     {
         $flatten = $this->flatten_recursing($this->collection, $depth);
@@ -205,6 +303,12 @@ class Collection extends AbstractCollectionImmutable
         return $this;
     }
 
+    /**
+     * @param array<TKey, TValue> $array
+     * @param int|float           $depth
+     *
+     * @return array<TKey, TValue>
+     */
     private function flatten_recursing(array $array, $depth = INF): array
     {
         $result = [];
@@ -216,8 +320,8 @@ class Collection extends AbstractCollectionImmutable
                 $result[$key] = $item;
             } else {
                 $values = $depth === 1
-          ? array_values($item)
-          : $this->flatten_recursing($item, $depth - 1);
+                    ? array_values($item)
+                    : $this->flatten_recursing($item, $depth - 1);
 
                 foreach ($values as $key_dept => $value) {
                     $result[$key_dept] = $value;
@@ -228,33 +332,91 @@ class Collection extends AbstractCollectionImmutable
         return $result;
     }
 
+    /**
+     * @return CollectionImmutable<TKey, TValue>
+     */
     public function immutable(): CollectionImmutable
     {
         return new CollectionImmutable($this->collection);
     }
 
-   public function offsetExists($offset): bool
-   {
-       return $this->has($offset);
-   }
-
-    public function offsetGet($offset)
-    {
-        return $this->__get($offset);
-    }
-
-    public function offsetSet($offset, $value): void
-    {
-        $this->set($offset, $value);
-    }
-
+    /**
+     * {@inheritdoc}
+     */
     public function offsetUnset($offset): void
     {
         $this->remove($offset);
     }
 
-    public function getIterator(): \Traversable
+    /**
+     * @return $this
+     */
+    public function shuffle(): self
     {
-        return new \ArrayIterator($this->all());
+        $items = $this->collection;
+        $keys  = $this->keys();
+        shuffle($keys);
+        $reordered = [];
+        foreach ($keys as $key) {
+            $reordered[$key] = $items[$key];
+        }
+
+        return $this->replace($reordered);
+    }
+
+    /**
+     * Convert array, key and value from item (also key).
+     *
+     * @template TKeyItem of array-key
+     * @template TValueItem
+     *
+     * @param callable(TValue, TKey=): array<TKeyItem, TValueItem> $callable With single key/value pair per element
+     *
+     * @return $this
+     */
+    public function assocBy(callable $callable): self
+    {
+        /** @var array<TKeyItem, TValueItem> */
+        $new_collection = [];
+        foreach ($this->collection as $key => $item) {
+            $array_assoc          = $callable($item, $key);
+            $key                  = array_key_first($array_assoc);
+            $new_collection[$key] = $array_assoc[$key];
+        }
+
+        return $this->replace($new_collection);
+    }
+
+    /**
+     * Reduce items.
+     *
+     * @param callable(TValue, TValue): TValue $callable
+     * @param TValue|null                      $carry
+     *
+     * @return TValue|null
+     */
+    public function reduse(callable $callable, $carry = null)
+    {
+        foreach ($this->collection as $item) {
+            $carry = $callable($carry, $item);
+        }
+
+        return $carry;
+    }
+
+    /**
+     * @return $this
+     */
+    public function take(int $limit): self
+    {
+        if ($limit < 0) {
+            return $this->replace(
+                array_slice($this->collection, $limit, abs($limit))
+            );
+        }
+
+        return $this->replace(
+            array_slice($this->collection, 0, $limit)
+        );
     }
 }

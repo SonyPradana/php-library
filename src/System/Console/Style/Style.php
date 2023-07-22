@@ -323,6 +323,21 @@ class Style
     }
 
     /**
+     * Print to terminal and continue.
+     *
+     * @return self
+     */
+    public function yield()
+    {
+        echo $this;
+        $this->text   = '';
+        $this->length = 0;
+        $this->flush();
+
+        return $this;
+    }
+
+    /**
      * Print terminal style.
      *
      * @return void
@@ -333,6 +348,18 @@ class Style
     }
 
     // style ------------------------------------------
+
+    /**
+     * Reset all attributes (set reset decorate to be 0).
+     *
+     * @return self
+     */
+    public function resetDecorate()
+    {
+        $this->reset_rules = [Decorate::RESET];
+
+        return $this;
+    }
 
     /**
      * Text decorate bold.
@@ -421,6 +448,18 @@ class Style
         }
 
         $this->raw_rules[] = [$raw];
+
+        return $this;
+    }
+
+    /**
+     * @param int[] $reset rules reset
+     *
+     * @return self
+     */
+    public function rawReset($reset)
+    {
+        $this->reset_rules = $reset;
 
         return $this;
     }

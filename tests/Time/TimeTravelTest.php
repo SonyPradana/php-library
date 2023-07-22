@@ -189,8 +189,8 @@ final class TimeTravelTest extends TestCase
         $now->year = 2022;
         $this->assertEquals(2022, $now->year);
 
-        $now->month = 6;
-        $this->assertEquals(6, $now->month);
+        $now->month = 1;
+        $this->assertEquals(1, $now->month);
 
         $now->day = 11;
         $this->assertEquals(11, $now->day);
@@ -204,9 +204,9 @@ final class TimeTravelTest extends TestCase
         $now->second = 0;
         $this->assertEquals(0, $now->second);
 
-        $this->assertEquals('June', $now->monthName);
-        $this->assertEquals('Saturday', $now->dayName);
-        $this->assertEquals('Sat', $now->shortDay);
+        $this->assertEquals('January', $now->monthName);
+        $this->assertEquals('Tuesday', $now->dayName);
+        $this->assertEquals('Tue', $now->shortDay);
         $this->assertEquals('Asia/Jakarta', $now->timeZone);
 
         $this->lessThan($now->age);
@@ -240,5 +240,21 @@ final class TimeTravelTest extends TestCase
 
         $this->expectException(PropertyNotExist::class);
         $now->not_exist_property;
+    }
+
+    /** @test */
+    public function itCanReturnFormatedTime()
+    {
+        $now = new Now('29-01-2023');
+
+        $this->assertEquals('2023-01-29', $now->format('Y-m-d'));
+    }
+
+    /** @test */
+    public function itCanReturnFormatedTimeWithStandartTime()
+    {
+        $now = new Now('29-01-2023', 'UTC');
+
+        $this->assertEquals('Sunday, 29-Jan-2023 00:00:00 UTC', $now->formatCOOKIE());
     }
 }

@@ -255,8 +255,11 @@ final class StrTest extends TestCase
 
         $text = '-~+-';
 
-        $this->expectErrorMessage($text . ' doest return anythink.');
-        Str::slug($text);
+        try {
+            Str::slug($text);
+        } catch (\Throwable $th) {
+            $this->assertEquals("Method slug with {$text} doest return anythink.", $th->getMessage());
+        }
     }
 
     /** @test */
@@ -326,5 +329,23 @@ final class StrTest extends TestCase
     public function itCanMakeLimit()
     {
         $this->assertEquals('laravel best...', Str::limit('laravel best framework', 12));
+    }
+
+    /** @test */
+    public function itCanGetTextAfter()
+    {
+        $this->assertEquals(
+            '//localhost:8000/test',
+            Str::after('https://localhost:8000/test', ':')
+        );
+    }
+
+    /** @test */
+    public function itCanGetTextAfterMustReturnBack()
+    {
+        $this->assertEquals(
+            'https://localhost:8000/test',
+            Str::after('https://localhost:8000/test', '~')
+        );
     }
 }

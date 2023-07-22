@@ -38,49 +38,48 @@ class Karnel
      */
     public function handle(Request $request)
     {
-        return new Response();
+        $this->app->set(Request::class, $request);
+
+        $dispatcher = $this->dispatcher($request);
+
+        $pipeline = array_reduce(
+            array_merge($this->middleware, $dispatcher['middleware']),
+            fn ($next, $middleware) => fn ($req) => $this->app->call([$middleware, 'handle'], ['request' => $req, 'next' => $next]),
+            fn () => $this->responesType($dispatcher['callable'], $dispatcher['parameters'])
+        );
+
+        return $pipeline($request);
     }
 
     /**
-     * Handle middleware class.
+     * @param callable|mixed[]|string $callable   function to call
+     * @param mixed[]                 $parameters parameters to use
      *
-     * @param array<int, class-string> $middlewares Middleware array class-name
-     *
-     * @return self
+     * @throws \Exception
      */
-    protected function handle_middleware($middlewares)
+    private function responesType($callable, $parameters): Response
     {
-        foreach ($middlewares as $middleware) {
-            // prevent duplicate middleware and not handle-able
-            if (in_array($middleware, $this->middleware_used)
-            && !method_exists($middleware, 'handle')) {
-                continue;
-            }
-
-            $this->app->call([$middleware, 'handle']);
-            $this->middleware_used[] = $middleware;
+        $content = $this->app->call($callable, $parameters);
+        if ($content instanceof Response) {
+            return $content;
         }
 
-        return $this;
+        if (is_string($content)) {
+            return new Response($content);
+        }
+
+        if (is_array($content)) {
+            return new Response($content);
+        }
+
+        throw new \Exception('Content must return as respone|string|array');
     }
 
     /**
-     * Handle middleware and execute callback.
-     *
-     * @param callable                  $callable   Callable
-     * @param array<int|string, string> $params     Parameter to use
-     * @param array<int, class-string>  $middleware Middleware array class-name
-     *
-     * @return mixed Callavle result
+     * @return array<string, mixed>
      */
-    protected function call_middleware($callable, $params = [], $middleware = [])
+    protected function dispatcher(Request $request): array
     {
-        // global middleware
-        $this->handle_middleware($this->middleware);
-
-        // user middleware
-        $this->handle_middleware($middleware);
-
-        return $this->app->call($callable, $params);
+        return ['callable' => new Response(), 'parameters' => [], 'middleware'];
     }
 }

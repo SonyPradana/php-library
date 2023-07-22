@@ -10,9 +10,12 @@ class Schedule
     /** @var ScheduleTime[] */
     protected array $pools = [];
 
-    public function __construct(int $time = null)
+    private ?InterpolateInterface $logger;
+
+    public function __construct(int $time, InterpolateInterface $logger)
     {
-        $this->time = $time ?? time();
+        $this->time   = $time;
+        $this->logger = $logger;
     }
 
     /**
@@ -36,6 +39,7 @@ class Schedule
     public function execute(): void
     {
         foreach ($this->pools as $cron) {
+            $cron->setLogger($this->logger);
             do {
                 $cron->exect();
             } while ($cron->retryAtempts() > 0);
@@ -44,5 +48,10 @@ class Schedule
                 $cron->exect();
             }
         }
+    }
+
+    public function setLogger(InterpolateInterface $logger): void
+    {
+        $this->logger = $logger;
     }
 }

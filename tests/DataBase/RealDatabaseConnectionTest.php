@@ -5,27 +5,34 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use System\Database\MyPDO;
 use System\Database\MyQuery;
+use System\Database\MySchema;
 
+use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertTrue;
 
 abstract class RealDatabaseConnectionTest extends TestCase
 {
     private $env;
     protected MyPDO $pdo;
+    protected MySchema\MyPDO $pdo_schema;
+    protected MySchema $schema;
 
     protected function setUp(): void
     {
         $this->env = [
-            'host'           => 'localhost',
+            'host'           => '127.0.0.1',
             'user'           => 'root',
             'password'       => '',
             'database_name'  => 'testing_db',
         ];
 
-        $this->schema()->query('DROP DATABASE IF EXISTS testing_db;')->execute();
-        $this->schema()->query('CREATE DATABASE IF NOT EXISTS testing_db;')->execute();
+        $this->pdo_schema = new MySchema\MyPDO($this->env);
+        $this->schema     = new MySchema($this->pdo_schema);
 
-        $this->pdo = new MyPDO($this->env);
+        // building the database
+        $this->schema->create()->database('testing_db')->ifNotExists()->execute();
+
+        $this->pdo        = new MyPDO($this->env);
 
         // factory
         $this->pdo
@@ -55,16 +62,7 @@ abstract class RealDatabaseConnectionTest extends TestCase
 
     protected function tearDown(): void
     {
-        $this->schema()->query('DROP DATABASE IF EXISTS testing_db;')->execute();
-    }
-
-    private function schema()
-    {
-        $host = $this->env['host'];
-        $user = $this->env['user'];
-        $pass = $this->env['password'];
-
-        return new PDO("mysql:host=$host;charset=utf8mb4", $user, $pass);
+        $this->schema->drop()->database('testing_db')->ifExists()->execute();
     }
 
     // assert
@@ -97,5 +95,12 @@ abstract class RealDatabaseConnectionTest extends TestCase
             ->all();
 
         $this->assertEquals($expect, (int) $data[0]['stat']);
+    }
+
+    protected function assertDbExists(string $database_name)
+    {
+        $a = $this->pdo_schema->query('SHOW DATABASES LIKE ' . $database_name)->resultset();
+
+        assertCount(1, $a);
     }
 }

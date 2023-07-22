@@ -178,18 +178,21 @@ final class StyleTest extends TestCase
     {
         $text = (new Style('text'))->text_red_500();
 
-        $this->assertEquals(sprintf('%s[38;2;244;67;54;49mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
+        $this->assertEquals(sprintf('%s[38;2;239;68;68;49mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
 
         $text = (new Style('text'))->bg_blue_500();
 
-        $this->assertEquals(sprintf('%s[39;48;2;33;150;243mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
+        $this->assertEquals(sprintf('%s[39;48;2;59;130;246mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
     }
 
     /** @test */
     public function itCanThrowExceptionWhenColorVariantNotRegister()
     {
-        $this->expectError();
-        (new Style('text'))->text_red_10();
+        try {
+            (new Style('text'))->text_red_10();
+        } catch (\Throwable $th) {
+            $this->assertEquals('Undefined constant self::RED_10', $th->getMessage());
+        }
     }
 
     /** @test */
@@ -236,5 +239,80 @@ final class StyleTest extends TestCase
             sprintf('%s[34;49mtext%s[0m%s[31;49mtext2%s[0m', chr(27), chr(27), chr(27), chr(27)),
             $text
         );
+    }
+
+    /** @test */
+    public function itCanRenderAndResetDecorate()
+    {
+        $cmd  = new Style('text');
+        $text = $cmd->textBlue()->resetDecorate();
+
+        $this->assertEquals(sprintf('%s[34;49mtext%s[0m', chr(27), chr(27)), $text, 'text must return blue text terminal code');
+    }
+
+    /** @test */
+    public function itCanRenderAndResetDecorateUsingRawReset()
+    {
+        $cmd  = new Style('text');
+        $text = $cmd->textBlue()->rawReset([0, 22]);
+
+        $this->assertEquals(sprintf('%s[34;49mtext%s[0;22m', chr(27), chr(27)), $text, 'text must return blue text terminal code');
+    }
+
+    /** @test */
+    public function itCanPrintUsingYield()
+    {
+        $cmd = new Style('text');
+
+        ob_start();
+        $cmd('i')
+            ->textDim()
+            ->push('love')
+            ->textRed()
+            ->push('php')
+            ->textBlue()
+            ->yield();
+        $text = ob_get_clean();
+
+        $this->assertEquals(sprintf('%s[2;49mi%s[0m%s[31;49mlove%s[0m%s[34;49mphp%s[0m', chr(27), chr(27), chr(27), chr(27), chr(27), chr(27)), $text, 'text must return blue text terminal code');
+    }
+
+    /** @test */
+    public function itCanPrintUsingYieldAndContinue()
+    {
+        $cmd = new Style('text');
+
+        ob_start();
+        $cmd('i')
+            ->textDim()
+            ->push('love')
+            ->textRed()
+            ->yield()
+            ->push('php')
+            ->textBlue()
+        ;
+        $text = ob_get_clean();
+
+        $this->assertEquals(sprintf('%s[2;49mi%s[0m%s[31;49mlove%s[0m', chr(27), chr(27), chr(27), chr(27)), $text, 'text must return blue text terminal code');
+    }
+
+    /** @test */
+    public function itCanPrintUsingYieldContinueAndOut()
+    {
+        $cmd = new Style('text');
+
+        ob_start();
+        $cmd('i')
+            ->textDim()
+            ->push('love')
+            ->textRed()
+            ->yield()
+            ->push('php')
+            ->textBlue()
+            ->out(false)
+        ;
+        $text = ob_get_clean();
+
+        $this->assertEquals(sprintf('%s[2;49mi%s[0m%s[31;49mlove%s[0m%s[34;49mphp%s[0m', chr(27), chr(27), chr(27), chr(27), chr(27), chr(27)), $text, 'text must return blue text terminal code');
     }
 }
