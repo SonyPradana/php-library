@@ -64,6 +64,18 @@ class Router
     }
 
     /**
+     *  Remove router using router name.
+     */
+    public static function removeRoutes(string $route_name): void
+    {
+        foreach (self::$routes as $name => $route) {
+            if ($route['name'] === $route_name) {
+                unset(self::$routes[$name]);
+            }
+        }
+    }
+
+    /**
      * Merge router array from other router array.
      *
      * @param Route[][] $array_routes
@@ -233,10 +245,8 @@ class Router
     /**
      * @param class-string            $class_name
      * @param array<string, string[]> $setup
-     *
-     * @return void
      */
-    public static function resource(string $uri, $class_name, array $setup = [])
+    public static function resource(string $uri, $class_name, array $setup = []): ResourceControllerCollection
     {
         $resource = new ResourceController($uri, $class_name);
         if (isset($setup['only'])) {
@@ -251,6 +261,8 @@ class Router
 
             return true;
         });
+
+        return new ResourceControllerCollection($class_name);
     }
 
     /**

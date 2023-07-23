@@ -91,6 +91,19 @@ class RouteControllerTest extends TestCase
     }
 
     /** @test */
+    public function itCanRouteUsingResourceControllerWithCostumeOnlyUingChain()
+    {
+        Router::resource('/', RouteClassController::class)
+            ->only(['index']);
+
+        $res = $this->dispatcher('/', 'get');
+        $this->assertEquals('works', $res);
+
+        $res = $this->dispatcher('/', 'post');
+        $this->assertEquals('not allowed', $res);
+    }
+
+    /** @test */
     public function itCanRouteUsingResourceControllerWithCostumeExcept()
     {
         Router::resource('/', RouteClassController::class, [
@@ -117,6 +130,62 @@ class RouteControllerTest extends TestCase
 
         $res = $this->dispatcher('/12', 'delete');
         $this->assertEquals('works destroy', $res);
+    }
+
+    /** @test */
+    public function itCanRouteUsingResourceControllerWithCostumeExceptUsingChain()
+    {
+        Router::resource('/', RouteClassController::class)
+            ->except(['store']);
+
+        $res = $this->dispatcher('/', 'get');
+        $this->assertEquals('works', $res);
+
+        $res = $this->dispatcher('/', 'post');
+        $this->assertEquals('not allowed', $res);
+
+        $res = $this->dispatcher('/create', 'get');
+        $this->assertEquals('works create', $res);
+
+        $res = $this->dispatcher('/12', 'get');
+        $this->assertEquals('works show', $res);
+
+        $res = $this->dispatcher('/12/edit', 'get');
+        $this->assertEquals('works edit', $res);
+
+        $res = $this->dispatcher('/12', 'put');
+        $this->assertEquals('works update', $res);
+
+        $res = $this->dispatcher('/12', 'delete');
+        $this->assertEquals('works destroy', $res);
+    }
+
+    /** @test */
+    public function itRouteResoureHaveName()
+    {
+        Router::resource('/', RouteClassController::class);
+
+        $this->assertTrue(Router::has('RouteClassController.index'));
+        $this->assertTrue(Router::has('RouteClassController.create'));
+        $this->assertTrue(Router::has('RouteClassController.store'));
+        $this->assertTrue(Router::has('RouteClassController.show'));
+        $this->assertTrue(Router::has('RouteClassController.edit'));
+        $this->assertTrue(Router::has('RouteClassController.delete'));
+    }
+
+    /** @test */
+    public function itRouteResoureHaveNameWithPrefix()
+    {
+        Router::name('test.')->group(function () {
+            Router::resource('/', RouteClassController::class);
+        });
+
+        $this->assertTrue(Router::has('test.RouteClassController.index'));
+        $this->assertTrue(Router::has('test.RouteClassController.create'));
+        $this->assertTrue(Router::has('test.RouteClassController.store'));
+        $this->assertTrue(Router::has('test.RouteClassController.show'));
+        $this->assertTrue(Router::has('test.RouteClassController.edit'));
+        $this->assertTrue(Router::has('test.RouteClassController.delete'));
     }
 }
 
