@@ -46,4 +46,23 @@ class ResourceControllerCollection
             }
         }
     }
+
+    /**
+     * Map resource with exits route resource.
+     *
+     * @param string[] $resources
+     */
+    public function map($resources): void
+    {
+        foreach (Router::getRoutes() as $route) {
+            foreach ($resources as $key => $resource) {
+                $name = "{$this->class_name}.{$key}";
+                if ($name === $route['name']) {
+                    $route['function'][1] = $resource;
+                    Router::changeRoutes($name, $route);
+                    break;
+                }
+            }
+        }
+    }
 }

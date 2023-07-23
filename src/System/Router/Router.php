@@ -64,13 +64,28 @@ class Router
     }
 
     /**
-     *  Remove router using router name.
+     * Remove router using router name.
      */
     public static function removeRoutes(string $route_name): void
     {
         foreach (self::$routes as $name => $route) {
             if ($route['name'] === $route_name) {
                 unset(self::$routes[$name]);
+            }
+        }
+    }
+
+    /**
+     * Change exists route using router name.
+     *
+     * @param Route $new_route
+     */
+    public static function changeRoutes(string $route_name, $new_route): void
+    {
+        foreach (self::$routes as $name => $route) {
+            if ($route['name'] === $route_name) {
+                self::$routes[$name] = $new_route;
+                break;
             }
         }
     }
@@ -248,7 +263,18 @@ class Router
      */
     public static function resource(string $uri, $class_name, array $setup = []): ResourceControllerCollection
     {
-        $resource = new ResourceController($uri, $class_name);
+        $setup['map'] ??= [
+            'index'   => 'index',
+            'create'  => 'create',
+            'store'   => 'store',
+            'show'    => 'show',
+            'edit'    => 'edit',
+            'update'  => 'update',
+            'destroy' => 'destroy',
+        ];
+
+        $resource = new ResourceController($uri, $class_name, $setup['map']);
+
         if (isset($setup['only'])) {
             $resource->only($setup['only']);
         }
