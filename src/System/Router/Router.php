@@ -302,18 +302,29 @@ class Router
      */
     public static function match($method, string $uri, $callback): Route
     {
-        $uri = self::$group['prefix'] . $uri;
-        if (isset(self::$group['controller']) && is_string($callback)) {
-            $callback = [self::$group['controller'], $callback];
-        }
-        $middleware = self::$group['middleware'] ?? [];
-
-        return self::$routes[] = new Route([
+        $uri   = self::$group['prefix'] . $uri;
+        $route = [
             'method'      => $method,
             'expression'  => self::mapPatterns($uri),
             'function'    => $callback,
-            'middleware'  => $middleware,
-        ]);
+            'middleware'  => self::$group['middleware'] ?? [],
+        ];
+
+        if (is_string($callback)) {
+            if (array_key_exists('controller', self::$group)) {
+                $route['function'] = [self::$group['controller'], $callback];
+
+                return self::$routes[] = new Route($route);
+            }
+
+            if (method_exists($callback, '__invoke')) {
+                $route['function'] = [$callback, '__invoke'];
+
+                return self::$routes[] = new Route($route);
+            }
+        }
+
+        return self::$routes[] = new Route($route);
     }
 
     /**
