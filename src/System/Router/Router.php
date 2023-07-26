@@ -226,6 +226,8 @@ class Router
      */
     public static function group(array $setup_group, \Closure $group): void
     {
+        self::$group['middleware'] ??= [];
+
         // backup currect
         $reset_group = self::$group;
 
