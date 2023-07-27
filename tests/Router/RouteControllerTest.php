@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use System\Http\Request;
-use System\Router\Exceptions\MethodNotExist;
 use System\Router\RouteDispatcher;
 use System\Router\Router;
 
@@ -222,7 +221,7 @@ class RouteControllerTest extends TestCase
     /** @test */
     public function itCanModifiResoureMap()
     {
-        Router::resource('/', RouteClassController::class, [
+        Router::resource('/', EmptyRouteClassController::class, [
             'map' => ['index' => 'api'],
         ]);
         $res = $this->dispatcher('/', 'get');
@@ -232,20 +231,12 @@ class RouteControllerTest extends TestCase
     /** @test */
     public function itCanModifiResoureMapUsingChain()
     {
-        Router::resource('/', RouteClassController::class)
+        Router::resource('/', EmptyRouteClassController::class)
             ->map(['index' => 'api', 'create' => 'api_create']);
         $res = $this->dispatcher('/', 'get');
         $this->assertEquals('works api', $res);
         $res = $this->dispatcher('/create', 'get');
         $this->assertEquals('works api_create', $res);
-    }
-
-    /** @test */
-    public function itRouteThrowIfMethodNotExist()
-    {
-        $this->expectException(MethodNotExist::class);
-        Router::resource('/', RouteClassController::class, ['map' => ['index' => 'view']]);
-        $this->dispatcher('/', 'get');
     }
 }
 
@@ -285,7 +276,10 @@ class RouteClassController
     {
         echo 'works destroy';
     }
+}
 
+class EmptyRouteClassController
+{
     public function api()
     {
         echo 'works api';

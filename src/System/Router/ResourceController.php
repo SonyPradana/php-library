@@ -6,7 +6,6 @@ namespace System\Router;
 
 use System\Collection\Collection;
 use System\Collection\CollectionImmutable;
-use System\Router\Exceptions\MethodNotExist;
 
 class ResourceController
 {
@@ -30,8 +29,6 @@ class ResourceController
     public function ganerate(string $uri, $class_name, $map): self
     {
         $uri  = Router::$group['prefix'] . $uri;
-
-        $this->checkMethodExist($class_name, $map);
 
         if (array_key_exists('index', $map)) {
             $this->resource->set($map['index'],
@@ -139,20 +136,5 @@ class ResourceController
         $this->resource->except($resource);
 
         return $this;
-    }
-
-    /**
-     * @param class-string          $class_name
-     * @param array<string, string> $methods
-     *
-     * @throw MethodNotExist
-     */
-    private function checkMethodExist($class_name, $methods): void
-    {
-        foreach ($methods as $method) {
-            if (false === method_exists($class_name, $method)) {
-                throw new MethodNotExist($class_name, $method);
-            }
-        }
     }
 }
