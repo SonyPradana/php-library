@@ -87,8 +87,23 @@ class RouteControllerTest extends TestCase
         $res = $this->dispatcher('/', 'get');
         $this->assertEquals('works', $res);
 
+        $res = $this->dispatcher('/create', 'get');
+        $this->assertEquals('not found', $res);
+
         $res = $this->dispatcher('/', 'post');
         $this->assertEquals('not allowed', $res);
+
+        $res = $this->dispatcher('/12', 'get');
+        $this->assertEquals('not found', $res);
+
+        $res = $this->dispatcher('/12/edit', 'get');
+        $this->assertEquals('not found', $res);
+
+        $res = $this->dispatcher('/12', 'put');
+        $this->assertEquals('not found', $res);
+
+        $res = $this->dispatcher('/12', 'delete');
+        $this->assertEquals('not found', $res);
     }
 
     /** @test */
@@ -100,8 +115,23 @@ class RouteControllerTest extends TestCase
         $res = $this->dispatcher('/', 'get');
         $this->assertEquals('works', $res);
 
+        $res = $this->dispatcher('/create', 'get');
+        $this->assertEquals('not found', $res);
+
         $res = $this->dispatcher('/', 'post');
         $this->assertEquals('not allowed', $res);
+
+        $res = $this->dispatcher('/12', 'get');
+        $this->assertEquals('not found', $res);
+
+        $res = $this->dispatcher('/12/edit', 'get');
+        $this->assertEquals('not found', $res);
+
+        $res = $this->dispatcher('/12', 'put');
+        $this->assertEquals('not found', $res);
+
+        $res = $this->dispatcher('/12', 'delete');
+        $this->assertEquals('not found', $res);
     }
 
     /** @test */
@@ -171,7 +201,7 @@ class RouteControllerTest extends TestCase
         $this->assertTrue(Router::has('RouteClassController.store'));
         $this->assertTrue(Router::has('RouteClassController.show'));
         $this->assertTrue(Router::has('RouteClassController.edit'));
-        $this->assertTrue(Router::has('RouteClassController.delete'));
+        $this->assertTrue(Router::has('RouteClassController.destroy'));
     }
 
     /** @test */
@@ -186,7 +216,7 @@ class RouteControllerTest extends TestCase
         $this->assertTrue(Router::has('test.RouteClassController.store'));
         $this->assertTrue(Router::has('test.RouteClassController.show'));
         $this->assertTrue(Router::has('test.RouteClassController.edit'));
-        $this->assertTrue(Router::has('test.RouteClassController.delete'));
+        $this->assertTrue(Router::has('test.RouteClassController.destroy'));
     }
 
     /** @test */

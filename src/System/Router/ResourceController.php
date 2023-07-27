@@ -106,7 +106,7 @@ class ResourceController
                     'function'   => [$class_name, $map['destroy']],
                     'method'     => 'delete',
                     'middleware' => Router::$group['middleware'] ?? [],
-                ]))->name("{$class_name}.delete")
+                ]))->name("{$class_name}.destroy")
             );
         }
 
