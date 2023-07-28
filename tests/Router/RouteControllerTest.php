@@ -238,6 +238,29 @@ class RouteControllerTest extends TestCase
         $res = $this->dispatcher('/create', 'get');
         $this->assertEquals('works api_create', $res);
     }
+
+    /** @test */
+    public function itCanCostumeResourceWhenMissing()
+    {
+        Router::resource('/', EmptyRouteClassController::class)
+            ->missing(function () {
+                echo '404';
+            });
+        $res = $this->dispatcher('/', 'get');
+        $this->assertEquals('404', $res);
+    }
+
+    /** @test */
+    public function itCanCostumeResourceWhenMissingUsingSetup()
+    {
+        Router::resource('/', EmptyRouteClassController::class, [
+            'missing' => function () {
+                echo '404';
+            },
+        ]);
+        $res = $this->dispatcher('/', 'get');
+        $this->assertEquals('404', $res);
+    }
 }
 
 class RouteClassController
