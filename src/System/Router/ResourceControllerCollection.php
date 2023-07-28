@@ -54,6 +54,17 @@ class ResourceControllerCollection
      */
     public function map($resources): void
     {
+        $diff = array_diff_key([
+            'index'   => 'index',
+            'create'  => 'create',
+            'store'   => 'store',
+            'show'    => 'show',
+            'edit'    => 'edit',
+            'update'  => 'update',
+            'destroy' => 'destroy',
+        ], $resources);
+        $this->except($diff);
+
         foreach (Router::getRoutes() as $route) {
             foreach ($resources as $key => $resource) {
                 $name = "{$this->class_name}.{$key}";
