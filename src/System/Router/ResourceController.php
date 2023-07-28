@@ -13,6 +13,24 @@ class ResourceController
     private $resource;
 
     /**
+     * List resource method.
+     *
+     * @return array<string, string>
+     */
+    public static function method()
+    {
+        return [
+            'index'   => 'index',
+            'create'  => 'create',
+            'store'   => 'store',
+            'show'    => 'show',
+            'edit'    => 'edit',
+            'update'  => 'update',
+            'destroy' => 'destroy',
+        ];
+    }
+
+    /**
      * @param class-string          $class_name
      * @param array<string, string> $map
      */
