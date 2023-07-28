@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace System\Router;
 
+use System\Text\Str;
+
 class ResourceControllerCollection
 {
     private string $class_name;
@@ -21,7 +23,7 @@ class ResourceControllerCollection
     public function only($resources): void
     {
         $map = array_filter(
-            ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'],
+            ResourceController::method(),
             fn ($resource) => !in_array($resource, $resources, true)
         );
         foreach ($map as $resource) {
@@ -54,6 +56,9 @@ class ResourceControllerCollection
      */
     public function map($resources): void
     {
+        $diff = array_diff_key(ResourceController::method(), $resources);
+        $this->except($diff);
+
         foreach (Router::getRoutes() as $route) {
             foreach ($resources as $key => $resource) {
                 $name = "{$this->class_name}.{$key}";
@@ -64,5 +69,21 @@ class ResourceControllerCollection
                 }
             }
         }
+    }
+
+    public function missing(callable $callable): self
+    {
+        foreach (Router::getRoutes() as $route) {
+            $name = $route['name'];
+            if (Str::startsWith($name, "{$this->class_name}.")) {
+                [$class, $method] = $route['function'];
+                if (!method_exists($class, $method)) {
+                    $route['function'] = $callable;
+                    Router::changeRoutes($name, $route);
+                }
+            }
+        }
+
+        return $this;
     }
 }
