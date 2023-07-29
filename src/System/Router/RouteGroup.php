@@ -17,11 +17,19 @@ class RouteGroup
         $this->cleanup = $cleanup;
     }
 
-    public function group(\Closure $callback): mixed
+    /**
+     * @template T
+     *
+     * @param callable(): T $callback
+     *
+     * @return T
+     */
+    public function group($callback)
     {
-        call_user_func($this->setup);
-        $result = call_user_func($callback);
-        call_user_func($this->cleanup);
+        // call stack
+        ($this->setup)();
+        $result = ($callback)();
+        ($this->cleanup)();
 
         return $result;
     }
