@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.1] - 2023-07-29
+### Changed
+- Change `RouteGroup::group` return same with 1st parameter callback return (return <T>) (#197).
+
 ## [0.21.0] - 2023-07-29
 ### Added
 - Added Request format type (#186).
