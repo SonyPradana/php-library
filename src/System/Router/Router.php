@@ -265,15 +265,7 @@ class Router
      */
     public static function resource(string $uri, $class_name, array $setup = []): ResourceControllerCollection
     {
-        $setup['map'] ??= [
-            'index'   => 'index',
-            'create'  => 'create',
-            'store'   => 'store',
-            'show'    => 'show',
-            'edit'    => 'edit',
-            'update'  => 'update',
-            'destroy' => 'destroy',
-        ];
+        $setup['map'] ??= ResourceController::method();
 
         $resource = new ResourceController($uri, $class_name, $setup['map']);
 
@@ -290,7 +282,13 @@ class Router
             return true;
         });
 
-        return new ResourceControllerCollection($class_name);
+        $router = new ResourceControllerCollection($class_name);
+
+        if (array_key_exists('missing', $setup)) {
+            $router->missing($setup['missing']);
+        }
+
+        return $router;
     }
 
     /**
