@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.21.0] - 2023-07-29
+### Added
+- Added Request format type (#186).
+- Added support `litespeed_finish_request` to send respone (#188).
+- Added database schema for raw queary `MySchema::raw()` (#189).
+- Added support `StreamedResponseCallable` to send stream to client (#192).
+- Added support `Route::resource` include `only`, `except`, `map` and `misssing` (#195).
+
+### Changed
+- Changed command parse support count alias, group value (array) (#190).
+- Changed `Response::send` now flush after send buffer (#191).
+
 ## [0.20.0] - 2023-06-30
 ### Added
 - Added `Collection::reduse()` method.
