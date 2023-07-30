@@ -23,7 +23,7 @@ final class Action
      *
      * @template T
      *
-     * @var callable(): T
+     * @var callable(T): T
      */
     private $main;
 
@@ -62,7 +62,7 @@ final class Action
 
     /**
      * @param Collection<int, callable> $prepares
-     * @param callable(): T             $main
+     * @param callable(T): T            $main
      * @param array<string, mixed>      $parameters
      */
     public function __construct($prepares, $main, $parameters)
@@ -123,8 +123,10 @@ final class Action
      * Last action of pipeline.
      *
      * @param callable(T): void $callback
+     *
+     * @return $this
      */
-    public function final($callback): void
+    public function success($callback): self
     {
         $this->prepares->each(function ($prepare) {
             ($prepare)();
@@ -132,6 +134,48 @@ final class Action
             return true;
         });
         $this->do();
-        ($callback)($this->result);
+        if (null === $this->throw) {
+            ($callback)($this->result);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Final of Pipeline action.
+     *
+     * @param callable(): void $callback
+     */
+    public function finally($callback): void
+    {
+        if (null === $this->result && null === $this->throw) {
+            $this->success(function () {});
+        }
+        ($callback)();
+    }
+
+    /**
+     * Contionue call other action if success.
+     *
+     * @param callable(T): T $callback
+     *
+     * @return Action<T>
+     */
+    public function then($callback): Action
+    {
+        $this->success(function () {});
+        $pipe = new Pipeline();
+        $pipe->with([
+            'result' => $this->result,
+        ]);
+
+        $next = null === $this->throw
+            ? $callback
+            : fn ($result) => null;
+
+        $action        = $pipe->throw(fn ($result) => ($next)($result));
+        $action->throw = $this->throw;
+
+        return $action;
     }
 }

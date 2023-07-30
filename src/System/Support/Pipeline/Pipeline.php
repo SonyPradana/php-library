@@ -60,7 +60,7 @@ final class Pipeline
     /**
      * @template T
      *
-     * @param callable(): T $callback
+     * @param callable(T): T $callback
      *
      * @return Action<T>
      */
