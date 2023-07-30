@@ -18,9 +18,17 @@ final class Pipeline
      */
     private $prepares;
 
+    /**
+     * Parameters.
+     *
+     * @var array<string,>
+     */
+    private $parameters;
+
     public function __construct()
     {
-        $this->prepares = new Collection([]);
+        $this->prepares   = new Collection([]);
+        $this->parameters = [];
     }
 
     /**
@@ -38,6 +46,18 @@ final class Pipeline
     }
 
     /**
+     * Set parameters.
+     *
+     * @param array<string, mixed> $parameters
+     */
+    public function with($parameters): self
+    {
+        $this->parameters = $parameters;
+
+        return $this;
+    }
+
+    /**
      * @template T
      *
      * @param callable(): T $callback
@@ -46,6 +66,6 @@ final class Pipeline
      */
     public function throw($callback): Action
     {
-        return new Action($this->prepares, $callback);
+        return new Action($this->prepares, $callback, $this->parameters);
     }
 }

@@ -54,17 +54,26 @@ final class Action
     private int $retry;
 
     /**
+     * Paremeter for set in main function.
+     *
+     * @var array<string, mixed>
+     */
+    private $parameters;
+
+    /**
      * @param Collection<int, callable> $prepares
      * @param callable(): T             $main
+     * @param array<string, mixed>      $parameters
      */
-    public function __construct($prepares, $main)
+    public function __construct($prepares, $main, $parameters)
     {
-        $this->prepares = $prepares;
-        $this->main     = $main;
-        $this->result   = null;
-        $this->throw    = null;
-        $this->catch    = function ($throw) {};
-        $this->retry    = 1;
+        $this->prepares   = $prepares;
+        $this->main       = $main;
+        $this->result     = null;
+        $this->throw      = null;
+        $this->catch      = function ($throw) {};
+        $this->retry      = 1;
+        $this->parameters = $parameters;
     }
 
     private function do(): void
@@ -72,7 +81,7 @@ final class Action
         $atempt = $this->retry;
         while ($atempt > 0) {
             try {
-                $this->result = ($this->main)();
+                $this->result = call_user_func_array($this->main, $this->parameters);
                 $atempt       = 0;
             } catch (\Throwable $th) {
                 $atempt--;

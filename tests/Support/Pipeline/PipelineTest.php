@@ -25,6 +25,49 @@ final class PipelineTest extends TestCase
     }
 
     /** @test */
+    public function itCanGetResultWithSomeParameters()
+    {
+        $pipe = new Pipeline();
+        $pipe
+            ->with(['even' => 2])
+            ->throw(fn ($even) => $even % 2 === 0)
+            ->final(function ($assert) {
+                assertTrue($assert);
+            })
+        ;
+    }
+
+    /** @test */
+    public function itCanGetResultWithSomeParametersNotExist()
+    {
+        $pipe = new Pipeline();
+        $pipe
+            ->with(['number' => 2])
+            ->throw(fn ($even) => $even % 2 === 0)
+            ->catch(function (\Throwable $th) {
+                assertEquals('Unknown named parameter $number', $th->getMessage());
+            })
+            ->final(function ($result) {
+                assertTrue(true);
+            })
+        ;
+    }
+
+    /** @test */
+    public function itCanGetResultWithNoMatchParameter()
+    {
+        $pipe = new Pipeline();
+        $pipe
+            ->with(['even' => 4, 'number' => 2])
+            ->throw(fn ($even) => $even % 2 === 0)
+            ->catch(function (\Throwable $th) {
+                assertEquals('Unknown named parameter $number', $th->getMessage());
+            })
+            ->final(function ($result) {})
+        ;
+    }
+
+    /** @test */
     public function itCanGetResultUsingPrepare()
     {
         $pipe = new Pipeline();
