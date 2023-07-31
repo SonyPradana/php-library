@@ -80,6 +80,20 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
+     * Push item (set without key).
+     *
+     * @param TValue $value
+     *
+     * @return $this
+     */
+    protected function push($value): self
+    {
+        $this->collection[] = $value;
+
+        return $this;
+    }
+
+    /**
      * @param TKey $key
      */
     public function has($key): bool

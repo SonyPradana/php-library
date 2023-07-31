@@ -423,4 +423,123 @@ class CollectionTest extends TestCase
 
         $this->assertEquals([80, 90], $coll->take(-2)->toArray());
     }
+
+    /** @test */
+    public function itCanPushNewItem()
+    {
+        $coll = new Collection([10, 20, 30, 40, 50, 60, 70, 80, 90]);
+        $coll->push(100);
+
+        $this->assertTrue(in_array(100, $coll->toArray()));
+    }
+
+    /** @test */
+    public function itCanGetDiff()
+    {
+        $coll = new Collection([1, 2, 3, 4, 5]);
+        $coll->diff([2, 4, 6, 8]);
+
+        $this->assertEquals([1, 3, 5], $coll->items());
+    }
+
+    /** @test */
+    public function itCanGetDiffUsingKey()
+    {
+        $coll = new Collection([
+            'buah_1' => 'mangga',
+            'buah_2' => 'jeruk',
+            'buah_3' => 'apel',
+            'buah_4' => 'melon',
+            'buah_5' => 'rambutan',
+        ]);
+        $coll->diffKeys([
+            'buah_2' => 'orange',
+            'buah_4' => 'water malon',
+            'buah_6' => 'six',
+            'buah_8' => 'eight',
+        ]);
+
+        $this->assertEquals([
+            'buah_1' => 'mangga',
+            'buah_3' => 'apel',
+            'buah_5' => 'rambutan',
+        ], $coll->toArray());
+    }
+
+    /** @test */
+    public function itCanGetDiffUsingAssoc()
+    {
+        $coll = new Collection([
+            'color'   => 'green',
+            'type'    => 'library',
+            'version' => 0,
+        ]);
+        $coll->diffAssoc([
+            'color'   => 'orange',
+            'type'    => 'framework',
+            'version' => 10,
+            'used'    => 100,
+        ]);
+
+        $this->assertEquals([
+            'color'   => 'green',
+            'type'    => 'library',
+            'version' => 0,
+        ], $coll->toArray());
+    }
+
+    /** @test */
+    public function itCanGetcomplement()
+    {
+        $coll = new Collection([1, 2, 3, 4, 5]);
+        $coll->complement([2, 4, 6, 8]);
+
+        $this->assertEquals([6, 8], $coll->items());
+    }
+
+    /** @test */
+    public function itCanGetComplementUsingKey()
+    {
+        $coll = new Collection([
+            'buah_1' => 'mangga',
+            'buah_2' => 'jeruk',
+            'buah_3' => 'apel',
+            'buah_4' => 'melon',
+            'buah_5' => 'rambutan',
+        ]);
+        $coll->complementKeys([
+            'buah_2' => 'orange',
+            'buah_4' => 'water malon',
+            'buah_6' => 'six',
+            'buah_8' => 'eight',
+        ]);
+
+        $this->assertEquals([
+            'buah_6' => 'six',
+            'buah_8' => 'eight',
+        ], $coll->toArray());
+    }
+
+    /** @test */
+    public function itCanGetComplementUsingAssoc()
+    {
+        $coll = new Collection([
+            'color'   => 'green',
+            'type'    => 'library',
+            'version' => 0,
+        ]);
+        $coll->complementAssoc([
+            'color'   => 'orange',
+            'type'    => 'framework',
+            'version' => 10,
+            'used'    => 100,
+        ]);
+
+        $this->assertEquals([
+            'color'   => 'orange',
+            'type'    => 'framework',
+            'version' => 10,
+            'used'    => 100,
+        ], $coll->toArray());
+    }
 }
