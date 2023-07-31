@@ -64,7 +64,7 @@ final class Pipeline
      *
      * @return Action<T>
      */
-    public function throw($callback): Action
+    public function through($callback): Action
     {
         return new Action($this->prepares, $callback, $this->parameters);
     }

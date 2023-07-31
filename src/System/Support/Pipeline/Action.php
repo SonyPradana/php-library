@@ -173,7 +173,7 @@ final class Action
             ? $callback
             : fn ($result) => null;
 
-        $action        = $pipe->throw(fn ($result) => ($next)($result));
+        $action        = $pipe->through(fn ($result) => ($next)($result));
         $action->throw = $this->throw;
 
         return $action;

@@ -17,7 +17,7 @@ final class PipelineTest extends TestCase
     {
         $pipe = new Pipeline();
         $pipe
-            ->throw(fn () => true)
+            ->through(fn () => true)
             ->success(function ($assert) {
                 assertTrue($assert);
             })
@@ -30,7 +30,7 @@ final class PipelineTest extends TestCase
         $pipe = new Pipeline();
         ob_start();
         $pipe
-            ->throw(function () {
+            ->through(function () {
                 echo 'start';
 
                 return 'result';
@@ -53,7 +53,7 @@ final class PipelineTest extends TestCase
         $pipe = new Pipeline();
         ob_start();
         $pipe
-            ->throw(function () {
+            ->through(function () {
                 echo 'start';
 
                 return 'result';
@@ -73,7 +73,7 @@ final class PipelineTest extends TestCase
         $pipe = new Pipeline();
         ob_start();
         $pipe
-            ->throw(function () {
+            ->through(function () {
                 throw new \Exception('error');
 
                 return 'result';
@@ -93,7 +93,7 @@ final class PipelineTest extends TestCase
         $pipe = new Pipeline();
         $pipe
             ->with(['even' => 2])
-            ->throw(fn ($even) => $even % 2 === 0)
+            ->through(fn ($even) => $even % 2 === 0)
             ->success(function ($assert) {
                 assertTrue($assert);
             })
@@ -106,7 +106,7 @@ final class PipelineTest extends TestCase
         $pipe = new Pipeline();
         $pipe
             ->with(['number' => 2])
-            ->throw(fn ($even) => $even % 2 === 0)
+            ->through(fn ($even) => $even % 2 === 0)
             ->catch(function (\Throwable $th) {
                 assertEquals('Unknown named parameter $number', $th->getMessage());
             })
@@ -122,7 +122,7 @@ final class PipelineTest extends TestCase
         $pipe = new Pipeline();
         $pipe
             ->with(['even' => 4, 'number' => 2])
-            ->throw(fn ($even) => $even % 2 === 0)
+            ->through(fn ($even) => $even % 2 === 0)
             ->catch(function (\Throwable $th) {
                 assertEquals('Unknown named parameter $number', $th->getMessage());
             })
@@ -140,7 +140,7 @@ final class PipelineTest extends TestCase
             ->prepare(function () {
                 echo 'prepare ';
             })
-            ->throw(fn () => true)
+            ->through(fn () => true)
             ->success(function ($assert) {
                 echo 'final';
                 assertTrue($assert);
@@ -157,7 +157,7 @@ final class PipelineTest extends TestCase
         $pipe = new Pipeline();
 
         $pipe
-            ->throw(function () {
+            ->through(function () {
                 return 0 / 0;
             })
             ->catch(function (\Throwable $th) {
@@ -175,7 +175,7 @@ final class PipelineTest extends TestCase
 
         ob_start();
         $pipe
-            ->throw(function () {
+            ->through(function () {
                 echo '#';
 
                 return 0 / 0;
@@ -195,7 +195,7 @@ final class PipelineTest extends TestCase
         $pipe = new Pipeline();
         $pipe
             ->with(['x' => 0])
-            ->throw(function ($x) {
+            ->through(function ($x) {
                 $x++;
 
                 return $x;
@@ -222,13 +222,13 @@ final class PipelineTest extends TestCase
     }
 
     /** @test */
-    public function itCanChainPipeAndThrowParent()
+    public function itCanChainPipeAndThroughParent()
     {
         $pipe = new Pipeline();
         ob_start();
         $pipe
             ->with(['x' => 0])
-            ->throw(function ($x) {
+            ->through(function ($x) {
                 throw new \Exception('error');
 
                 return $x;
@@ -251,12 +251,12 @@ final class PipelineTest extends TestCase
     }
 
     /** @test */
-    public function itCanChainPipeAndThrow()
+    public function itCanChainPipeAndThrough()
     {
         $pipe = new Pipeline();
         $pipe
             ->with(['x' => 0])
-            ->throw(function ($x) {
+            ->through(function ($x) {
                 return $x;
             })
             ->then(function ($x) {
