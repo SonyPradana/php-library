@@ -85,6 +85,20 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
+     * Push item (set without key).
+     *
+     * @param TValue $value
+     *
+     * @return $this
+     */
+    public function push($value): self
+    {
+        parent::push($value);
+
+        return $this;
+    }
+
+    /**
      * @param array<TKey, TValue> $new_collection
      *
      * @return $this
@@ -417,6 +431,78 @@ class Collection extends AbstractCollectionImmutable
 
         return $this->replace(
             array_slice($this->collection, 0, $limit)
+        );
+    }
+
+    /**
+     * @param array<TKey, TValue> $collection
+     *
+     * @return $this
+     */
+    public function diff($collection)
+    {
+        return $this->replace(
+            array_diff($this->collection, $collection)
+        );
+    }
+
+    /**
+     * @param array<TKey, TValue> $collection
+     *
+     * @return $this
+     */
+    public function diffKeys($collection)
+    {
+        return $this->replace(
+            array_diff_key($this->collection, $collection)
+        );
+    }
+
+    /**
+     * @param array<TKey, TValue> $collection
+     *
+     * @return $this
+     */
+    public function diffAssoc($collection)
+    {
+        return $this->replace(
+            array_diff_assoc($this->collection, $collection)
+        );
+    }
+
+    /**
+     * @param array<TKey, TValue> $collection
+     *
+     * @return $this
+     */
+    public function complement($collection)
+    {
+        return $this->replace(
+            array_diff($collection, $this->collection)
+        );
+    }
+
+    /**
+     * @param array<TKey, TValue> $collection
+     *
+     * @return $this
+     */
+    public function complementKeys($collection)
+    {
+        return $this->replace(
+            array_diff_key($collection, $this->collection)
+        );
+    }
+
+    /**
+     * @param array<TKey, TValue> $collection
+     *
+     * @return $this
+     */
+    public function complementAssoc($collection)
+    {
+        return $this->replace(
+            array_diff_assoc($collection, $this->collection)
         );
     }
 }
