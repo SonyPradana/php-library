@@ -1,0 +1,19 @@
+#!/usr/bin/env php
+<?php 
+
+declare(strict_types=1);
+
+namespace Model\@__models__;
+
+use System\Database\MyModel;
+use System\Database\MyPDO;
+use System\Support\Facades\PDO;
+
+class __models__s extends MyModel
+{
+    public function __construct(MyPDO $pdo = null)
+    {
+      $this->_TABELS[]  = '__table__';
+      $this->PDO = $pdo ?? PDO::instance();
+    }    
+}

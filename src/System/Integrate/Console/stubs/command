@@ -1,0 +1,38 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Commands;
+
+use System\Console\Command;
+use System\Console\Traits\PrinterTrait;
+use function System\Console\style;
+
+class __command__Command extends Command
+{
+    use PrinterTrait;
+
+    public static array $command = [
+      [
+        "cmd"       => "__command__",
+        "mode"      => "full",
+        "class"     => __command__Command::class,
+        "fn"        => "main",
+      ],
+    ];
+
+    public function printHelp()
+      {
+          return [
+            'commands' => [],
+            'options'  => [],
+            'relation' => [],
+          ];
+      }
+
+    public function main()
+    {
+        style("__command__")->out(false);
+    }
+}
