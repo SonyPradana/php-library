@@ -3,33 +3,14 @@
 
 namespace Model\@__model__;
 
-use System\Database\MyCRUD;
 use System\Database\MyPDO;
+use System\Support\Facades\PDO;
 
 class __model__ extends MyCRUD
 {
-    // getter
-    public function getID()
-    {
-      return $this->ID['id'] ?? null;
-    }
-
-    // getter __getter__
-
-    // setter
-    public function setID(int $val)
-    {
-      $this->ID = array (
-        'id' => $val
-      );
-      return $this;
-    }
-
-    // setter __setter__
-
     public function __construct()
     {
-      $this->PDO = new MyPDO();
+      $this->PDO = PDO::instance();
       $this->TABLE_NAME = '__table__';
       $this->COLUMNS = [
         __column__
