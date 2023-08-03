@@ -47,7 +47,7 @@ class HelpCommand extends Command
     ];
 
     /**
-     * @return array<string, mixed>
+     * @return array<string, array<string, string|string[]>>
      */
     public function printHelp()
     {
@@ -72,7 +72,7 @@ class HelpCommand extends Command
     /**
      * Use for print --help.
      */
-    public function main()
+    public function main(): int
     {
         $has_visited      = [];
         $this->print_help = [
@@ -148,6 +148,8 @@ class HelpCommand extends Command
         $printer = $this->printOptions($printer);
 
         $printer->out();
+
+        return 0;
     }
 
     public function commandList(): int

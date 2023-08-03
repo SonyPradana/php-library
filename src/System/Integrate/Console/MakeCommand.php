@@ -54,7 +54,7 @@ class MakeCommand extends Command
     ];
 
     /**
-     * @return array<string, mixed>
+     * @return array<string, array<string, string|string[]>>
      */
     public function printHelp()
     {
@@ -84,7 +84,7 @@ class MakeCommand extends Command
         info('Making controller file...')->out(false);
 
         $success = $this->makeTemplate($this->OPTION[0], [
-            'template_location' => commands_path() . 'stubs/controller',
+            'template_location' => __DIR__ . '/stubs/controller',
             'save_location'     => controllers_path(),
             'pattern'           => '__controller__',
             'surfix'            => 'Controller.php',
@@ -106,7 +106,7 @@ class MakeCommand extends Command
         info('Making view file...')->out(false);
 
         $success = $this->makeTemplate($this->OPTION[0], [
-            'template_location' => commands_path() . 'stubs/view',
+            'template_location' => __DIR__ . '/stubs/view',
             'save_location'     => view_path(),
             'pattern'           => '__view__',
             'surfix'            => '.template.php',
@@ -128,7 +128,7 @@ class MakeCommand extends Command
         info('Making service file...')->out(false);
 
         $success = $this->makeTemplate($this->OPTION[0], [
-            'template_location' => commands_path() . 'stubs/service',
+            'template_location' => __DIR__ . '/stubs/service',
             'save_location'     => services_path(),
             'pattern'           => '__service__',
             'surfix'            => 'Service.php',
@@ -150,7 +150,7 @@ class MakeCommand extends Command
         info('Making model file...')->out(false);
 
         $success = $this->makeTemplate($this->OPTION[0], [
-            'template_location' => commands_path() . 'stubs/model',
+            'template_location' => __DIR__ . '/stubs/model',
             'save_location'     => model_path(),
             'pattern'           => '__model__',
             'surfix'            => '.php',
@@ -178,7 +178,7 @@ class MakeCommand extends Command
         $name = $this->OPTION[0];
 
         $success = $this->makeTemplate($name, [
-            'template_location' => commands_path() . 'stubs/models',
+            'template_location' => __DIR__ . '/stubs/models',
             'save_location'     => model_path(),
             'pattern'           => '__models__',
             'surfix'            => 's.php',
@@ -239,7 +239,7 @@ class MakeCommand extends Command
         info('Making command file...')->out(false);
         $name    = $this->OPTION[0];
         $success = $this->makeTemplate($name, [
-            'template_location' => commands_path() . 'stubs/command',
+            'template_location' => __DIR__ . '/stubs/command',
             'save_location'     => commands_path(),
             'pattern'           => '__command__',
             'surfix'            => 'Command.php',

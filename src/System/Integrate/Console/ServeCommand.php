@@ -29,7 +29,7 @@ class ServeCommand extends Command
   ];
 
     /**
-     * @return array<string, mixed>
+     * @return array<string, array<string, string|string[]>>
      */
     public function printHelp()
     {
