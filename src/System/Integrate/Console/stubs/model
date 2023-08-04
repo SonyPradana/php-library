@@ -1,9 +1,9 @@
 #!/usr/bin/env php
 <?php
 
-namespace Model\@__model__;
+namespace App\Model\@__model__;
 
-use System\Database\MyPDO;
+use System\Database\MyCRUD;
 use System\Support\Facades\PDO;
 
 class __model__ extends MyCRUD

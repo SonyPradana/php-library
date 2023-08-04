@@ -17,12 +17,12 @@ class CommandTest extends TestCase
     {
         $this->app = new Application('');
 
-        $this->app->setViewPath(__DIR__ . DIRECTORY_SEPARATOR);
-        $this->app->setContollerPath(__DIR__ . DIRECTORY_SEPARATOR);
-        $this->app->setServicesPath(__DIR__ . DIRECTORY_SEPARATOR);
-        $this->app->setModelPath(__DIR__ . DIRECTORY_SEPARATOR);
-        $this->app->setCommandPath(__DIR__ . DIRECTORY_SEPARATOR);
-        $this->app->setConfigPath(__DIR__ . DIRECTORY_SEPARATOR);
+        $this->app->setViewPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR);
+        $this->app->setContollerPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR);
+        $this->app->setServicesPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR);
+        $this->app->setModelPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR);
+        $this->app->setCommandPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR);
+        $this->app->setConfigPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR);
     }
 
     protected function tearDown(): void

@@ -64,6 +64,7 @@ class MakeCommand extends Command
                 'make:view'       => 'Generate new view',
                 'make:service'    => 'Generate new service',
                 'make:model'      => 'Generate new model',
+                'make:models'     => 'Generate new models',
                 'make:command'    => 'Generate new command',
             ],
             'options'   => [
@@ -74,6 +75,7 @@ class MakeCommand extends Command
                 'make:view'       => ['[view_name]'],
                 'make:service'    => ['[service_name]'],
                 'make:model'      => ['[model_name]', '--table-name'],
+                'make:models'     => ['[models_name]', '--table-name'],
                 'make:command'    => ['[command_name]'],
             ],
         ];
@@ -149,15 +151,19 @@ class MakeCommand extends Command
     {
         info('Making model file...')->out(false);
 
-        $success = $this->makeTemplate($this->OPTION[0], [
+        $name = $this->OPTION[0];
+
+        $success = $this->makeTemplate($name, [
             'template_location' => __DIR__ . '/stubs/model',
             'save_location'     => model_path(),
             'pattern'           => '__model__',
             'surfix'            => '.php',
-        ], $this->OPTION[0] . '/');
+        ], $name . '/');
+        $file_name = model_path() . ucfirst($name) . '/' . $name . '.php';
 
         if ($this->option('table-name', false)) {
-            // TODO: fill model with table name information
+            $table_name = $this->option('table-name');
+            $success    = $this->FillModelDatabase($file_name, $table_name);
         }
 
         if ($success) {
@@ -263,6 +269,26 @@ class MakeCommand extends Command
         fail("\nFailed Create command file")->out();
 
         return 1;
+    }
+
+    /**
+     * Fill template with property
+     * base on databe table.
+     *
+     * @param string $model_location File location (models)
+     * @param string $table_name     Tabel name to sync with models
+     *
+     * @return bool True if templete success copie
+     */
+    private function FillModelDatabase(string $model_location, string $table_name)
+    {
+        info($model_location)->out();
+        info($table_name)->out();
+        $getContent = file_get_contents($model_location);
+        $getContent = str_replace('__table__', $table_name, $getContent);
+        $isCopied   = file_put_contents($model_location, $getContent);
+
+        return $isCopied === false ? false : true;
     }
 
     /**
