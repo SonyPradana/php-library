@@ -46,7 +46,7 @@ class RouteCommand extends Command
         ];
     }
 
-    public function main()
+    public function main(): int
     {
         $print = new Style();
         $print->tap(Alert::render()->ok('route list'));
@@ -66,6 +66,8 @@ class RouteCommand extends Command
             ;
         }
         $print->out();
+
+        return 0;
     }
 
     /**
