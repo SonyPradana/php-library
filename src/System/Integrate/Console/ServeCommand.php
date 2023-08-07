@@ -20,13 +20,13 @@ class ServeCommand extends Command
      * @var array<int, array<string, mixed>>
      */
     public static $command = [
-     [
-       'cmd'       => 'serve',
-       'mode'      => 'full',
-       'class'     => ServeCommand::class,
-       'fn'        => 'main',
-     ],
-  ];
+        [
+        'cmd'       => 'serve',
+        'mode'      => 'full',
+        'class'     => ServeCommand::class,
+        'fn'        => 'main',
+        ],
+    ];
 
     /**
      * @return array<string, array<string, string|string[]>>

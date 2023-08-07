@@ -165,9 +165,9 @@ class MigrationCommand extends Command
         return $migrate;
     }
 
-    public function main()
+    public function main(): int
     {
-        $this->migration();
+        return $this->migration();
     }
 
     public function migration(bool $silent = false): int
@@ -217,10 +217,10 @@ class MigrationCommand extends Command
         return 0;
     }
 
-    public function fresh(): int
+    public function fresh(bool $silent = false): int
     {
         // drop and recreate database
-        if (($drop = $this->databaseDrop()) > 0) {
+        if (($drop = $this->databaseDrop($silent)) > 0) {
             return $drop;
         }
         if (($create = $this->databaseCreate(true)) > 0) {
