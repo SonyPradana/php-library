@@ -55,6 +55,20 @@ final class HelpCommandsTest extends CommandTest
     /**
      * @test
      */
+    public function itCanCallHelpCommandCommandHelp()
+    {
+        $helpCommand = $this->maker('cli help serve');
+        ob_start();
+        $exit = $helpCommand->commandHelp();
+        $out  = ob_get_clean();
+
+        $this->assertSuccess($exit);
+        $this->assertContain('Serve server with port number (default 8080)', $out);
+    }
+
+    /**
+     * @test
+     */
     public function itCanCallHelpCommandCommandHelpButNoFound()
     {
         $helpCommand = $this->maker('cli help main');

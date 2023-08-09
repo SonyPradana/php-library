@@ -23,6 +23,13 @@ class HelpCommand extends Command
     protected array $commands;
 
     /**
+     * @var string[]
+     */
+    protected array $class_namespace = [
+        // register namesapce commands
+    ];
+
+    /**
      * Register command.
      *
      * @var array<int, array<string, mixed>>
@@ -177,7 +184,7 @@ class HelpCommand extends Command
     {
         if (!isset($this->OPTION[0])) {
             style('')
-                 ->tap(info('To see help command, place provide command_name'))
+                ->tap(info('To see help command, place provide command_name'))
                 ->textYellow()
                 ->push('php cli help <command_nama>')->textDim()
                 ->new_lines()
@@ -195,13 +202,17 @@ class HelpCommand extends Command
         }
 
         $className .= 'Command';
-        $className = ucfirst($className);
-        $nameSpace = [
-            'App\\Commands\\' . $className,
-            'System\\Integrate\\Console' . $className,
-        ];
+        $className  = ucfirst($className);
+        $namespaces = array_merge(
+            $this->class_namespace,
+            [
+                'App\\Commands\\',
+                'System\\Integrate\\Console\\',
+            ]
+        );
 
-        foreach ($nameSpace as $class_name) {
+        foreach ($namespaces as $namespace) {
+            $class_name = $namespace . $className;
             if (class_exists($class_name)) {
                 $class = new $class_name([]);
 
