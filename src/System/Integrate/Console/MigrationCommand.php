@@ -20,7 +20,7 @@ use function System\Console\style;
 use function System\Console\warn;
 
 /**
- * @property int  $take
+ * @property ?int $take
  * @property bool $force
  */
 class MigrationCommand extends Command
@@ -299,12 +299,15 @@ class MigrationCommand extends Command
 
     public function rollback(): int
     {
-        $take = $this->take ?? 1;
-        if ($this->take) {
-            info("Rolling back {$take} migrations")->out(false);
+        $take    = (int) $this->take;
+        $message = "Rolling {$take} back migrations.";
+        if ($take < 1) {
+            $take    = null;
+            $message = 'Rolling back migrations.';
         }
+        info($message)->out(false);
 
-        return $this->rollbacks($take);
+        return $this->rollbacks(null);
     }
 
     public function rollbacks(?int $take): int
@@ -315,8 +318,6 @@ class MigrationCommand extends Command
         if (null === $take) {
             $take = $migrate->lenght();
         }
-
-        $print->tap(info('running rollbak'));
 
         foreach ($migrate->sortDesc()->take($take) as $key => $val) {
             $schema = require_once $val;

@@ -283,8 +283,8 @@ class MakeCommand extends Command
      */
     private function FillModelDatabase(string $model_location, string $table_name)
     {
-        info($model_location)->out();
-        info($table_name)->out();
+        info($model_location)->out(false);
+        info($table_name)->out(false);
 
         $template_column = '';
         $primery_key     = 'id';
@@ -298,7 +298,7 @@ class MakeCommand extends Command
             }
             $template_column = implode("\n\t\t", $columns);
         } catch (\Throwable $th) {
-            warn($th->getMessage())->out();
+            warn($th->getMessage())->out(false);
         }
 
         $getContent = file_get_contents($model_location);
