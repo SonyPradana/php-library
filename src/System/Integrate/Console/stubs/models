@@ -3,7 +3,7 @@
 
 declare(strict_types=1);
 
-namespace Model\@__models__;
+namespace App\Models\__models__;
 
 use System\Database\MyModel;
 use System\Support\Facades\PDO;
@@ -12,7 +12,7 @@ class __models__s extends MyModel
 {
     public function __construct()
     {
-      $this->_TABELS[]  = '__table__';
-      $this->PDO = PDO::instance();
+        $this->_TABELS[] = '__table__';
+        $this->PDO       = PDO::instance();
     }    
 }

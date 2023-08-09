@@ -20,12 +20,12 @@ class __command__Command extends Command
      * @var array<int, array<string, mixed>>
      */
     public static array $command = [
-      [
-        "cmd"       => "__command__",
-        "mode"      => "full",
-        "class"     => self::class,
-        "fn"        => "main",
-      ],
+        [
+            "cmd"       => "__command__",
+            "mode"      => "full",
+            "class"     => self::class,
+            "fn"        => "main",
+        ],
     ];
 
     /**
@@ -34,9 +34,9 @@ class __command__Command extends Command
     public function printHelp()
       {
           return [
-            'commands' => [],
-            'options'  => [],
-            'relation' => [],
+              'commands' => [],
+              'options'  => [],
+              'relation' => [],
           ];
       }
 

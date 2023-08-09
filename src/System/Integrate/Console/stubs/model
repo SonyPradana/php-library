@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-namespace App\Model\@__model__;
+namespace App\Models\__model__;
 
 use System\Database\MyCRUD;
 use System\Support\Facades\PDO;
@@ -9,7 +9,7 @@ use System\Support\Facades\PDO;
 class __model__ extends MyCRUD
 {
     protected $TABLE_NAME = '__table__';
-    
+
     protected $PRIMERY_KEY = '__primery__';
     
     protected $COLUMNS = [
@@ -18,6 +18,6 @@ class __model__ extends MyCRUD
     
     public function __construct()
     {
-      $this->PDO = PDO::instance();
+        $this->PDO = PDO::instance();
     }
 }

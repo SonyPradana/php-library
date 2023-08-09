@@ -233,8 +233,7 @@ class MakeCommand extends Command
         }
 
         $get_template = file_get_contents($make_option['template_location']);
-        $get_template = str_replace('@' . $make_option['pattern'], ucfirst($argument), $get_template);
-        $get_template = str_replace($make_option['pattern'], $argument, $get_template);
+        $get_template = str_replace($make_option['pattern'], ucfirst($argument), $get_template);
         $get_template = preg_replace('/^.+\n/', '', $get_template);
         $isCopied     = file_put_contents($file_name, $get_template);
 

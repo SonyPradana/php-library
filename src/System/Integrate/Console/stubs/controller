@@ -5,7 +5,6 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Controllers;
 use System\Http\Response;
 
 class __controller__Controller extends Controller

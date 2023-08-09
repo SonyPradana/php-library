@@ -224,7 +224,7 @@ final class MakeCommandsTest extends CommandTest
      */
     public function itCanCallMakeCommandModelsWithTableNameAndReturnSuccess()
     {
-        $make_model = new MakeCommand($this->argv('cli make:models User --table-name users'));
+        $make_model = new MakeCommand($this->argv('cli make:models user --table-name users'));
         ob_start();
         $exit = $make_model->make_models();
         ob_get_clean();
@@ -236,7 +236,7 @@ final class MakeCommandsTest extends CommandTest
 
         $models = file_get_contents($file);
         $this->assertContain('class Users extends MyModel', $models);
-        $this->assertContain('$this->_TABELS[]  = \'users\';', $models);
+        $this->assertContain('$this->_TABELS[] = \'users\';', $models);
     }
 
     /**
