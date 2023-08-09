@@ -196,32 +196,37 @@ class HelpCommand extends Command
 
         $className .= 'Command';
         $className = ucfirst($className);
-        $className = 'App\\Commands\\' . $className;
+        $nameSpace = [
+            'App\\Commands\\' . $className,
+            'System\\Integrate\\Console' . $className,
+        ];
 
-        if (class_exists($className)) {
-            $class = new $className([]);
+        foreach ($nameSpace as $class_name) {
+            if (class_exists($class_name)) {
+                $class = new $class_name([]);
 
-            $res = app()->call([$class, 'printHelp']) ?? [];
+                $res = app()->call([$class, 'printHelp']) ?? [];
 
-            if (isset($res['commands']) && $res['commands'] != null) {
-                $this->command_describes = $res['commands'];
+                if (isset($res['commands']) && $res['commands'] != null) {
+                    $this->command_describes = $res['commands'];
+                }
+
+                if (isset($res['options']) && $res['options'] != null) {
+                    $this->option_describes = $res['options'];
+                }
+
+                if (isset($res['relation']) && $res['relation'] != null) {
+                    $this->command_relation = $res['relation'];
+                }
+
+                style('Avilabe command:')->new_lines()->out();
+                $this->printCommands(new Style())->out();
+
+                style('Avilable options:')->new_lines()->out();
+                $this->printOptions(new Style())->out();
+
+                return 0;
             }
-
-            if (isset($res['options']) && $res['options'] != null) {
-                $this->option_describes = $res['options'];
-            }
-
-            if (isset($res['relation']) && $res['relation'] != null) {
-                $this->command_relation = $res['relation'];
-            }
-
-            style('Avilabe command:')->new_lines()->out();
-            $this->printCommands(new Style())->out();
-
-            style('Avilable options:')->new_lines()->out();
-            $this->printOptions(new Style())->out();
-
-            return 0;
         }
 
         warn("Help for `{$this->OPTION[0]}` command not found")->out(false);
