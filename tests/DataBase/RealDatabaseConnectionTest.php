@@ -12,7 +12,7 @@ use function PHPUnit\Framework\assertTrue;
 
 abstract class RealDatabaseConnectionTest extends TestCase
 {
-    private $env;
+    protected $env;
     protected MyPDO $pdo;
     protected MySchema\MyPDO $pdo_schema;
     protected MySchema $schema;

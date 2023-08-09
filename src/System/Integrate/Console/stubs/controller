@@ -1,0 +1,18 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controllers;
+
+use System\Http\Response;
+
+class __controller__Controller extends Controller
+{
+    public function index(): Response
+    {
+        return view('__controller__', [
+            "title" => "Documnet Title",
+        ]);
+    }
+}

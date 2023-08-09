@@ -1,0 +1,18 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+class __service__Service extends Service
+{
+    public function Test(array $request): array
+    {
+        return [
+            'status'  => 'ok',
+            'data'    => null,
+            'error'   => false,
+            'headers' => ['HTTP/1.1 200 Oke']
+        ];
+    }
+}
+
