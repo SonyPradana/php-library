@@ -34,6 +34,10 @@ final class MakeCommandsWithDatabaseTest extends \RealDatabaseConnectionTest
     {
         parent::tearDown();
         $this->app->flush();
+
+        if (file_exists($client =  __DIR__ . '/assets/Client/Client.php')) {
+            unlink($client);
+        }
     }
 
     /**
@@ -43,14 +47,14 @@ final class MakeCommandsWithDatabaseTest extends \RealDatabaseConnectionTest
      */
     public function itCanCallMakeCommandModelWithSuccess()
     {
-        $make_model = new MakeCommand(['cli', 'make:model', 'User', '--table-name', 'users']);
+        $make_model = new MakeCommand(['cli', 'make:model', 'Client', '--table-name', 'users']);
         ob_start();
         $exit = $make_model->make_model();
         ob_get_clean();
 
         $this->assertEquals(0, $exit);
 
-        $file = __DIR__ . '/assets/User/User.php';
+        $file = __DIR__ . '/assets/Client/Client.php';
         $this->assertTrue(file_exists($file));
 
         $model = file_get_contents($file);
