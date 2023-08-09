@@ -13,7 +13,7 @@ class __model__ extends MyCRUD
       $this->PDO = PDO::instance();
       $this->TABLE_NAME = '__table__';
       $this->COLUMNS = [
-        __column__
+        // __column__
       ];
     }
 }

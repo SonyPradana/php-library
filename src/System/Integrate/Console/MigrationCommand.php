@@ -410,7 +410,7 @@ class MigrationCommand extends Command
         info('showing database')->out(false);
 
         $tables = PDO::instance()
-        ->query('SHOW DATABASES')
+            ->query('SHOW DATABASES')
             ->query('
                 SELECT table_name, create_time, ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024) AS `size`
                 FROM information_schema.tables

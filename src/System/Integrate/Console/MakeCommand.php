@@ -4,6 +4,7 @@ namespace System\Integrate\Console;
 
 use System\Console\Command;
 use System\Console\Traits\CommandTrait;
+use System\Support\Facades\DB;
 
 use function System\Console\fail;
 use function System\Console\info;
@@ -284,8 +285,20 @@ class MakeCommand extends Command
     {
         info($model_location)->out();
         info($table_name)->out();
+
+        $template_column = '';
+        try {
+            $columns = [];
+            foreach (DB::table('users')->info() as $column) {
+                $columns[] = "'{$column['COLUMN_NAME']}' => null,";
+            }
+            $template_column = implode("\n", $columns);
+        } catch (\Throwable $th) {
+        }
+
         $getContent = file_get_contents($model_location);
         $getContent = str_replace('__table__', $table_name, $getContent);
+        $getContent = str_replace('// __column__', $template_column, $getContent);
         $isCopied   = file_put_contents($model_location, $getContent);
 
         return $isCopied === false ? false : true;
