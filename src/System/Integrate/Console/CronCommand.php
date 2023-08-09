@@ -154,7 +154,7 @@ class CronCommand extends Command
         ->retry(2)
         ->justInTime()
         ->animusly()
-        ->eventName('savanna');
+        ->eventName('cli-schedule');
 
         // others schedule
     }
