@@ -297,9 +297,8 @@ class MakeCommand extends Command
                 }
             }
             $template_column = implode("\n\t\t", $columns);
-
-            var_dump(DB::table('users')->info());
         } catch (\Throwable $th) {
+            warn($th->getMessage())->out();
         }
 
         $getContent = file_get_contents($model_location);

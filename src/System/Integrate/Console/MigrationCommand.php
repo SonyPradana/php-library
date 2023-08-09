@@ -316,6 +316,8 @@ class MigrationCommand extends Command
             $take = $migrate->lenght();
         }
 
+        $print->tap(info('running rollbak'));
+
         foreach ($migrate->sortDesc()->take($take) as $key => $val) {
             $schema = require_once $val;
             $down   = new Collection($schema['down'] ?? []);

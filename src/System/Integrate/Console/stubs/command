@@ -3,7 +3,7 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Console;
+namespace App\Commands;
 
 use System\Console\Command;
 use System\Console\Traits\PrinterTrait;
