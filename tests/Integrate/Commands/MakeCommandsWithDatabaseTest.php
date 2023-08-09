@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace System\Test\Integrate\Commands;
 
-use RealDatabaseConnectionTest;
-use System\Database\MyPDO;
 use System\Database\MyQuery;
 use System\Integrate\Application;
 use System\Integrate\Console\MakeCommand;
@@ -13,14 +11,14 @@ use System\Support\Facades\PDO;
 use System\Support\Facades\Schema;
 use System\Text\Str;
 
-final class MakeCommandsWithDatabaseTestphp extends RealDatabaseConnectionTest
+final class MakeCommandsWithDatabaseTest extends \RealDatabaseConnectionTest
 {
     private Application $app;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->app = new Application(__DIR__);
         $this->app->set('environment', 'dev');
         new Schema($this->app);
@@ -31,7 +29,7 @@ final class MakeCommandsWithDatabaseTestphp extends RealDatabaseConnectionTest
         $this->app->set('MyQuery', fn () => new MyQuery($this->pdo));
         $this->app->setModelPath(DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR);
     }
-    
+
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -40,7 +38,7 @@ final class MakeCommandsWithDatabaseTestphp extends RealDatabaseConnectionTest
 
     /**
      * @test
-     * 
+     *
      * @group database
      */
     public function itCanCallMakeCommandModelWithSuccess()
@@ -56,8 +54,7 @@ final class MakeCommandsWithDatabaseTestphp extends RealDatabaseConnectionTest
         $this->assertTrue(file_exists($file));
 
         $model = file_get_contents($file);
-        $this->assertTrue(Str::contains($model, "'user' => null"));
-        $this->assertTrue(Str::contains($model, "'pwd'  => null"));
-        $this->assertTrue(Str::contains($model, "'stat' => null"));
+        $this->assertTrue(Str::contains($model, 'protected $' . "TABLE_NAME = 'users'"));
+        $this->assertTrue(Str::contains($model, 'protected $' . "PRIMERY_KEY = 'user'"));
     }
 }

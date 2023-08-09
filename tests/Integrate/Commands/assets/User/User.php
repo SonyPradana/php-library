@@ -1,19 +1,20 @@
-#!/usr/bin/env php
 <?php
 
-namespace App\Model\@__model__;
+namespace App\Model\User;
 
 use System\Database\MyCRUD;
 use System\Support\Facades\PDO;
 
-class __model__ extends MyCRUD
+class User extends MyCRUD
 {
-    protected $TABLE_NAME = '__table__';
+    protected $TABLE_NAME = 'users';
     
-    protected $PRIMERY_KEY = '__primery__';
+    protected $PRIMERY_KEY = 'user';
     
     protected $COLUMNS = [
-        // __column__
+        'user' => null,
+		'pwd' => null,
+		'stat' => null,
     ];
     
     public function __construct()

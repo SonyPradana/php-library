@@ -287,18 +287,25 @@ class MakeCommand extends Command
         info($table_name)->out();
 
         $template_column = '';
+        $primery_key     = 'id';
         try {
             $columns = [];
             foreach (DB::table('users')->info() as $column) {
                 $columns[] = "'{$column['COLUMN_NAME']}' => null,";
+                if ('PRI' === $column['COLUMN_KEY']) {
+                    $primery_key = $column['COLUMN_NAME'];
+                }
             }
-            $template_column = implode("\n", $columns);
+            $template_column = implode("\n\t\t", $columns);
+
+            var_dump(DB::table('users')->info());
         } catch (\Throwable $th) {
         }
 
         $getContent = file_get_contents($model_location);
         $getContent = str_replace('__table__', $table_name, $getContent);
         $getContent = str_replace('// __column__', $template_column, $getContent);
+        $getContent = str_replace('__primery__', $primery_key, $getContent);
         $isCopied   = file_put_contents($model_location, $getContent);
 
         return $isCopied === false ? false : true;

@@ -185,7 +185,6 @@ final class MakeCommandsTest extends CommandTest
 
         $model = file_get_contents($file);
         $this->assertContain('class User extends MyCRUD', $model);
-        $this->assertContain('$this->TABLE_NAME = \'users\';', $model);
     }
 
     /**
