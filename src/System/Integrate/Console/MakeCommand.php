@@ -152,7 +152,7 @@ class MakeCommand extends Command
     {
         info('Making model file...')->out(false);
 
-        $name = $this->OPTION[0];
+        $name = ucfirst($this->OPTION[0]);
 
         $success = $this->makeTemplate($name, [
             'template_location' => __DIR__ . '/stubs/model',
@@ -160,7 +160,7 @@ class MakeCommand extends Command
             'pattern'           => '__model__',
             'surfix'            => '.php',
         ], $name . '/');
-        $file_name = model_path() . ucfirst($name) . '/' . ucfirst($name) . '.php';
+        $file_name = model_path() . $name . '/' . $name . '.php';
 
         if ($this->option('table-name', false)) {
             $table_name = $this->option('table-name');
@@ -182,7 +182,7 @@ class MakeCommand extends Command
     {
         info('Making models file...')->out(false);
 
-        $name = $this->OPTION[0];
+        $name = ucfirst($this->OPTION[0]);
 
         $success = $this->makeTemplate($name, [
             'template_location' => __DIR__ . '/stubs/models',
@@ -194,7 +194,7 @@ class MakeCommand extends Command
         if ($this->option('table-name', false)) {
             $table_name = $this->option('table-name');
             $this->FillModelsDatabase(
-                model_path() . ucfirst($name) . '/' . ucfirst($name) . 's.php',
+                model_path() . $name . '/' . $name . 's.php',
                 $table_name
             );
         }
