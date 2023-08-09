@@ -160,7 +160,7 @@ class MakeCommand extends Command
             'pattern'           => '__model__',
             'surfix'            => '.php',
         ], $name . '/');
-        $file_name = model_path() . ucfirst($name) . '/' . $name . '.php';
+        $file_name = model_path() . ucfirst($name) . '/' . ucfirst($name) . '.php';
 
         if ($this->option('table-name', false)) {
             $table_name = $this->option('table-name');
@@ -194,7 +194,7 @@ class MakeCommand extends Command
         if ($this->option('table-name', false)) {
             $table_name = $this->option('table-name');
             $this->FillModelsDatabase(
-                model_path() . ucfirst($name) . '/' . $name . 's.php',
+                model_path() . ucfirst($name) . '/' . ucfirst($name) . 's.php',
                 $table_name
             );
         }
