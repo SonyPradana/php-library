@@ -254,6 +254,15 @@ class Command implements \ArrayAccess
      */
     protected function getWidth(int $min = 80, int $max = 160): int
     {
+        if (array_key_exists('COLUMNS', $_ENV)) {
+            $width = (int) trim($_ENV['COLUMNS']);
+
+                return $width < $min
+                    ? $min
+                    : ($width > $max ? $max : $width)
+                ;
+        }
+
         if ('Windows' === PHP_OS_FAMILY) {
             $modeOutput = shell_exec('mode con');
             if (preg_match('/Columns:\s+(\d+)/', $modeOutput, $matches)) {
