@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Console;
 
 use System\Text\Str;
@@ -73,14 +75,12 @@ class Command implements \ArrayAccess
      */
     public function __construct(array $argv, $default_option = [])
     {
-        // catch input argument from command line
-        array_shift($argv); // remove index 0
+        array_shift($argv);
 
-        $this->CMD        = array_shift($argv) ?? '';
-        $this->OPTION     = $argv;
-
-        // parse the option
+        $this->CMD           = array_shift($argv) ?? '';
+        $this->OPTION        = $argv;
         $this->option_mapper = $default_option;
+
         foreach ($this->option_mapper($argv) as $key => $value) {
             $this->option_mapper[$key] = $value;
         }
@@ -247,5 +247,38 @@ class Command implements \ArrayAccess
     public function main()
     {
         // print welcome screen or what ever you want
+    }
+
+    /**
+     * Get terminal width.
+     */
+    protected function getWidth(int $min = 80, int $max = 160): int
+    {
+        if ('Windows' === PHP_OS_FAMILY) {
+            $modeOutput = shell_exec('mode con');
+            if (preg_match('/Columns:\s+(\d+)/', $modeOutput, $matches)) {
+                $width = (int) $matches[1];
+
+                return $width < $min
+                    ? $min
+                    : ($width > $max ? $max : $width)
+                ;
+            }
+        }
+
+        $sttyOutput = shell_exec('stty size 2>&1');
+        if ($sttyOutput) {
+            $dimensions = explode(' ', trim($sttyOutput));
+            if (count($dimensions) === 2) {
+                $width = (int) $dimensions[1];
+
+                return $width < $min
+                    ? $min
+                    : ($width > $max ? $max : $width)
+                ;
+            }
+        }
+
+        return $min;
     }
 }
