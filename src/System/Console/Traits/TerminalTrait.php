@@ -24,6 +24,8 @@ trait TerminalTrait
             if (preg_match('/Columns:\s+(\d+)/', $modeOutput, $matches)) {
                 return $this->minMax((int) $matches[1], $min, $max);
             }
+
+            return $min;
         }
 
         $sttyOutput = shell_exec('stty size 2>&1');
