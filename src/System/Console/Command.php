@@ -255,39 +255,36 @@ class Command implements \ArrayAccess
     protected function getWidth(int $min = 80, int $max = 160): int
     {
         if (array_key_exists('COLUMNS', $_ENV)) {
-            $width = (int) trim($_ENV['COLUMNS']);
+            return $this->minMax((int) trim($_ENV['COLUMNS']), $min, $max);
+        }
 
-                return $width < $min
-                    ? $min
-                    : ($width > $max ? $max : $width)
-                ;
+        if (!function_exists('shell_exec')) {
+            return $min;
         }
 
         if ('Windows' === PHP_OS_FAMILY) {
             $modeOutput = shell_exec('mode con');
             if (preg_match('/Columns:\s+(\d+)/', $modeOutput, $matches)) {
-                $width = (int) $matches[1];
-
-                return $width < $min
-                    ? $min
-                    : ($width > $max ? $max : $width)
-                ;
+                return $this->minMax((int) $matches[1], $min, $max);
             }
         }
 
         $sttyOutput = shell_exec('stty size 2>&1');
         if ($sttyOutput) {
             $dimensions = explode(' ', trim($sttyOutput));
-            if (count($dimensions) === 2) {
-                $width = (int) $dimensions[1];
-
-                return $width < $min
-                    ? $min
-                    : ($width > $max ? $max : $width)
-                ;
+            if (2 === count($dimensions)) {
+                return $this->minMax((int) $dimensions[1], $min, $max);
             }
         }
 
         return $min;
+    }
+
+    /**
+     * Helper to get between min-max value.
+     */
+    private function minMax(int $value, int $min, int $max): int
+    {
+        return $value < $min ? $min : ($value > $max ? $max : $value);
     }
 }
