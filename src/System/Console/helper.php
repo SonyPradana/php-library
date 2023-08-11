@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Console;
 
 use System\Console\Style\Style;
+use System\Console\Traits\TerminalTrait;
 
 if (!function_exists('style')) {
     /**
@@ -145,5 +146,24 @@ if (!function_exists('any_key')) {
     function any_key($title, callable $callable)
     {
         return (new Prompt($title))->anyKey($callable);
+    }
+}
+
+if (!function_exists('width')) {
+    /**
+     * Get terminal width.
+     */
+    function width(int $min, int $max): int
+    {
+        $terminal = new class() {
+            use TerminalTrait;
+
+            public function width(int $min, int $max): int
+            {
+                return $this->getWidth($min, $max);
+            }
+        };
+
+        return $terminal->width($min, $max);
     }
 }
