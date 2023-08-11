@@ -12,7 +12,7 @@ trait TerminalTrait
     protected function getWidth(int $min = 80, int $max = 160): int
     {
         if (array_key_exists('COLUMNS', $_ENV)) {
-            return $this->minMax((int) trim($_ENV['COLUMNS']), $min, $max);
+            return $this->minMax((int) trim((string) $_ENV['COLUMNS']), $min, $max);
         }
 
         if (!function_exists('shell_exec')) {
