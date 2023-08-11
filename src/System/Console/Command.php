@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Console;
 
+use System\Console\Traits\TerminalTrait;
 use System\Text\Str;
 
 /**
@@ -14,6 +17,8 @@ use System\Text\Str;
  */
 class Command implements \ArrayAccess
 {
+    use TerminalTrait;
+
     /**
      * Commandline input.
      *
@@ -73,14 +78,12 @@ class Command implements \ArrayAccess
      */
     public function __construct(array $argv, $default_option = [])
     {
-        // catch input argument from command line
-        array_shift($argv); // remove index 0
+        array_shift($argv);
 
-        $this->CMD        = array_shift($argv) ?? '';
-        $this->OPTION     = $argv;
-
-        // parse the option
+        $this->CMD           = array_shift($argv) ?? '';
+        $this->OPTION        = $argv;
         $this->option_mapper = $default_option;
+
         foreach ($this->option_mapper($argv) as $key => $value) {
             $this->option_mapper[$key] = $value;
         }
