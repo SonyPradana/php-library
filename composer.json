@@ -67,7 +67,7 @@
         ],
         "test": [
             "php-cs-fixer fix -v",
-            "rector",
+            "rector --dry-run",
             "phpstan analyse --ansi --memory-limit=-1",
             "phpunit --exclude-group database"
         ]
