@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Http;
 
 use System\Http\Exceptions\StreamedResponseCallable;

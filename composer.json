@@ -19,7 +19,8 @@
         "phpunit/phpunit": "^9.6",
         "mockery/mockery": "^1.5",
         "friendsofphp/php-cs-fixer": "^3.18",
-        "phpstan/phpstan": "^1.10"
+        "phpstan/phpstan": "^1.10",
+        "rector/rector": "^0.17"
     },
     "autoload": {
         "psr-4": {
@@ -53,16 +54,20 @@
     "prefer-stable": true,
     "scripts": {
         "lint": "php-cs-fixer fix -v",
+        "refactor": "rector --debug",
         "test:lint": "php-cs-fixer fix -v --dry-run",
+        "test:refactor": "rector --dry-run",
         "test:types": "phpstan analyse --ansi --memory-limit=-1 --debug",
         "test:unit": "phpunit --testdox --exclude-group database",
         "test:dev": [
             "@test:lint",
+            "@test:refactor",
             "@test:types",
             "@test:unit"
         ],
         "test": [
             "php-cs-fixer fix -v",
+            "rector",
             "phpstan analyse --ansi --memory-limit=-1",
             "phpunit --exclude-group database"
         ]

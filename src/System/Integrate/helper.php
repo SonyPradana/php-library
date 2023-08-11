@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // path aplication
 
 use System\Integrate\Exceptions\ApplicationNotAvailable;
