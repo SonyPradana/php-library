@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Database;
 
 use System\Database\MyQuery\Join\AbstractJoin;
