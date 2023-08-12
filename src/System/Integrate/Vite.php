@@ -148,7 +148,7 @@ class Vite
         $hot  = $this->getHmrUrl();
 
         return (new Collection($resource_names))
-            ->assocBy(fn ($asset) => [$asset => $hot . $asset])
+            ->assocBy(static fn ($asset) => [$asset => $hot . $asset])
             ->toArray()
         ;
     }

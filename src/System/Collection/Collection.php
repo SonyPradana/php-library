@@ -288,7 +288,7 @@ class Collection extends AbstractCollectionImmutable
     public function except(array $excepts): self
     {
         /* @phpstan-ignore-next-line */
-        $this->filter(fn ($item, $key) => !in_array($key, $excepts));
+        $this->filter(static fn ($item, $key) => !in_array($key, $excepts));
 
         return $this;
     }
@@ -301,7 +301,7 @@ class Collection extends AbstractCollectionImmutable
     public function only(array $only): self
     {
         /* @phpstan-ignore-next-line */
-        $this->filter(fn ($item, $key) => in_array($key, $only));
+        $this->filter(static fn ($item, $key) => in_array($key, $only));
 
         return $this;
     }

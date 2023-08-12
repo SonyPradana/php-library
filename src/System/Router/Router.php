@@ -157,11 +157,11 @@ class Router
     {
         return new RouteGroup(
             // set up
-            function () use ($prefix) {
+            static function () use ($prefix) {
                 Router::$group['prefix'] = $prefix;
             },
             // reset
-            function () {
+            static function () {
                 Router::$group['prefix'] = '';
             }
         );
@@ -178,11 +178,11 @@ class Router
 
         return new RouteGroup(
             // load midleware
-            function () use ($middlewares) {
+            static function () use ($middlewares) {
                 self::$group['middleware'] = $middlewares;
             },
             // close midleware
-            function () use ($reset_group) {
+            static function () use ($reset_group) {
                 self::$group = $reset_group;
             }
         );
@@ -192,11 +192,11 @@ class Router
     {
         return new RouteGroup(
             // setup
-            function () use ($name) {
+            static function () use ($name) {
                 Router::$group['as'] = $name;
             },
             // reset
-            function () {
+            static function () {
                 Router::$group['as'] = '';
             }
         );
@@ -209,11 +209,11 @@ class Router
 
         $route_group = new RouteGroup(
             // setup
-            function () use ($class_name) {
+            static function () use ($class_name) {
                 self::$group['controller'] = $class_name;
             },
             // reset
-            function () use ($reset_group) {
+            static function () use ($reset_group) {
                 self::$group = $reset_group;
             }
         );
@@ -233,14 +233,14 @@ class Router
 
         $route_group = new RouteGroup(
             // setup
-            function () use ($setup_group) {
+            static function () use ($setup_group) {
                 foreach ((array) self::$group['middleware'] as $middleware) {
                     $setup_group['middleware'][] = $middleware;
                 }
                 self::$group = $setup_group;
             },
             // reset
-            function () use ($reset_group) {
+            static function () use ($reset_group) {
                 self::$group = $reset_group;
             }
         );
@@ -276,7 +276,7 @@ class Router
             $resource->except($setup['except']);
         }
 
-        $resource->get()->each(function ($route) {
+        $resource->get()->each(static function ($route) {
             self::$routes[] = $route;
 
             return true;
@@ -429,9 +429,9 @@ class Router
             ->trailingSlashMatters($trailing_slash_matters)
             ->multimatch($multimatch)
             ->run(
-                fn ($current, $params) => call_user_func_array($current, $params),
-                fn ($path) => call_user_func_array(self::$pathNotFound, [$path]),
-                fn ($path, $method) => call_user_func_array(self::$methodNotAllowed, [$path, $method])
+                static fn ($current, $params) => call_user_func_array($current, $params),
+                static fn ($path) => call_user_func_array(self::$pathNotFound, [$path]),
+                static fn ($path, $method) => call_user_func_array(self::$methodNotAllowed, [$path, $method])
             );
 
         self::$current = $dispatcher->current();

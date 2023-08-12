@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Rector\CodingStyle\Rector\ArrowFunction\StaticArrowFunctionRector;
+use Rector\CodingStyle\Rector\Closure\StaticClosureRector;
 use Rector\Config\RectorConfig;
 use Rector\TypeDeclaration\Rector\StmtsAwareInterface\DeclareStrictTypesRector;
 
@@ -10,5 +12,9 @@ return static function (RectorConfig $rectorConfig): void {
         __DIR__ . '/src',
     ]);
 
-    $rectorConfig->rule(DeclareStrictTypesRector::class);
+    $rectorConfig->rules([
+        DeclareStrictTypesRector::class,
+        StaticClosureRector::class,
+        StaticArrowFunctionRector::class,
+    ]);
 };

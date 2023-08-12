@@ -29,7 +29,7 @@ final class Select extends Fetch
 
         // defaul query
         if (count($this->_column) > 1) {
-            $this->_column = array_map(fn ($e) => "`$e`", $this->_column);
+            $this->_column = array_map(static fn ($e) => "`$e`", $this->_column);
         }
 
         $column       = implode(', ', $columns_name);
@@ -179,7 +179,7 @@ final class Select extends Fetch
         $build['sort_order'] = $this->_sort_order;
         $build['limit']      = $this->getLimit();
 
-        $condition = implode(' ', array_filter($build, fn ($item) => $item !== ''));
+        $condition = implode(' ', array_filter($build, static fn ($item) => $item !== ''));
 
         return $this->_query = "SELECT $column FROM `$this->_table` $condition";
     }

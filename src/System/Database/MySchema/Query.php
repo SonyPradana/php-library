@@ -33,7 +33,7 @@ abstract class Query
     {
         return implode(
             $sperator,
-            array_filter($array, fn ($item) => $item !== '')
+            array_filter($array, static fn ($item) => $item !== '')
         );
     }
 }

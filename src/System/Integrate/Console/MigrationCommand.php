@@ -121,8 +121,8 @@ class MigrationCommand extends Command
 
         /* @var bool */
         return (new Prompt(style('Runing migration/database in production?')->textRed(), [
-                'yes' => fn () => true,
-                'no'  => fn () => false,
+                'yes' => static fn () => true,
+                'no'  => static fn () => false,
             ], 'no'))
             ->selection([
                 style('yes')->textDim(),
@@ -138,8 +138,8 @@ class MigrationCommand extends Command
     {
         /* @var bool */
         return (new Prompt($message, [
-            'yes' => fn () => true,
-            'no'  => fn () => false,
+            'yes' => static fn () => true,
+            'no'  => static fn () => false,
         ], 'no'))
         ->selection([
             style('yes')->textDim(),
@@ -186,7 +186,7 @@ class MigrationCommand extends Command
             $up     = new Collection($schema['up'] ?? []);
 
             if ($this->option('dry-run')) {
-                $up->each(function ($item) use ($print) {
+                $up->each(static function ($item) use ($print) {
                     $print->push($item->__toString())->textDim()->new_lines(2);
 
                     return true;
@@ -198,7 +198,7 @@ class MigrationCommand extends Command
             $print->repeat('.', 60 - strlen($key))->textDim();
 
             try {
-                $success = $up->every(fn ($item) => $item->execute());
+                $success = $up->every(static fn ($item) => $item->execute());
             } catch (\Throwable $th) {
                 $success = false;
                 fail($th->getMessage())->out(false);
@@ -239,7 +239,7 @@ class MigrationCommand extends Command
             $up     = new Collection($schema['up'] ?? []);
 
             if ($this->option('dry-run')) {
-                $up->each(function ($item) use ($print) {
+                $up->each(static function ($item) use ($print) {
                     $print->push($item->__toString())->textDim()->new_lines(2);
 
                     return true;
@@ -251,7 +251,7 @@ class MigrationCommand extends Command
             $print->repeat('.', 60 - strlen($key))->textDim();
 
             try {
-                $success = $up->every(fn ($item) => $item->execute());
+                $success = $up->every(static fn ($item) => $item->execute());
             } catch (\Throwable $th) {
                 $success = false;
                 fail($th->getMessage())->out(false);
@@ -324,7 +324,7 @@ class MigrationCommand extends Command
             $down   = new Collection($schema['down'] ?? []);
 
             if ($this->option('dry-run')) {
-                $down->each(function ($item) use ($print) {
+                $down->each(static function ($item) use ($print) {
                     $print->push($item->__toString())->textDim()->new_lines(2);
 
                     return true;
@@ -336,7 +336,7 @@ class MigrationCommand extends Command
             $print->repeat('.', 60 - strlen($key))->textDim();
 
             try {
-                $success = $down->every(fn ($item) => $item->execute());
+                $success = $down->every(static fn ($item) => $item->execute());
             } catch (\Throwable $th) {
                 $success = false;
                 fail($th->getMessage())->out(false);

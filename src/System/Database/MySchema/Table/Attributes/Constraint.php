@@ -45,7 +45,7 @@ class Constraint
             $this->order,
         ];
 
-        return implode(' ', array_filter($collumn, fn ($item) => $item !== ''));
+        return implode(' ', array_filter($collumn, static fn ($item) => $item !== ''));
     }
 
     public function notNull(bool $null = true): self

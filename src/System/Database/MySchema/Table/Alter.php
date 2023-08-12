@@ -70,7 +70,7 @@ class Alter extends Query
         $query = array_merge($query, $this->getColumns());
 
         // drop
-        $drops = array_map(fn ($column) => "DROP COLUMN `{$column}`;", $this->drop_columns);
+        $drops = array_map(static fn ($column) => "DROP COLUMN `{$column}`;", $this->drop_columns);
         $query = array_merge($query, $drops);
 
         // rename

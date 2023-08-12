@@ -24,7 +24,7 @@ class ResourceControllerCollection
     {
         $map = array_filter(
             ResourceController::method(),
-            fn ($resource) => !in_array($resource, $resources, true)
+            static fn ($resource) => !in_array($resource, $resources, true)
         );
         foreach ($map as $resource) {
             $name = "{$this->class_name}.{$resource}";

@@ -451,7 +451,7 @@ final class Str
         $arr_text = \preg_split('//', $text, -1, PREG_SPLIT_NO_EMPTY);
         $new      = new Collection($arr_text);
         /* @phpstan-ignore-next-line */
-        $new_text = $new->map(function ($string, $index) use ($mask, $start, $end) {
+        $new_text = $new->map(static function ($string, $index) use ($mask, $start, $end) {
             if ($index > $start && $index < $end) {
                 return $mask;
             }

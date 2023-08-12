@@ -84,7 +84,7 @@ class Property
             $single_line  = $this->expecting[0] ?? '';
             $multy_line   = implode(
                 "\n" . $tab_dept(1),
-                array_filter($this->expecting, fn ($key) => $key > 0, ARRAY_FILTER_USE_KEY)
+                array_filter($this->expecting, static fn ($key) => $key > 0, ARRAY_FILTER_USE_KEY)
             );
             $expecting = count($this->expecting) > 1
         ? ' ' . $single_line . "\n" . $tab_dept(1) . $multy_line

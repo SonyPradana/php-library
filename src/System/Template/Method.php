@@ -102,7 +102,7 @@ class Method
         $return .= $this->return_type;
 
         // body
-        $bodys = array_map(fn ($x) => $tab_dept(2) . $x, $this->body);
+        $bodys = array_map(static fn ($x) => $tab_dept(2) . $x, $this->body);
         $body  = implode("\n", $bodys);
 
         return str_replace(

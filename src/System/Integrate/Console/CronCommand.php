@@ -146,7 +146,7 @@ class CronCommand extends Command
 
     public function scheduler(Schedule $schedule): void
     {
-        $schedule->call(function () {
+        $schedule->call(static function () {
             return [
                 'code' => 200,
             ];

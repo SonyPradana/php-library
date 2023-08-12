@@ -192,11 +192,10 @@ abstract class Query
     {
         [$binds, $values] = $this->bindsDestructur();
 
-        $quote_values = array_map(function ($value) {
+        $quote_values = array_map(static function ($value) {
             if (is_string($value)) {
                 return "'" . $value . "'";
             }
-
             if (is_bool($value)) {
                 if ($value === true) {
                     return 'true';
@@ -204,7 +203,6 @@ abstract class Query
 
                 return 'false';
             }
-
             /* @phpstan-ignore-next-line */
             return $value;
         }, $values);

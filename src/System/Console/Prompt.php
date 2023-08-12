@@ -38,7 +38,7 @@ class Prompt
     public function __construct($title, array $options = [], string $default = '')
     {
         $this->title     = $title;
-        $this->options   = array_merge(['' => fn () => false], $options);
+        $this->options   = array_merge(['' => static fn () => false], $options);
         $this->default   = $default;
         $this->selection = array_keys($options);
     }
@@ -134,7 +134,8 @@ class Prompt
         (new Style($this->title))->out();
 
         $userline = [];
-        readline_callback_handler_install('', function () {});
+        readline_callback_handler_install('', static function () {
+        });
         while (true) {
             $keystroke = stream_get_contents(STDIN, 1);
 
@@ -164,7 +165,8 @@ class Prompt
     public function anyKey(callable $callable)
     {
         $prompt = (string) $this->title;
-        readline_callback_handler_install($prompt, function () {});
+        readline_callback_handler_install($prompt, static function () {
+        });
         $keystroke = stream_get_contents(STDIN, 1);
 
         return ($callable)($keystroke);
