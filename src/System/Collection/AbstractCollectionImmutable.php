@@ -156,21 +156,16 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param callable(TValue, TKey=): bool $callable
+     * @param callable(TValue, TKey=): (bool|void) $callable
      *
      * @return $this
      */
-    public function each(callable $callable): self
+    public function each($callable): self
     {
-        if (!is_callable($callable)) {
-            return $this;
-        }
-
         foreach ($this->collection as $key => $item) {
             $do_somethink = call_user_func($callable, $item, $key);
 
-            // stop looping if callable returning false
-            if ($do_somethink === false) {
+            if (false === $do_somethink) {
                 break;
             }
         }
