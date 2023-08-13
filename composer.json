@@ -53,21 +53,21 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
+        "refacto": "rector",
         "lint": "php-cs-fixer fix -v",
-        "refactor": "rector --debug",
-        "test:lint": "php-cs-fixer fix -v --dry-run",
-        "test:refactor": "rector --dry-run",
+        "test:refacto": "rector --dry-run",
+        "test:lint": "php-cs-fixer fix -v --dry-run --diff",
         "test:types": "phpstan analyse --ansi --memory-limit=-1 --debug",
         "test:unit": "phpunit --testdox --exclude-group database",
         "test:dev": [
+            "@test:refacto",
             "@test:lint",
-            "@test:refactor",
             "@test:types",
             "@test:unit"
         ],
         "test": [
-            "php-cs-fixer fix -v",
             "rector --dry-run",
+            "php-cs-fixer fix -v --dry-run",
             "phpstan analyse --ansi --memory-limit=-1",
             "phpunit --exclude-group database"
         ]
