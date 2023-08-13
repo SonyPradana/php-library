@@ -23,6 +23,7 @@ class CommandTest extends TestCase
         $this->app->setModelPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR);
         $this->app->setCommandPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR);
         $this->app->setConfigPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR);
+        $this->app->setMigrationPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'migration' . DIRECTORY_SEPARATOR);
     }
 
     protected function tearDown(): void

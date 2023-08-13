@@ -50,6 +50,9 @@ final class MakeCommandsTest extends CommandTest
         if (file_exists($command = __DIR__ . '/assets/CacheCommand.php')) {
             unlink($command);
         }
+
+        $migration = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'migration' . DIRECTORY_SEPARATOR;
+        array_map('unlink', glob("{$migration}/*.php"));
     }
 
     /**
@@ -282,5 +285,25 @@ final class MakeCommandsTest extends CommandTest
         ob_get_clean();
 
         $this->assertFails($exit);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanCallMakeCommandMigrationWithSuccess()
+    {
+        $make_command = new MakeCommand($this->argv('cli make:migration user'));
+        ob_start();
+        $exit = $make_command->make_migration();
+        ob_get_clean();
+
+        $this->assertSuccess($exit);
+
+        $make_command = new MakeCommand($this->argv('cli make:migration guest --update'));
+        ob_start();
+        $exit = $make_command->make_migration();
+        ob_get_clean();
+
+        $this->assertSuccess($exit);
     }
 }
