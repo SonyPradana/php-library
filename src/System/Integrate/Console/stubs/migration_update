@@ -1,0 +1,15 @@
+<?php
+
+declare(strict_types=1);
+
+use System\Database\MySchema\Table\Alter;
+use System\Support\Facades\Schema;
+
+return [
+    'up' => [
+        Schema::alter('__table__', static function (Alter $table) {
+            // $table->drop('delete_at');
+        }),
+    ],
+    'down' => [],
+];

@@ -11,8 +11,12 @@ use System\Support\Facades\DB;
 use function System\Console\fail;
 use function System\Console\info;
 use function System\Console\ok;
+use function System\Console\text;
 use function System\Console\warn;
 
+/**
+ * @property bool $update
+ */
 class MakeCommand extends Command
 {
     use CommandTrait;
@@ -53,6 +57,11 @@ class MakeCommand extends Command
             'mode'      => 'full',
             'class'     => MakeCommand::class,
             'fn'        => 'make_command',
+        ], [
+            'cmd'       => 'make:migration',
+            'mode'      => 'full',
+            'class'     => MakeCommand::class,
+            'fn'        => 'make_migration',
         ],
     ];
 
@@ -69,9 +78,11 @@ class MakeCommand extends Command
                 'make:model'      => 'Generate new model',
                 'make:models'     => 'Generate new models',
                 'make:command'    => 'Generate new command',
+                'make:migartion'  => 'Generate new migration file',
             ],
             'options'   => [
                 '--table-name' => 'Set table column when creating model/models.',
+                '--update'     => 'Generate migration file with alter (update).',
             ],
             'relation'  => [
                 'make:controller' => ['[controller_name]'],
@@ -80,6 +91,7 @@ class MakeCommand extends Command
                 'make:model'      => ['[model_name]', '--table-name'],
                 'make:models'     => ['[models_name]', '--table-name'],
                 'make:command'    => ['[command_name]'],
+                'make:migration'  => ['[table_name]', ['--update']],
             ],
         ];
     }
@@ -271,6 +283,37 @@ class MakeCommand extends Command
         fail("\nFailed Create command file")->out();
 
         return 1;
+    }
+
+    public function make_migration(): int
+    {
+        info('Making migration')->out(false);
+
+        $name = $this->OPTION[0] ?? false;
+        if (false === $name) {
+            warn('Table name cant be empty.')->out(false);
+            do {
+                $name = text('Fill the table name?', static fn ($text) => $text);
+            } while ($name === '' || $name === false);
+        }
+
+        $name         = strtolower($name);
+        $path_to_file = migration_path();
+        $bath         = now()->format('Y_m_d_His');
+        $file_name    = "{$path_to_file}\\{$bath}_{$name}.php";
+
+        $use      = $this->update ? 'migration_update' : 'migration';
+        $template = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . $use);
+        $template = str_replace('__table__', $name, $template);
+
+        if (false === file_exists($path_to_file) || false === file_put_contents($file_name, $template)) {
+            fail('Can\'t create migration file.')->out();
+
+            return 1;
+        }
+        ok('Success create migration file.')->out();
+
+        return 0;
     }
 
     /**
