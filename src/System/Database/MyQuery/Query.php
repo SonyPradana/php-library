@@ -129,6 +129,7 @@ abstract class Query
             // hanya mengunakan basic where
             return "WHERE $where";
         }
+
         // return condition where statment
         return $where;
     }
@@ -146,6 +147,7 @@ abstract class Query
                 'strict'  => $this->_strict_mode,
             ];
         }
+
         // hasil penggabungan
         return $new_group_filters;
     }
