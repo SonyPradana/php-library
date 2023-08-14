@@ -77,8 +77,8 @@ class RequestFactory
             : null;
     }
 
-    private function getRawBody(): ?string // @phpstan-ignore-line
+    private function getRawBody(): ?string
     {
-        return file_get_contents('php://input') || null; // @phpstan-ignore-line
+        return file_get_contents('php://input') ?: null;
     }
 }
