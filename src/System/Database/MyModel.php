@@ -237,6 +237,7 @@ abstract class MyModel
                 'strict'  => $this->_STRICT_SEARCH,
             ];
         }
+
         // membuat group filter baru tanpa merubah grups filter dr classs
         return $new_grups_filters;
     }
