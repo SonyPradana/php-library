@@ -78,7 +78,7 @@ class MakeCommand extends Command
                 'make:model'      => 'Generate new model',
                 'make:models'     => 'Generate new models',
                 'make:command'    => 'Generate new command',
-                'make:migartion'  => 'Generate new migration file',
+                'make:migration'  => 'Generate new migration file',
             ],
             'options'   => [
                 '--table-name' => 'Set table column when creating model/models.',
