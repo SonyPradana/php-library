@@ -334,7 +334,7 @@ class MakeCommand extends Command
         $primery_key     = 'id';
         try {
             $columns = [];
-            foreach (DB::table('users')->info() as $column) {
+            foreach (DB::table($table_name)->info() as $column) {
                 $columns[] = "'{$column['COLUMN_NAME']}' => null,";
                 if ('PRI' === $column['COLUMN_KEY']) {
                     $primery_key = $column['COLUMN_NAME'];
@@ -356,7 +356,7 @@ class MakeCommand extends Command
 
     /**
      * Fill template with property
-     * base on databe table.
+     * base on database table.
      *
      * @param string $model_location File location (models)
      * @param string $table_name     Tabel name to sync with models
