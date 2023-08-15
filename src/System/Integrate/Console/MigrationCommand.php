@@ -88,13 +88,13 @@ class MigrationCommand extends Command
             'migrate:reset'            => 'Rolling back all migrations (down)',
             'migrate:refresh'          => 'Rolling back and run migration all',
             'migrate:rollback'         => 'Rolling back last migrations (down)',
-            'database:create'          => 'Create databese',
-            'database:drop'            => 'Drop databese',
-            'database:show'            => 'Show databese table',
+            'database:create'          => 'Create database',
+            'database:drop'            => 'Drop database',
+            'database:show'            => 'Show database table',
           ],
           'options'   => [
             '--dry-run' => 'Excute migration but olny get query output.',
-            '--force'   => 'Force runing migration/databe query in production',
+            '--force'   => 'Force runing migration/database query in production',
           ],
           'relation'  => [
             'migrate'                   => ['--dry-run', '--force'],
