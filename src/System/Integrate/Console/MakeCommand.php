@@ -91,7 +91,7 @@ class MakeCommand extends Command
                 'make:model'      => ['[model_name]', '--table-name'],
                 'make:models'     => ['[models_name]', '--table-name'],
                 'make:command'    => ['[command_name]'],
-                'make:migration'  => ['[table_name]', ['--update']],
+                'make:migration'  => ['[table_name]', '--update'],
             ],
         ];
     }
@@ -300,7 +300,7 @@ class MakeCommand extends Command
         $name         = strtolower($name);
         $path_to_file = migration_path();
         $bath         = now()->format('Y_m_d_His');
-        $file_name    = "{$path_to_file}\\{$bath}_{$name}.php";
+        $file_name    = "{$path_to_file}{$bath}_{$name}.php";
 
         $use      = $this->update ? 'migration_update' : 'migration';
         $template = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . $use);
