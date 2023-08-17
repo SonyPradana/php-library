@@ -51,13 +51,13 @@ class ServeCommand extends Command
         $localIP = gethostbyname(gethostname());
 
         style('Server runing add:')
-            ->new_lines()
+            ->newLines()
             ->push('Local')->tabs()->push("http://localhost:$port")->textBlue()
-            ->new_lines()
+            ->newLines()
             ->push('Network')->tabs()->push("http://$localIP:$port")->textBlue()
-            ->new_lines(2)
+            ->newLines(2)
             ->push('ctrl+c to stop server')
-            ->new_lines()
+            ->newLines()
             ->tap(Alert::render()->info('server runing...'))
             ->out(false);
 

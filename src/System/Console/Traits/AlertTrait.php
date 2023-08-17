@@ -36,7 +36,7 @@ trait AlertTrait
     public function info($info)
     {
         return (new Style())
-            ->new_lines()
+            ->newLines()
             ->repeat(' ', $this->margin_left)
             ->push(' info ')
             ->bold()
@@ -44,7 +44,7 @@ trait AlertTrait
             ->bgBlue()
             ->push(' ')
             ->push($info)
-            ->new_lines(2)
+            ->newLines(2)
         ;
     }
 
@@ -58,7 +58,7 @@ trait AlertTrait
     public function warn($warn)
     {
         return (new Style())
-            ->new_lines()
+            ->newLines()
             ->repeat(' ', $this->margin_left)
             ->push(' warn ')
             ->bold()
@@ -66,7 +66,7 @@ trait AlertTrait
             ->bgYellow()
             ->push(' ')
             ->push($warn)
-            ->new_lines(2)
+            ->newLines(2)
         ;
     }
 
@@ -80,7 +80,7 @@ trait AlertTrait
     public function fail($fail)
     {
         return (new Style())
-            ->new_lines()
+            ->newLines()
             ->repeat(' ', $this->margin_left)
             ->push(' fail ')
             ->bold()
@@ -88,7 +88,7 @@ trait AlertTrait
             ->bgRed()
             ->push(' ')
             ->push($fail)
-            ->new_lines(2)
+            ->newLines(2)
         ;
     }
 
@@ -102,7 +102,7 @@ trait AlertTrait
     public function ok($ok)
     {
         return (new Style())
-            ->new_lines()
+            ->newLines()
             ->repeat(' ', $this->margin_left)
             ->push(' ok ')
             ->bold()
@@ -110,7 +110,7 @@ trait AlertTrait
             ->bgGreen()
             ->push(' ')
             ->push($ok)
-            ->new_lines(2)
+            ->newLines(2)
         ;
     }
 }

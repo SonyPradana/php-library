@@ -100,7 +100,7 @@ class Prompt
             if ($option instanceof Style) {
                 $style->tap($option);
             } else {
-                $style->new_lines()->push("[{$i}] {$option}");
+                $style->newLines()->push("[{$i}] {$option}");
             }
             $i++;
         }

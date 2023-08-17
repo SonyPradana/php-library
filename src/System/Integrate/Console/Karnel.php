@@ -58,12 +58,12 @@ class Karnel
 
         // if command not register
         (new Style())
-            ->push('Commad Not Found, run help command')->textRed()->new_lines(2)
+            ->push('Commad Not Found, run help command')->textRed()->newLines(2)
             ->push('> ')->textDim()
             ->push('php ')->textYellow()
             ->push('cli ')
             ->push('--help')->textDim()
-            ->new_lines()
+            ->newLines()
             ->out()
         ;
 

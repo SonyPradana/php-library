@@ -187,7 +187,7 @@ class MigrationCommand extends Command
 
             if ($this->option('dry-run')) {
                 $up->each(function ($item) use ($print) {
-                    $print->push($item->__toString())->textDim()->new_lines(2);
+                    $print->push($item->__toString())->textDim()->newLines(2);
 
                     return true;
                 });
@@ -205,11 +205,11 @@ class MigrationCommand extends Command
             }
 
             if ($success) {
-                $print->push('DONE')->textGreen()->new_lines();
+                $print->push('DONE')->textGreen()->newLines();
                 continue;
             }
 
-            $print->push('FAIL')->textRed()->new_lines();
+            $print->push('FAIL')->textRed()->newLines();
         }
 
         $print->out();
@@ -240,7 +240,7 @@ class MigrationCommand extends Command
 
             if ($this->option('dry-run')) {
                 $up->each(function ($item) use ($print) {
-                    $print->push($item->__toString())->textDim()->new_lines(2);
+                    $print->push($item->__toString())->textDim()->newLines(2);
 
                     return true;
                 });
@@ -258,11 +258,11 @@ class MigrationCommand extends Command
             }
 
             if ($success) {
-                $print->push('DONE')->textGreen()->new_lines();
+                $print->push('DONE')->textGreen()->newLines();
                 continue;
             }
 
-            $print->push('FAIL')->textRed()->new_lines();
+            $print->push('FAIL')->textRed()->newLines();
         }
 
         $print->out();
@@ -325,7 +325,7 @@ class MigrationCommand extends Command
 
             if ($this->option('dry-run')) {
                 $down->each(function ($item) use ($print) {
-                    $print->push($item->__toString())->textDim()->new_lines(2);
+                    $print->push($item->__toString())->textDim()->newLines(2);
 
                     return true;
                 });
@@ -343,11 +343,11 @@ class MigrationCommand extends Command
             }
 
             if ($success) {
-                $print->push('DONE')->textGreen()->new_lines();
+                $print->push('DONE')->textGreen()->newLines();
                 continue;
             }
 
-            $print->push('FAIL')->textRed()->new_lines();
+            $print->push('FAIL')->textRed()->newLines();
         }
 
         $print->out();
@@ -448,7 +448,7 @@ class MigrationCommand extends Command
         $table = (new MyQuery(PDO::instance()))->table($table)->info();
         $print = new Style("\n");
 
-        $print->push('column')->textYellow()->bold()->resetDecorate()->new_lines();
+        $print->push('column')->textYellow()->bold()->resetDecorate()->newLines();
         foreach ($table as $column) {
             $will_print = [];
 
@@ -466,7 +466,7 @@ class MigrationCommand extends Command
             $print->push(' ' . $info . ' ')->textDim();
             $print->repeat('.', 60 - $lenght)->textDim();
             $print->push(' ' . $column['COLUMN_TYPE']);
-            $print->new_lines();
+            $print->newLines();
         }
 
         $print->out();

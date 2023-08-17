@@ -338,13 +338,19 @@ class Style
     }
 
     /**
-     * Print terminal style.
-     *
-     * @return void
+     * Clear curent line (original text is keep).
      */
-    public function clear()
+    public function clear(int $line = -1): void
     {
-        $this->clear_line();
+        $this->clearLine($line);
+    }
+
+    /**
+     * Replace current line (original text is keep).
+     */
+    public function replace(string $text, int $line = -1): void
+    {
+        $this->replaceLine($text, $line);
     }
 
     // style ------------------------------------------
@@ -517,11 +523,25 @@ class Style
     /**
      * Push/insert new lines.
      *
+     * @deprecated
+     *
      * @param int $repeat
      *
      * @return self
      */
     public function new_lines($repeat = 1)
+    {
+        return $this->repeat("\n", $repeat);
+    }
+
+    /**
+     * Push/insert new lines.
+     *
+     * @param int $repeat
+     *
+     * @return self
+     */
+    public function newLines($repeat = 1)
     {
         return $this->repeat("\n", $repeat);
     }

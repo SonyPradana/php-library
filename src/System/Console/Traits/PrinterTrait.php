@@ -43,11 +43,21 @@ trait PrinterTrait
             : $rule;
     }
 
+    /**
+     * Print new line x times.
+     *
+     * @deprecated
+     */
     protected function print_n(int $count = 1): void
     {
         echo str_repeat("\n", $count);
     }
 
+    /**
+     * Print tab x times.
+     *
+     * @deprecated
+     */
     protected function print_t(int $count = 1): void
     {
         echo str_repeat("\t", $count);
@@ -66,6 +76,8 @@ trait PrinterTrait
     /**
      * Clear from the cursor position to the beginning of the line.
      *
+     * @deprecated
+     *
      * @return void
      */
     protected function clear_cursor()
@@ -76,10 +88,38 @@ trait PrinterTrait
     /**
      * Clear everything on the line.
      *
+     * @deprecated
+     *
      * @return void
      */
     protected function clear_line()
     {
         echo chr(27) . '[2K';
+    }
+
+    /**
+     * Replace single line output to new string.
+     */
+    protected function replaceLine(string $replace, int $line = -1): void
+    {
+        $this->moveLine($line);
+        echo chr(27) . "[K\r" . $replace;
+    }
+
+    /**
+     * Remove / reset curent line to empty.
+     */
+    protected function clearLine(int $line = -1): void
+    {
+        $this->moveLine($line);
+        $this->replaceLine('');
+    }
+
+    /**
+     * Move to line (start from bottom).
+     */
+    protected function moveLine(int $line): void
+    {
+        echo chr(27) . "[{$line}A";
     }
 }
