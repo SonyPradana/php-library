@@ -100,16 +100,26 @@ trait PrinterTrait
     /**
      * Replace single line output to new string.
      */
-    protected function replaceLine(string $replace): void
+    protected function replaceLine(string $replace, int $line = -1): void
     {
+        $this->moveLine($line);
         echo chr(27) . "[K\r" . $replace;
     }
 
     /**
      * Remove / reset curent line to empty.
      */
-    protected function clearLine(): void
+    protected function clearLine(int $line = -1): void
     {
+        $this->moveLine($line);
         $this->replaceLine('');
+    }
+
+    /**
+     * Move to line (start from bottom).
+     */
+    protected function moveLine(int $line): void
+    {
+        echo chr(27) . "[{$line}A";
     }
 }

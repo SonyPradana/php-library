@@ -340,17 +340,17 @@ class Style
     /**
      * Clear curent line (original text is keep).
      */
-    public function clear(): void
+    public function clear(int $line = -1): void
     {
-        $this->clearLine();
+        $this->clearLine($line);
     }
 
     /**
      * Replace current line (original text is keep).
      */
-    public function replace(string $text): void
+    public function replace(string $text, int $line = -1): void
     {
-        $this->replaceLine($text);
+        $this->replaceLine($text, $line);
     }
 
     // style ------------------------------------------
