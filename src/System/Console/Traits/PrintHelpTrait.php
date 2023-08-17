@@ -58,7 +58,7 @@ trait PrintHelpTrait
             $style->repeat(' ', $range + 8);
 
             $style->push($describe);
-            $style->new_lines();
+            $style->newLines();
         }
 
         return $style;
@@ -88,7 +88,7 @@ trait PrintHelpTrait
             $style->push($option_name)->textDim();
 
             $style->push($describe);
-            $style->new_lines();
+            $style->newLines();
         }
 
         return $style;

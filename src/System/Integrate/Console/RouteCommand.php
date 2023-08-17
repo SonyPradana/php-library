@@ -62,7 +62,7 @@ class RouteCommand extends Command
               ->repeat('.', 80 - $length)->textDim()
               ->push(' ')
               ->push(Str::limit($route['expression'], 30))
-              ->new_lines()
+              ->newLines()
             ;
         }
         $print->out();

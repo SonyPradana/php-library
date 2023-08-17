@@ -96,11 +96,11 @@ class CronCommand extends Command
             } else {
                 $print->push($cron['time'])->textGreen()->repeat(' ', $max + 1 - strlen($cron['time']));
             }
-            $print->push($cron['name'])->textYellow()->new_lines();
+            $print->push($cron['name'])->textYellow()->newLines();
         }
 
         $watch_end = round(microtime(true) - $watch_start, 3) * 1000;
-        $print->new_lines()->push('done in ')
+        $print->newLines()->push('done in ')
             ->push($watch_end . ' ms')->textGreen()
             ->out();
 
@@ -112,7 +112,7 @@ class CronCommand extends Command
         $print = new Style("\n");
         $print
             ->push('Simulate Cron in terminal (every minute)')->textBlue()
-            ->new_lines(2)
+            ->newLines(2)
             ->push('type ctrl+c to stop')->textGreen()->underline()
             ->out();
 

@@ -125,33 +125,33 @@ class HelpCommand extends Command
         $printer = new Style();
         $printer->push($this->banner)->textGreen();
         $printer
-            ->new_lines(2)
+            ->newLines(2)
             ->push('Usage:')
-            ->new_lines(2)->tabs()
+            ->newLines(2)->tabs()
             ->push('php')->textGreen()
             ->push(' cli [flag]')
-            ->new_lines()->tabs()
+            ->newLines()->tabs()
             ->push('php')->textGreen()
             ->push(' cli [command] ')
             ->push('[option]')->textDim()
-            ->new_lines(2)
+            ->newLines(2)
 
             ->push('Avilable flag:')
-            ->new_lines(2)->tabs()
+            ->newLines(2)->tabs()
             ->push('--help')->textDim()
             ->tabs(3)
             ->push('Get all help commands')
-            ->new_lines()->tabs()
+            ->newLines()->tabs()
             ->push('--list')->textDim()
             ->tabs(3)
             ->push('Get list of commands registered (class & function)')
-            ->new_lines(2)
+            ->newLines(2)
         ;
 
-        $printer->push('Avilabe command:')->new_lines(2);
-        $printer = $this->printCommands($printer)->new_lines();
+        $printer->push('Avilabe command:')->newLines(2);
+        $printer = $this->printCommands($printer)->newLines();
 
-        $printer->push('Avilabe options:')->new_lines();
+        $printer->push('Avilabe options:')->newLines();
         $printer = $this->printOptions($printer);
 
         $printer->out();
@@ -187,7 +187,7 @@ class HelpCommand extends Command
                 ->tap(info('To see help command, place provide command_name'))
                 ->textYellow()
                 ->push('php cli help <command_nama>')->textDim()
-                ->new_lines()
+                ->newLines()
                 ->push('              ^^^^^^^^^^^^')->textRed()
                 ->out()
             ;
@@ -230,10 +230,10 @@ class HelpCommand extends Command
                     $this->command_relation = $res['relation'];
                 }
 
-                style('Avilabe command:')->new_lines()->out();
+                style('Avilabe command:')->newLines()->out();
                 $this->printCommands(new Style())->out();
 
-                style('Avilable options:')->new_lines()->out();
+                style('Avilable options:')->newLines()->out();
                 $this->printOptions(new Style())->out();
 
                 return 0;

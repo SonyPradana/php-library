@@ -173,7 +173,7 @@ class GreatConsole extends Console
 
     style("Great console Aapplication")
     	->textGreen()
-        ->new_lines()
+        ->newLines()
         ->push("hay my name is ")
         ->push($name)
         ->textYellow()
