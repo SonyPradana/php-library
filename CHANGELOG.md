@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.0] - 2023-08-18
+### Added
+- Added method `Collection::push` to add item in collection without using key.
+- Added method `Collection::diff`, `Collection::diffKeys`, `Collection::diffAssoc`.
+- Added method `Collection::complement`, `Collection::complementKeys`, `Collection::complementAssoc`.
+- Added integrate command `CronCommand::class`, `HelpCommand::class`, `MakeCommand::class`, `RouteCommand::class`, `MiggrationCommand::class`.
+- Added console width via `Terminal::width`.
+- Added console method `Style::replace`, replace spesific line with new text.
+- Added terminal style `ProgressBar::class` print progressbar in console.
+
+### Changed
+- Change return type to `bool|void` in `Colection::each(closure(): void|bool)`.
+
+### Deprecated
+- Deprecated `new_lines` and added new method `newLines` with same result.
+
 ## [0.21.1] - 2023-07-29
 ### Changed
 - Change `RouteGroup::group` return same with 1st parameter callback return (return <T>) (#197).
