@@ -65,7 +65,14 @@ abstract class MyModel
     protected $PDO;
 
     // setter
-    public function setStrictSearch(bool $strict_mode): self
+
+    /**
+     * Combine where condition with 'AND' or 'OR'.
+     * If true where condition using 'AND'.
+     *
+     * @return $this
+     */
+    public function setStrictSearch(bool $strict_mode)
     {
         $this->_STRICT_SEARCH = $strict_mode;
 
@@ -76,8 +83,10 @@ abstract class MyModel
      * Set data start for feact all data.
      *
      * @param int $val limit start default is 0
+     *
+     * @return $this
      */
-    public function limitStart(int $val): self
+    public function limitStart(int $val)
     {
         $this->_limit_start = $val;
 
@@ -89,8 +98,10 @@ abstract class MyModel
      * zero value meaning no data show.
      *
      * @param int $val limit start default
+     *
+     * @return $this
      */
-    public function limitEnd(int $val): self
+    public function limitEnd(int $val)
     {
         $this->_limit_end = $val;
 
@@ -100,8 +111,10 @@ abstract class MyModel
     /**
      * Set sort column and order
      * column name must register.
+     *
+     * @return $this
      */
-    public function order(string $column_name, int $order_using = MyModel::ORDER_ASC): self
+    public function order(string $column_name, int $order_using = MyModel::ORDER_ASC)
     {
         $order             = $order_using == 0 ? 'ASC' : 'DESC';
         $this->_SORT_ORDER = "$column_name $order";
@@ -114,8 +127,10 @@ abstract class MyModel
      *
      * @param string                $statment Where query statment
      * @param array<string, string> $bind     Where query bind
+     *
+     * @return $this
      */
-    public function costumeWhere(string $statment, array $bind): self
+    public function costumeWhere(string $statment, array $bind)
     {
         $this->_COSTUME_WHERE[] = [
             'statment' => "($statment)",
@@ -143,8 +158,10 @@ abstract class MyModel
      *
      * @param AbstractJoin $join             Type of join
      * @param bool         $use_parent_table True will replace perent table to this table
+     *
+     * @return $this
      */
-    public function join(AbstractJoin $join, bool $use_parent_table = true): self
+    public function join(AbstractJoin $join, bool $use_parent_table = true)
     {
         // rewrite table relation with this current table
         if ($use_parent_table) {
