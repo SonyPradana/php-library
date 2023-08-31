@@ -103,6 +103,9 @@ abstract class MyCRUD
         $this->setter($name, $value);
     }
 
+    /**
+     * Featch from database using primery_key and identifer.
+     */
     public function read(): bool
     {
         $key        = $this->PRIMERY_KEY;
@@ -112,11 +115,10 @@ abstract class MyCRUD
         $read = MyQuery::from($this->TABLE_NAME, $this->PDO)
             ->select($arr_column)
             ->equal($key, $value)
-            ->limitStart(1)
             ->single()
         ;
 
-        if ($read == []) {
+        if ([] === $read) {
             return false;
         }
 
