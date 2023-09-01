@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.1] - 2023-09-01
+### Fixed
+- Removed `MyCRUD::read()` limit causing no result when fetching database.
+- Change return type from `self` to `$this` to make child can access chain from parent.
+
 ## [0.22.0] - 2023-08-18
 ### Added
 - Added method `Collection::push` to add item in collection without using key.
