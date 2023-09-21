@@ -214,7 +214,7 @@ final class RouteDispatcher
             $route['expression'] = '^' . $route['expression'];
 
             // Add 'find string end' automatically
-            $route['expression'] = $route['expression'] . '$';
+            $route['expression'] .= '$';
 
             // Check path match
             if (preg_match('#' . $route['expression'] . '#' . ($case_matters ? '' : 'i') . 'u', $path, $matches)) {
