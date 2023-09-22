@@ -24,4 +24,23 @@ final class CreateTest extends \RealDatabaseConnectionTest
 
         $this->assertTrue($schema->execute());
     }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanGenerateCreateDatabaseWithEngine()
+    {
+        $schema = new Create($this->pdo_schema->configs()['database_name'], 'profiles', $this->pdo_schema);
+
+        $schema('id')->int(3)->notNull();
+        $schema('name')->varchar(32)->notNull();
+        $schema('gender')->int(1);
+        $schema->primaryKey('id');
+        $schema->engine(Create::INNODB);
+        $schema->character('utf8mb4');
+
+        $this->assertTrue($schema->execute());
+    }
 }
