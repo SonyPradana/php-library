@@ -32,17 +32,20 @@ class Create extends Query
     /** @var string */
     private $store_engine;
 
+    private string $character_set;
+
     /** @var string */
     private $table_name;
 
     public function __construct(string $database_name, string $table_name, MyPDO $pdo)
     {
-        $this->table_name   = $database_name . '.' . $table_name;
-        $this->pdo          = $pdo;
-        $this->columns      = [];
-        $this->primaryKeys  = [];
-        $this->uniques      = [];
-        $this->store_engine = '';
+        $this->table_name    = $database_name . '.' . $table_name;
+        $this->pdo           = $pdo;
+        $this->columns       = [];
+        $this->primaryKeys   = [];
+        $this->uniques       = [];
+        $this->store_engine  = '';
+        $this->character_set = '';
     }
 
     public function __invoke(string $column_name): DataType
@@ -87,12 +90,19 @@ class Create extends Query
         return $this;
     }
 
+    public function character(string $character_set): self
+    {
+        $this->character_set = $character_set;
+
+        return $this;
+    }
+
     protected function builder(): string
     {
         /** @var string[] */
         $columns = array_merge($this->getColumns(), $this->getPrimarykey(), $this->getUnique());
         $columns = $this->join($columns, ', ');
-        $query   = $this->join([$this->table_name, '(', $columns, ')' . $this->getStoreEngine()]);
+        $query   = $this->join([$this->table_name, '(', $columns, ')' . $this->getStoreEngine() . $this->getCharacterSet()]);
 
         return 'CREATE TABLE ' . $query;
     }
@@ -136,5 +146,10 @@ class Create extends Query
     private function getStoreEngine(): string
     {
         return $this->store_engine === '' ? '' : ' ENGINE=' . $this->store_engine;
+    }
+
+    private function getCharacterSet(): string
+    {
+        return $this->character_set === '' ? '' : " CHARACTER SET {$this->character_set}";
     }
 }

@@ -108,4 +108,35 @@ final class CreateTest extends \QueryStringTest
             $schema->__toString()
         );
     }
+
+    /** @test */
+    public function itCanGenerateQueryWithCharacterSet()
+    {
+        $schema = new Create('testing_db', 'test', $this->pdo_schame);
+        $schema->addColumn()->raw('PersonID int');
+        $schema->addColumn()->raw('LastName varchar(255)');
+        $schema->primaryKey('PersonID');
+        $schema->character('utf8mb4');
+
+        $this->assertEquals(
+            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), PRIMARY KEY (`PersonID`) ) CHARACTER SET utf8mb4',
+            $schema->__toString()
+        );
+    }
+
+    /** @test */
+    public function itCanGenerateQueryWithEngineStoreAndCharacterSet()
+    {
+        $schema = new Create('testing_db', 'test', $this->pdo_schame);
+        $schema->addColumn()->raw('PersonID int');
+        $schema->addColumn()->raw('LastName varchar(255)');
+        $schema->primaryKey('PersonID');
+        $schema->engine(Create::INNODB);
+        $schema->character('utf8mb4');
+
+        $this->assertEquals(
+            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), PRIMARY KEY (`PersonID`) ) ENGINE=INNODB CHARACTER SET utf8mb4',
+            $schema->__toString()
+        );
+    }
 }
