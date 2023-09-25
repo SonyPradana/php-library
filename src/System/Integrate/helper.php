@@ -184,6 +184,15 @@ if (!function_exists('migration_path')) {
     }
 }
 
+if (!function_exists('seeder_path')) {
+    function seeder_path(string $surfix_path = ''): string
+    {
+        $path = app()->seeder_path() . $surfix_path;
+
+        return $path;
+    }
+}
+
 if (!function_exists('base_path')) {
     /**
      * Get base path.
