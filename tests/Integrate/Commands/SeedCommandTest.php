@@ -40,6 +40,8 @@ final class SeedCommandTest extends \RealDatabaseConnectionTest
 
     /**
      * @test
+     *
+     * @group database
      */
     public function itCanRunSeeder()
     {
@@ -68,6 +70,8 @@ final class SeedCommandTest extends \RealDatabaseConnectionTest
 
     /**
      * @test
+     *
+     * @group database
      */
     public function itCanRunSeederWithCallOther()
     {
