@@ -17,8 +17,8 @@ use function System\Console\style;
 use function System\Console\warn;
 
 /**
- * @property string $class
- * @property bool   $force
+ * @property string|null $class
+ * @property bool|null   $force
  */
 class SeedCommand extends Command
 {
@@ -122,10 +122,6 @@ class SeedCommand extends Command
     public function make(): int
     {
         $class = $this->OPTION[0];
-
-        if (false === $this->runInDev()) {
-            return 2;
-        }
 
         if (null === $class) {
             warn('command db:make require --class flag follow by class name.')->out(false);
