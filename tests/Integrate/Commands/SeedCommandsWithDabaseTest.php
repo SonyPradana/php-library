@@ -11,7 +11,7 @@ use System\Support\Facades\PDO as FacadesPDO;
 use System\Support\Facades\Schema;
 use System\Text\Str;
 
-final class SeedCommandTest extends \RealDatabaseConnectionTest
+final class SeedCommandsWithDabaseTest extends \RealDatabaseConnectionTest
 {
     private Application $app;
 

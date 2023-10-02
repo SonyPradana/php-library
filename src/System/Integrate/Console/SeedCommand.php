@@ -8,6 +8,7 @@ use System\Console\Command;
 use System\Console\Prompt;
 use System\Console\Traits\PrintHelpTrait;
 use System\Template\Generate;
+use System\Template\Method;
 use System\Text\Str;
 
 use function System\Console\fail;
@@ -121,10 +122,14 @@ class SeedCommand extends Command
 
     public function make(): int
     {
-        $class = $this->OPTION[0];
+        $class = $this->OPTION[0] ?? null;
+
+        if (false === $this->runInDev()) {
+            return 2;
+        }
 
         if (null === $class) {
-            warn('command db:make require --class flag follow by class name.')->out(false);
+            warn('command make:seed require class name')->out(false);
 
             return 1;
         }
@@ -140,7 +145,8 @@ class SeedCommand extends Command
         $make->use('System\Database\Seeder\Seeder');
         $make->extend('Seeder');
         $make->addMethod('run')
-            ->setReturnType('void');
+            ->setReturnType('void')
+            ->visibility(Method::PUBLIC_);
 
         if (file_put_contents(seeder_path() . $class . '.php', $make->__toString())) {
             ok('Success create seeder')->out();
