@@ -108,6 +108,11 @@ final class Application extends Container
     private string $migraton_path;
 
     /**
+     * Seeder path.
+     */
+    private string $seeder_path;
+
+    /**
      * Public path.
      */
     private string $public_path;
@@ -226,6 +231,7 @@ final class Application extends Container
         $this->setProviderPath($configs['SERVICE_PROVIDER']);
         $this->setMigrationPath($configs['MIGRATION_PATH']);
         $this->setPublicPath($configs['PUBLIC_PATH']);
+        $this->setSeederPath($configs['SEEDER_PATH']);
         // pusher config
         $this->set('config.pusher_id', $configs['PUSHER_APP_ID']);
         $this->set('config.pusher_key', $configs['PUSHER_APP_KEY']);
@@ -262,8 +268,9 @@ final class Application extends Container
             'CONFIG'                => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR,
             'MIDDLEWARE'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'middleware' . DIRECTORY_SEPARATOR,
             'SERVICE_PROVIDER'      => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Providers' . DIRECTORY_SEPARATOR,
-            'MIGRATION_PATH'        => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migrations' . DIRECTORY_SEPARATOR,
+            'MIGRATION_PATH'        => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migrations' . DIRECTORY_SEPARATOR,
             'PUBLIC_PATH'           => DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR,
+            'SEEDER_PATH'           => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'seeders' . DIRECTORY_SEPARATOR,
 
             'PROVIDERS'             => [
                 // provider class name
@@ -504,6 +511,17 @@ final class Application extends Container
     }
 
     /**
+     * Set seeder path.
+     */
+    public function setSeederPath(string $path): self
+    {
+        $this->seeder_path = $this->base_path . $path;
+        $this->set('path.seeder', $this->seeder_path);
+
+        return $this;
+    }
+
+    /**
      * Set public path.
      */
     public function setPublicPath(string $path): self
@@ -642,6 +660,14 @@ final class Application extends Container
     public function migration_path(): string
     {
         return $this->get('path.migration');
+    }
+
+    /**
+     * Get seeder path.
+     */
+    public function seeder_path(): string
+    {
+        return $this->get('path.seeder');
     }
 
     /**
