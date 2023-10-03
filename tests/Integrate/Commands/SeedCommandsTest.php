@@ -67,4 +67,25 @@ final class SeedCommandsTest extends CommandTest
 
         $this->assertFails($exit);
     }
+
+    /**
+     * @test
+     */
+    public function itCanCallMakeExistCommandSeeder()
+    {
+        app()->setSeederPath(__DIR__ . '//database//seeders//');
+        $makeCommand = new SeedCommand($this->argv('cli make:seed ExistSeeder --force'));
+        ob_start();
+        $exit = $makeCommand->make();
+        ob_get_clean();
+
+        $this->assertSuccess($exit);
+
+        $file = __DIR__ . '//database//seeders//ExistSeeder.php';
+        $this->assertTrue(file_exists($file));
+
+        $class = file_get_contents($file);
+        $this->assertContain('class ExistSeeder extends Seeder', $class, 'Stub test');
+        $this->assertContain('public function run(): void', $class, 'Stub test');
+    }
 }

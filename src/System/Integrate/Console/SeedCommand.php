@@ -124,29 +124,29 @@ class SeedCommand extends Command
     {
         $class = $this->OPTION[0] ?? null;
 
-        if (false === $this->runInDev()) {
-            return 2;
-        }
-
         if (null === $class) {
             warn('command make:seed require class name')->out(false);
 
             return 1;
         }
 
-        if (file_exists(seeder_path() . $class . '.php')) {
+        if (file_exists(seeder_path() . $class . '.php') && !$this->force) {
             warn("Class '{$class}::class' already exist.")->out(false);
 
             return 1;
         }
 
         $make = new Generate($class);
+        $make->tabIndent(' ');
+        $make->tabSize(4);
         $make->namespace('Database\Seeders');
         $make->use('System\Database\Seeder\Seeder');
         $make->extend('Seeder');
+        $make->setEndWithNewLine();
         $make->addMethod('run')
+            ->visibility(Method::PUBLIC_)
             ->setReturnType('void')
-            ->visibility(Method::PUBLIC_);
+            ->body('// run some insert db');
 
         if (file_put_contents(seeder_path() . $class . '.php', $make->__toString())) {
             ok('Success create seeder')->out();
