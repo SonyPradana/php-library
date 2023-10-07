@@ -6,9 +6,12 @@ namespace System\Integrate\Testing;
 
 use PHPUnit\Framework\Assert;
 use System\Http\Response;
+use System\Integrate\Testing\Traits\ResponseStatusTrait;
 
-class ResponseTest
+class TestResponse
 {
+    use ResponseStatusTrait;
+
     protected Response $response;
 
     public function __construct(Response $response)
@@ -29,25 +32,5 @@ class ResponseTest
     public function assertStatusCode(int $code, string $message = ''): void
     {
         Assert::assertSame($code, $this->response->getStatusCode(), $message);
-    }
-
-    public function assertOk(): void
-    {
-        $this->assertStatusCode(Response::HTTP_OK, 'Respone code must return ok');
-    }
-
-    public function assertNoContent(): void
-    {
-        $this->assertStatusCode(Response::HTTP_NO_CONTENT, 'Respone code must return no content');
-    }
-
-    public function assertNotFound(): void
-    {
-        $this->assertStatusCode(Response::HTTP_NOT_FOUND, 'Respone code must return Not Found');
-    }
-
-    public function assertNotAllowed(): void
-    {
-        $this->assertStatusCode(Response::HTTP_METHOD_NOT_ALLOWED, 'Respone code must return Not Allowed');
     }
 }

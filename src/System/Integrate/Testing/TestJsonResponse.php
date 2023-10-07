@@ -10,20 +10,20 @@ use System\Http\Response;
 /**
  * @implements \ArrayAccess<string, mixed>
  */
-class ApiResponseTest extends ResponseTest implements \ArrayAccess
+class TestJsonResponse extends TestResponse implements \ArrayAccess
 {
     /**
      * @var array<string, mixed>
      */
     private array $respone_data;
 
-    /**
-     * @param array<string, mixed> $respone_data
-     */
-    public function __construct(Response $response, $respone_data = [])
+    public function __construct(Response $response)
     {
         $this->response     = $response;
-        $this->respone_data = $respone_data;
+        $this->respone_data = (array) $response->getContent();
+        if (!is_array($response->getContent())) {
+            throw new \Exception('Respone body is not Array.');
+        }
     }
 
     /**
@@ -53,16 +53,6 @@ class ApiResponseTest extends ResponseTest implements \ArrayAccess
     public function offsetUnset($offset): void
     {
         unset($this->respone_data[$offset]);
-    }
-
-    public function assertDataEmpty(): void
-    {
-        Assert::assertEmpty($this->getData());
-    }
-
-    public function assertDataNotEmpty(): void
-    {
-        Assert::assertNotEmpty($this->getData());
     }
 
     /**
@@ -96,5 +86,17 @@ class ApiResponseTest extends ResponseTest implements \ArrayAccess
     {
         $data_get = data_get($this->respone_data, $data_key);
         Assert::assertNotNull($data_get, $message);
+    }
+
+    public function assertEmpty(string $data_key): void
+    {
+        $data_get = data_get($this->respone_data, $data_key);
+        Assert::assertEmpty($this->getData());
+    }
+
+    public function assertNotEmpty(string $data_key): void
+    {
+        $data_get = data_get($this->respone_data, $data_key);
+        Assert::assertNotEmpty($this->getData());
     }
 }
