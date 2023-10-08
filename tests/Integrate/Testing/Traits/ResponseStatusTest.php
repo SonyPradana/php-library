@@ -23,11 +23,51 @@ final class ResponseStatusTrait extends TestCase
     /**
      * @test
      */
+    public function itCanTestResponeseAssertCreate()
+    {
+        $response = new TestResponse(new Response('test', 201, []));
+
+        $response->assertCreated();
+    }
+
+    /**
+     * @test
+     */
     public function itCanTestResponeseAssertNoContent()
     {
         $response = new TestResponse(new Response('', 204, []));
 
         $response->assertNoContent();
+    }
+
+    /**
+     * @test
+     */
+    public function itCanTestResponeseAssertBadRequest()
+    {
+        $response = new TestResponse(new Response('', 400, []));
+
+        $response->assertBadRequest();
+    }
+
+    /**
+     * @test
+     */
+    public function itCanTestResponeseAssertUnauthorized()
+    {
+        $response = new TestResponse(new Response('', 401, []));
+
+        $response->assertUnauthorized();
+    }
+
+    /**
+     * @test
+     */
+    public function itCanTestResponeseAssertForbidden()
+    {
+        $response = new TestResponse(new Response('', 403, []));
+
+        $response->assertForbidden();
     }
 
     /**
