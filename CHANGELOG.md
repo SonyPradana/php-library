@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.23.0] - 2023-10-10
+### Added
+- Added support database schema builder with `character set`.
+- Added Integrate seeder (seeder command, seeder path, seeder abstract).
+- Added test response assertation.
+
 ## [0.22.1] - 2023-09-01
 ### Fixed
 - Removed `MyCRUD::read()` limit causing no result when fetching database.
