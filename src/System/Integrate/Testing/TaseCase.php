@@ -72,7 +72,7 @@ class TestCase extends BaseTestCase
      * @param array<string, string> $put
      * @param array<string, string> $files
      */
-    protected function put(string $url, array $put, array $files): TestResponse
+    protected function put(string $url, array $put, array $files = []): TestResponse
     {
         return new TestResponse(
             $this->karnel->handle(new Request($url, [], $put, [], [], $files, [], 'PUT'))
