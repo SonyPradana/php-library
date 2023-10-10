@@ -59,11 +59,33 @@ class TestCase extends BaseTestCase
 
     /**
      * @param array<string, string> $post
+     * @param array<string, string> $files
      */
-    protected function post(string $url, array $post): TestResponse
+    protected function post(string $url, array $post, array $files =[]): TestResponse
     {
         return new TestResponse(
-            $this->karnel->handle(new Request($url, [], $post, [], [], [], [], 'POST'))
+            $this->karnel->handle(new Request($url, [], $post, [], [], $files, [], 'POST'))
+        );
+    }
+
+    /**
+     * @param array<string, string> $put
+     * @param array<string, string> $files
+     */
+    protected function put(string $url, array $put, array $files): TestResponse
+    {
+        return new TestResponse(
+            $this->karnel->handle(new Request($url, [], $put, [], [], $files, [], 'PUT'))
+        );
+    }
+
+    /**
+     * @param array<string, string> $delete
+     */
+    protected function delete(string $url, array $delete): TestResponse
+    {
+        return new TestResponse(
+            $this->karnel->handle(new Request($url, [], $delete, [], [], [], [], 'DELETE'))
         );
     }
 }
