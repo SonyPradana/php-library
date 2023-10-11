@@ -177,10 +177,9 @@ if (!function_exists('exit_prompt')) {
      */
     function exit_prompt($title, array $options = null): void
     {
+        $signal = defined('SIGINT') ? constant('SIGINT') : 2;
         $options ??= [
-            'yes' => static function () {
-                $signal = defined('SIGINT') ? constant('SIGINT') : 2;
-
+            'yes' => static function () use ($signal) {
                 if (function_exists('posix_kill') && function_exists('posix_getpid')) {
                     posix_kill(posix_getgid(), $signal);
                 }
@@ -197,6 +196,10 @@ if (!function_exists('exit_prompt')) {
                 }
             });
         }
+
+        if (function_exists('pcntl_signal')) {
+            pcntl_signal($signal, $options['yes']);
+        }
     }
 }
 
@@ -208,6 +211,12 @@ if (!function_exists('remove_exit_prompt')) {
     {
         if (function_exists('sapi_windows_set_ctrl_handler') && 'cli' === PHP_SAPI) {
             sapi_windows_set_ctrl_handler(function (int $handler): void {}, false);
+        }
+
+        $signal  = defined('SIGINT') ? constant('SIGINT') : 2;
+        $default = defined('SIG_DFL') ? constant('SIG_DFL') : 0;
+        if (function_exists('pcntl_signal')) {
+            pcntl_signal(constant('SIGINT'), constant('SIG_DFL'));
         }
     }
 }
