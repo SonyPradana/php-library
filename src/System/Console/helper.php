@@ -167,3 +167,57 @@ if (!function_exists('width')) {
         return $terminal->width($min, $max);
     }
 }
+
+if (!function_exists('exit_prompt')) {
+    /**
+     * Register ctrl+c event.
+     *
+     * @param string|Style            $title
+     * @param array<string, callable> $options
+     */
+    function exit_prompt($title, array $options = null): void
+    {
+        $signal = defined('SIGINT') ? constant('SIGINT') : 2;
+        $options ??= [
+            'yes' => static function () use ($signal) {
+                if (function_exists('posix_kill') && function_exists('posix_getpid')) {
+                    posix_kill(posix_getgid(), $signal);
+                }
+
+                exit(128 + $signal);
+            },
+            'no'  => fn () => null,
+        ];
+
+        if (function_exists('sapi_windows_set_ctrl_handler') && 'cli' === PHP_SAPI) {
+            sapi_windows_set_ctrl_handler(static function (int $event) use ($title, $options) {
+                if (PHP_WINDOWS_EVENT_CTRL_C === $event) {
+                    (new Style())->out();
+                    (new Prompt($title, $options, 'no'))->option();
+                }
+            });
+        }
+
+        if (function_exists('pcntl_signal')) {
+            pcntl_signal($signal, $options['yes']);
+        }
+    }
+}
+
+if (!function_exists('remove_exit_prompt')) {
+    /**
+     * Remove ctrl-c handle.
+     */
+    function remove_exit_prompt(): void
+    {
+        if (function_exists('sapi_windows_set_ctrl_handler') && 'cli' === PHP_SAPI) {
+            sapi_windows_set_ctrl_handler(function (int $handler): void {}, false);
+        }
+
+        $signal  = defined('SIGINT') ? constant('SIGINT') : 2;
+        $default = defined('SIG_DFL') ? constant('SIG_DFL') : 0;
+        if (function_exists('pcntl_signal')) {
+            pcntl_signal($signal, $default);
+        }
+    }
+}
