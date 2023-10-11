@@ -217,7 +217,7 @@ if (!function_exists('remove_exit_prompt')) {
         $signal  = defined('SIGINT') ? constant('SIGINT') : 2;
         $default = defined('SIG_DFL') ? constant('SIG_DFL') : 0;
         if (function_exists('pcntl_signal')) {
-            pcntl_signal(constant('SIGINT'), constant('SIG_DFL'));
+            pcntl_signal($signal, $default);
         }
     }
 }
