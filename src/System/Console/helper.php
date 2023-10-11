@@ -167,3 +167,47 @@ if (!function_exists('width')) {
         return $terminal->width($min, $max);
     }
 }
+
+if (!function_exists('exit_prompt')) {
+    /**
+     * Register ctrl+c event.
+     *
+     * @param string|Style            $title
+     * @param array<string, callable> $options
+     */
+    function exit_prompt($title, array $options = null): void
+    {
+        $options ??= [
+            'yes' => static function () {
+                $signal = defined('SIGINT') ? constant('SIGINT') : 2;
+
+                if (function_exists('posix_kill') && function_exists('posix_getpid')) {
+                    posix_kill(posix_getgid(), $signal);
+                }
+
+                exit(128 + $signal);
+            },
+            'no'  => fn () => null,
+        ];
+
+        if (function_exists('sapi_windows_set_ctrl_handler') && 'cli' === PHP_SAPI) {
+            sapi_windows_set_ctrl_handler(function (int $event) use ($title, $options) {
+                if (PHP_WINDOWS_EVENT_CTRL_C === $event) {
+                    option($title, $options);
+                }
+            });
+        }
+    }
+}
+
+if (!function_exists('remove_exit_prompt')) {
+    /**
+     * Remove ctrl-c handle.
+     */
+    function remove_exit_prompt(): void
+    {
+        if (function_exists('sapi_windows_set_ctrl_handler') && 'cli' === PHP_SAPI) {
+            sapi_windows_set_ctrl_handler(function (int $handler): void {}, false);
+        }
+    }
+}
