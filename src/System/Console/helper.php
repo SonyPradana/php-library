@@ -191,7 +191,7 @@ if (!function_exists('exit_prompt')) {
         ];
 
         if (function_exists('sapi_windows_set_ctrl_handler') && 'cli' === PHP_SAPI) {
-            sapi_windows_set_ctrl_handler(function (int $event) use ($title, $options) {
+            sapi_windows_set_ctrl_handler(static function (int $event) use ($title, $options) {
                 if (PHP_WINDOWS_EVENT_CTRL_C === $event) {
                     option($title, $options);
                 }
