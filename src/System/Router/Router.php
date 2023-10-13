@@ -260,6 +260,20 @@ class Router
     }
 
     /**
+     * Redirect to antother route.
+     *
+     * @throws \Exception
+     */
+    public static function redirect(string $to): Route
+    {
+        if (false === static::has($to)) {
+            throw new \Exception('Route name doest exist.');
+        }
+
+        return static::$routes[$to];
+    }
+
+    /**
      * @param class-string            $class_name
      * @param array<string, string[]> $setup
      */
