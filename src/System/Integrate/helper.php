@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 // path aplication
 
+use System\Http\RedirectResponse;
 use System\Integrate\Exceptions\ApplicationNotAvailable;
+use System\Router\Router;
 
 if (!function_exists('app_path')) {
     /**
@@ -308,5 +310,38 @@ if (!function_exists('vite')) {
         $vite = app()->get('vite.gets');
 
         return $vite(...$entry_ponits);
+    }
+}
+
+if (!function_exists('redirect_route')) {
+    /**
+     * Redirect to another route.
+     *
+     * @param string[] $parameter Dinamic parameter to fill with url exprestion
+     */
+    function redirect_route(string $route_name, array $parameter = []): RedirectResponse
+    {
+        $route      = Router::redirect($route_name);
+        $valueIndex = 0;
+        $url        = preg_replace_callback(
+            "/\(:\w+\)/",
+            function ($matches) use ($parameter, &$valueIndex) {
+                if (!array_key_exists($matches[0], Router::$patterns)) {
+                    throw new \Exception('parameter not matches with any pattern.');
+                }
+
+                if ($valueIndex < count($parameter)) {
+                    $value = $parameter[$valueIndex];
+                    $valueIndex++;
+
+                    return $value;
+                }
+
+                return '';
+            },
+            $route['uri']
+        );
+
+        return new RedirectResponse($url);
     }
 }

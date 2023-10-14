@@ -268,7 +268,7 @@ class Router
     {
         foreach (self::$routes as $name => $route) {
             if ($route['name'] === $to) {
-                return static::$routes[$name];
+                return self::$routes[$name];
             }
         }
 
@@ -324,6 +324,7 @@ class Router
 
         return self::$routes[] = new Route([
             'method'      => $method,
+            'uri'         => $uri,
             'expression'  => self::mapPatterns($uri),
             'function'    => $callback,
             'middleware'  => $middleware,
