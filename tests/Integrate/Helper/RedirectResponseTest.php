@@ -16,9 +16,10 @@ final class RedirectResponseTest extends TestCase
     public function itRiderectToCorrectUrl()
     {
         Router::get('/test/(:any)', fn ($test) => $test)->name('test');
-        $redirect = redirect_route('test', ['ok']);
-        $res      = new TestResponse($redirect);
-        $res->assertStatusCode(302);
+        $res           = redirect_route('test', ['ok']);
+        $redirect      = new TestResponse($res);
+        $redirect->assertStatusCode(302);
+        $redirect->assertSee('Redirecting to /test/ok');
 
         Router::reset();
     }
@@ -29,9 +30,10 @@ final class RedirectResponseTest extends TestCase
     public function itRiderectToCorrectUrlWithPlanUrl()
     {
         Router::get('/test', fn ($test) => $test)->name('test');
-        $redirect = redirect_route('test');
-        $res      = new TestResponse($redirect);
-        $res->assertStatusCode(302);
+        $res           = redirect_route('test');
+        $redirect      = new TestResponse($res);
+        $redirect->assertStatusCode(302);
+        $redirect->assertSee('Redirecting to /test');
 
         Router::reset();
     }
