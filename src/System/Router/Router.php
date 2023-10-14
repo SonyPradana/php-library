@@ -266,11 +266,13 @@ class Router
      */
     public static function redirect(string $to): Route
     {
-        if (false === static::has($to)) {
-            throw new \Exception('Route name doest exist.');
+        foreach (self::$routes as $name => $route) {
+            if ($route['name'] === $to) {
+                return static::$routes[$name];
+            }
         }
 
-        return static::$routes[$to];
+        throw new \Exception('Route name doest exist.');
     }
 
     /**
