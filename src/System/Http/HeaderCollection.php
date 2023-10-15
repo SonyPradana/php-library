@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Http;
 
 use System\Collection\Collection;
+use System\Text\Str;
 
 /**
  * @extends Collection<string, string>
@@ -19,19 +20,18 @@ class HeaderCollection extends Collection
     }
 
     /**
-     * {@inheritdoc}
+     * Set raw header.
+     *
+     * @return $this
      */
-    public function set($name, $value): Collection
+    public function setRaw(string $header): self
     {
-        $header_name = $name;
-        $header_val  = $value;
-
-        if (\str_contains($name, ':')) {
-            [$header_name, $header_val] = \explode(':', $name, 2);
+        if (false === Str::contains($header, ':')) {
+            throw new \Exception("Invalid header structur {$header}.");
         }
 
-        parent::set(\trim($header_name), \trim($header_val));
+        [$header_name, $header_val] = \explode(':', $header, 2);
 
-        return $this;
+        return $this->set(\trim($header_name), \trim($header_val));
     }
 }

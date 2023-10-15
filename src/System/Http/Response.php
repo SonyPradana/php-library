@@ -346,8 +346,10 @@ class Response
                     continue;
                 }
 
-                [$header_name, $header] = explode(':', $header, 2);
+                $this->headers->setRaw($$header);
+                continue;
             }
+
             $this->headers->set($header_name, $header);
         }
 
@@ -382,6 +384,12 @@ class Response
      */
     public function header(string $header, string $value = null)
     {
+        if (null === $value) {
+            $this->headers->setRaw($header);
+
+            return $this;
+        }
+
         $this->headers->set($header, $value);
 
         return $this;
