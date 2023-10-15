@@ -56,10 +56,8 @@ class Response
 
     /**
      * Header array pools.
-     *
-     * @var array<string, string>
      */
-    private $headers;
+    public HeaderCollection $headers;
 
     /**
      * List header to be hide/remove to client.
@@ -86,7 +84,7 @@ class Response
     {
         $this->setContent($content);
         $this->setResponeCode($respone_code);
-        $this->setHeaders($headers);
+        $this->headers = new HeaderCollection($headers);
     }
 
     /**
@@ -100,12 +98,7 @@ class Response
         $respone_text   = Response::$statusTexts[$respone_code] ?? 'ok';
         $respone_header = sprintf('HTTP/1.1 %s %s', $respone_code, $respone_text);
 
-        $headers = [];
-        foreach ($this->headers as $header_name => $header) {
-            $headers[] = $header_name . ': ' . $header;
-        }
-
-        $header_lines = implode("\r\n", $headers);
+        $header_lines = (string) $this->headers;
         $content      = is_array($this->content)
             ? json_encode($this->content, JSON_NUMERIC_CHECK)
             : $this->content;
@@ -135,7 +128,7 @@ class Response
         header($respone_template);
 
         // header
-        $this->headers['Content-Type'] = $this->content_type;
+        $this->headers->set('Content-Type', $this->content_type);
         // add costume header
         foreach ($this->headers as $key => $header) {
             header($key . ':' . $header);
@@ -337,14 +330,15 @@ class Response
     /**
      * Set header pools (overide).
      *
+     * @deprecated use headers property instead
+     *
      * @param array<string, string> $headers
      *
      * @return self
      */
     public function setHeaders($headers)
     {
-        // flush headers
-        $this->headers = [];
+        $this->headers->clear();
 
         foreach ($headers as $header_name => $header) {
             if (is_numeric($header_name)) {
@@ -354,7 +348,7 @@ class Response
 
                 [$header_name, $header] = explode(':', $header, 2);
             }
-            $this->header(\trim($header_name), \trim($header));
+            $this->headers->set($header_name, $header);
         }
 
         return $this;
@@ -362,6 +356,8 @@ class Response
 
     /**
      * Remove header from origin header.
+     *
+     * @deprecated use headers property instead
      *
      * @param array<int, string> $headers
      *
@@ -380,18 +376,13 @@ class Response
     /**
      * Add new header to headers pools.
      *
+     * @deprecated use headers property instead
+     *
      * @return self
      */
     public function header(string $header, string $value = null)
     {
-        $header_name = $header;
-        $header_val  = $value;
-
-        if ($value === null && \str_contains($header, ':')) {
-            [$header_name, $header_val] = \explode(':', $header, 2);
-        }
-
-        $this->headers[\trim($header_name)] = \trim($header_val ?? '');
+        $this->headers->set($header, $value);
 
         return $this;
     }
@@ -399,11 +390,13 @@ class Response
     /**
      * Get entry header.
      *
+     * @deprecated use headers property instead
+     *
      * @return array<string, string>
      */
     public function getHeaders()
     {
-        return $this->headers;
+        return $this->headers->toArray();
     }
 
     public function getStatusCode(): int
