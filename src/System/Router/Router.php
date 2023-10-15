@@ -260,6 +260,22 @@ class Router
     }
 
     /**
+     * Redirect to antother route.
+     *
+     * @throws \Exception
+     */
+    public static function redirect(string $to): Route
+    {
+        foreach (self::$routes as $name => $route) {
+            if ($route['name'] === $to) {
+                return self::$routes[$name];
+            }
+        }
+
+        throw new \Exception('Route name doest exist.');
+    }
+
+    /**
      * @param class-string            $class_name
      * @param array<string, string[]> $setup
      */
@@ -308,6 +324,7 @@ class Router
 
         return self::$routes[] = new Route([
             'method'      => $method,
+            'uri'         => $uri,
             'expression'  => self::mapPatterns($uri),
             'function'    => $callback,
             'middleware'  => $middleware,
