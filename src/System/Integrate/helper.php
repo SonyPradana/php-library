@@ -345,3 +345,13 @@ if (!function_exists('redirect_route')) {
         return new RedirectResponse($url);
     }
 }
+
+if (!function_exists('redirect')) {
+    /**
+     * Redirect to Url.
+     */
+    function redirect(string $url): RedirectResponse
+    {
+        return new RedirectResponse($url);
+    }
+}

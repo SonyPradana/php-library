@@ -16,10 +16,10 @@ final class RedirectResponseTest extends TestCase
     public function itRiderectToCorrectUrl()
     {
         Router::get('/test/(:any)', fn ($test) => $test)->name('test');
-        $res           = redirect_route('test', ['ok']);
-        $redirect      = new TestResponse($res);
-        $redirect->assertStatusCode(302);
-        $redirect->assertSee('Redirecting to /test/ok');
+        $redirect = redirect_route('test', ['ok']);
+        $response = new TestResponse($redirect);
+        $response->assertStatusCode(302);
+        $response->assertSee('Redirecting to /test/ok');
 
         Router::reset();
     }
@@ -30,10 +30,10 @@ final class RedirectResponseTest extends TestCase
     public function itRiderectToCorrectUrlWithPlanUrl()
     {
         Router::get('/test', fn ($test) => $test)->name('test');
-        $res           = redirect_route('test');
-        $redirect      = new TestResponse($res);
-        $redirect->assertStatusCode(302);
-        $redirect->assertSee('Redirecting to /test');
+        $redirect = redirect_route('test');
+        $response = new TestResponse($redirect);
+        $response->assertStatusCode(302);
+        $response->assertSee('Redirecting to /test');
 
         Router::reset();
     }
@@ -53,5 +53,16 @@ final class RedirectResponseTest extends TestCase
         $this->assertEquals('parameter not matches with any pattern.', $message);
 
         Router::reset();
+    }
+
+    /**
+     * @test
+     */
+    public function itCanRedirectUsingUlrGiven()
+    {
+        $redirect = redirect('/test');
+        $response = new TestResponse($redirect);
+        $response->assertStatusCode(302);
+        $response->assertSee('Redirecting to /test');
     }
 }
