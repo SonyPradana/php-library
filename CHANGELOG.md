@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.24.0] - 2023-10-17
+### Added
+- Added exit prompt confirmation function `exit_prompt()`.
+- Added `redirect()` and `redirect_route()` to redirect as `RedirecResponse::class`.
+- Added costume header class (collection) to handle/manage http header.
+
 ## [0.23.0] - 2023-10-10
 ### Added
 - Added support database schema builder with `character set`.
@@ -144,7 +150,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added support cron job to `retry` and `retryCondition()`.
 - Added `Now::shortDay` property.
 
-### Removed 
+### Removed
 - Removed `AbstractMiddleware::class`.
 
 ### [0.12.4] - 2022-11-09
@@ -163,7 +169,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Removed `AbstracMiddleware::handle()`.
 
-- Added 
+- Added
 ### [0.12.1] - 2022-10-21
 ### Fixed
 - Fix error when create from global to get content body #66.
@@ -265,7 +271,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - PHPStan level 6 for `System\Database` exclude `MyModel::class`.
 
-### Removed 
+### Removed
 - Remove `MyQuery::getInstance`.
 
 ## [0.8.0] - 2022-06-17
@@ -313,7 +319,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Router::getRoutes()`, Call to an undefined method `System\Router\Route::route()`.
 
 ## [0.7.0] - 2022-06-06
-### Added 
+### Added
 - Added `MyPDO::config()` PDO connection configure.
 - Added string manipulation `Str::chartAt`, `Str::concat`, `Str::indexOf`, `Str::lastIndexOf`, `Str::match`, `Str::repalce`, `Str::search`, `Str::slice`, `Str::split`, `Str::toLowerCase`, `Str::toUpperCase`, `Str::firstUpper`, `Str::firstUppeAll`, `Str::toPascalCase`, `Str::toCamelCase`, `Str::contains`, `Str::startsWith`, `Str::endsWith`, `Str::template`, `Str::slug`, `Str::repeat`, `Str::length`, `Str::isString`, `Str::isEmpty`, `Str::isMatch`.
 - Added string macro `System\Text\Str::macro`.
@@ -420,7 +426,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.2] - 2021-09-15
 ### Added
 - Add class to render view ```View::class```
-### Fixed 
+### Fixed
 -  ```Router::view``` cant render using child controller class
 
 ## [0.1.1] - 2021-09-14
