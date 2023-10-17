@@ -440,7 +440,7 @@ class Response
         // header based on the Request
         foreach ($follow_rule as $rule) {
             if ($request->hasHeader($rule)) {
-                $this->header($rule, $request->getHeaders($rule));
+                $this->headers->set($rule, $request->getHeaders($rule));
             }
         }
 
