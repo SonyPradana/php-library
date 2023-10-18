@@ -148,4 +148,23 @@ class ResponseTest extends TestCase
 
         $this->assertEquals('content', $res->getContent());
     }
+
+    /** @test */
+    public function itCanGetTypeOfResponseCode()
+    {
+        $res = new Response('content', rand(100, 199));
+        $this->assertTrue($res->isInformational());
+
+        $res = new Response('content', rand(200, 299));
+        $this->assertTrue($res->isSuccessful());
+
+        $res = new Response('content', rand(300, 399));
+        $this->assertTrue($res->isRedirection());
+
+        $res = new Response('content', rand(400, 499));
+        $this->assertTrue($res->isClientError());
+
+        $res = new Response('content', rand(500, 599));
+        $this->assertTrue($res->isServerError());
+    }
 }

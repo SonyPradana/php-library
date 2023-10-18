@@ -446,4 +446,44 @@ class Response
 
         return $this;
     }
+
+    /**
+     * Informational status code 1xx.
+     */
+    public function isInformational(): bool
+    {
+        return $this->respone_code > 99 && $this->respone_code < 201;
+    }
+
+    /**
+     * Successful status code 2xx.
+     */
+    public function isSuccessful(): bool
+    {
+        return $this->respone_code > 199 && $this->respone_code < 301;
+    }
+
+    /**
+     * Redirection status code 3xx.
+     */
+    public function isRedirection(): bool
+    {
+        return $this->respone_code > 299 && $this->respone_code < 401;
+    }
+
+    /**
+     * Client error status code 4xx.
+     */
+    public function isClientError(): bool
+    {
+        return $this->respone_code > 399 && $this->respone_code < 501;
+    }
+
+    /**
+     * Server error status code 5xx.
+     */
+    public function isServerError(): bool
+    {
+        return $this->respone_code > 499 && $this->respone_code < 601;
+    }
 }
