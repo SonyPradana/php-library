@@ -3,6 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use System\Http\Request;
 use System\Http\Response;
+use System\Text\Str;
 
 class ResponseTest extends TestCase
 {
@@ -166,5 +167,14 @@ class ResponseTest extends TestCase
 
         $res = new Response('content', rand(500, 599));
         $this->assertTrue($res->isServerError());
+    }
+
+    /** @test */
+    public function itCanChangeProtocolVersion()
+    {
+        $res = new Response('content');
+        $res->setProtocolVersion('1.0');
+
+        $this->assertTrue(Str::contains((string) $res, '1.0'), 'Test protocol version');
     }
 }

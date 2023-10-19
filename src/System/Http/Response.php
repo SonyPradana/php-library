@@ -74,6 +74,11 @@ class Response
     private $content_type = 'text/html';
 
     /**
+     * Http Protocol version (1.0 or 1.1).
+     */
+    private string $protocol_version;
+
+    /**
      * Create rosone http base on conten and header.
      *
      * @param string|array<mixed, mixed> $content      Content to serve to client
@@ -85,6 +90,7 @@ class Response
         $this->setContent($content);
         $this->setResponeCode($respone_code);
         $this->headers = new HeaderCollection($headers);
+        $this->setProtocolVersion('1.1');
     }
 
     /**
@@ -96,7 +102,7 @@ class Response
     {
         $respone_code   = $this->respone_code;
         $respone_text   = Response::$statusTexts[$respone_code] ?? 'ok';
-        $respone_header = sprintf('HTTP/1.1 %s %s', $respone_code, $respone_text);
+        $respone_header = sprintf('HTTP/%s %s %s', $this->getProtocolVersion(), $respone_code, $respone_text);
 
         $header_lines = (string) $this->headers;
         $content      = is_array($this->content)
@@ -357,6 +363,16 @@ class Response
     }
 
     /**
+     * Set http protocol version.
+     */
+    public function setProtocolVersion(string $version): self
+    {
+        $this->protocol_version = $version;
+
+        return $this;
+    }
+
+    /**
      * Remove header from origin header.
      *
      * @deprecated use headers property instead
@@ -418,6 +434,14 @@ class Response
     public function getContent()
     {
         return $this->content;
+    }
+
+    /**
+     * Get http protocole version.
+     */
+    public function getProtocolVersion(): string
+    {
+        return $this->protocol_version;
     }
 
     /**
