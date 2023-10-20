@@ -118,4 +118,44 @@ class Url
     {
         return $this->fragment;
     }
+
+    public function hasSchema(): bool
+    {
+        return null !== $this->schema;
+    }
+
+    public function hasHost(): bool
+    {
+        return null !== $this->host;
+    }
+
+    public function hasPort(): bool
+    {
+        return null !== $this->port;
+    }
+
+    public function hasUser(): bool
+    {
+        return null !== $this->user;
+    }
+
+    public function hasPassword(): bool
+    {
+        return null !== $this->password;
+    }
+
+    public function hasPath(): bool
+    {
+        return null !== $this->path;
+    }
+
+    public function hasQuery(): bool
+    {
+        return null !== $this->query;
+    }
+
+    public function hasFragment(): bool
+    {
+        return null !== $this->fragment;
+    }
 }
