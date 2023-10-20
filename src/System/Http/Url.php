@@ -85,9 +85,6 @@ class Url
     }
 
     /**
-     * @return int|null
-     */
-    /**
      * @return string|null
      */
     public function password()
