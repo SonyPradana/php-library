@@ -1,0 +1,121 @@
+<?php
+
+declare(strict_types=1);
+
+namespace System\Http;
+
+class Url
+{
+    private ?string $schema;
+    private ?string $host;
+    private ?int $port;
+    private ?string $user;
+    private ?string $password;
+    private ?string $path;
+    /**
+     * @var array<int|string, string>|null
+     */
+    private ?array $query;
+    private ?string $fragment;
+
+    /**
+     * @param array<string, string|int|array<int|string, string>|null> $parse_url
+     */
+    public function __construct(array $parse_url)
+    {
+        $this->schema    = $parse_url['scheme'] ?? null;
+        $this->host      = $parse_url['host'] ?? null;
+        $this->port      = $parse_url['port'] ?? null;
+        $this->user      = $parse_url['user'] ?? null;
+        $this->password  = $parse_url['pass'] ?? null;
+        $this->path      = $parse_url['path'] ?? null;
+        $this->fragment  = $parse_url['fragment'] ?? null;
+
+        if (array_key_exists('query', $parse_url)) {
+            $this->query = $this->parseQuery($parse_url['query']);
+        }
+    }
+
+    /**
+     * @return array<int|string, string>
+     */
+    private function parseQuery(string $query): array
+    {
+        $result = [];
+        parse_str($query, $result);
+
+        return $result;
+    }
+
+    public static function parse(string $url): self
+    {
+        return new self(parse_url($url));
+    }
+
+    /**
+     * @return string|null
+     */
+    public function schema()
+    {
+        return $this->schema;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function host()
+    {
+        return $this->host;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function port()
+    {
+        return $this->port;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function user()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @return int|null
+     */
+    /**
+     * @return string|null
+     */
+    public function password()
+    {
+        return $this->password;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function path()
+    {
+        return $this->path;
+    }
+
+    /**
+     * @return array<int|string, string>|null
+     */
+    public function query()
+    {
+        return $this->query;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function fragment()
+    {
+        return $this->fragment;
+    }
+}
