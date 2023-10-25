@@ -29,6 +29,16 @@ final class HeaderCollectionTest extends TestCase
     /**
      * @test
      */
+    public function itCanAddRawHeader()
+    {
+        $header = new HeaderCollection([]);
+        $header->setRaw('Cache-Control: max-age=31536000, public, no-transform, proxy-revalidate, s-maxage=2592000');
+        $this->assertEquals('Cache-Control: max-age=31536000, public, no-transform, proxy-revalidate, s-maxage=2592000', (string) $header);
+    }
+
+    /**
+     * @test
+     */
     public function itCanGetHeaderItemDirectly()
     {
         $header = new HeaderCollection([
