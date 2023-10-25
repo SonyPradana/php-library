@@ -12,6 +12,16 @@ use System\Text\Str;
  */
 class HeaderCollection extends Collection
 {
+    /**
+     * Header collection.
+     *
+     * @param array<string, string> $headers
+     */
+    public function __construct($headers)
+    {
+        parent::__construct($headers);
+    }
+
     public function __toString()
     {
         $headers = $this->clone()->map(fn (string $value, string $key = ''): string => "{$key}: {$value}")->toArray();
