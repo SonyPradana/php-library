@@ -36,6 +36,16 @@ class HeaderCollection extends Collection
     }
 
     /**
+     * Get header directly.
+     *
+     * @return array<string|int, string|string[]>
+     */
+    public function getDirective(string $header)
+    {
+        return $this->parseDirective($header);
+    }
+
+    /**
      * Add new heder value directly to exist header.
      *
      * @param array<int|string, string|string[]> $value
@@ -93,7 +103,7 @@ class HeaderCollection extends Collection
     }
 
     /**
-     * Parde header item to array.
+     * Parse header item to array.
      *
      * @return array<string|int, string|string[]>
      */
