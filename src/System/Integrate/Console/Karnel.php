@@ -6,7 +6,6 @@ namespace System\Integrate\Console;
 
 use System\Console\Style\Style;
 use System\Container\Container;
-use System\Text\Str;
 
 class Karnel
 {
@@ -38,15 +37,10 @@ class Karnel
         $baseArgs = $arguments[1] ?? '--help';
 
         foreach ($this->commands() as $cmd) {
-            $found = collection($cmd->cmd())
-                ->some(
-                    fn ($alias) => $this->alias($baseArgs, $alias, $cmd['mode'])
-                );
-
-            if ($found) {
+            if ($cmd->isMatch($baseArgs)) {
                 $this->app->set(
                     $cmd->class(),
-                    \DI\autowire($cmd->class())->constructor($arguments)
+                    \DI\autowire($cmd->class())->constructor($arguments, $cmd->defaultOption())
                 );
 
                 $service = $this->app->get($cmd->class());
@@ -67,14 +61,7 @@ class Karnel
             ->out()
         ;
 
-        return $this->exit_code = 0;
-    }
-
-    private function alias(string $argument, string $alias, string $mode): bool
-    {
-        return 'full' === $mode
-          ? $argument === $alias
-          : Str::startsWith($argument, $alias);
+        return $this->exit_code = 1;
     }
 
     /**
