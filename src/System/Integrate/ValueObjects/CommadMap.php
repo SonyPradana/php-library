@@ -7,20 +7,20 @@ namespace System\Integrate\ValueObjects;
 use System\Text\Str;
 
 /**
- * @implements \ArrayAccess<string, string|string[]>
+ * @implements \ArrayAccess<string, string|string[]|(array<string, string|bool|int|null>)|(callable(string): bool)>
  */
 class CommadMap implements \ArrayAccess
 {
-    /** @var array<string, string|string[]> */
+    /** @var array<string, string|string[]|(array<string, string|bool|int|null>)|(callable(string): bool)> */
     private $command = [
-      'cmd'       => '',
-      'mode'      => 'full',
-      'class'     => '',
-      'fn'        => '',
+        'cmd'       => '',
+        'mode'      => 'full',
+        'class'     => '',
+        'fn'        => '',
     ];
 
     /**
-     * @param array<string, string|string[]> $command
+     * @param array<string, string|string[]|(array<string, string|bool|int|null>)|(callable(string): bool)> $command
      */
     public function __construct(array $command)
     {
@@ -129,8 +129,11 @@ class CommadMap implements \ArrayAccess
         return array_key_exists($offset, $this->command);
     }
 
+    /**
+     * @return string|string[]|(array<string, string|bool|int|null>)|(callable(string): bool)
+     */
     #[\ReturnTypeWillChange]
-    public function offsetGet($offset): string
+    public function offsetGet($offset)
     {
         return $this->command[$offset];
     }
