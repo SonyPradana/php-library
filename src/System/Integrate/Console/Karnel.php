@@ -33,7 +33,7 @@ class Karnel
      */
     public function handle($arguments)
     {
-        // handle commad empty
+        // handle command empty
         $baseArgs = $arguments[1] ?? '--help';
 
         foreach ($this->commands() as $cmd) {
@@ -52,7 +52,7 @@ class Karnel
 
         // if command not register
         (new Style())
-            ->push('Commad Not Found, run help command')->textRed()->newLines(2)
+            ->push('Command Not Found, run help command')->textRed()->newLines(2)
             ->push('> ')->textDim()
             ->push('php ')->textYellow()
             ->push('cli ')
@@ -77,7 +77,7 @@ class Karnel
     /**
      * Command route.
      *
-     * @return \System\Integrate\ValueObjects\CommadMap[]
+     * @return \System\Integrate\ValueObjects\CommandMap[]
      */
     protected function commands()
     {

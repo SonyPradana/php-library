@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use System\Console\Command;
 use System\Integrate\Application;
 use System\Integrate\Console\Karnel;
-use System\Integrate\ValueObjects\CommadMap;
+use System\Integrate\ValueObjects\CommandMap;
 use System\Text\Str;
 
 use function System\Console\style;
@@ -36,7 +36,7 @@ final class KarnelTest extends TestCase
         $out     = ob_get_clean();
 
         $this->assertEquals(1, $exit);
-        $hasContent = Str::contains($out, 'Commad Not Found, run help command');
+        $hasContent = Str::contains($out, 'Command Not Found, run help command');
         $this->assertTrue($hasContent);
     }
 
@@ -138,37 +138,37 @@ class NormalCommand extends Karnel
     {
         return [
             // olr style
-            new CommadMap([
+            new CommandMap([
                 'cmd'   => 'use:full',
                 'mode'  => 'full',
                 'class' => FoundedCommand::class,
                 'fn'    => 'main',
             ]),
-            new CommadMap([
+            new CommandMap([
                 'cmd'   => ['use:group', 'group'],
                 'class' => FoundedCommand::class,
                 'fn'    => 'main',
             ]),
-            new CommadMap([
+            new CommandMap([
                 'cmd'   => 'start:',
                 'mode'  => 'start',
                 'class' => FoundedCommand::class,
                 'fn'    => 'main',
             ]),
-            new CommadMap([
+            new CommandMap([
                 'cmd'   => 'use:without_mode',
                 'class' => FoundedCommand::class,
                 'fn'    => 'main',
             ]),
-            new CommadMap([
+            new CommandMap([
                 'cmd'   => 'use:without_main',
                 'class' => FoundedCommand::class,
             ]),
-            new CommadMap([
+            new CommandMap([
                 'match' => fn ($given) => $given == 'use:match',
                 'fn'    => [FoundedCommand::class, 'main'],
             ]),
-            new CommadMap([
+            new CommandMap([
                 'pattern' => 'use:pattern',
                 'fn'      => [FoundedCommand::class, 'main'],
             ]),

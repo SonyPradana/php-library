@@ -9,7 +9,7 @@ use System\Text\Str;
 /**
  * @implements \ArrayAccess<string, string|string[]|(array<string, string|bool|int|null>)|(callable(string): bool)>
  */
-class CommadMap implements \ArrayAccess
+class CommandMap implements \ArrayAccess
 {
     /** @var array<string, string|string[]|(array<string, string|bool|int|null>)|(callable(string): bool)> */
     private $command = [
