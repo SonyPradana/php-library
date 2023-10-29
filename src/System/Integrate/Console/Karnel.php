@@ -6,7 +6,6 @@ namespace System\Integrate\Console;
 
 use System\Console\Style\Style;
 use System\Container\Container;
-use System\Text\Str;
 
 class Karnel
 {
@@ -34,19 +33,14 @@ class Karnel
      */
     public function handle($arguments)
     {
-        // handle commad empty
+        // handle command empty
         $baseArgs = $arguments[1] ?? '--help';
 
         foreach ($this->commands() as $cmd) {
-            $found = collection($cmd->cmd())
-                ->some(
-                    fn ($alias) => $this->alias($baseArgs, $alias, $cmd['mode'])
-                );
-
-            if ($found) {
+            if ($cmd->isMatch($baseArgs)) {
                 $this->app->set(
                     $cmd->class(),
-                    \DI\autowire($cmd->class())->constructor($arguments)
+                    \DI\autowire($cmd->class())->constructor($arguments, $cmd->defaultOption())
                 );
 
                 $service = $this->app->get($cmd->class());
@@ -58,7 +52,7 @@ class Karnel
 
         // if command not register
         (new Style())
-            ->push('Commad Not Found, run help command')->textRed()->newLines(2)
+            ->push('Command Not Found, run help command')->textRed()->newLines(2)
             ->push('> ')->textDim()
             ->push('php ')->textYellow()
             ->push('cli ')
@@ -67,14 +61,7 @@ class Karnel
             ->out()
         ;
 
-        return $this->exit_code = 0;
-    }
-
-    private function alias(string $argument, string $alias, string $mode): bool
-    {
-        return 'full' === $mode
-          ? $argument === $alias
-          : Str::startsWith($argument, $alias);
+        return $this->exit_code = 1;
     }
 
     /**
@@ -90,7 +77,7 @@ class Karnel
     /**
      * Command route.
      *
-     * @return \System\Integrate\ValueObjects\CommadMap[]
+     * @return \System\Integrate\ValueObjects\CommandMap[]
      */
     protected function commands()
     {
