@@ -71,6 +71,36 @@ class CommandMapTest extends TestCase
     /**
      * @test
      */
+    public function itWillThrowErrorWhenFnIsArrayButClassNotExist()
+    {
+        $command = new CommandMap([
+            'fn' => [],
+        ]);
+
+        try {
+            $command->class();
+        } catch (\Throwable $th) {
+            $this->assertEquals('Command map require class in (class or fn).', $th->getMessage());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function itWillThrowErrorWhenClassNotExist()
+    {
+        $command = new CommandMap([]);
+
+        try {
+            $command->class();
+        } catch (\Throwable $th) {
+            $this->assertEquals('Command map require class in (class or fn).', $th->getMessage());
+        }
+    }
+
+    /**
+     * @test
+     */
     public function itCanGetFn()
     {
         $command = new CommandMap([

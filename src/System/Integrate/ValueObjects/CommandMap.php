@@ -46,11 +46,15 @@ class CommandMap implements \ArrayAccess
 
     public function class(): string
     {
-        if (is_array($this->fn())) {
+        if (is_array($this->fn()) && array_key_exists(0, $this->fn())) {
             return $this->fn()[0];
         }
 
-        return $this->command['class'];
+        if (array_key_exists('class', $this->command)) {
+            return $this->command['class'];
+        }
+
+        throw new \InvalidArgumentException('Command map require class in (class or fn).');
     }
 
     /**
