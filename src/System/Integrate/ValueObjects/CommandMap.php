@@ -30,7 +30,7 @@ class CommandMap implements \ArrayAccess
     /**
      * Command rule.
      *
-     * @return string|string[]
+     * @return string[]
      */
     public function cmd()
     {
