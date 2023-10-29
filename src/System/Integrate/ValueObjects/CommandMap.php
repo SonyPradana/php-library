@@ -14,7 +14,7 @@ class CommandMap implements \ArrayAccess
     /** @var array<string, string|string[]|(array<string, string|bool|int|null>)|(callable(string): bool)> */
     private $command = [
         'cmd'       => '',
-        'mode'      => 'full',
+        'mode'      => '',
         'class'     => '',
         'fn'        => '',
     ];
