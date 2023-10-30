@@ -34,12 +34,11 @@ class SeedCommand extends Command
         [
             'pattern'=> 'db:seed',
             'fn'     => [self::class, 'main'],
-        ],
-        [
+        ], [
             'pattern' => 'make:seed',
             'fn'      => [self::class, 'make'],
             'default' => [
-                'namespace' => true,
+                'name-space' => true,
             ],
         ],
     ];
@@ -55,10 +54,11 @@ class SeedCommand extends Command
             'make:seed' => 'Create new seeder class',
           ],
           'options'   => [
-            '--class' => 'Target class',
+            '--class'      => 'Target class',
+            '--name-space' => 'True will generate namespace `Database\Seeders`',
           ],
           'relation'  => [
-            'db:seed' => ['--class'],
+            'db:seed' => ['--class', '--name-space'],
           ],
         ];
     }
