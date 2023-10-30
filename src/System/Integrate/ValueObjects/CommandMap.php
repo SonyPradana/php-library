@@ -28,7 +28,7 @@ class CommandMap implements \ArrayAccess
     }
 
     /**
-     * Command rule.
+     * Command rule wrap to array.
      *
      * @return string[]
      */
@@ -42,6 +42,18 @@ class CommandMap implements \ArrayAccess
     public function mode(): string
     {
         return $this->command['mode'] ?? 'full';
+    }
+
+    /**
+     * Pattern rule wrap to array.
+     *
+     * @return string[]
+     */
+    public function patterns()
+    {
+        $pattern = $this->command['pattern'];
+
+        return is_array($pattern) ? $pattern : [$pattern];
     }
 
     public function class(): string
@@ -79,9 +91,18 @@ class CommandMap implements \ArrayAccess
     public function match()
     {
         if (array_key_exists('pattern', $this->command)) {
-            $pattern = $this->command['pattern'];
+            $pattern  = $this->command['pattern'];
+            $patterns = is_array($pattern) ? $pattern : [$pattern];
 
-            return fn ($given): bool => $given == $pattern;
+            return function ($given) use ($patterns): bool {
+                foreach ($patterns as $cmd) {
+                    if ($given == $cmd) {
+                        return true;
+                    }
+                }
+
+                return false;
+            };
         }
 
         if (array_key_exists('match', $this->command)) {
