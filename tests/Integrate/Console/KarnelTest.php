@@ -136,7 +136,7 @@ final class KarnelTest extends TestCase
     {
         $karnel = new NormalCommand($this->app);
         ob_start();
-        $exit    = $karnel->handle(['cli', 'use:default_option', '--default="test"']);
+        $exit    = $karnel->handle(['cli', 'use:default_option']);
         $out     = ob_get_clean();
 
         $this->assertEquals(0, $exit);
@@ -188,6 +188,9 @@ class NormalCommand extends Karnel
             new CommandMap([
                 'pattern' => 'use:default_option',
                 'fn'      => [FoundedCommand::class, 'default'],
+                'default' => [
+                    'default' => 'test',
+                ],
             ]),
         ];
     }
