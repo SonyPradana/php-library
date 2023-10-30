@@ -130,6 +130,19 @@ final class KarnelTest extends TestCase
         $hasContent = Str::contains($out, 'command has founded');
         $this->assertTrue($hasContent);
     }
+
+    /** @test */
+    public function itCanCallCommandWithDefaultOption()
+    {
+        $karnel = new NormalCommand($this->app);
+        ob_start();
+        $exit    = $karnel->handle(['cli', 'use:default_option', '--default="test"']);
+        $out     = ob_get_clean();
+
+        $this->assertEquals(0, $exit);
+        $hasContent = Str::contains($out, 'test');
+        $this->assertTrue($hasContent);
+    }
 }
 
 class NormalCommand extends Karnel
@@ -172,6 +185,10 @@ class NormalCommand extends Karnel
                 'pattern' => 'use:pattern',
                 'fn'      => [FoundedCommand::class, 'main'],
             ]),
+            new CommandMap([
+                'pattern' => 'use:default_option',
+                'fn'      => [FoundedCommand::class, 'default'],
+            ]),
         ];
     }
 }
@@ -181,6 +198,13 @@ class FoundedCommand extends Command
     public function main(): int
     {
         style('command has founded')->out();
+
+        return 0;
+    }
+
+    public function default(): int
+    {
+        style($this->default)->out(false);
 
         return 0;
     }
