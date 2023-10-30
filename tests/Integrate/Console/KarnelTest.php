@@ -132,6 +132,29 @@ final class KarnelTest extends TestCase
     }
 
     /** @test */
+    public function itCanCallCommandUsingPatternGroupCommand()
+    {
+        $karnel = new NormalCommand($this->app);
+        ob_start();
+        $exit    = $karnel->handle(['cli', 'pattern1']);
+        $out     = ob_get_clean();
+
+        $this->assertEquals(0, $exit);
+        $hasContent = Str::contains($out, 'command has founded');
+        $this->assertTrue($hasContent);
+
+        // 2
+        $karnel = new NormalCommand($this->app);
+        ob_start();
+        $exit    = $karnel->handle(['cli', 'pattern2']);
+        $out     = ob_get_clean();
+
+        $this->assertEquals(0, $exit);
+        $hasContent = Str::contains($out, 'command has founded');
+        $this->assertTrue($hasContent);
+    }
+
+    /** @test */
     public function itCanCallCommandWithDefaultOption()
     {
         $karnel = new NormalCommand($this->app);
@@ -183,6 +206,10 @@ class NormalCommand extends Karnel
             ]),
             new CommandMap([
                 'pattern' => 'use:pattern',
+                'fn'      => [FoundedCommand::class, 'main'],
+            ]),
+            new CommandMap([
+                'pattern' => ['pattern1', 'pattern2'],
                 'fn'      => [FoundedCommand::class, 'main'],
             ]),
             new CommandMap([
