@@ -9,7 +9,6 @@ use System\Console\Prompt;
 use System\Console\Traits\PrintHelpTrait;
 use System\Template\Generate;
 use System\Template\Method;
-use System\Text\Str;
 
 use function System\Console\fail;
 use function System\Console\info;
@@ -31,18 +30,13 @@ class SeedCommand extends Command
      * @var array<int, array<string, mixed>>
      */
     public static array $command = [
-      [
-        'cmd'       => 'db:seed',
-        'mode'      => 'full',
-        'class'     => self::class,
-        'fn'        => 'main',
-      ],
-      [
-        'cmd'       => 'make:seed',
-        'mode'      => 'full',
-        'class'     => self::class,
-        'fn'        => 'make',
-      ],
+        [
+            'pattern'=> 'db:seed',
+            'fn'     => [self::class, 'main'],
+        ], [
+            'pattern' => 'make:seed',
+            'fn'      => [self::class, 'make'],
+        ],
     ];
 
     /**
@@ -56,10 +50,11 @@ class SeedCommand extends Command
             'make:seed' => 'Create new seeder class',
           ],
           'options'   => [
-            '--class' => 'Target class',
+            '--class'      => 'Target class (will add `Database\\Seeders\\`)',
+            '--name-space' => 'Target class with full namespace',
           ],
           'relation'  => [
-            'db:seed' => ['--class'],
+            'db:seed' => ['--class', '--name-space'],
           ],
         ];
     }
@@ -84,21 +79,26 @@ class SeedCommand extends Command
 
     public function main(): int
     {
-        $class = $this->class;
-        $exit  = 0;
+        $class     = $this->class;
+        $namespace = $this->option('name-space');
+        $exit      = 0;
 
         if (false === $this->runInDev()) {
             return 2;
         }
 
-        if (null === $class) {
-            warn('command db:seed require --class flag follow by class name.')->out(false);
-
-            return 1;
+        if (null === $class && null !== $namespace) {
+            $class = $namespace;
         }
 
-        if (!Str::startsWith($class, 'Database\Seeders')) {
+        if ($class !== null && null === $namespace) {
             $class = 'Database\\Seeders\\' . $class;
+        }
+
+        if (null === $class && null === $namespace) {
+            warn('command db:seed require --class or --name-space flag follow by class name.')->out(false);
+
+            return 1;
         }
 
         if (false === class_exists($class)) {
