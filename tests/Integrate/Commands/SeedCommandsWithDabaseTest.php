@@ -76,7 +76,7 @@ final class SeedCommandsWithDabaseTest extends \RealDatabaseConnectionTest
      */
     public function itCanRunSeederWithCostumeNamesapce()
     {
-        $seeder = new SeedCommand(['cli', 'db:seed', '--class', 'CostumeNamespaceSeeder', '--name-space=false']);
+        $seeder = new SeedCommand(['cli', 'db:seed', '--name-space', 'CostumeNamespaceSeeder']);
         ob_start();
         $seeder->main();
         $out  = ob_get_clean();
