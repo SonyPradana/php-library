@@ -31,18 +31,17 @@ class SeedCommand extends Command
      * @var array<int, array<string, mixed>>
      */
     public static array $command = [
-      [
-        'cmd'       => 'db:seed',
-        'mode'      => 'full',
-        'class'     => self::class,
-        'fn'        => 'main',
-      ],
-      [
-        'cmd'       => 'make:seed',
-        'mode'      => 'full',
-        'class'     => self::class,
-        'fn'        => 'make',
-      ],
+        [
+            'pattern'=> 'db:seed',
+            'fn'     => [self::class, 'main'],
+        ],
+        [
+            'pattern' => 'make:seed',
+            'fn'      => [self::class, 'make'],
+            'default' => [
+                'namespace' => true,
+            ],
+        ],
     ];
 
     /**
@@ -97,7 +96,7 @@ class SeedCommand extends Command
             return 1;
         }
 
-        if (!Str::startsWith($class, 'Database\Seeders')) {
+        if (!Str::startsWith($class, 'Database\Seeders') && !$this->option('name-space')) {
             $class = 'Database\\Seeders\\' . $class;
         }
 

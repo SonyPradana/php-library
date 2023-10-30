@@ -21,6 +21,7 @@ final class SeedCommandsWithDabaseTest extends \RealDatabaseConnectionTest
         require_once __DIR__ . '//database//seeders//BasicSeeder.php';
         require_once __DIR__ . '//database//seeders//UserSeeder.php';
         require_once __DIR__ . '//database//seeders//ChainSeeder.php';
+        require_once __DIR__ . '//database//seeders//CostumeNamespaceSeeder.php';
         $this->app = new Application(__DIR__);
         $this->app->setSeederPath(__DIR__ . '//database//seeders//');
         $this->app->set('environment', 'dev');
@@ -61,6 +62,21 @@ final class SeedCommandsWithDabaseTest extends \RealDatabaseConnectionTest
     public function itCanRunSeederRunnerWithRealInsertData()
     {
         $seeder = new SeedCommand(['cli', 'db:seed', '--class', 'UserSeeder']);
+        ob_start();
+        $seeder->main();
+        $out  = ob_get_clean();
+
+        $this->assertTrue(Str::contains($out, 'Success run seeder'));
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanRunSeederWithCostumeNamesapce()
+    {
+        $seeder = new SeedCommand(['cli', 'db:seed', '--class', 'CostumeNamespaceSeeder', '--name-space=false']);
         ob_start();
         $seeder->main();
         $out  = ob_get_clean();
