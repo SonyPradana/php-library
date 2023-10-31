@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.25.0] - 2023-10-31
+### Added
+- Added response status code  `isInformational()`, `isSuccessful()`, `isRedirection()`, `isClientError()`,  `isServerError()`.
+- Added response http protocol version.
+- Added `Url::class` object value for url parse.
+- Added `Response::headers` property to modify headers as collection.
+- Added new command map structur `fn` (array), `pattern`, `match` and `default`.
+- Added support Console Karnel to add default option using command map.
+- Added `SeederCommand` to run seeder using costume namespace (--name-space).
+
 ## [0.24.0] - 2023-10-17
 ### Added
 - Added exit prompt confirmation function `exit_prompt()`.
