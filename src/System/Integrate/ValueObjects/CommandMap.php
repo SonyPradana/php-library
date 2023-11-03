@@ -34,6 +34,9 @@ class CommandMap implements \ArrayAccess
      */
     public function cmd()
     {
+        if (false === array_key_exists('cmd', $this->command)) {
+            return [];
+        }
         $cmd = $this->command['cmd'];
 
         return is_array($cmd) ? $cmd : [$cmd];

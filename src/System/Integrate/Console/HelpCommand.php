@@ -167,7 +167,9 @@ class HelpCommand extends Command
         $maks1 = 0;
         $maks2 = 0;
         foreach ($this->commandMaps() as $command) {
-            $lenght = Str::length(implode(', ', $command->patterns()));
+            $option = array_merge($command->cmd(), $command->patterns());
+            $lenght = Str::length(implode(', ', $option));
+
             if ($lenght > $maks1) {
                 $maks1 = $lenght;
             }
@@ -179,9 +181,10 @@ class HelpCommand extends Command
         }
 
         foreach ($this->commandMaps() as $command) {
-            style(implode(', ', $command->patterns()))->textLightYellow()->out(false);
+            $option = array_merge($command->cmd(), $command->patterns());
+            style(implode(', ', $option))->textLightYellow()->out(false);
 
-            $lenght1 = Str::length(implode(', ', $command->patterns()));
+            $lenght1 = Str::length(implode(', ', $option));
             $lenght2 = Str::length($command->class());
             style('')
                 ->repeat(' ', $maks1 - $lenght1 + 4)
