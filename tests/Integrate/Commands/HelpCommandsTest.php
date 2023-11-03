@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Test\Integrate\Commands;
 
+use System\Console\Command;
 use System\Integrate\Console\HelpCommand;
 
 final class HelpCommandsTest extends CommandTest
@@ -42,6 +43,46 @@ final class HelpCommandsTest extends CommandTest
     /**
      * @test
      */
+    public function itCanCallHelpCommandMainWithRegesterAnotherCommand()
+    {
+        $helpCommand = new class(['php', 'cli', '--help']) extends HelpCommand {
+            protected array $commands = [
+                [
+                    'pattern' => 'test',
+                    'fn'      => [RegisterHelpCommand::class, 'main'],
+                ],
+            ];
+
+            public function useCommands($commands): void
+            {
+                $this->commands = $commands;
+            }
+        };
+
+        ob_start();
+        $exit = $helpCommand->main();
+        $out  = ob_get_clean();
+
+        $this->assertSuccess($exit);
+        $this->assertContain('some test will appere in test', $out);
+        $this->assertContain('this also will display in test', $out);
+
+        // use old style commandmaps
+        $helpCommand->useCommands([
+            ['class' => RegisterHelpCommand::class],
+        ]);
+        ob_start();
+        $exit = $helpCommand->main();
+        $out  = ob_get_clean();
+
+        $this->assertSuccess($exit);
+        $this->assertContain('some test will appere in test', $out);
+        $this->assertContain('this also will display in test', $out);
+    }
+
+    /**
+     * @test
+     */
     public function itCanCallHelpCommandCommandList()
     {
         $helpCommand = $this->maker('php cli --list');
@@ -49,6 +90,34 @@ final class HelpCommandsTest extends CommandTest
         $exit = $helpCommand->commandList();
         ob_get_clean();
 
+        $this->assertSuccess($exit);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanCallHelpCommandCommandListWithRegisterAnotherCommand()
+    {
+        $helpCommand = new class(['php', 'cli', '--list']) extends HelpCommand {
+            protected array $commands = [
+                [
+                    'pattern' => 'unit:test',
+                    'fn'      => [RegisterHelpCommand::class, 'main'],
+                ],
+            ];
+
+            public function useCommands($commands): void
+            {
+                $this->commands = $commands;
+            }
+        };
+
+        ob_start();
+        $exit = $helpCommand->commandList();
+        $out  = ob_get_clean();
+
+        $this->assertContain('unit:test', $out);
+        $this->assertContain('System\Test\Integrate\Commands\RegisterHelpCommand', $out);
         $this->assertSuccess($exit);
     }
 
@@ -92,5 +161,26 @@ final class HelpCommandsTest extends CommandTest
 
         $this->assertFails($exit);
         $this->assertContain('php cli help <command_nama>', $out);
+    }
+}
+
+class RegisterHelpCommand extends Command
+{
+    /**
+     * @return array<string, array<string, string|string[]>>
+     */
+    public function printHelp()
+    {
+        return [
+            'commands'  => [
+                'test' => 'some test will appere in test',
+            ],
+            'options'   => [
+                '--test' => 'this also will display in test',
+            ],
+            'relation'  => [
+                'test' => ['[unit]'],
+            ],
+        ];
     }
 }

@@ -51,6 +51,9 @@ class CommandMap implements \ArrayAccess
      */
     public function patterns()
     {
+        if (false === array_key_exists('pattern', $this->command)) {
+            return [];
+        }
         $pattern = $this->command['pattern'];
 
         return is_array($pattern) ? $pattern : [$pattern];
@@ -75,6 +78,11 @@ class CommandMap implements \ArrayAccess
     public function fn()
     {
         return $this->command['fn'] ?? 'main';
+    }
+
+    public function method(): string
+    {
+        return is_array($this->fn()) ? $this->fn()[1] : $this->fn();
     }
 
     /**
