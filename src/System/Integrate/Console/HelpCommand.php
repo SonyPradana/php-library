@@ -7,6 +7,7 @@ namespace System\Integrate\Console;
 use System\Console\Command;
 use System\Console\Style\Style;
 use System\Console\Traits\PrintHelpTrait;
+use System\Integrate\ValueObjects\CommandMap;
 use System\Text\Str;
 
 use function System\Console\info;
@@ -83,38 +84,38 @@ class HelpCommand extends Command
     {
         $has_visited      = [];
         $this->print_help = [
-          'margin-left'         => 8,
-          'column-1-min-lenght' => 16,
+            'margin-left'         => 8,
+            'column-1-min-lenght' => 16,
         ];
 
-        foreach ($this->commands as $command) {
-            if (!in_array($command['class'], $has_visited)) {
-                $class_name    = $command['class'];
-                $has_visited[] = $class_name;
+        foreach ($this->commandMaps() as $command) {
+            $class = $command->class();
+            if (!in_array($class, $has_visited)) {
+                $has_visited[] = $class;
 
-                if (class_exists($class_name)) {
-                    $class = new $class_name([]);
+                if (class_exists($class)) {
+                    $class = new $class([], $command->defaultOption());
 
                     if (!method_exists($class, 'printHelp')) {
                         continue;
                     }
 
-                    $res = app()->call([$class, 'printHelp']) ?? [];
+                    $help = app()->call([$class, 'printHelp']) ?? [];
 
-                    if (isset($res['commands']) && $res['commands'] != null) {
-                        foreach ($res['commands'] as $command => $desc) {
+                    if (isset($help['commands']) && $help['commands'] !== null) {
+                        foreach ($help['commands'] as $command => $desc) {
                             $this->command_describes[$command] = $desc;
                         }
                     }
 
-                    if (isset($res['options']) && $res['options'] != null) {
-                        foreach ($res['options'] as $option => $desc) {
+                    if (isset($help['options']) && $help['options'] !== null) {
+                        foreach ($help['options'] as $option => $desc) {
                             $this->option_describes[$option] = $desc;
                         }
                     }
 
-                    if (isset($res['relation']) && $res['relation'] != null) {
-                        foreach ($res['relation'] as $option => $desc) {
+                    if (isset($help['relation']) && $help['relation'] != null) {
+                        foreach ($help['relation'] as $option => $desc) {
                             $this->command_relation[$option] = $desc;
                         }
                     }
@@ -163,18 +164,31 @@ class HelpCommand extends Command
     {
         style('List of all command registered:')->out();
 
-        foreach ($this->commands as $command) {
-            // get command
-            if (is_array($command['cmd'])) {
-                style(implode(', ', $command['cmd']))->textBlue()->out();
-            } else {
-                style($command['cmd'])->textBlue()->out();
+        $maks1 = 0;
+        $maks2 = 0;
+        foreach ($this->commandMaps() as $command) {
+            $lenght = Str::length(implode(', ', $command->patterns()));
+            if ($lenght > $maks1) {
+                $maks1 = $lenght;
             }
 
-            style("\t")
-              ->push($command['class'])->textGreen()
-              ->push("\t")->push($command['fn'])->textDim()
-              ->out();
+            $lenght = Str::length($command->class());
+            if ($lenght > $maks2) {
+                $maks2 = $lenght;
+            }
+        }
+
+        foreach ($this->commandMaps() as $command) {
+            style(implode(', ', $command->patterns()))->textLightYellow()->out(false);
+
+            $lenght1 = Str::length(implode(', ', $command->patterns()));
+            $lenght2 = Str::length($command->class());
+            style('')
+                ->repeat(' ', $maks1 - $lenght1 + 4)
+                ->push($command->class())->textGreen()
+                ->repeat('.', $maks2 - $lenght2 + 8)->textDim()
+                ->push($command->method())
+                ->out();
         }
 
         return 0;
@@ -216,18 +230,18 @@ class HelpCommand extends Command
             if (class_exists($class_name)) {
                 $class = new $class_name([]);
 
-                $res = app()->call([$class, 'printHelp']) ?? [];
+                $help = app()->call([$class, 'printHelp']) ?? [];
 
-                if (isset($res['commands']) && $res['commands'] != null) {
-                    $this->command_describes = $res['commands'];
+                if (isset($help['commands']) && $help['commands'] != null) {
+                    $this->command_describes = $help['commands'];
                 }
 
-                if (isset($res['options']) && $res['options'] != null) {
-                    $this->option_describes = $res['options'];
+                if (isset($help['options']) && $help['options'] != null) {
+                    $this->option_describes = $help['options'];
                 }
 
-                if (isset($res['relation']) && $res['relation'] != null) {
-                    $this->command_relation = $res['relation'];
+                if (isset($help['relation']) && $help['relation'] != null) {
+                    $this->command_relation = $help['relation'];
                 }
 
                 style('Avilabe command:')->newLines()->out();
@@ -243,5 +257,20 @@ class HelpCommand extends Command
         warn("Help for `{$this->OPTION[0]}` command not found")->out(false);
 
         return 1;
+    }
+
+    /**
+     * Transform commandsmap array to CommandMap.
+     *
+     * @return CommandMap[]
+     */
+    private function commandMaps()
+    {
+        $commandmap =  [];
+        foreach ($this->commands as $command) {
+            $commandmap[] = new CommandMap($command);
+        }
+
+        return $commandmap;
     }
 }
