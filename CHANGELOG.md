@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.25.0] - 2023-11-04
+### Fixed
+- Fixed `HelpCommand` using commandmap to find command helper.
+- Fixed prevent error when `cmd` not found in commandmap.
+
 ## [0.25.0] - 2023-10-31
 ### Added
 - Added response status code  `isInformational()`, `isSuccessful()`, `isRedirection()`, `isClientError()`,  `isServerError()`.
