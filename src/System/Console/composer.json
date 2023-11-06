@@ -1,6 +1,6 @@
 {
-    "name": "savanna-php/collection",
-    "description": "part of php-library, console application",
+    "name": "savanna-php/console",
+    "description": "part of php-library, console",
     "authors": [
         {
             "name": "Angger Pradana",

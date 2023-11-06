@@ -9,12 +9,12 @@
     ],
     "require": {
         "php": "^7.4 || ^8.0",
-        "savanna-php/Collection": "^0.25",
-        "savanna-php/Integrate": "^0.25"
+        "savanna-php/collection": "^0.25",
+        "savanna-php/integrate": "^0.25"
     },
     "autoload": {
         "psr-4": {
-            "System\\DataBase\\": ""
+            "System\\Database\\": ""
         }
     }
 }
