@@ -41,12 +41,23 @@
             "tests/DataBase/RealDatabaseConnectionTest.php"
         ]
     },
+    "replace": {
+        "savanna-php/collection": "self.version",
+        "savanna-php/console": "self.version",
+        "savanna-php/container": "self.version",
+        "savanna-php/cron": "self.version",
+        "savanna-php/database": "self.version",
+        "savanna-php/file": "self.version",
+        "savanna-php/integrate": "self.version",
+        "savanna-php/router": "self.version",
+        "savanna-php/security": "self.version",
+        "savanna-php/support": "self.version",
+        "savanna-php/template": "self.version",
+        "savanna-php/text": "self.version",
+        "savanna-php/time": "self.version",
+        "savanna-php/view": "self.version"
+    },
     "extra": {
-        "laravel": {
-            "dont-discover": [
-                "*"
-            ]
-        },
         "branch-alias": {
             "dev-master": "0.x-dev"
         }
