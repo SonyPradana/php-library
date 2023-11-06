@@ -48,6 +48,7 @@
         "savanna-php/cron": "self.version",
         "savanna-php/database": "self.version",
         "savanna-php/file": "self.version",
+        "savanna-php/http": "self.version",
         "savanna-php/integrate": "self.version",
         "savanna-php/router": "self.version",
         "savanna-php/security": "self.version",

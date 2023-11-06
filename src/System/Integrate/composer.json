@@ -18,7 +18,7 @@
         "savanna-php/database": "^0.25",
         "savanna-php/file": "^0.25",
         "savanna-php/http": "^0.25",
-        "savanna-php/route": "^0.25",
+        "savanna-php/router": "^0.25",
         "savanna-php/support": "^0.25",
         "savanna-php/template": "^0.25",
         "savanna-php/text": "^0.25",
