@@ -27,6 +27,9 @@
     "autoload": {
         "psr-4": {
             "System\\Integrate\\": ""
-        }
+        },
+        "files": [
+            "helper.php"
+        ]
     }
 }

@@ -15,6 +15,9 @@
     "autoload": {
         "psr-4": {
             "System\\Console\\": ""
-        }
+        },
+        "files": [
+            "helper.php"
+        ]
     }
 }

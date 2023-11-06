@@ -16,6 +16,9 @@
     "autoload": {
         "psr-4": {
             "System\\Time\\": ""
-        }
+        },
+        "files": [
+            "helper.php"
+        ]
     }
 }
