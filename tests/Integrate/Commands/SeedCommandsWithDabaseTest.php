@@ -51,6 +51,7 @@ final class SeedCommandsWithDabaseTest extends \RealDatabaseConnectionTest
         $seeder->main();
         $out  = ob_get_clean();
 
+        $this->assertTrue(Str::contains($out, 'seed for basic seeder'));
         $this->assertTrue(Str::contains($out, 'Success run seeder'));
     }
 
@@ -96,6 +97,7 @@ final class SeedCommandsWithDabaseTest extends \RealDatabaseConnectionTest
         $seeder->main();
         $out  = ob_get_clean();
 
+        $this->assertTrue(Str::contains($out, 'seed for basic seeder'));
         $this->assertTrue(Str::contains($out, 'Success run seeder'));
     }
 }
