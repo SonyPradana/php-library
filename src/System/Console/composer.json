@@ -1,0 +1,20 @@
+{
+    "name": "savanna-php/collection",
+    "description": "part of php-library, console application",
+    "authors": [
+        {
+            "name": "Angger Pradana",
+            "email": "sonypradana@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "sonypradana/validator": "^0.8",
+        "savanna-php/text": "^0.25"
+    },
+    "autoload": {
+        "psr-4": {
+            "System\\Console\\": ""
+        }
+    }
+}

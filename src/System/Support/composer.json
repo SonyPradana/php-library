@@ -1,0 +1,19 @@
+{
+    "name": "savanna-php/support",
+    "description": "part of php-library, support",
+    "authors": [
+        {
+            "name": "Angger Pradana",
+            "email": "sonypradana@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "savanna-php/integrate": "^0.25"
+    },
+    "autoload": {
+        "psr-4": {
+            "System\\Support\\": ""
+        }
+    }
+}

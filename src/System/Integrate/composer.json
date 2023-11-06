@@ -1,0 +1,32 @@
+{
+    "name": "savanna-php/integrate",
+    "description": "part of php-library, http",
+    "authors": [
+        {
+            "name": "Angger Pradana",
+            "email": "sonypradana@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "php-di/php-di": "^6.4 || ^7.0",
+        "sonypradana/validator": "^0.8",
+        "savanna-php/collection": "^0.25",
+        "savanna-php/console": "^0.25",
+        "savanna-php/container": "^0.25",
+        "savanna-php/cron": "^0.25",
+        "savanna-php/database": "^0.25",
+        "savanna-php/file": "^0.25",
+        "savanna-php/http": "^0.25",
+        "savanna-php/route": "^0.25",
+        "savanna-php/support": "^0.25",
+        "savanna-php/template": "^0.25",
+        "savanna-php/text": "^0.25",
+        "savanna-php/time": "^0.25"
+    },
+    "autoload": {
+        "psr-4": {
+            "System\\Integrate\\": ""
+        }
+    }
+}

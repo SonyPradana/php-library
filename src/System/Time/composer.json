@@ -1,0 +1,21 @@
+{
+    "name": "savanna-php/time",
+    "description": "part of php-library, time",
+    "authors": [
+        {
+            "name": "Angger Pradana",
+            "email": "sonypradana@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "savanna-php/collection": "^0.25",
+        "savanna-php/support": "^0.25",
+        "savanna-php/text": "^0.25"
+    },
+    "autoload": {
+        "psr-4": {
+            "System\\Time\\": ""
+        }
+    }
+}

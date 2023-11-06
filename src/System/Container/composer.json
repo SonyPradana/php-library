@@ -1,0 +1,19 @@
+{
+    "name": "savanna-php/container",
+    "description": "part of php-library, dependency injection container",
+    "authors": [
+        {
+            "name": "Angger Pradana",
+            "email": "sonypradana@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "php-di/php-di": "^6.4 || ^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "System\\Container\\": ""
+        }
+    }
+}

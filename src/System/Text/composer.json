@@ -1,0 +1,21 @@
+{
+    "name": "savanna-php/text",
+    "description": "part of php-library, text",
+    "authors": [
+        {
+            "name": "Angger Pradana",
+            "email": "sonypradana@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "ext-mbstring": "*",
+        "savanna-php/collection": "^0.25",
+        "savanna-php/support": "^0.25"
+    },
+    "autoload": {
+        "psr-4": {
+            "System\\Text\\": ""
+        }
+    }
+}
