@@ -6,15 +6,14 @@ namespace System\Database\Seeder;
 
 use System\Database\MyPDO;
 use System\Database\MyQuery\Insert;
-use System\Integrate\Application;
 
 abstract class Seeder
 {
-    protected Application $app;
+    protected MyPDO $pdo;
 
-    public function __construct(Application $app)
+    public function __construct(MyPDO $pdo)
     {
-        $this->app =  $app;
+        $this->pdo =  $pdo;
     }
 
     /**
@@ -22,15 +21,13 @@ abstract class Seeder
      */
     public function call(string $class_name): void
     {
-        $this->app->call([$class_name, 'run']);
+        $class = new $class_name($this->pdo);
+        $class->run();
     }
 
     public function create(string $table_name): Insert
     {
-        /** @var MyPDO */
-        $pdo = $this->app->get(MyPDO::class);
-
-        return new Insert($table_name, $pdo);
+        return new Insert($table_name, $this->pdo);
     }
 
     /**
