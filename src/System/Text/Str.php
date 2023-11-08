@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace System\Text;
 
-use System\Collection\Collection;
 use System\Support\Marco;
 use System\Text\Exceptions\NoReturn;
 
@@ -449,17 +448,15 @@ final class Str
         $end = $start + $mask_length;
         $start--;
         $arr_text = \preg_split('//', $text, -1, PREG_SPLIT_NO_EMPTY);
-        $new      = new Collection($arr_text);
-        /* @phpstan-ignore-next-line */
-        $new_text = $new->map(function ($string, $index) use ($mask, $start, $end) {
+        $new_text = array_map(function ($index, $string) use ($mask, $start, $end) {
             if ($index > $start && $index < $end) {
                 return $mask;
             }
 
             return $string;
-        });
+        }, array_keys($arr_text), array_values($arr_text));
 
-        return \implode('', $new_text->all());
+        return \implode('', $new_text);
     }
 
     // condition ------------------------------------

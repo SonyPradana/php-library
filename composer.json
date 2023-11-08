@@ -25,7 +25,8 @@
     },
     "autoload": {
         "psr-4": {
-            "System\\": "src/System/"
+            "System\\": "src/System/",
+            "System\\Support\\": "src/System/Macroable"
         },
         "files": [
           "src/System/Collection/helper.php",
