@@ -1,0 +1,23 @@
+{
+    "name": "savanna-php/console",
+    "description": "part of php-library, console",
+    "authors": [
+        {
+            "name": "Angger Pradana",
+            "email": "sonypradana@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "sonypradana/validator": "^0.8",
+        "savanna-php/text": "^0.25"
+    },
+    "autoload": {
+        "psr-4": {
+            "System\\Console\\": ""
+        },
+        "files": [
+            "helper.php"
+        ]
+    }
+}

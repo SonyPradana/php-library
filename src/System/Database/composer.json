@@ -1,0 +1,19 @@
+{
+    "name": "savanna-php/database",
+    "description": "part of php-library, dependency injection container",
+    "authors": [
+        {
+            "name": "Angger Pradana",
+            "email": "sonypradana@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "savanna-php/collection": "^0.25"
+    },
+    "autoload": {
+        "psr-4": {
+            "System\\Database\\": ""
+        }
+    }
+}
