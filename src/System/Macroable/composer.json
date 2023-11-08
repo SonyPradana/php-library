@@ -1,6 +1,6 @@
 {
-    "name": "savanna-php/support",
-    "description": "part of php-library, support",
+    "name": "savanna-php/macroable",
+    "description": "part of php-library, macroable",
     "authors": [
         {
             "name": "Angger Pradana",
@@ -8,9 +8,7 @@
         }
     ],
     "require": {
-        "php": "^7.4 || ^8.0",
-        "savanna-php/integrate": "^0.25",
-        "savanna-php/macroable": "^0.25"
+        "php": "^7.4 || ^8.0"
     },
     "autoload": {
         "psr-4": {

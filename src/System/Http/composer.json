@@ -11,7 +11,7 @@
         "php": "^7.4 || ^8.0",
         "sonypradana/validator": "^0.8",
         "savanna-php/collection": "^0.25",
-        "savanna-php/support": "^0.25",
+        "savanna-php/macroable": "^0.25",
         "savanna-php/text": "^0.25"
     },
     "autoload": {
