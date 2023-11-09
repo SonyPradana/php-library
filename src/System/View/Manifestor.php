@@ -6,20 +6,22 @@ namespace System\View;
 
 class Manifestor
 {
+    private string $templateDir;
     private string $cache_path;
     private string $manifest_name;
     /** @var array<string, string[]> */
     private static $cache_manifest = [];
 
-    public function __construct(string $cache_path, string $manifest_name = 'manifest.json')
+    public function __construct(string $templateDir, string $cache_path, string $manifest_name = '/manifest.json')
     {
+        $this->templateDir   = $templateDir;
         $this->cache_path    = $cache_path;
         $this->manifest_name = $manifest_name;
     }
 
     public function manifestFileName(): string
     {
-        return $file_name = $this->cache_path . $this->manifest_name;
+        return $this->cache_path . $this->manifest_name;
     }
 
     /**
@@ -47,10 +49,10 @@ class Manifestor
      *
      * @return array<string, string[]>
      */
-    public static function getCachedManifest(string $cache_path, string $manifest_name = 'manifest.json')
+    public static function getCachedManifest(string $template_path, string $cache_path, string $manifest_name = 'manifest.json')
     {
         if ([] === self::$cache_manifest) {
-            (new self($cache_path, $manifest_name))->getManifest();
+            (new self($template_path, $cache_path, $manifest_name))->getManifest();
         }
 
         return self::$cache_manifest;
@@ -124,16 +126,9 @@ class Manifestor
      */
     public function replaceDependency(string $template_filename, $new_dependency): void
     {
-        $new_manifest = [];
-        foreach ($this->getManifest() as $template => $dependency) {
-            if ($template === $template_filename) {
-                $new_manifest[$template] = $new_dependency;
-                continue;
-            }
-
-            $new_manifest[$template] = $dependency;
-        }
-        $this->putManifest($new_manifest);
+        $dependency                     = $this->getManifest();
+        $dependency[$template_filename] = $new_dependency;
+        $this->putManifest($dependency);
     }
 
     /**
@@ -143,29 +138,24 @@ class Manifestor
      */
     public function isDependencyUptodate(string $template_filename, int $template_time = null): bool
     {
-        if (false === \file_exists($this->cache_path . '/' . $template_filename . '.php')) {
-            throw new \Exception("Cache file `{$template_filename}.php` is not exist.");
+        if (false === \file_exists($this->cache_path . '/' . $template_filename)) {
+            throw new \Exception("Cache file `{$template_filename}` is not exist.");
         }
 
         if (null === $template_time) {
-            $template_time = \filemtime($this->cache_path . '/' . $template_filename . '.php');
+            $template_time = \filemtime($this->cache_path . '/' . $template_filename);
         }
 
         foreach ($this->getDependency($template_filename) as $file) {
-            $check     = $this->cache_path . '/' . $file . '.php';
+            $check     = $this->templateDir . '/' . $file;
             $file_time = \filemtime($check);
 
             if (false === file_exists($check)) {
-                throw new \Exception("Cache file `{$file}.php` is not exist.");
+                return false;
             }
 
             if ($file_time > $template_time) {
                 return false;
-            }
-
-            // dependency tree (recursing)
-            if (array_key_exists($file, self::$cache_manifest)) {
-                return $this->isDependencyUptodate($file, $file_time);
             }
         }
 

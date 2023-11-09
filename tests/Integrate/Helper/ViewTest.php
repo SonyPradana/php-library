@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use System\Http\Response;
 use System\Integrate\Application;
 use System\Text\Str;
+use System\View\Manifestor;
 use System\View\Templator;
 
 final class ViewTest extends TestCase
@@ -15,6 +16,8 @@ final class ViewTest extends TestCase
     public function testItCanGetResponeFromeContainer()
     {
         $app = new Application('/');
+
+        (new Manifestor(__DIR__ . '/assets/view/', __DIR__ . '/assets/cache/'))->init();
 
         $app->set(
             'view.response',

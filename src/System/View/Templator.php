@@ -14,11 +14,19 @@ class Templator
     private $sections     = [];
     public string $suffix = '';
     public int $max_depth = 5;
+    private Manifestor $manifest;
+    /**
+     * Template dependency.
+     *
+     * @var string[]
+     */
+    private $dependency = [];
 
-    public function __construct(string $templateDir, string $cacheDir)
+    public function __construct(string $templateDir, string $cacheDir, string $manifest = '/manifest.json')
     {
         $this->templateDir = $templateDir;
         $this->cacheDir    = $cacheDir;
+        $this->manifest    = new Manifestor($templateDir, $cacheDir, $manifest);
     }
 
     /**
@@ -33,16 +41,19 @@ class Templator
             throw new ViewFileNotFound($templatePath);
         }
 
-        $cachePath = $this->cacheDir . '/' . md5($templateName) . '.php';
+        $alias     = md5($templateName) . '.php';
+        $cachePath = $this->cacheDir . '/' . $alias;
 
-        if ($cache && file_exists($cachePath) && filemtime($cachePath) >= filemtime($templatePath)) {
+        if ($cache && file_exists($cachePath) && $this->manifest->isDependencyUptodate($alias)) {
             return $this->getView($cachePath, $data);
         }
+        $this->addDependency($templateName);
 
         $template = file_get_contents($templatePath);
         $template = $this->templates($template);
 
         file_put_contents($cachePath, $template);
+        $this->manifest->replaceDependency($alias, $this->dependency);
 
         return $this->getView($cachePath, $data);
     }
@@ -98,6 +109,7 @@ class Templator
         }
 
         $layout = file_get_contents($templatePath);
+        $this->addDependency($matches_layout[1]);
 
         $template = preg_replace_callback(
             '/{%\s*section\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}(.*?){%\s*endsection\s*%}/s',
@@ -132,6 +144,7 @@ class Templator
                 }
 
                 $includedTemplate = file_get_contents($templatePath);
+                $this->addDependency($matches[1]);
                 if ($maks_dept === 0) {
                     return $includedTemplate;
                 }
@@ -173,8 +186,15 @@ class Templator
         return preg_replace('/{%\s*foreach\s+([^%]+)\s+as\s+([^%]+)\s*%}(.*?){%\s*endforeach\s*%}/s', '<?php foreach ($$1 as $$2): ?>$3<?php endforeach; ?>', $template);
     }
 
-    public function templateComment(string $template): string
+    private function templateComment(string $template): string
     {
         return preg_replace('/{#\s*(.*?)\s*#}/', '<?php // $1 ?>', $template);
+    }
+
+    private function addDependency(string $templatename): void
+    {
+        if (false === in_array($templatename, $this->dependency)) {
+            $this->dependency[] = $templatename;
+        }
     }
 }

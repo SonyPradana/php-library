@@ -2,6 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use System\Text\Str;
+use System\View\Manifestor;
 use System\View\Templator;
 
 class TemplatorTest extends TestCase
@@ -13,6 +14,9 @@ class TemplatorTest extends TestCase
             if (is_file($file)) {
                 unlink($file);
             }
+        }
+        if (file_exists(__DIR__ . '/caches/manifest.json')) {
+            unlink(__DIR__ . '/caches/manifest.json');
         }
     }
 
@@ -32,6 +36,8 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
+        (new Manifestor($loader, $cache, '/manifest.json'))->init();
+
         $view = new Templator($loader, $cache);
         $out  = $view->render('php.php', []);
 
@@ -47,6 +53,8 @@ class TemplatorTest extends TestCase
     {
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        (new Manifestor($loader, $cache, '/manifest.json'))->init();
 
         $view = new Templator($loader, $cache);
         $out  = $view->render('include.php', []);
@@ -64,6 +72,8 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
+        (new Manifestor($loader, $cache, '/manifest.json'))->init();
+
         $view = new Templator($loader, $cache);
         $out  = $view->render('nesting.include.php', []);
 
@@ -79,6 +89,8 @@ class TemplatorTest extends TestCase
     {
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        (new Manifestor($loader, $cache, '/manifest.json'))->init();
 
         $view = new Templator($loader, $cache);
         $out  = $view->render('naming.php', ['name' => 'taylor', 'age' => 17]);
@@ -96,6 +108,8 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
+        (new Manifestor($loader, $cache, '/manifest.json'))->init();
+
         $view = new Templator($loader, $cache);
         $out  = $view->render('naming-ternary.php', ['age' => false]);
 
@@ -112,6 +126,8 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
+        (new Manifestor($loader, $cache, '/manifest.json'))->init();
+
         $view = new Templator($loader, $cache);
         $out  = $view->render('Groups/nesting.php', ['name' => 'taylor', 'age' => 17]);
 
@@ -123,6 +139,8 @@ class TemplatorTest extends TestCase
     {
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        (new Manifestor($loader, $cache, '/manifest.json'))->init();
 
         $view = new Templator($loader, $cache);
         $out  = $view->render('if.php', ['true' => true]);
@@ -140,6 +158,8 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
+        (new Manifestor($loader, $cache, '/manifest.json'))->init();
+
         $view = new Templator($loader, $cache);
         $out  = $view->render('else.php', ['true' => false]);
 
@@ -155,6 +175,8 @@ class TemplatorTest extends TestCase
     {
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        (new Manifestor($loader, $cache, '/manifest.json'))->init();
 
         $view = new Templator($loader, $cache);
         $out  = $view->render('each.php', ['numbsers' => [1, 2, 3]]);
@@ -173,6 +195,8 @@ class TemplatorTest extends TestCase
     {
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        (new Manifestor($loader, $cache, '/manifest.json'))->init();
 
         $view = new Templator($loader, $cache);
         $out  = $view->render('slot.php', [
@@ -193,6 +217,8 @@ class TemplatorTest extends TestCase
     {
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        (new Manifestor($loader, $cache, '/manifest.json'))->init();
 
         $view = new Templator($loader, $cache);
 
@@ -215,6 +241,8 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
+        (new Manifestor($loader, $cache, '/manifest.json'))->init();
+
         $view         = new Templator($loader, $cache);
         $view->suffix = '.php';
         $out          = $view->render('portofolio', [
@@ -234,6 +262,8 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
+        (new Manifestor($loader, $cache, '/manifest.json'))->init();
+
         $view = new Templator($loader, $cache);
         $out  = $view->render('comment.php', []);
 
@@ -249,6 +279,8 @@ class TemplatorTest extends TestCase
     {
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        (new Manifestor($loader, $cache, '/manifest.json'))->init();
 
         $view = new Templator($loader, $cache);
         $out  = $view->render('repeat.include.php', []);
