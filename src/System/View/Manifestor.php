@@ -128,7 +128,7 @@ class Manifestor
     {
         $dependency                     = $this->getManifest();
         $dependency[$template_filename] = $new_dependency;
-        $this->putManifest($dependency);
+        $this->putManifest(self::$cache_manifest = $dependency);
     }
 
     /**
