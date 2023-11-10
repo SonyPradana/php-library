@@ -115,12 +115,10 @@ class ManifestorTest extends TestCase
      */
     public function itCheckDepencyIsUpdate()
     {
-        $manifest = new Manifestor(__DIR__ . '/caches', __DIR__ . '/caches/', 'manifestor.test.json');
+        $manifest = new Manifestor(__DIR__ . '/caches_fixed', __DIR__ . '/caches/', 'manifestor.test.json');
 
-        $manifest->putManifest(['a.php' => ['b.php', 'c.php']]);
+        $manifest->putManifest(['a.php' => ['old2.php', 'old3.php']]);
         file_put_contents(__DIR__ . '/caches/a.php', 'a');
-        file_put_contents(__DIR__ . '/caches/b.php', 'b');
-        file_put_contents(__DIR__ . '/caches/c.php', 'c');
         $this->assertTrue($manifest->isDependencyUptodate('a.php'));
     }
 

@@ -154,7 +154,7 @@ class Manifestor
                 return false;
             }
 
-            if ($file_time > $template_time) {
+            if ($file_time >= $template_time) {
                 return false;
             }
         }
