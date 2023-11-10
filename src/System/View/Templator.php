@@ -109,7 +109,6 @@ class Templator
         }
 
         $layout = file_get_contents($templatePath);
-        $this->addDependency($matches_layout[1]);
 
         $template = preg_replace_callback(
             '/{%\s*section\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}(.*?){%\s*endsection\s*%}/s',
@@ -128,6 +127,8 @@ class Templator
             },
             $layout
         );
+
+        $this->addDependency($matches_layout[1]);
 
         return $template;
     }
