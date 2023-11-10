@@ -115,7 +115,7 @@ class ManifestorTest extends TestCase
      */
     public function itCheckDepencyIsUpdate()
     {
-        $manifest = new Manifestor(__DIR__ . '/caches_fixed/', __DIR__ . '/caches/', 'manifestor.test.json');
+        $manifest = new Manifestor(__DIR__ . '/caches_fixed', __DIR__ . '/caches/', 'manifestor.test.json');
 
         $manifest->putManifest(['a.php' => ['b.php', 'c.php']]);
         file_put_contents(__DIR__ . '/caches/a.php', 'a');
@@ -129,7 +129,7 @@ class ManifestorTest extends TestCase
      */
     public function itCheckDepencyIsNotUpdate()
     {
-        $manifest = new Manifestor(__DIR__ . '/caches_fixed/', __DIR__ . '/caches_fixed/', 'manifestor.test.json');
+        $manifest = new Manifestor(__DIR__ . '/caches_fixed', __DIR__ . '/caches_fixed/', 'manifestor.test.json');
 
         $manifest->putManifest(['a.php' => ['b.php', 'c.php']]);
         file_put_contents(__DIR__ . '/caches_fixed/b.php', now()->format('Y-m-d H:i'));
