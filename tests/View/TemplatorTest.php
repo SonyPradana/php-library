@@ -15,8 +15,17 @@ class TemplatorTest extends TestCase
                 unlink($file);
             }
         }
-        if (file_exists(__DIR__ . '/caches/manifest.json')) {
-            unlink(__DIR__ . '/caches/manifest.json');
+        $manifests = glob(__DIR__ . '/caches/*.json');
+        foreach ($manifests as $manifest) {
+            if (is_file($manifest)) {
+                unlink($manifest);
+            }
+        }
+        $manifests = glob(__DIR__ . '/caches_fixed/*.json');
+        foreach ($manifests as $manifest) {
+            if (is_file($manifest)) {
+                unlink($manifest);
+            }
         }
     }
 
@@ -290,5 +299,64 @@ class TemplatorTest extends TestCase
         // without cache
         $out  = $view->render('repeat.include.php', [], false);
         $this->assertEquals(6, substr_count($out, 'some text'));
+    }
+
+    /**
+     * @test
+     */
+    public function itCheckDepencyIsUpdate()
+    {
+        $manifest = new Manifestor(
+            __DIR__ . '/caches_fixed',          // templateDir
+            __DIR__ . '/caches/',               // cache_path
+            'manifestor.dependency.test.json'   // manifest_name
+        );
+        $templator = new Templator(
+            __DIR__ . '/caches_fixed',           // templateDir
+            __DIR__ . '/caches/',               // cache_path
+            'manifestor.dependency.test.json'   // manifest_name
+        );
+
+        $template_name = 'include.php';
+        $cache_name    = md5($template_name) . '.php';
+        $manifest->putManifest([
+            $cache_name => ['include2.php', 'include3.php'],
+        ]);
+
+        file_put_contents(__DIR__ . '/caches/' . $cache_name, 'no render required');
+        $out = $templator->render($template_name, []);
+
+        $this->assertTrue($manifest->isDependencyUptodate($cache_name));
+        $this->assertTrue(Str::contains($out, 'no render required'));
+    }
+
+    /**
+     * @test
+     */
+    public function itCheckDepencyIsNotUpdate()
+    {
+        $manifest = new Manifestor(
+            __DIR__ . '/caches_fixed',          // templateDir
+            __DIR__ . '/caches/',               // cache_path
+            'manifestor.dependency.test.json'   // manifest_name
+        );
+        $templator = new Templator(
+            __DIR__ . '/caches_fixed',           // templateDir
+            __DIR__ . '/caches/',               // cache_path
+            'manifestor.dependency.test.json'   // manifest_name
+        );
+
+        $template_name = 'new_file.php';
+        $cache_name    = md5($template_name) . '.php';
+        $manifest->putManifest([
+            $cache_name => ['new_file.php'],
+        ]);
+
+        file_put_contents(__DIR__ . '/caches_fixed/new_file.php', 'rerender required');
+        file_put_contents(__DIR__ . '/caches/' . $cache_name, 'no render required');
+        $out = $templator->render($template_name, []);
+
+        $this->assertFalse($manifest->isDependencyUptodate($cache_name));
+        $this->assertTrue(Str::contains($out, 'rerender required'));
     }
 }
