@@ -147,14 +147,11 @@ class Manifestor
         }
 
         foreach ($this->getDependency($template_filename) as $file) {
-            $check     = $this->templateDir . '/' . $file;
-            $file_time = \filemtime($check);
-
-            if (false === file_exists($check)) {
+            if (false === file_exists($check = $this->templateDir . '/' . $file)) {
                 return false;
             }
 
-            if ($file_time >= $template_time) {
+            if (\filemtime($check) >= $template_time) {
                 return false;
             }
         }
