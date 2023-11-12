@@ -522,7 +522,7 @@ class Collection extends AbstractCollectionImmutable
             return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && $TValue[$key] == $value);
         }
         if ('===' === $operator) {
-            return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && $TValue[$key] == $value);
+            return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && $TValue[$key] === $value);
         }
         if ('!=' === $operator) {
             return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && $TValue[$key] != $value);
