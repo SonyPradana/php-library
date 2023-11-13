@@ -375,32 +375,6 @@ final class Str
     }
 
     /**
-     * Fill string with string if length is less.
-     *
-     * @param string $text       String Text
-     * @param string $fill       String fill for miss length
-     * @param int    $max_length max length of output string
-     * @param bool   $fill_start If true filling from start
-     *
-     * @return string
-     */
-    private static function fillText(string $text, string $fill, int $max_length, bool $fill_start)
-    {
-        $max_length = $max_length < \strlen($text) ? \strlen($text) : $max_length;
-        $deviation  = $max_length - \strlen($text);
-
-        if (0 === $deviation) {
-            return $text;
-        }
-
-        $prefix = \str_repeat($fill, $deviation);
-
-        return $fill_start
-            ? $prefix . $text
-            : $text . $prefix;
-    }
-
-    /**
      * Fill string (start) with string if length is less.
      *
      * @param string $text       String Text
@@ -411,7 +385,7 @@ final class Str
      */
     public static function fill(string $text, string $fill, int $max_length)
     {
-        return static::fillText($text, $fill, $max_length, true);
+        return \str_pad($text, $max_length, $fill, STR_PAD_LEFT);
     }
 
     /**
@@ -425,7 +399,7 @@ final class Str
      */
     public static function fillEnd(string $text, string $fill, int $max_length)
     {
-        return static::fillText($text, $fill, $max_length, false);
+        return \str_pad($text, $max_length, $fill, STR_PAD_RIGHT);
     }
 
     /**
