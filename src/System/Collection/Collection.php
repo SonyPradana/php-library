@@ -507,4 +507,68 @@ class Collection extends AbstractCollectionImmutable
             array_diff_assoc($collection, $this->collection)
         );
     }
+
+    /**
+     * Filter where using operator.
+     *
+     * @param TKey   $key
+     * @param TValue $value
+     *
+     * @return $this
+     */
+    public function where($key, string $operator, $value): self
+    {
+        if ('=' === $operator || '==' === $operator) {
+            return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && $TValue[$key] == $value);
+        }
+        if ('===' === $operator) {
+            return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && $TValue[$key] === $value);
+        }
+        if ('!=' === $operator) {
+            return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && $TValue[$key] != $value);
+        }
+        if ('!==' === $operator) {
+            return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && $TValue[$key] !== $value);
+        }
+        if ('>' === $operator) {
+            return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && $TValue[$key] > $value);
+        }
+        if ('>=' === $operator) {
+            return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && $TValue[$key] >= $value);
+        }
+        if ('<' === $operator) {
+            return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && $TValue[$key] < $value);
+        }
+        if ('<=' === $operator) {
+            return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && $TValue[$key] <= $value);
+        }
+
+        return $this->replace([]);
+    }
+
+    /**
+     * Filter where in range.
+     *
+     * @param TKey     $key
+     * @param TValue[] $range
+     *
+     * @return $this
+     */
+    public function whereIn($key, $range): self
+    {
+        return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && in_array($TValue[$key], $range));
+    }
+
+    /**
+     * Filter where not in range.
+     *
+     * @param TKey     $key
+     * @param TValue[] $range
+     *
+     * @return $this
+     */
+    public function whereNotIn($key, $range): self
+    {
+        return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && false === in_array($TValue[$key], $range));
+    }
 }

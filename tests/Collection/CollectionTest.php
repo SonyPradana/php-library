@@ -542,4 +542,111 @@ class CollectionTest extends TestCase
             'used'    => 100,
         ], $coll->toArray());
     }
+
+    /**
+     * @test
+     */
+    public function itCanGetFilteredUsingWhere()
+    {
+        $data = [
+            ['user' => 'user1', 'age' => 10],
+            ['user' => 'user2', 'age' => 12],
+            ['user' => 'user3', 'age' => 10],
+            ['user' => 'user4', 'age' => 13],
+            ['user' => 'user5', 'age' => 14],
+        ];
+        $equal = (new Collection($data))->where('age', '=', '13');
+        $this->assertEquals([
+            3 => ['user' => 'user4', 'age' => 13],
+        ], $equal->toArray());
+
+        $identical = (new Collection($data))->where('age', '===', 13);
+        $this->assertEquals([
+            3 => ['user' => 'user4', 'age' => 13],
+        ], $identical->toArray());
+
+        $notequal = (new Collection($data))->where('age', '!=', '13');
+        $this->assertEquals([
+            ['user' => 'user1', 'age' => 10],
+            ['user' => 'user2', 'age' => 12],
+            ['user' => 'user3', 'age' => 10],
+            4       => ['user' => 'user5', 'age' => 14],
+        ], $notequal->toArray());
+
+        $notequalidentical = (new Collection($data))->where('age', '!==', 13);
+        $this->assertEquals([
+            ['user' => 'user1', 'age' => 10],
+            ['user' => 'user2', 'age' => 12],
+            ['user' => 'user3', 'age' => 10],
+            4       => ['user' => 'user5', 'age' => 14],
+        ], $notequalidentical->toArray());
+
+        $greathat = (new Collection($data))->where('age', '>', 13);
+        $this->assertEquals([
+            4 => ['user' => 'user5', 'age' => 14],
+        ], $greathat->toArray());
+
+        $greathatequal = (new Collection($data))->where('age', '>=', 13);
+        $this->assertEquals([
+            3 => ['user' => 'user4', 'age' => 13],
+            4 => ['user' => 'user5', 'age' => 14],
+        ], $greathatequal->toArray());
+
+        $lessthat = (new Collection($data))->where('age', '<', 13);
+        $this->assertEquals([
+            ['user' => 'user1', 'age' => 10],
+            ['user' => 'user2', 'age' => 12],
+            ['user' => 'user3', 'age' => 10],
+        ], $lessthat->toArray());
+
+        $lessthatequal = (new Collection($data))->where('age', '<=', 13);
+        $this->assertEquals([
+            ['user' => 'user1', 'age' => 10],
+            ['user' => 'user2', 'age' => 12],
+            ['user' => 'user3', 'age' => 10],
+            ['user' => 'user4', 'age' => 13],
+        ], $lessthatequal->toArray());
+    }
+
+    /**
+     * @test
+     */
+    public function itCanFilterDataUsingWhereIn()
+    {
+        $data = [
+            ['user' => 'user1', 'age' => 10],
+            ['user' => 'user2', 'age' => 12],
+            ['user' => 'user3', 'age' => 10],
+            ['user' => 'user4', 'age' => 13],
+            ['user' => 'user5', 'age' => 14],
+        ];
+
+        $wherein = (new Collection($data))->whereIn('age', [10, 12]);
+        $this->assertEquals([
+            ['user' => 'user1', 'age' => 10],
+            ['user' => 'user2', 'age' => 12],
+            ['user' => 'user3', 'age' => 10],
+        ], $wherein->toArray());
+    }
+
+    /**
+     * @test
+     */
+    public function itCanFilterDataUsingWhereNotIn()
+    {
+        $data = [
+            ['user' => 'user1', 'age' => 10],
+            ['user' => 'user2', 'age' => 12],
+            ['user' => 'user3', 'age' => 10],
+            ['user' => 'user4', 'age' => 13],
+            ['user' => 'user5', 'age' => 14],
+        ];
+
+        $wherein = (new Collection($data))->whereNotIn('age', [13, 14]);
+        $this->assertEquals([
+            ['user' => 'user1', 'age' => 10],
+            ['user' => 'user2', 'age' => 12],
+            ['user' => 'user3', 'age' => 10],
+        ], $wherein->toArray());
+    }
 }
