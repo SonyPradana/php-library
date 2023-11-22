@@ -52,6 +52,11 @@ class Url
         return new self(parse_url($url));
     }
 
+    public static function fromRequest(Request $from): self
+    {
+        return new self(parse_url($from->getUrl()));
+    }
+
     /**
      * @return string|null
      */
