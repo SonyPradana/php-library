@@ -55,10 +55,9 @@ class Karnel
 
         // did you mean
         $count   = 0;
-        $best    = 4;
         $similar = (new Style('Did you mean?'))->textLightYellow()->newLines();
         foreach ($this->similar($baseArgs, $commands) as $term => $level) {
-            if ($level > $best) {
+            if ($level > 4) { // rating score
                 break;
             }
             $similar->push('    > ')->push($term)->textYellow()->newLines();
@@ -66,7 +65,7 @@ class Karnel
         }
 
         // if command not register
-        if ($count === 0) {
+        if (0 === $count) {
             (new Style())
                 ->push('Command Not Found, run help command')->textRed()->newLines(2)
                 ->push('> ')->textDim()
@@ -95,6 +94,7 @@ class Karnel
     private function similar(string $find, $matchs)
     {
         $shortest  = -1;
+        $closest   = [];
 
         foreach ($matchs as $match) {
             $level = levenshtein($find, $match);
