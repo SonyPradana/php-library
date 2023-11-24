@@ -56,10 +56,7 @@ class Karnel
         // did you mean
         $count   = 0;
         $similar = (new Style('Did you mean?'))->textLightYellow()->newLines();
-        foreach ($this->similar($baseArgs, $commands) as $term => $level) {
-            if ($level > 4) { // rating score
-                break;
-            }
+        foreach ($this->similar($baseArgs, $commands, 4) as $term => $level) {
             $similar->push('    > ')->push($term)->textYellow()->newLines();
             $count++;
         }
@@ -91,22 +88,14 @@ class Karnel
      *
      * @return array<string, int> Sorted from simalar
      */
-    private function similar(string $find, $matchs)
+    private function similar(string $find, $matchs, int $threshold = -1)
     {
-        $shortest  = -1;
         $closest   = [];
 
         foreach ($matchs as $match) {
             $level = levenshtein($find, $match);
-            if (0 === $level) {
+            if ($level <= $threshold) {
                 $closest[$match] = $level;
-                $shortest        = 0;
-
-                break;
-            }
-            if ($level <= $shortest || $shortest < 0) {
-                $closest[$match] = $level;
-                $shortest        = $level;
             }
         }
         asort($closest);
