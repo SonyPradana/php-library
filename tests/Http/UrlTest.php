@@ -1,6 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use System\Http\Request;
 use System\Http\Url;
 
 class UrlTest extends TestCase
@@ -11,6 +12,24 @@ class UrlTest extends TestCase
     public function itUrlParse(): void
     {
         $url = Url::parse('http://username:password@hostname:9090/path?arg=value#anchor');
+
+        $this->assertEquals('http', $url->schema());
+        $this->assertEquals('hostname', $url->host());
+        $this->assertEquals(9090, $url->port());
+        $this->assertEquals('username', $url->user());
+        $this->assertEquals('password', $url->password());
+        $this->assertEquals('/path', $url->path());
+        $this->assertEquals(['arg' => 'value'], $url->query());
+        $this->assertEquals('anchor', $url->fragment());
+    }
+
+    /**
+     * @test
+     */
+    public function itUrlParseUsingRequest(): void
+    {
+        $request = new Request('http://username:password@hostname:9090/path?arg=value#anchor');
+        $url     = Url::fromRequest($request);
 
         $this->assertEquals('http', $url->schema());
         $this->assertEquals('hostname', $url->host());
