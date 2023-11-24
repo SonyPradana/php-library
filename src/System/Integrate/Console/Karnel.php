@@ -90,10 +90,11 @@ class Karnel
      */
     private function similar(string $find, $matchs, int $threshold = -1)
     {
-        $closest   = [];
+        $closest = [];
+        $find    = strtolower($find);
 
         foreach ($matchs as $match) {
-            $level = levenshtein($find, $match);
+            $level = levenshtein($find, strtolower($match));
             if ($level <= $threshold) {
                 $closest[$match] = $level;
             }
