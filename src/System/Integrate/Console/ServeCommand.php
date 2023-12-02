@@ -10,8 +10,8 @@ use System\Console\Style\Style;
 use System\Console\Traits\PrintHelpTrait;
 
 /**
- * @property-read string $port
- * @property-read bool   $expose
+ * @property string $port
+ * @property bool   $expose
  */
 class ServeCommand extends Command
 {
