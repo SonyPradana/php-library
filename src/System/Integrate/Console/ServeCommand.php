@@ -10,7 +10,8 @@ use System\Console\Style\Style;
 use System\Console\Traits\PrintHelpTrait;
 
 /**
- * @property bool|null $expose
+ * @property-read string $port
+ * @property-read bool   $expose
  */
 class ServeCommand extends Command
 {
@@ -26,6 +27,7 @@ class ServeCommand extends Command
             'pattern' => 'serve',
             'fn'      => [ServeCommand::class, 'main'],
             'default' => [
+                'port'   => 8080,
                 'expose' => false,
             ],
         ],
@@ -41,29 +43,28 @@ class ServeCommand extends Command
                 'serve' => 'Serve server with port number (default 8080)',
             ],
             'options'   => [
+                '--port'   => 'Serve with costume port',
                 '--expose' => 'Make server run public network',
             ],
             'relation'  => [
-                'serve' => ['[port]', '--expose'],
+                'serve' => ['--port', '--expose'],
             ],
         ];
     }
 
     public function main(): void
     {
-        $port    = $this->OPTION[0] ?? '8080';
-        $port    = $port == '' ? '8080' : $port;
+        $port    = $this->port;
         $localIP = gethostbyname(gethostname());
 
         $print = new Style('Server runing add:');
 
         $print
             ->newLines()
-            ->push('Local')->tabs()->push("http://localhost:$port")->textBlue()
-            ->newLines();
+            ->push('Local')->tabs()->push("http://localhost:$port")->textBlue();
 
         if ($this->expose) {
-            $print->push('Network')->tabs()->push("http://$localIP:$port")->textBlue();
+            $print->newLines()->push('Network')->tabs()->push("http://$localIP:$port")->textBlue();
         }
 
         $print
