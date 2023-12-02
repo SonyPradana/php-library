@@ -259,4 +259,17 @@ class TemplatorTest extends TestCase
         $out  = $view->render('repeat.include.php', [], false);
         $this->assertEquals(6, substr_count($out, 'some text'));
     }
+
+    /** @test */
+    public function itCanCompailTemplateFile(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator($loader, $cache);
+        $out  = $view->compail('include.php');
+
+        $this->assertSee(trim($out), '<p>taylor</p>');
+        $this->assertFileExists($cache . '\\' . md5('include.php') . '.php');
+    }
 }
