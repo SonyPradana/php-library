@@ -57,8 +57,10 @@ class Templator
         ob_start();
 
         try {
-            extract($data);
-            include $tempalte_path;
+            (static function ($data, $template) {
+                extract($data);
+                include $template;
+            })($data, $tempalte_path);
         } catch (\Throwable $th) {
             while (ob_get_level() > $level) {
                 ob_end_clean();
