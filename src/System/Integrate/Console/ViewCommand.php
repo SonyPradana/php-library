@@ -10,6 +10,9 @@ use System\Console\Traits\PrintHelpTrait;
 use function System\Console\ok;
 use function System\Console\warn;
 
+/**
+ * @property string|null $prefix
+ */
 class ViewCommand extends Command
 {
     use PrintHelpTrait;
@@ -23,9 +26,15 @@ class ViewCommand extends Command
         [
             'pattern' => 'view:cache',
             'fn'      => [ViewCommand::class, 'cache'],
+            'default' => [
+                'prefix' => '*.php',
+            ],
         ], [
             'pattern' => 'view:clear',
             'fn'      => [ViewCommand::class, 'clear'],
+            'default' => [
+                'prefix' => '*.php',
+            ],
         ],
     ];
 
@@ -39,8 +48,13 @@ class ViewCommand extends Command
                 'view:cache' => 'Create all templator template (optimize)',
                 'view:clear' => 'Clear all cached view file',
             ],
-            'options'   => [],
-            'relation'  => [],
+            'options'   => [
+                '--prefix' => 'Finding file by pattern given',
+            ],
+            'relation'  => [
+                'view:cache' => ['--prefix'],
+                'view:clear' => ['--prefix'],
+            ],
         ];
     }
 
@@ -52,7 +66,7 @@ class ViewCommand extends Command
     public function clear(): int
     {
         warn('Clear cache file in `{cache_path()}`.')->out(false);
-        $files = glob(cache_path() . '/*.php');
+        $files = glob(cache_path() . DIRECTORY_SEPARATOR . $this->prefix);
         foreach ($files as $file) {
             if (is_file($file)) {
                 unlink($file);
