@@ -48,9 +48,9 @@ class Templator
     }
 
     /**
-     * Compail templator file to php file.
+     * Compile templator file to php file.
      */
-    public function compail(string $template_name): string
+    public function compile(string $template_name): string
     {
         $template_name .= $this->suffix;
         $template_dir  = $this->templateDir . '/' . $template_name;

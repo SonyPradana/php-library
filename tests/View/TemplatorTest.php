@@ -267,9 +267,10 @@ class TemplatorTest extends TestCase
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
         $view = new Templator($loader, $cache);
-        $out  = $view->compail('include.php');
+        $out  = $view->compile('include.php');
 
         $this->assertSee(trim($out), '<p>taylor</p>');
-        $this->assertFileExists($cache . '\\' . md5('include.php') . '.php');
+        $this->assertFileExists($cache . DIRECTORY_SEPARATOR . md5('include.php') . '.php');
+        sleep(20);
     }
 }
