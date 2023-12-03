@@ -48,6 +48,28 @@ class Templator
     }
 
     /**
+     * Compile templator file to php file.
+     */
+    public function compile(string $template_name): string
+    {
+        $template_name .= $this->suffix;
+        $template_dir  = $this->templateDir . '/' . $template_name;
+
+        if (!file_exists($template_dir)) {
+            throw new ViewFileNotFound($template_dir);
+        }
+
+        $cachePath = $this->cacheDir . '/' . md5($template_name) . '.php';
+
+        $template = file_get_contents($template_dir);
+        $template = $this->templates($template);
+
+        file_put_contents($cachePath, $template);
+
+        return $template;
+    }
+
+    /**
      * @param array<string, mixed> $data
      */
     private function getView(string $tempalte_path, array $data): string
