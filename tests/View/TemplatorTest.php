@@ -271,6 +271,5 @@ class TemplatorTest extends TestCase
 
         $this->assertSee(trim($out), '<p>taylor</p>');
         $this->assertFileExists($cache . DIRECTORY_SEPARATOR . md5('include.php') . '.php');
-        sleep(20);
     }
 }
