@@ -6,6 +6,8 @@ namespace System\Integrate\Console;
 
 use System\Console\Command;
 use System\Console\Traits\PrintHelpTrait;
+use System\Text\Str;
+use System\View\Templator;
 
 use function System\Console\ok;
 use function System\Console\warn;
@@ -60,6 +62,19 @@ class ViewCommand extends Command
 
     public function cache(): int
     {
+        $templator = new Templator(view_path(), cache_path());
+
+        $files = glob(view_path() . $this->prefix);
+        if (false === $files) {
+            return 1;
+        }
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                $filename = Str::replace($file, view_path(), '');
+                $templator->compile($filename);
+            }
+        }
+
         return 0;
     }
 
@@ -67,6 +82,11 @@ class ViewCommand extends Command
     {
         warn('Clear cache file in `{cache_path()}`.')->out(false);
         $files = glob(cache_path() . DIRECTORY_SEPARATOR . $this->prefix);
+
+        if (false === $files) {
+            return 1;
+        }
+
         foreach ($files as $file) {
             if (is_file($file)) {
                 unlink($file);

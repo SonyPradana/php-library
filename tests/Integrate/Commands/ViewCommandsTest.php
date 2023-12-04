@@ -15,12 +15,20 @@ final class ViewCommandsTest extends TestCase
      */
     public function itCanCompileFromTemplatorFiles(): void
     {
-        $this->markTestIncomplete('Wait new PR for handle tempaltor::compailer.');
-        $view_command = new ViewCommand(['php', 'cli', 'view:cache']);
+        (new Application(''))
+            ->setCachePath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'view_cache' . DIRECTORY_SEPARATOR)
+            ->setViewPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR)
+        ;
+
+        $view_command = new ViewCommand(['php', 'cli', 'view:cache'], [
+            'prefix' => '*.php',
+        ]);
         ob_start();
         $exit = $view_command->cache();
         ob_get_clean();
+
         $this->assertEquals(0, $exit);
+        $this->assertFileExists(cache_path() . md5('test.php') . '.php');
     }
 
     /**
@@ -33,7 +41,9 @@ final class ViewCommandsTest extends TestCase
 
         file_put_contents(cache_path() . 'test01.php', '');
         file_put_contents(cache_path() . 'test02.php', '');
-        $view_command = new ViewCommand(['php', 'cli', 'view:clear']);
+        $view_command = new ViewCommand(['php', 'cli', 'view:clear'], [
+            'prefix' => '*.php',
+        ]);
         ob_start();
         $exit = $view_command->clear();
         ob_get_clean();
