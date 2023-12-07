@@ -105,6 +105,8 @@ class Templator
         $template = $this->templateIf($template);
         $template = $this->templateEach($template);
         $template = $this->templateComment($template);
+        $template = $this->templateContinue($template);
+        $template = $this->templateBreak($template);
 
         return $template;
     }
@@ -213,5 +215,15 @@ class Templator
     public function templateComment(string $template): string
     {
         return preg_replace('/{#\s*(.*?)\s*#}/', '<?php // $1 ?>', $template);
+    }
+
+    public function templateContinue(string $template): string
+    {
+        return preg_replace('/\{%\s*continue\s*(\d*)\s*%\}/', '<?php continue $1; ?>', $template);
+    }
+
+    public function templateBreak(string $template): string
+    {
+        return preg_replace('/\{%\s*break\s*(\d*)\s*%\}/', '<?php break $1; ?>', $template);
     }
 }

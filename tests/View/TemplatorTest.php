@@ -284,4 +284,28 @@ class TemplatorTest extends TestCase
 
         $this->assertEquals('<html><head></head><body><h1>oke, your {{ name }}, ages {{ age }}</h1></body></html>', trim($out));
     }
+
+    /** @test */
+    public function itCanRenderEachBreakTemplate(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator($loader, $cache);
+        $out  = $view->render('eachbreak.php', ['numbsers' => [1, 2, 3]]);
+
+        $this->assertEquals('<html><head></head><body></body></html>', trim($out));
+    }
+
+    /** @test */
+    public function itCanRenderEachContinueTemplate(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator($loader, $cache);
+        $out  = $view->render('eachcontinue.php', ['numbsers' => [1, 2, 3]]);
+
+        $this->assertEquals('<html><head></head><body></body></html>', trim($out));
+    }
 }
