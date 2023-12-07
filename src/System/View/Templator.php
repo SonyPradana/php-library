@@ -98,6 +98,7 @@ class Templator
 
     private function templates(string $template): string
     {
+        $template = $this->templateSet($template);
         $template = $this->templateSlot($template);
         $template = $this->templateInclude($template, $this->max_depth);
         $template = $this->templatePhp($template);
@@ -200,5 +201,13 @@ class Templator
     public function templateComment(string $template): string
     {
         return preg_replace('/{#\s*(.*?)\s*#}/', '<?php // $1 ?>', $template);
+    }
+
+    /**
+     * Template convert set to php variable.
+     */
+    public function templateSet(string $template): string
+    {
+        return preg_replace('/{%\s*set\s+(\w+)\s*=\s*(.*?)\s*%}/', '<?php $$1 = $2; ?>', $template);
     }
 }
