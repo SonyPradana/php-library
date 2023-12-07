@@ -6,7 +6,7 @@ namespace System\Integrate\Console;
 
 use System\Console\Command;
 use System\Console\Style\ProgressBar;
-use System\Console\Traits\PrintHelpTrait;`
+use System\Console\Traits\PrintHelpTrait;
 use System\Text\Str;
 use System\View\Templator;
 
@@ -71,13 +71,13 @@ class ViewCommand extends Command
             return 1;
         }
         info('build compiler cache')->out(false);
-        $count = 0;
+        $count     = 0;
         $proggress = new ProgressBar(':progress :percent - :current', [
-            ':current' => fn ($current, $max): string => array_key_exists($current, $files) ? Str::replace($files[$current], view_path(), '') : ''
+            ':current' => fn ($current, $max): string => array_key_exists($current, $files) ? Str::replace($files[$current], view_path(), '') : '',
         ]);
 
         $proggress->maks = count($files);
-        $watch_start = microtime(true);
+        $watch_start     = microtime(true);
         foreach ($files as $file) {
             if (is_file($file)) {
                 $filename = Str::replace($file, view_path(), '');
@@ -85,8 +85,8 @@ class ViewCommand extends Command
                 $count++;
             }
             $proggress->current++;
-            $time =round(microtime(true) - $watch_start, 3) * 1000;
-            $proggress->complete = static fn () => ok("Success, {$count} file compiled ({$time} ms).");
+            $time                = round(microtime(true) - $watch_start, 3) * 1000;
+            $proggress->complete = static fn (): string => (string) ok("Success, {$count} file compiled ({$time} ms).");
             $proggress->tick();
         }
 
@@ -95,28 +95,29 @@ class ViewCommand extends Command
 
     public function clear(): int
     {
-        warn("Clear cache file in " . cache_path())->out(false);
+        warn('Clear cache file in ' . cache_path())->out(false);
         $files = glob(cache_path() . DIRECTORY_SEPARATOR . $this->prefix);
 
         if (false === $files || 0 === count($files)) {
             warn('No file cache clear.')->out();
+
             return 1;
         }
 
-        $count = 0;
+        $count     = 0;
         $proggress = new ProgressBar(':progress :percent - :current', [
-            ':current' => fn ($current, $max): string => array_key_exists($current, $files) ? Str::replace($files[$current], view_path(), '') : ''
+            ':current' => fn ($current, $max): string => array_key_exists($current, $files) ? Str::replace($files[$current], view_path(), '') : '',
         ]);
 
         $proggress->maks = count($files);
-        $watch_start = microtime(true);
+        $watch_start     = microtime(true);
         foreach ($files as $file) {
             if (is_file($file)) {
                 $count += unlink($file) ? 1 : 0;
             }
             $proggress->current++;
-            $time = round(microtime(true) - $watch_start, 3) * 1000;
-            $proggress->complete = static fn () => ok("Success, {$count} cache clear ({$time} ms).");
+            $time                = round(microtime(true) - $watch_start, 3) * 1000;
+            $proggress->complete = static fn (): string => (string) ok("Success, {$count} cache clear ({$time} ms).");
             $proggress->tick();
         }
 
