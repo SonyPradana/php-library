@@ -272,4 +272,16 @@ class TemplatorTest extends TestCase
         $this->assertSee(trim($out), '<p>taylor</p>');
         $this->assertFileExists($cache . DIRECTORY_SEPARATOR . md5('include.php') . '.php');
     }
+
+    /** @test */
+    public function itCanRenderNameTemplateWithRaw(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator($loader, $cache);
+        $out  = $view->render('namingskip.php', ['render'=>'oke']);
+
+        $this->assertEquals('<html><head></head><body><h1>oke, your {{ name }}, ages {{ age }}</h1></body></html>', trim($out));
+    }
 }
