@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace System\Integrate\Console;
 
 use System\Console\Command;
-use System\Console\Traits\PrintHelpTrait;
+use System\Console\Style\ProgressBar;
+use System\Console\Traits\PrintHelpTrait;`
 use System\Text\Str;
 use System\View\Templator;
 
+use function System\Console\info;
 use function System\Console\ok;
 use function System\Console\warn;
 
@@ -68,11 +70,24 @@ class ViewCommand extends Command
         if (false === $files) {
             return 1;
         }
+        info('build compiler cache')->out(false);
+        $count = 0;
+        $proggress = new ProgressBar(':progress :percent - :current', [
+            ':current' => fn ($current, $max): string => array_key_exists($current, $files) ? Str::replace($files[$current], view_path(), '') : ''
+        ]);
+
+        $proggress->maks = count($files);
+        $watch_start = microtime(true);
         foreach ($files as $file) {
             if (is_file($file)) {
                 $filename = Str::replace($file, view_path(), '');
                 $templator->compile($filename);
+                $count++;
             }
+            $proggress->current++;
+            $time =round(microtime(true) - $watch_start, 3) * 1000;
+            $proggress->complete = static fn () => ok("Success, {$count} file compiled ({$time} ms).");
+            $proggress->tick();
         }
 
         return 0;
@@ -80,20 +95,30 @@ class ViewCommand extends Command
 
     public function clear(): int
     {
-        warn('Clear cache file in `{cache_path()}`.')->out(false);
+        warn("Clear cache file in " . cache_path())->out(false);
         $files = glob(cache_path() . DIRECTORY_SEPARATOR . $this->prefix);
 
-        if (false === $files) {
+        if (false === $files || 0 === count($files)) {
+            warn('No file cache clear.')->out();
             return 1;
         }
 
+        $count = 0;
+        $proggress = new ProgressBar(':progress :percent - :current', [
+            ':current' => fn ($current, $max): string => array_key_exists($current, $files) ? Str::replace($files[$current], view_path(), '') : ''
+        ]);
+
+        $proggress->maks = count($files);
+        $watch_start = microtime(true);
         foreach ($files as $file) {
             if (is_file($file)) {
-                unlink($file);
+                $count += unlink($file) ? 1 : 0;
             }
+            $proggress->current++;
+            $time = round(microtime(true) - $watch_start, 3) * 1000;
+            $proggress->complete = static fn () => ok("Success, {$count} cache clear ({$time} ms).");
+            $proggress->tick();
         }
-
-        ok('Finish clear cache.')->out();
 
         return 0;
     }
