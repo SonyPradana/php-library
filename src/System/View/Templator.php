@@ -106,6 +106,8 @@ class Templator
         $template = $this->templateIf($template);
         $template = $this->templateEach($template);
         $template = $this->templateComment($template);
+        $template = $this->templateContinue($template);
+        $template = $this->templateBreak($template);
 
         return $template;
     }
@@ -169,10 +171,23 @@ class Templator
 
     private function templateName(string $template): string
     {
-        return preg_replace('/{{\s*([^}]+)\s*\?\?\s*([^:}]+)\s*:\s*([^}]+)\s*}}/',
+        $rawBlocks = [];
+        $template  = preg_replace_callback('/{% raw %}(.*?){% endraw %}/s', function ($matches) use (&$rawBlocks) {
+            $rawBlocks[] = $matches[1];
+
+            return '##RAW_BLOCK##';
+        }, $template);
+
+        $template = preg_replace('/{{\s*([^}]+)\s*\?\?\s*([^:}]+)\s*:\s*([^}]+)\s*}}/',
             '<?php echo ($1 !== null) ? $1 : $3; ?>',
             preg_replace('/{{\s*([^}]+)\s*}}/', '<?php echo htmlspecialchars($$1); ?>', $template)
         );
+
+        foreach ($rawBlocks as $rawBlock) {
+            $template = preg_replace('/##RAW_BLOCK##/', $rawBlock, $template, 1);
+        }
+
+        return $template;
     }
 
     private function templatePhp(string $template): string
@@ -201,6 +216,16 @@ class Templator
     public function templateComment(string $template): string
     {
         return preg_replace('/{#\s*(.*?)\s*#}/', '<?php // $1 ?>', $template);
+    }
+
+    public function templateContinue(string $template): string
+    {
+        return preg_replace('/\{%\s*continue\s*(\d*)\s*%\}/', '<?php continue $1; ?>', $template);
+    }
+
+    public function templateBreak(string $template): string
+    {
+        return preg_replace('/\{%\s*break\s*(\d*)\s*%\}/', '<?php break $1; ?>', $template);
     }
 
     /**
