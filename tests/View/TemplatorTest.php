@@ -274,6 +274,22 @@ class TemplatorTest extends TestCase
     }
 
     /** @test */
+    public function itCanCompileSetTemplate(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator($loader, $cache);
+        $out  = $view->compile('set.php');
+
+        $contain = Str::contains($out, '<?php $foo = \'bar\'; ?>');
+        $this->assertTrue($contain);
+        $contain = Str::contains($out, '<?php $bar = 123; ?>');
+        $this->assertTrue($contain);
+        $contain = Str::contains($out, '<?php $arr = [12, \'34\']; ?>');
+        $this->assertTrue($contain);
+    }
+
     public function itCanRenderNameTemplateWithRaw(): void
     {
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
