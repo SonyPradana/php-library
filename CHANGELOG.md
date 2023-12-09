@@ -6,6 +6,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.26.0] - 2023-12-09
+### Changed
+- Changed `App` property and use `MyPDO` insted.
+- Changed native array map instead using `Collection::map` in `Str::mask`.
+- Changed folder structur for `Macro` trait.
+- Chenged `Str::fill*` using native `string_pad`.
+- Changed `ServeCommand::serve` named argument with option command `--port`.
+- Changed how `Templator::getView` include php file (encapsulation).
+
+### Added
+- Added new Collection method `Collection::where`, `Collection::whereIn`, `Collection::whereNotIn`.
+- Added `Karnel::class` command similar when cant match any command.
+- Added `Url::parseRequest` to parse url using `Request::class`.
+- Added `ServeCommand::serve` with new option `--expose`.
+- Added `Templator::compile` get compiled templator file without run php file.
+- Added new command `ViewCommand::cache` and `ViewCommand::clear`.
+- Added new `Templator` syntax `{% set foo='bar' %}` to set variable.
+- Added new `Templator` syntax `{% raw %}{% endraw %}` to give raw template without compile any variable.
+- Added new `Templator` syntax `{% break %}` and `{% continue %}`.
+
 ## [0.25.0] - 2023-11-04
 ### Fixed
 - Fixed `HelpCommand` using commandmap to find command helper.
