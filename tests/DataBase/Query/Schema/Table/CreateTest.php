@@ -115,11 +115,11 @@ final class CreateTest extends \QueryStringTest
     {
         $schema = new Create('testing_db', 'test', $this->pdo_schame);
         $schema('PersonID')->int()->notNull();
-        $schema('LastName')->varchar(255);
+        $schema('LastName')->varchar(255)->null();
         $schema->primaryKey('PersonID');
 
         $this->assertEquals(
-            'CREATE TABLE testing_db.test ( `PersonID` int NOT NULL, `LastName` varchar(255), PRIMARY KEY (`PersonID`) )',
+            'CREATE TABLE testing_db.test ( `PersonID` int NOT NULL, `LastName` varchar(255) NULL, PRIMARY KEY (`PersonID`) )',
             $schema->__toString()
         );
     }
