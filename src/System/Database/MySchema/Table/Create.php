@@ -126,9 +126,10 @@ class Create extends Query
             return [''];
         }
 
-        $primaryKeys = implode(', ', $this->primaryKeys);
+        $primaryKeys = array_map(fn ($primaryKey) => "`{$primaryKey}`", $this->primaryKeys);
+        $primaryKeys = implode(', ', $primaryKeys);
 
-        return ['PRIMARY KEY (`' . $primaryKeys . '`)'];
+        return ["PRIMARY KEY ({$primaryKeys})"];
     }
 
     /** @return string[] */
@@ -138,9 +139,10 @@ class Create extends Query
             return [''];
         }
 
-        $uniques = implode(', ', $this->uniques);
+        $uniques = array_map(fn ($uniques) => "`{$uniques}`", $this->uniques);
+        $uniques = implode(', ', $uniques);
 
-        return ['UNIQUE (`' . $uniques . '`)'];
+        return ["UNIQUE ({$uniques})"];
     }
 
     private function getStoreEngine(): string

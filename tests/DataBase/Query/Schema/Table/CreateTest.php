@@ -24,6 +24,21 @@ final class CreateTest extends \QueryStringTest
     }
 
     /** @test */
+    public function itCanGenerateQueryUsingWithMultyPrimeryKey()
+    {
+        $schema = new Create('testing_db', 'test', $this->pdo_schame);
+        $schema->addColumn()->raw('PersonID int');
+        $schema->addColumn()->raw('LastName varchar(255)');
+        $schema->primaryKey('PersonID');
+        $schema->primaryKey('LastName');
+
+        $this->assertEquals(
+            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), PRIMARY KEY (`PersonID`, `LastName`) )',
+            $schema->__toString()
+        );
+    }
+
+    /** @test */
     public function itCanGenerateQueryUsingAddColumnWithoutPrimeryKey()
     {
         $schema = new Create('testing_db', 'test', $this->pdo_schame);
@@ -46,6 +61,21 @@ final class CreateTest extends \QueryStringTest
 
         $this->assertEquals(
             'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), UNIQUE (`PersonID`) )',
+            $schema->__toString()
+        );
+    }
+
+    /** @test */
+    public function itCanGenerateQueryUsingAddColumnWithMultyUnique()
+    {
+        $schema = new Create('testing_db', 'test', $this->pdo_schame);
+        $schema->addColumn()->raw('PersonID int');
+        $schema->addColumn()->raw('LastName varchar(255)');
+        $schema->unique('PersonID');
+        $schema->unique('LastName');
+
+        $this->assertEquals(
+            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), UNIQUE (`PersonID`, `LastName`) )',
             $schema->__toString()
         );
     }

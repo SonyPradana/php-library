@@ -30,6 +30,43 @@ final class CreateTest extends \RealDatabaseConnectionTest
      *
      * @group database
      */
+    public function itCanExecuteQueryWithMultyPrimeryKey()
+    {
+        $schema = new Create($this->pdo_schema->configs()['database_name'], 'profiles', $this->pdo_schema);
+
+        $schema('id')->int(3)->notNull();
+        $schema('xid')->int(3)->notNull();
+        $schema('name')->varchar(32)->notNull();
+        $schema('gender')->int(1);
+        $schema->primaryKey('id');
+        $schema->primaryKey('xid');
+
+        $this->assertTrue($schema->execute());
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanExecuteQueryWithMultyUniqe()
+    {
+        $schema = new Create($this->pdo_schema->configs()['database_name'], 'profiles', $this->pdo_schema);
+
+        $schema('id')->int(3)->notNull();
+        $schema('name')->varchar(32)->notNull();
+        $schema('gender')->int(1);
+        $schema->unique('id');
+        $schema->unique('name');
+
+        $this->assertTrue($schema->execute());
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
     public function itCanGenerateCreateDatabaseWithEngine()
     {
         $schema = new Create($this->pdo_schema->configs()['database_name'], 'profiles', $this->pdo_schema);
