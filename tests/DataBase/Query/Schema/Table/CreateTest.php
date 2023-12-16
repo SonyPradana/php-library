@@ -114,13 +114,13 @@ final class CreateTest extends \QueryStringTest
     public function itCanGenerateDefaultConstraint()
     {
         $schema = new Create('testing_db', 'test', $this->pdo_schame);
-        $schema('PersonID')->int()->default(1);
+        $schema('PersonID')->int()->unsigned()->default(1);
         $schema('LastName')->varchar(255)->default('-');
         $schema('sufix')->varchar(15)->defaultNull();
         $schema->primaryKey('PersonID');
 
         $this->assertEquals(
-            "CREATE TABLE testing_db.test ( `PersonID` int DEFAULT 1, `LastName` varchar(255) DEFAULT '-', `sufix` varchar(15) DEFAULT NULL, PRIMARY KEY (`PersonID`) )",
+            "CREATE TABLE testing_db.test ( `PersonID` int UNSIGNED DEFAULT 1, `LastName` varchar(255) DEFAULT '-', `sufix` varchar(15) DEFAULT NULL, PRIMARY KEY (`PersonID`) )",
             $schema->__toString()
         );
     }
