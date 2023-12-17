@@ -60,14 +60,26 @@ class Constraint
         return $this->notNull(!$null);
     }
 
-    public function default(string $default): self
+    /**
+     * Set default constraint.
+     *
+     * @param string|int $default Default set value
+     * @param bool       $wrap    Wrap default value with "'"
+     */
+    public function default($default, bool $wrap = true): self
     {
-        $this->default = "'$default'";
+        $wrap          = is_int($default) ? false : $wrap;
+        $this->default = $wrap ? "DEFAULT '{$default}'" : "DEFAULT {$default}";
 
         return $this;
     }
 
-    public function autoIncrement(bool $incremnet): self
+    public function defaultNull(): self
+    {
+        return $this->default('NULL', false);
+    }
+
+    public function autoIncrement(bool $incremnet = true): self
     {
         $this->auto_increment = $incremnet ? 'AUTO_INCREMENT' : '';
 
