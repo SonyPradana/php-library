@@ -48,9 +48,9 @@ class Constraint
         return implode(' ', array_filter($collumn, fn ($item) => $item !== ''));
     }
 
-    public function notNull(bool $null = true): self
+    public function notNull(bool $notNull = true): self
     {
-        $this->null_able = $null ? 'NOT NULL' : '';
+        $this->null_able = $notNull ? 'NOT NULL' : 'NULL';
 
         return $this;
     }
