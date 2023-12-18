@@ -80,4 +80,20 @@ final class CreateTest extends \RealDatabaseConnectionTest
 
         $this->assertTrue($schema->execute());
     }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanGenerateDefaultConstraint()
+    {
+        $schema = new Create($this->pdo_schema->configs()['database_name'], 'profiles', $this->pdo_schema);
+        $schema('PersonID')->int()->unsigned()->default(1);
+        $schema('LastName')->varchar(255)->default('-');
+        $schema('sufix')->varchar(15)->defaultNull();
+        $schema->primaryKey('PersonID');
+
+        $this->assertTrue($schema->execute());
+    }
 }

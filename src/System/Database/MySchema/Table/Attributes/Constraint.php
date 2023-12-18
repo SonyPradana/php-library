@@ -17,6 +17,8 @@ class Constraint
     /** @var string */
     protected $order;
     /** @var string */
+    protected $unsigned;
+    /** @var string */
     protected $raw;
 
     public function __construct(string $data_type)
@@ -27,6 +29,7 @@ class Constraint
         $this->auto_increment = '';
         $this->raw            = '';
         $this->order          = '';
+        $this->unsigned       = '';
     }
 
     public function __toString()
@@ -38,6 +41,7 @@ class Constraint
     {
         $collumn = [
             $this->data_type,
+            $this->unsigned,
             $this->null_able,
             $this->default,
             $this->auto_increment,
@@ -89,6 +93,16 @@ class Constraint
     public function increment(bool $incremnet): self
     {
         return $this->autoIncrement($incremnet);
+    }
+
+    public function unsigned(): self
+    {
+        if (false === in_array($this->data_type, ['int', 'tinyint', 'smallint', 'bigint'])) {
+            throw new \Exception('Cant use UNSIGNED not integer datatype.');
+        }
+        $this->unsigned = 'UNSIGNED';
+
+        return $this;
     }
 
     public function raw(string $raw): self
