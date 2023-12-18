@@ -95,9 +95,12 @@ class Constraint
         return $this->autoIncrement($incremnet);
     }
 
+    /**
+     * Make datatype tobe unsigned (int, tinyint, bigint, smallint).
+     */
     public function unsigned(): self
     {
-        if (false === in_array($this->data_type, ['int', 'tinyint', 'smallint', 'bigint'])) {
+        if (false === preg_match('/^(int|tinyint|bigint|smallint)(\(\d+\))?$/', $this->data_type)) {
             throw new \Exception('Cant use UNSIGNED not integer datatype.');
         }
         $this->unsigned = 'UNSIGNED';
