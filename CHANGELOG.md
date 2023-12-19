@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.26.1] - 2023-12-19
+### Fixed
+- Fixed adding multy premerykey and unique in schema builder.
+- Fixed when adding default constrait.
+
+### Changed
+- Changed add `NULL` when `Constrait::notnull` parameter is false.
+
+### Added
+- Added second parameter optional wrap quote value in `Constrait::default`.
+- Added new default constrait `Constrait::defaultNull` shortcut for add default is `NULL`.
+- Added Unsigned for integer data type in schema builder.
+
 ## [0.26.0] - 2023-12-09
 ### Changed
 - Changed `App` property and use `MyPDO` insted.
