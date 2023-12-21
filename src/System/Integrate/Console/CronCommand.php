@@ -22,22 +22,16 @@ class CronCommand extends Command
      * @var array<int, array<string, mixed>>
      */
     public static array $command = [
-      [
-        'cmd'       => 'cron',
-        'mode'      => 'full',
-        'class'     => self::class,
-        'fn'        => 'main',
-      ], [
-        'cmd'       => 'cron:list',
-        'mode'      => 'full',
-        'class'     => self::class,
-        'fn'        => 'list',
-      ], [
-        'cmd'       => 'cron:work',
-        'mode'      => 'full',
-        'class'     => self::class,
-        'fn'        => 'work',
-      ],
+        [
+            'pattern' => 'cron',
+            'fn'      => [self::class, 'main'],
+        ], [
+            'pattern' => 'cron:list',
+            'fn'      => [self::class, 'list'],
+        ], [
+            'pattern' => 'cron:work',
+            'fn'      => [self::class, 'work'],
+        ],
     ];
 
     /**

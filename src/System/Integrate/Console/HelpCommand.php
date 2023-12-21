@@ -36,22 +36,16 @@ class HelpCommand extends Command
      * @var array<int, array<string, mixed>>
      */
     public static array $command = [
-      [
-        'cmd'       => ['-h', '--help'],
-        'mode'      => 'full',
-        'class'     => self::class,
-        'fn'        => 'main',
-      ], [
-        'cmd'       => '--list',
-        'mode'      => 'full',
-        'class'     => self::class,
-        'fn'        => 'commandList',
-      ], [
-        'cmd'       => 'help',
-        'mode'      => 'full',
-        'class'     => self::class,
-        'fn'        => 'commandhelp',
-      ],
+        [
+            'pattern' => ['-h', '--help'],
+            'fn'      => [self::class, 'main'],
+        ], [
+            'pattern' => '--list',
+            'fn'      => [self::class, 'commandList'],
+        ], [
+            'pattern' => 'help',
+            'fn'      => [self::class, 'commandhelp'],
+        ],
     ];
 
     /**

@@ -28,40 +28,26 @@ class MakeCommand extends Command
      */
     public static array $command = [
         [
-            'cmd'       => 'make:controller',
-            'mode'      => 'full',
-            'class'     => MakeCommand::class,
-            'fn'        => 'make_controller',
+            'pattern' => 'make:controller',
+            'fn'      => [MakeCommand::class, 'make_controller'],
         ], [
-            'cmd'       => 'make:view',
-            'mode'      => 'full',
-            'class'     => MakeCommand::class,
-            'fn'        => 'make_view',
+            'pattern' => 'make:view',
+            'fn'      => [MakeCommand::class, 'make_view'],
         ], [
-            'cmd'       => 'make:services',
-            'mode'      => 'full',
-            'class'     => MakeCommand::class,
-            'fn'        => 'make_services',
+            'pattern' => 'make:services',
+            'fn'      => [MakeCommand::class, 'make_services'],
         ], [
-            'cmd'       => 'make:model',
-            'mode'      => 'full',
-            'class'     => MakeCommand::class,
-            'fn'        => 'make_model',
+            'pattern' => 'make:model',
+            'fn'      => [MakeCommand::class, 'make_model'],
         ], [
-            'cmd'       => 'make:models',
-            'mode'      => 'full',
-            'class'     => MakeCommand::class,
-            'fn'        => 'make_models',
+            'pattern' => 'make:models',
+            'fn'      => [MakeCommand::class, 'make_models'],
         ], [
-            'cmd'       => 'make:command',
-            'mode'      => 'full',
-            'class'     => MakeCommand::class,
-            'fn'        => 'make_command',
+            'pattern' => 'make:command',
+            'fn'      => [MakeCommand::class, 'make_command'],
         ], [
-            'cmd'       => 'make:migration',
-            'mode'      => 'full',
-            'class'     => MakeCommand::class,
-            'fn'        => 'make_migration',
+            'pattern' => 'make:migration',
+            'fn'      => [MakeCommand::class, 'make_migration'],
         ],
     ];
 

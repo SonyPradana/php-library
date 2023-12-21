@@ -33,47 +33,31 @@ class MigrationCommand extends Command
      * @var array<int, array<string, mixed>>
      */
     public static array $command = [
-      [
-        'cmd'       => 'migrate',
-        'mode'      => 'full',
-        'class'     => self::class,
-        'fn'        => 'main',
-      ], [
-        'cmd'       => 'migrate:fresh',
-        'mode'      => 'full',
-        'class'     => self::class,
-        'fn'        => 'fresh',
-      ], [
-        'cmd'       => 'migrate:reset',
-        'mode'      => 'full',
-        'class'     => self::class,
-        'fn'        => 'reset',
-      ], [
-        'cmd'       => 'migrate:refresh',
-        'mode'      => 'full',
-        'class'     => self::class,
-        'fn'        => 'refresh',
-      ], [
-        'cmd'       => 'migrate:rollback',
-        'mode'      => 'full',
-        'class'     => self::class,
-        'fn'        => 'rollback',
-      ], [
-        'cmd'       => ['database:create', 'db:create'],
-        'mode'      => 'full',
-        'class'     => self::class,
-        'fn'        => 'databaseCreate',
-      ], [
-        'cmd'       => ['database:drop', 'db:drop'],
-        'mode'      => 'full',
-        'class'     => self::class,
-        'fn'        => 'databaseDrop',
-      ], [
-        'cmd'       => ['database:show', 'db:show'],
-        'mode'      => 'full',
-        'class'     => self::class,
-        'fn'        => 'databaseShow',
-      ],
+        [
+            'pattern' => 'migrate',
+            'fn'      => [self::class, 'main'],
+        ], [
+            'pattern' => 'migrate:fresh',
+            'fn'      => [self::class, 'fresh'],
+        ], [
+            'pattern' => 'migrate:reset',
+            'fn'      => [self::class, 'reset'],
+        ], [
+            'pattern' => 'migrate:refresh',
+            'fn'      => [self::class, 'refresh'],
+        ], [
+            'pattern' => 'migrate:rollback',
+            'fn'      => [self::class, 'rollback'],
+        ], [
+            'pattern' => ['database:create', 'db:create'],
+            'fn'      => [self::class, 'databaseCreate'],
+        ], [
+            'pattern' => ['database:drop', 'db:drop'],
+            'fn'      => [self::class, 'databaseDrop'],
+        ], [
+            'pattern' => ['database:show', 'db:show'],
+            'fn'      => [self::class, 'databaseShow'],
+        ],
     ];
 
     /**
