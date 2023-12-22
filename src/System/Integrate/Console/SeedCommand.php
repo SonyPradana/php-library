@@ -102,9 +102,7 @@ class SeedCommand extends Command
         }
 
         if (null === $class && null === $namespace) {
-            warn('command db:seed require --class or --name-space flag follow by class name.')->out(false);
-
-            return 1;
+            $class = 'Database\\Seeders\\DatabaseSeeder';
         }
 
         if (false === class_exists($class)) {
@@ -117,7 +115,7 @@ class SeedCommand extends Command
         try {
             app()->call([$class, 'run']);
 
-            ok('Success run seeder')->out(false);
+            ok('Success run seeder ' . $class)->out(false);
         } catch (\Throwable $th) {
             warn($th->getMessage())->out(false);
             $exit = 1;
