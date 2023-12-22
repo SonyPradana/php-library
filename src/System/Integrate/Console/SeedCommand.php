@@ -87,6 +87,12 @@ class SeedCommand extends Command
             return 2;
         }
 
+        if (null !== $class && null !== $namespace) {
+            warn('Use only one class or namespace, be specific.')->out(false);
+
+            return 1;
+        }
+
         if (null === $class && null !== $namespace) {
             $class = $namespace;
         }

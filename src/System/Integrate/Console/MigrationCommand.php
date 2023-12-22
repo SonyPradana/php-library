@@ -20,8 +20,9 @@ use function System\Console\style;
 use function System\Console\warn;
 
 /**
- * @property ?int $take
- * @property bool $force
+ * @property ?int        $take
+ * @property bool        $force
+ * @property string|bool $seed
  */
 class MigrationCommand extends Command
 {
@@ -77,14 +78,16 @@ class MigrationCommand extends Command
             'database:show'            => 'Show database table',
           ],
           'options'   => [
-            '--dry-run' => 'Excute migration but olny get query output.',
-            '--force'   => 'Force runing migration/database query in production',
+            '--dry-run'           => 'Excute migration but olny get query output.',
+            '--force'             => 'Force runing migration/database query in production.',
+            '--seed'              => 'Run seeder after migration.',
+            '--seed-namespace'    => 'Run seeder after migration using class namespace.',
           ],
           'relation'  => [
-            'migrate'                   => ['--dry-run', '--force'],
-            'migrate:fresh'             => ['--dry-run', '--force'],
+            'migrate'                   => ['--seed', '--dry-run', '--force'],
+            'migrate:fresh'             => ['--seed', '--dry-run', '--force'],
             'migrate:reset'             => ['--dry-run', '--force'],
-            'migrate:refresh'           => ['--dry-run', '--force'],
+            'migrate:refresh'           => ['--seed', '--dry-run', '--force'],
             'migrate:rollback'          => ['--dry-run', '--force'],
             'database:create'           => ['--force'],
             'database:drop'             => ['--force'],
@@ -198,7 +201,7 @@ class MigrationCommand extends Command
 
         $print->out();
 
-        return 0;
+        return $this->seed();
     }
 
     public function fresh(bool $silent = false): int
@@ -251,7 +254,7 @@ class MigrationCommand extends Command
 
         $print->out();
 
-        return 0;
+        return $this->seed();
     }
 
     public function reset(bool $silent = false): int
@@ -454,6 +457,27 @@ class MigrationCommand extends Command
         }
 
         $print->out();
+
+        return 0;
+    }
+
+    /**
+     * Integrate seeder during run migration.
+     */
+    private function seed(): int
+    {
+        if ($this->seed) {
+            $seed = true === $this->seed ? null : $this->seed;
+
+            return (new SeedCommand([], ['class' => $seed]))->main();
+        }
+
+        $namespace = $this->option('seed-namespace', false);
+        if ($namespace) {
+            $namespace = true === $namespace ? null : $namespace;
+
+            return (new SeedCommand([], ['name-space' => $namespace]))->main();
+        }
 
         return 0;
     }
