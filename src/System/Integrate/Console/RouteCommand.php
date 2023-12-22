@@ -24,12 +24,10 @@ class RouteCommand extends Command
      * @var array<int, array<string, mixed>>
      */
     public static $command = [
-      [
-        'cmd'       => 'route:list',
-        'mode'      => 'full',
-        'class'     => RouteCommand::class,
-        'fn'        => 'main',
-      ],
+        [
+            'cmd' => 'route:list',
+            'fn'  => [RouteCommand::class, 'main'],
+        ],
     ];
 
     /**
