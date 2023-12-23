@@ -466,6 +466,9 @@ class MigrationCommand extends Command
      */
     private function seed(): int
     {
+        if ($this->option('dry-run', false)) {
+            return 0;
+        }
         if ($this->seed) {
             $seed = true === $this->seed ? null : $this->seed;
 
