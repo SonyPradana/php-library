@@ -159,7 +159,7 @@ final class Application extends Container
         // base binding
         static::$app = $this;
         $this->set('app', $this);
-        $this->set(\System\Integrate\Application::class, $this);
+        $this->set(Application::class, $this);
         $this->set(Container::class, $this);
 
         // load config and load provider

@@ -30,7 +30,7 @@ class BasicTemplateTest extends TestCase
 
         $class
       ->use(System\Template\Generate::class)
-      ->extend(\PHPUnit\Framework\TestCase::class)
+      ->extend(TestCase::class)
       ->implement('testInterface')
       ->setEndWithNewLine();
 
@@ -48,7 +48,7 @@ class BasicTemplateTest extends TestCase
 
         $class
       ->use(System\Template\Generate::class)
-      ->extend(\PHPUnit\Framework\TestCase::class)
+      ->extend(TestCase::class)
       ->implement('testInterface')
       ->traits([
         PhpParser\Builder\TraitUseAdaptation::class,
@@ -77,7 +77,7 @@ class BasicTemplateTest extends TestCase
       ->tabSize(2)
 
       ->use(System\Template\Generate::class)
-      ->extend(\PHPUnit\Framework\TestCase::class)
+      ->extend(TestCase::class)
       ->implement('testInterface')
       ->traits([
         PhpParser\Builder\TraitUseAdaptation::class,
