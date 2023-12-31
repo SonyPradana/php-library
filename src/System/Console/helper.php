@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Console;
 
+use System\Console\Style\Alert;
 use System\Console\Style\Style;
 use System\Console\Traits\TerminalTrait;
 
@@ -13,11 +14,11 @@ if (!function_exists('style')) {
      *
      * @param string $text
      *
-     * @return \System\Console\Style\Style
+     * @return Style
      */
     function style($text)
     {
-        return new \System\Console\Style\Style($text);
+        return new Style($text);
     }
 }
 
@@ -27,11 +28,11 @@ if (!function_exists('info')) {
      *
      * @param string $text
      *
-     * @return \System\Console\Style\Style
+     * @return Style
      */
     function info($text)
     {
-        return \System\Console\Style\Alert::render()->info($text);
+        return Alert::render()->info($text);
     }
 }
 
@@ -41,11 +42,11 @@ if (!function_exists('warn')) {
      *
      * @param string $text
      *
-     * @return \System\Console\Style\Style
+     * @return Style
      */
     function warn($text)
     {
-        return \System\Console\Style\Alert::render()->warn($text);
+        return Alert::render()->warn($text);
     }
 }
 
@@ -55,11 +56,11 @@ if (!function_exists('fail')) {
      *
      * @param string $text
      *
-     * @return \System\Console\Style\Style
+     * @return Style
      */
     function fail($text)
     {
-        return \System\Console\Style\Alert::render()->fail($text);
+        return Alert::render()->fail($text);
     }
 }
 
@@ -69,11 +70,11 @@ if (!function_exists('ok')) {
      *
      * @param string $text
      *
-     * @return \System\Console\Style\Style
+     * @return Style
      */
     function ok($text)
     {
-        return \System\Console\Style\Alert::render()->ok($text);
+        return Alert::render()->ok($text);
     }
 }
 

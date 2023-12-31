@@ -37,7 +37,7 @@ class View
         // send render content to client
         return (new Response())
             ->setContent($html)
-            ->setResponeCode(\System\Http\Response::HTTP_OK)
+            ->setResponeCode(Response::HTTP_OK)
             ->removeHeader([
                 'Expires',
                 'Pragma',
