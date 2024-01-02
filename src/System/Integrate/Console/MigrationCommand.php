@@ -10,6 +10,8 @@ use System\Console\Prompt;
 use System\Console\Style\Style;
 use System\Console\Traits\PrintHelpTrait;
 use System\Database\MyQuery;
+use System\Database\MySchema\Table\Create;
+use System\Support\Facades\DB;
 use System\Support\Facades\PDO;
 use System\Support\Facades\Schema;
 
@@ -21,6 +23,7 @@ use function System\Console\warn;
 
 /**
  * @property ?int        $take
+ * @property ?int        $batch
  * @property bool        $force
  * @property string|bool $seed
  */
@@ -58,6 +61,12 @@ class MigrationCommand extends Command
         ], [
             'pattern' => ['database:show', 'db:show'],
             'fn'      => [self::class, 'databaseShow'],
+        ], [
+            'pattern' => 'migrate:status',
+            'fn'      => [self::class, 'status'],
+        ], [
+            'pattern' => 'migrate:init',
+            'fn'      => [self::class, 'initializeMigration'],
         ],
     ];
 
@@ -73,22 +82,26 @@ class MigrationCommand extends Command
             'migrate:reset'            => 'Rolling back all migrations (down)',
             'migrate:refresh'          => 'Rolling back and run migration all',
             'migrate:rollback'         => 'Rolling back last migrations (down)',
+            'migrate:init'             => 'Initialize migartion table',
+            'migrate:status'           => 'Show migartion status.',
             'database:create'          => 'Create database',
             'database:drop'            => 'Drop database',
             'database:show'            => 'Show database table',
           ],
           'options'   => [
+            '--take'              => 'Number of migrations to be run.',
+            '--batch'             => 'Batch migration excution.',
             '--dry-run'           => 'Excute migration but olny get query output.',
             '--force'             => 'Force runing migration/database query in production.',
             '--seed'              => 'Run seeder after migration.',
             '--seed-namespace'    => 'Run seeder after migration using class namespace.',
           ],
           'relation'  => [
-            'migrate'                   => ['--seed', '--dry-run', '--force'],
+            'migrate'                   => ['--take', '--seed', '--dry-run', '--force'],
             'migrate:fresh'             => ['--seed', '--dry-run', '--force'],
             'migrate:reset'             => ['--dry-run', '--force'],
             'migrate:refresh'           => ['--seed', '--dry-run', '--force'],
-            'migrate:rollback'          => ['--dry-run', '--force'],
+            'migrate:rollback'          => ['--batch', '--take', '--dry-run', '--force'],
             'database:create'           => ['--force'],
             'database:drop'             => ['--force'],
           ],
@@ -136,18 +149,63 @@ class MigrationCommand extends Command
     }
 
     /**
-     * @return Collection<string, string>
+     * Get migration list.
+     *
+     * @param int|false $batch
+     *
+     * @return Collection<string, array<string, string>>
      */
-    public function baseMigrate(): Collection
+    public function baseMigrate(&$batch = false): Collection
     {
-        $dir     = base_path('/database/migration/');
+        $migartion_batch = $this->getMigrationTable()->assocBy(fn ($item) => [$item['migration'] => $item]);
+        $hights          = $migartion_batch->lenght() > 0
+            ? max(array_column($migartion_batch->toArray(), 'batch')) + 1
+            : 0;
+        $batch = false === $batch ? $hights : $batch;
+
+        $dir     = migration_path();
         $migrate = new Collection([]);
         foreach (new \DirectoryIterator($dir) as $file) {
             if ($file->isDot() | $file->isDir()) {
                 continue;
             }
-            $migrate->set($file->getFilename(), $dir . $file->getFilename());
+
+            $migration_name = pathinfo($file->getBasename(), PATHINFO_FILENAME);
+            $hasMigration   = $migartion_batch->has($migration_name);
+
+            if (false == $batch && $hasMigration) {
+                if ($migartion_batch->get($migration_name)['batch'] <= $hights - 1) {
+                    $migrate->set($migration_name, [
+                        'file_name' => $dir . $file->getFilename(),
+                        'batch'     => $migartion_batch->get($migration_name)['batch'],
+                    ]);
+                    continue;
+                }
+            }
+
+            if (false === $hasMigration) {
+                $migrate->set($migration_name, [
+                    'file_name' => $dir . $file->getFilename(),
+                    'batch'     => $hights,
+                ]);
+                $this->insertMigrationTable([
+                    'migration' => $migration_name,
+                    'batch'     => $hights,
+                ]);
+                continue;
+            }
+
+            if ($migartion_batch->get($migration_name)['batch'] <= $batch) {
+                $migrate->set($migration_name, [
+                    'file_name' => $dir . $file->getFilename(),
+                    'batch'     => $migartion_batch->get($migration_name)['batch'],
+                ]);
+                continue;
+            }
         }
+
+        // $migrate->where('batch', '>', 0)->dumb();
+        // exit;
 
         return $migrate;
     }
@@ -164,12 +222,18 @@ class MigrationCommand extends Command
         }
 
         $print   = new Style();
-        $migrate = $this->baseMigrate();
+        $width   = $this->getWidth(40, 60);
+        $batch   = false;
+        $migrate = $this->baseMigrate($batch);
+        $take    = $this->option('take', $batch);
+        $migrate
+            ->filter(static fn ($value): bool => $value['batch'] >= $batch - $take)
+            ->sort();
 
         $print->tap(info('Running migration'));
 
-        foreach ($migrate->sort() as $key => $val) {
-            $schema = require_once $val;
+        foreach ($migrate as $key => $val) {
+            $schema = require_once $val['file_name'];
             $up     = new Collection($schema['up'] ?? []);
 
             if ($this->option('dry-run')) {
@@ -182,7 +246,7 @@ class MigrationCommand extends Command
             }
 
             $print->push($key)->textDim();
-            $print->repeat('.', 60 - strlen($key))->textDim();
+            $print->repeat('.', $width - strlen($key))->textDim();
 
             try {
                 $success = $up->every(fn ($item) => $item->execute());
@@ -214,15 +278,18 @@ class MigrationCommand extends Command
             return $create;
         }
 
+        $this->initializeMigration();
+
         // run migration
 
         $print   = new Style();
-        $migrate = $this->baseMigrate();
+        $migrate = $this->baseMigrate()->sort();
+        $width   = $this->getWidth(40, 60);
 
         $print->tap(info('Running migration'));
 
-        foreach ($migrate->sort() as $key => $val) {
-            $schema = require_once $val;
+        foreach ($migrate as $key => $val) {
+            $schema = require_once $val['file_name'];
             $up     = new Collection($schema['up'] ?? []);
 
             if ($this->option('dry-run')) {
@@ -235,7 +302,7 @@ class MigrationCommand extends Command
             }
 
             $print->push($key)->textDim();
-            $print->repeat('.', 60 - strlen($key))->textDim();
+            $print->repeat('.', $width - strlen($key))->textDim();
 
             try {
                 $success = $up->every(fn ($item) => $item->execute());
@@ -263,7 +330,7 @@ class MigrationCommand extends Command
             return 2;
         }
         info('Rolling back all migrations')->out(false);
-        $rollback = $this->rollbacks(null);
+        $rollback = $this->rollbacks(false, 0);
 
         return $rollback;
     }
@@ -286,28 +353,38 @@ class MigrationCommand extends Command
 
     public function rollback(): int
     {
-        $take    = (int) $this->take;
+        if (false === ($batch = $this->option('batch', false))) {
+            fail('batch is required.')->out();
+
+            return 1;
+        }
+        $take    = $this->take;
         $message = "Rolling {$take} back migrations.";
-        if ($take < 1) {
-            $take    = null;
+        if ($take < 0) {
+            $take    = 0;
             $message = 'Rolling back migrations.';
         }
         info($message)->out(false);
 
-        return $this->rollbacks(null);
+        return $this->rollbacks((int) $batch, (int) $take);
     }
 
-    public function rollbacks(?int $take): int
+    /**
+     * Rolling backs migartion.
+     *
+     * @param int|false $batch
+     */
+    public function rollbacks($batch, int $take): int
     {
         $print   = new Style();
-        $migrate = $this->baseMigrate();
+        $width   = $this->getWidth(40, 60);
 
-        if (null === $take) {
-            $take = $migrate->lenght();
-        }
+        $migrate = false === $batch
+            ? $this->baseMigrate($batch)
+            : $this->baseMigrate($batch)->filter(static fn ($value): bool => $value['batch'] >= $batch - $take);
 
-        foreach ($migrate->sortDesc()->take($take) as $key => $val) {
-            $schema = require_once $val;
+        foreach ($migrate->sortDesc() as $key => $val) {
+            $schema = require_once $val['file_name'];
             $down   = new Collection($schema['down'] ?? []);
 
             if ($this->option('dry-run')) {
@@ -320,7 +397,7 @@ class MigrationCommand extends Command
             }
 
             $print->push($key)->textDim();
-            $print->repeat('.', 60 - strlen($key))->textDim();
+            $print->repeat('.', $width - strlen($key))->textDim();
 
             try {
                 $success = $down->every(fn ($item) => $item->execute());
@@ -397,6 +474,7 @@ class MigrationCommand extends Command
         }
 
         $db_name = $this->DbName();
+        $width   = $this->getWidth(40, 60);
         info('showing database')->out(false);
 
         $tables = PDO::instance()
@@ -422,7 +500,7 @@ class MigrationCommand extends Command
 
             style($name)
                 ->push(' ' . $size . ' Mb ')->textDim()
-                ->repeat('.', 60 - $lenght)->textDim()
+                ->repeat('.', $width - $lenght)->textDim()
                 ->push(' ' . $time)
                 ->out();
         }
@@ -434,6 +512,7 @@ class MigrationCommand extends Command
     {
         $table = (new MyQuery(PDO::instance()))->table($table)->info();
         $print = new Style("\n");
+        $width = $this->getWidth(40, 60);
 
         $print->push('column')->textYellow()->bold()->resetDecorate()->newLines();
         foreach ($table as $column) {
@@ -451,9 +530,30 @@ class MigrationCommand extends Command
 
             $print->push($column['COLUMN_NAME'])->bold()->resetDecorate();
             $print->push(' ' . $info . ' ')->textDim();
-            $print->repeat('.', 60 - $lenght)->textDim();
+            $print->repeat('.', $width - $lenght)->textDim();
             $print->push(' ' . $column['COLUMN_TYPE']);
             $print->newLines();
+        }
+
+        $print->out();
+
+        return 0;
+    }
+
+    public function status(): int
+    {
+        $print = new Style();
+        $print->tap(info('show migration status'));
+        $width = $this->getWidth(40, 60);
+        foreach ($this->getMigrationTable() as $migration) {
+            $lenght = strlen($migration['migration']) + strlen((string) $migration['batch']);
+            $print
+                ->push($migration['migration'])
+                ->push(' ')
+                ->repeat('.', $width - $lenght)->textDim()
+                ->push(' ')
+                ->push($migration['batch'])
+                ->newLines();
         }
 
         $print->out();
@@ -483,5 +583,85 @@ class MigrationCommand extends Command
         }
 
         return 0;
+    }
+
+    /**
+     * Check for migration table exist or not in this current database.
+     */
+    private function hasMigrationTable(): bool
+    {
+        $result = PDO::instance()->query(
+            "SELECT COUNT(table_name) as total
+            FROM information_schema.tables
+            WHERE table_schema = :dbname
+            AND table_name = 'migration'"
+        )->bind(':dbname', $this->DbName())
+        ->single();
+
+        if ($result) {
+            return $result['total'] > 0;
+        }
+
+        return false;
+    }
+
+    /**
+     * Create migarion table schema.
+     */
+    private function createMigrationTable(): bool
+    {
+        return Schema::table('migration', function (Create $column) {
+            $column('migration')->varchar(100)->notNull();
+            $column('batch')->int(4)->notNull();
+
+            $column->unique('migration');
+        })->execute();
+    }
+
+    /**
+     * Get migration batch file in migation table.
+     *
+     * @return Collection<int|string, mixed>
+     */
+    private function getMigrationTable(): Collection
+    {
+        return DB::table('migration')
+            ->select()
+            ->get();
+    }
+
+    /**
+     * Save insert migration file with batch to migration table.
+     *
+     * @param array<string, string|int> $migration
+     */
+    private function insertMigrationTable($migration): bool
+    {
+        return DB::table('migration')
+            ->insert()
+            ->values($migration)
+            ->execute()
+        ;
+    }
+
+    public function initializeMigration(): int
+    {
+        $has_migration_table = $this->hasMigrationTable();
+
+        if ($has_migration_table) {
+            info('Migration table alredy exist on your database table.')->out(false);
+
+            return 0;
+        }
+
+        if ($this->createMigrationTable()) {
+            ok('Success create migration table.')->out(false);
+
+            return 0;
+        }
+
+        fail('Migration table cant be create.')->out(false);
+
+        return 1;
     }
 }
