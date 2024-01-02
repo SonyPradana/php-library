@@ -83,7 +83,7 @@ class MigrationCommand extends Command
             'migrate:refresh'          => 'Rolling back and run migration all',
             'migrate:rollback'         => 'Rolling back last migrations (down)',
             'migrate:init'             => 'Initialize migartion table',
-            'migrate:status'             => 'Show migartion status.',
+            'migrate:status'           => 'Show migartion status.',
             'database:create'          => 'Create database',
             'database:drop'            => 'Drop database',
             'database:show'            => 'Show database table',
