@@ -89,7 +89,8 @@ class MigrationCommand extends Command
             'database:show'            => 'Show database table',
           ],
           'options'   => [
-            '--batch'             => 'Batch migration excution',
+            '--take'              => 'Number of migrations to be run.',
+            '--batch'             => 'Batch migration excution.',
             '--dry-run'           => 'Excute migration but olny get query output.',
             '--force'             => 'Force runing migration/database query in production.',
             '--seed'              => 'Run seeder after migration.',
