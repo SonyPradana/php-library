@@ -175,4 +175,20 @@ final class MigrationCommandsTest extends \RealDatabaseConnectionTest
         $this->assertEquals(0, $exit);
         $this->assertTrue(Str::contains($out, 'success drop database `testing_db`'));
     }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanRunMigartteInit()
+    {
+        $migrate = new MigrationCommand(['cli', 'migrate:init']);
+        ob_start();
+        $exit    = $migrate->initializeMigration();
+        $out     = ob_get_clean();
+
+        $this->assertEquals(0, $exit);
+        $this->assertTrue(Str::contains($out, 'Migration table alredy exist on your database table.'));
+    }
 }

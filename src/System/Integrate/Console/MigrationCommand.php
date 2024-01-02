@@ -62,8 +62,7 @@ class MigrationCommand extends Command
             'pattern' => ['database:show', 'db:show'],
             'fn'      => [self::class, 'databaseShow'],
         ], [
-        ], [
-            'pattern' => ['database:show', 'migrate:view'],
+            'pattern' => 'migrate:view',
             'fn'      => [self::class, 'view'],
         ], [
             'pattern' => 'migrate:init',
@@ -83,6 +82,8 @@ class MigrationCommand extends Command
             'migrate:reset'            => 'Rolling back all migrations (down)',
             'migrate:refresh'          => 'Rolling back and run migration all',
             'migrate:rollback'         => 'Rolling back last migrations (down)',
+            'migrate:init'             => 'Initialize migartion table',
+            'migrate:view'             => 'Show migartion status.',
             'database:create'          => 'Create database',
             'database:drop'            => 'Drop database',
             'database:show'            => 'Show database table',
@@ -642,7 +643,7 @@ class MigrationCommand extends Command
         ;
     }
 
-    private function initializeMigration(): int
+    public function initializeMigration(): int
     {
         $has_migration_table = $this->hasMigrationTable();
 
