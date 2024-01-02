@@ -14,7 +14,7 @@ final class FacedeTest extends TestCase
         require_once __DIR__ . DIRECTORY_SEPARATOR . 'Sample' . DIRECTORY_SEPARATOR . 'FacadesTestClass.php';
         new FacadesTestClass($app);
 
-        FacadesTestClass::year(2024);
+        FacadesTestClass::year(2025);
         $year = FacadesTestClass::isNextYear();
 
         $this->assertTrue($year);
