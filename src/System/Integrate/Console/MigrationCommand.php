@@ -62,8 +62,8 @@ class MigrationCommand extends Command
             'pattern' => ['database:show', 'db:show'],
             'fn'      => [self::class, 'databaseShow'],
         ], [
-            'pattern' => 'migrate:view',
-            'fn'      => [self::class, 'view'],
+            'pattern' => 'migrate:status',
+            'fn'      => [self::class, 'status'],
         ], [
             'pattern' => 'migrate:init',
             'fn'      => [self::class, 'initializeMigration'],
@@ -83,7 +83,7 @@ class MigrationCommand extends Command
             'migrate:refresh'          => 'Rolling back and run migration all',
             'migrate:rollback'         => 'Rolling back last migrations (down)',
             'migrate:init'             => 'Initialize migartion table',
-            'migrate:view'             => 'Show migartion status.',
+            'migrate:status'             => 'Show migartion status.',
             'database:create'          => 'Create database',
             'database:drop'            => 'Drop database',
             'database:show'            => 'Show database table',
@@ -96,10 +96,10 @@ class MigrationCommand extends Command
             '--seed-namespace'    => 'Run seeder after migration using class namespace.',
           ],
           'relation'  => [
-            'migrate'                   => ['--batch', '--seed', '--dry-run', '--force'],
-            'migrate:fresh'             => ['--batch', '--seed', '--dry-run', '--force'],
-            'migrate:reset'             => ['--batch', '--dry-run', '--force'],
-            'migrate:refresh'           => ['--batch', '--seed', '--dry-run', '--force'],
+            'migrate'                   => ['--take', '--seed', '--dry-run', '--force'],
+            'migrate:fresh'             => ['--seed', '--dry-run', '--force'],
+            'migrate:reset'             => ['--dry-run', '--force'],
+            'migrate:refresh'           => ['--seed', '--dry-run', '--force'],
             'migrate:rollback'          => ['--batch', '--take', '--dry-run', '--force'],
             'database:create'           => ['--force'],
             'database:drop'             => ['--force'],
@@ -539,7 +539,7 @@ class MigrationCommand extends Command
         return 0;
     }
 
-    public function view(): int
+    public function status(): int
     {
         $print = new Style();
         $print->tap(info('show migration status'));
