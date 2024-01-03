@@ -338,6 +338,26 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
         return $this->sum() / $this->count();
     }
 
+    /**
+     * Find higest value.
+     *
+     * @param string|int|null $key
+     */
+    public function max($key = null): int
+    {
+        return max(array_column($this->collection, $key));
+    }
+
+    /**
+     * Find lowest value.
+     *
+     * @param string|int|null $key
+     */
+    public function min($key = null): int
+    {
+        return min(array_column($this->collection, $key));
+    }
+
     // array able
 
     /**
