@@ -219,4 +219,36 @@ class CollectionImmutableTest extends TestCase
 
         $this->assertEquals([80, 90], $coll->lasts(2));
     }
+
+    /** @test */
+    public function itCanGetHigest()
+    {
+        $coll = new CollectionImmutable([10, 20, 30, 40, 50, 60, 70, 80, 90]);
+
+        $this->assertEquals(90, $coll->max());
+
+        $coll = new CollectionImmutable([
+            ['rank' => 10],
+            ['rank' => 50],
+            ['rank' => 90],
+        ]);
+
+        $this->assertEquals(90, $coll->max('rank'));
+    }
+
+    /** @test */
+    public function itCanGetLowestValue()
+    {
+        $coll = new CollectionImmutable([10, 20, 30, 40, 50, 60, 70, 80, 90]);
+
+        $this->assertEquals(10, $coll->min());
+
+        $coll = new CollectionImmutable([
+            ['rank' => 10],
+            ['rank' => 50],
+            ['rank' => 90],
+        ]);
+
+        $this->assertEquals(10, $coll->min('rank'));
+    }
 }
