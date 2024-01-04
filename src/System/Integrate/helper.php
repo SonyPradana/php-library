@@ -199,11 +199,9 @@ if (!function_exists('base_path')) {
     /**
      * Get base path.
      *
-     * @param string $insert_path
-     *                            Insert string in end of path
+     * @param string $insert_path Insert string in end of path
      *
-     * @return string
-     *                Base path folder
+     * @return string Base path folder
      */
     function base_path(string $insert_path = ''): string
     {
@@ -327,7 +325,7 @@ if (!function_exists('redirect_route')) {
             "/\(:\w+\)/",
             function ($matches) use ($parameter, &$valueIndex) {
                 if (!array_key_exists($matches[0], Router::$patterns)) {
-                    throw new \Exception('parameter not matches with any pattern.');
+                    throw new Exception('parameter not matches with any pattern.');
                 }
 
                 if ($valueIndex < count($parameter)) {

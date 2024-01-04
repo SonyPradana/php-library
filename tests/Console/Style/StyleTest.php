@@ -190,7 +190,7 @@ final class StyleTest extends TestCase
     {
         try {
             (new Style('text'))->text_red_10();
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $this->assertEquals('Undefined constant self::RED_10', $th->getMessage());
         }
     }
