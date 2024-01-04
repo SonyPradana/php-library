@@ -275,8 +275,6 @@ class MigrationCommand extends Command
             return $create;
         }
 
-        $this->initializeMigration();
-
         // run migration
 
         $print   = new Style();
@@ -431,6 +429,8 @@ class MigrationCommand extends Command
 
         if ($success) {
             ok("success create database `{$db_name}`")->out(false);
+
+            $this->initializeMigration();
 
             return 0;
         }
