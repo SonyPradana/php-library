@@ -29,7 +29,7 @@ class BasicTemplateTest extends TestCase
         $class = new Generate('NewClass');
 
         $class
-      ->use(System\Template\Generate::class)
+      ->use(Generate::class)
       ->extend(TestCase::class)
       ->implement('testInterface')
       ->setEndWithNewLine();
@@ -47,7 +47,7 @@ class BasicTemplateTest extends TestCase
         $class = new Generate('NewClass');
 
         $class
-      ->use(System\Template\Generate::class)
+      ->use(Generate::class)
       ->extend(TestCase::class)
       ->implement('testInterface')
       ->traits([
@@ -76,7 +76,7 @@ class BasicTemplateTest extends TestCase
       ->tabIndent("\t")
       ->tabSize(2)
 
-      ->use(System\Template\Generate::class)
+      ->use(Generate::class)
       ->extend(TestCase::class)
       ->implement('testInterface')
       ->traits([

@@ -15,13 +15,13 @@ final class ColorsTest extends TestCase
 
         try {
             $this->assertEquals('38;5;231', Colors::hexText('ffffff'));
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $this->assertEquals('Hex code not found.', $th->getMessage());
         }
 
         try {
             $this->assertEquals('38;5;231', Colors::hexText('#badas'));
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $this->assertEquals('Hex code not found.', $th->getMessage());
         }
     }
@@ -34,13 +34,13 @@ final class ColorsTest extends TestCase
 
         try {
             $this->assertEquals('48;5;231', Colors::hexBg('ffffff')->raw());
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $this->assertEquals('Hex code not found.', $th->getMessage());
         }
 
         try {
             $this->assertEquals('48;5;231', Colors::hexBg('#badas')->raw());
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $this->assertEquals('Hex code not found.', $th->getMessage());
         }
     }

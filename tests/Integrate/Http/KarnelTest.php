@@ -19,7 +19,7 @@ final class KarnelTest extends TestCase
         $this->app = new Application('/');
 
         $this->app->set(
-            System\Integrate\Http\Karnel::class,
+            Karnel::class,
             fn () => new $this->karnel($this->app)
         );
 
@@ -67,7 +67,7 @@ final class KarnelTest extends TestCase
     /** @test */
     public function itCanRedirectByMiddleware()
     {
-        $respone = $this->app->make(System\Integrate\Http\Karnel::class);
+        $respone = $this->app->make(Karnel::class);
         $test    = $respone->handle(
             new Request('test')
         );

@@ -61,7 +61,7 @@ class ResponseCollectionTest extends TestCase
         $message = '';
         try {
             $header->setRaw('Host=test.test');
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $message = $th->getMessage();
         }
 

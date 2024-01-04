@@ -202,7 +202,7 @@ class TemplatorTest extends TestCase
                 'product' => 'laravel',
                 'year'    => 2023,
             ]);
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $this->assertEquals("Slot with extends 'Slots/layout.php' required 'title'", $th->getMessage());
         }
     }
