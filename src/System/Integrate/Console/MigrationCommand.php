@@ -157,9 +157,9 @@ class MigrationCommand extends Command
      */
     public function baseMigrate(&$batch = false): Collection
     {
-        $migartion_batch = $this->getMigrationTable()->assocBy(fn ($item) => [$item['migration'] => $item]);
+        $migartion_batch = $this->getMigrationTable();
         $hights          = $migartion_batch->lenght() > 0
-            ? max(array_column($migartion_batch->toArray(), 'batch')) + 1
+            ? $migartion_batch->max() + 1
             : 0;
         $batch = false === $batch ? $hights : $batch;
 
@@ -174,10 +174,10 @@ class MigrationCommand extends Command
             $hasMigration   = $migartion_batch->has($migration_name);
 
             if (false == $batch && $hasMigration) {
-                if ($migartion_batch->get($migration_name)['batch'] <= $hights - 1) {
+                if ($migartion_batch->get($migration_name) <= $hights - 1) {
                     $migrate->set($migration_name, [
                         'file_name' => $dir . $file->getFilename(),
-                        'batch'     => $migartion_batch->get($migration_name)['batch'],
+                        'batch'     => $migartion_batch->get($migration_name),
                     ]);
                     continue;
                 }
@@ -195,17 +195,14 @@ class MigrationCommand extends Command
                 continue;
             }
 
-            if ($migartion_batch->get($migration_name)['batch'] <= $batch) {
+            if ($migartion_batch->get($migration_name) <= $batch) {
                 $migrate->set($migration_name, [
                     'file_name' => $dir . $file->getFilename(),
-                    'batch'     => $migartion_batch->get($migration_name)['batch'],
+                    'batch'     => $migartion_batch->get($migration_name),
                 ]);
                 continue;
             }
         }
-
-        // $migrate->where('batch', '>', 0)->dumb();
-        // exit;
 
         return $migrate;
     }
@@ -545,14 +542,14 @@ class MigrationCommand extends Command
         $print = new Style();
         $print->tap(info('show migration status'));
         $width = $this->getWidth(40, 60);
-        foreach ($this->getMigrationTable() as $migration) {
-            $lenght = strlen($migration['migration']) + strlen((string) $migration['batch']);
+        foreach ($this->getMigrationTable() as $migration_name => $batch) {
+            $lenght = strlen($migration_name) + strlen((string) $batch);
             $print
-                ->push($migration['migration'])
+                ->push($migration_name)
                 ->push(' ')
                 ->repeat('.', $width - $lenght)->textDim()
                 ->push(' ')
-                ->push($migration['batch'])
+                ->push($batch)
                 ->newLines();
         }
 
@@ -621,13 +618,17 @@ class MigrationCommand extends Command
     /**
      * Get migration batch file in migation table.
      *
-     * @return Collection<int|string, mixed>
+     * @return Collection<string, int>
      */
     private function getMigrationTable(): Collection
     {
-        return DB::table('migration')
+        /** @var Collection<string, int> */
+        $pair = DB::table('migration')
             ->select()
-            ->get();
+            ->get()
+            ->assocBy(static fn ($item) => [$item['migration'] => $item['batch']]);
+
+        return $pair;
     }
 
     /**
