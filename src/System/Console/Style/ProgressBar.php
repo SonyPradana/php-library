@@ -75,6 +75,34 @@ class ProgressBar
         }
     }
 
+    /**
+     * Customize tick in progressbar.
+     *
+     * @param array<callable(int, int): string> $binds
+     */
+    public function tickWith(string $template = ':progress :percent', array $binds = []): void
+    {
+        $this->template = $template;
+
+        if (false === array_key_exists(':progress', $binds)) {
+            $binds[':progress'] =  fn ($current, $maks): string => $this->progress($current, $maks);
+        }
+
+        if (false === array_key_exists(':percent', $binds)) {
+            $binds[':percent'] =  fn ($current, $maks): string => ceil(($current / $maks) * 100) . '%';
+        }
+
+        $this->binds    = $binds;
+        $this->progress = (string) $this;
+        (new Style())->replace($this->progress);
+
+        if ($this->current + 1 > $this->maks) {
+            $complete = (string) call_user_func($this->complete);
+            (new Style())->clear();
+            (new Style())->replace($complete . PHP_EOL);
+        }
+    }
+
     private function progress(int $current, int $maks): string
     {
         $lenght = 20;
