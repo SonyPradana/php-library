@@ -31,6 +31,13 @@ class ProgressBar
     private array $binds;
 
     /**
+     * Bind template.
+     *
+     * @var array<callable(int, int): string>
+     */
+    public static array $costume_binds = [];
+
+    /**
      * @param array<callable(int, int): string> $binds
      */
     public function __construct(string $template = ':progress :percent', array $binds = [])
@@ -38,16 +45,7 @@ class ProgressBar
         $this->progress = '';
         $this->template = $template;
         $this->complete = fn (): string => $this->complete();
-
-        if (false === array_key_exists(':progress', $binds)) {
-            $binds[':progress'] =  fn ($current, $maks): string => $this->progress($current, $maks);
-        }
-
-        if (false === array_key_exists(':percent', $binds)) {
-            $binds[':percent'] =  fn ($current, $maks): string => ceil(($current / $maks) * 100) . '%';
-        }
-
-        $this->binds = $binds;
+        $this->binding($binds);
     }
 
     public function __toString()
@@ -83,16 +81,7 @@ class ProgressBar
     public function tickWith(string $template = ':progress :percent', array $binds = []): void
     {
         $this->template = $template;
-
-        if (false === array_key_exists(':progress', $binds)) {
-            $binds[':progress'] =  fn ($current, $maks): string => $this->progress($current, $maks);
-        }
-
-        if (false === array_key_exists(':percent', $binds)) {
-            $binds[':percent'] =  fn ($current, $maks): string => ceil(($current / $maks) * 100) . '%';
-        }
-
-        $this->binds    = $binds;
+        $this->binding($binds);
         $this->progress = (string) $this;
         (new Style())->replace($this->progress);
 
@@ -112,6 +101,24 @@ class ProgressBar
         $left   = '-';
 
         return '[' . str_pad($bar, $lenght, $left) . ']';
+    }
+
+    /**
+     * Binding.
+     *
+     * @param array<callable(int, int): string> $binds
+     */
+    public function binding($binds): void
+    {
+        $binds = array_merge($binds, self::$costume_binds);
+        if (false === array_key_exists(':progress', $binds)) {
+            $binds[':progress'] =  fn ($current, $maks): string => $this->progress($current, $maks);
+        }
+
+        if (false === array_key_exists(':percent', $binds)) {
+            $binds[':percent'] =  fn ($current, $maks): string => ceil(($current / $maks) * 100) . '%';
+        }
+        $this->binds    = $binds;
     }
 
     private function complete(): string
