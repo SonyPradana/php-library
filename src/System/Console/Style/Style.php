@@ -323,6 +323,23 @@ class Style
     }
 
     /**
+     * Print terminal style if condition true.
+     *
+     * @param bool $condition If true will echo out
+     * @param bool $new_line  True if print with new line in end line
+     *
+     * @return void
+     */
+    public function outIf($condition, $new_line = true)
+    {
+        if ($condition) {
+            $out = $this . ($new_line ? PHP_EOL : null);
+
+            echo $out;
+        }
+    }
+
+    /**
      * Print to terminal and continue.
      *
      * @return self
