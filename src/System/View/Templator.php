@@ -79,9 +79,9 @@ class Templator
         ob_start();
 
         try {
-            (static function ($data, $template) {
-                extract($data);
-                include $template;
+            (static function ($__, $__file_name__) {
+                extract($__);
+                include $__file_name__;
             })($data, $tempalte_path);
         } catch (\Throwable $th) {
             while (ob_get_level() > $level) {
