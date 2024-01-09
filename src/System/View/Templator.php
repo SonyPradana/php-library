@@ -5,13 +5,21 @@ declare(strict_types=1);
 namespace System\View;
 
 use System\View\Exceptions\ViewFileNotFound;
+use System\View\Templator\BreakTemplator;
+use System\View\Templator\CommentTemplator;
+use System\View\Templator\ContinueTemplator;
+use System\View\Templator\EachTemplator;
+use System\View\Templator\IfTemplator;
+use System\View\Templator\IncludeTemplator;
+use System\View\Templator\NameTemplator;
+use System\View\Templator\PHPTemplator;
+use System\View\Templator\SectionTemplator;
+use System\View\Templator\SetTemplator;
 
 class Templator
 {
     private string $templateDir;
     private string $cacheDir;
-    /** @var array<string, mixed> */
-    private $sections     = [];
     public string $suffix = '';
     public int $max_depth = 5;
 
@@ -96,143 +104,29 @@ class Templator
         return $out === false ? '' : ltrim($out);
     }
 
-    private function templates(string $template): string
-    {
-        $template = $this->templateSet($template);
-        $template = $this->templateSlot($template);
-        $template = $this->templateInclude($template, $this->max_depth);
-        $template = $this->templatePhp($template);
-        $template = $this->templateName($template);
-        $template = $this->templateIf($template);
-        $template = $this->templateEach($template);
-        $template = $this->templateComment($template);
-        $template = $this->templateContinue($template);
-        $template = $this->templateBreak($template);
-
-        return $template;
-    }
-
-    private function templateSlot(string $template): string
-    {
-        preg_match('/{%\s*extend\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/', $template, $matches_layout);
-        if (!array_key_exists(1, $matches_layout)) {
-            return $template;
-        }
-        $templatePath = $this->templateDir . '/' . $matches_layout[1];
-
-        if (!file_exists($templatePath)) {
-            throw new \Exception('Template file not found: ' . $matches_layout[1]);
-        }
-
-        $layout = file_get_contents($templatePath);
-
-        $template = preg_replace_callback(
-            '/{%\s*section\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}(.*?){%\s*endsection\s*%}/s',
-            fn ($matches) => $this->sections[$matches[1]] = trim($matches[2]),
-            $template
-        );
-
-        $template = preg_replace_callback(
-            "/{%\s*yield\(\'(\w+)\'\)\s*%}/",
-            function ($matches) use ($matches_layout) {
-                if (array_key_exists($matches[1], $this->sections)) {
-                    return $this->sections[$matches[1]];
-                }
-
-                throw new \Exception("Slot with extends '{$matches_layout[1]}' required '{$matches[1]}'");
-            },
-            $layout
-        );
-
-        return $template;
-    }
-
-    private function templateInclude(string $template, int $maks_dept): string
-    {
-        return preg_replace_callback(
-            '/{%\s*include\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/',
-            function ($matches) use ($maks_dept) {
-                $templatePath = $this->templateDir . '/' . $matches[1];
-
-                if (!file_exists($templatePath)) {
-                    throw new \Exception('Template file not found: ' . $matches[1]);
-                }
-
-                $includedTemplate = file_get_contents($templatePath);
-                if ($maks_dept === 0) {
-                    return $includedTemplate;
-                }
-
-                return trim($this->templateInclude($includedTemplate, --$maks_dept));
-            },
-            $template
-        );
-    }
-
-    private function templateName(string $template): string
-    {
-        $rawBlocks = [];
-        $template  = preg_replace_callback('/{% raw %}(.*?){% endraw %}/s', function ($matches) use (&$rawBlocks) {
-            $rawBlocks[] = $matches[1];
-
-            return '##RAW_BLOCK##';
-        }, $template);
-
-        $template = preg_replace('/{{\s*([^}]+)\s*\?\?\s*([^:}]+)\s*:\s*([^}]+)\s*}}/',
-            '<?php echo ($1 !== null) ? $1 : $3; ?>',
-            preg_replace('/{{\s*([^}]+)\s*}}/', '<?php echo htmlspecialchars($$1); ?>', $template)
-        );
-
-        foreach ($rawBlocks as $rawBlock) {
-            $template = preg_replace('/##RAW_BLOCK##/', $rawBlock, $template, 1);
-        }
-
-        return $template;
-    }
-
-    private function templatePhp(string $template): string
-    {
-        return preg_replace('/{%\s*php\s*%}(.*?){%\s*endphp\s*%}/s', '<?php $1 ?>', $template);
-    }
-
-    private function templateIf(string $template): string
-    {
-        return preg_replace(
-            '/{%\s*if\s+([^%]+)\s*%}(.*?){%\s*endif\s*%}/s',
-            '<?php if ($1): ?>$2<?php endif; ?>',
-            preg_replace(
-                '/{%\s*if\s+([^%]+)\s*%}(.*?){%\s*else\s*%}(.*?){%\s*endif\s*%}/s',
-                '<?php if ($1): ?>$2<?php else: ?>$3<?php endif; ?>',
-                $template
-            )
-        );
-    }
-
-    private function templateEach(string $template): string
-    {
-        return preg_replace('/{%\s*foreach\s+([^%]+)\s+as\s+([^%]+)\s*%}(.*?){%\s*endforeach\s*%}/s', '<?php foreach ($$1 as $$2): ?>$3<?php endforeach; ?>', $template);
-    }
-
-    public function templateComment(string $template): string
-    {
-        return preg_replace('/{#\s*(.*?)\s*#}/', '<?php // $1 ?>', $template);
-    }
-
-    public function templateContinue(string $template): string
-    {
-        return preg_replace('/\{%\s*continue\s*(\d*)\s*%\}/', '<?php continue $1; ?>', $template);
-    }
-
-    public function templateBreak(string $template): string
-    {
-        return preg_replace('/\{%\s*break\s*(\d*)\s*%\}/', '<?php break $1; ?>', $template);
-    }
-
     /**
-     * Template convert set to php variable.
+     * Transform templator to php template.
      */
-    public function templateSet(string $template): string
+    public function templates(string $template): string
     {
-        return preg_replace('/{%\s*set\s+(\w+)\s*=\s*(.*?)\s*%}/', '<?php $$1 = $2; ?>', $template);
+        return array_reduce([
+            SetTemplator::class,
+            SectionTemplator::class,
+            IncludeTemplator::class,
+            PHPTemplator::class,
+            NameTemplator::class,
+            IfTemplator::class,
+            EachTemplator::class,
+            CommentTemplator::class,
+            ContinueTemplator::class,
+            BreakTemplator::class,
+        ], function ($template, $templator) {
+            $templator = new $templator($this->templateDir, $this->cacheDir);
+            if ($templator instanceof IncludeTemplator) {
+                $templator->maksDept($this->max_depth);
+            }
+
+            return $templator->parse($template);
+        }, $template);
     }
 }
