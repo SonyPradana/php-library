@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.27.0] - 2024-01-09
+### Changed
+- Integrate command using pattern command instead of class command.
+- Run Migration command base on table migration (batch).
+- Changed parent parameter in templator template, `$data` -> `$__` and `$template` -> `$__file_name__`.
+- Separate templator to small part/class.
+
+### Added
+- Added seeder option after run migration command.
+- Added `Collection::max` and `Collection::min`.
+- Added `Style::outIf` print/echo when condition true.
+- Added costume tick cosole progressbar `ProgressBar::tickWith`.
+
+
 ## [0.26.1] - 2023-12-19
 ### Fixed
 - Fixed adding multy premerykey and unique in schema builder.
