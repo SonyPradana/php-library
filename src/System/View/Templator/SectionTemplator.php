@@ -26,6 +26,12 @@ class SectionTemplator extends AbstractTemplatorParse
         $layout = file_get_contents($templatePath);
 
         $template = preg_replace_callback(
+            '/{%\s*section\s*\(\s*[\'"]([^\'"]+)[\'"]\s*,\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/s',
+            fn ($matches) => $this->sections[$matches[1]] = htmlspecialchars(trim($matches[2])),
+            $template
+        );
+
+        $template = preg_replace_callback(
             '/{%\s*section\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}(.*?){%\s*endsection\s*%}/s',
             fn ($matches) => $this->sections[$matches[1]] = trim($matches[2]),
             $template
