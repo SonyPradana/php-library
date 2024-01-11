@@ -15,7 +15,7 @@ final class EachTest extends TestCase
     public function itCanRenderEach()
     {
         $templator = new Templator(__DIR__, __DIR__);
-        $out       = $templator->templates('{% foreach numbsers as number %}{{ number }}{% endforeach %}');
+        $out       = $templator->templates('{% foreach $numbsers as $number %}{{ $number }}{% endforeach %}');
         $this->assertEquals('<?php foreach ($numbsers as $number ): ?><?php echo htmlspecialchars($number ); ?><?php endforeach; ?>', $out);
     }
 
@@ -25,7 +25,7 @@ final class EachTest extends TestCase
     public function itCanRenderEachWithKeyValue()
     {
         $templator = new Templator(__DIR__, __DIR__);
-        $out       = $templator->templates('{% foreach numbsers as key => number %}{{ number }}{% endforeach %}');
+        $out       = $templator->templates('{% foreach $numbsers as $key => $number %}{{ $number }}{% endforeach %}');
         $this->assertEquals('<?php foreach ($numbsers as $key  => $number ): ?><?php echo htmlspecialchars($number ); ?><?php endforeach; ?>', $out);
     }
 }

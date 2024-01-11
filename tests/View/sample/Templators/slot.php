@@ -1,13 +1,13 @@
 {% extend('Slots/layout.php') %}
 
 {% section('title') %}
-{{ title }}
+{{ $title }}
 {% endsection %}
 
 {% section('content') %}
-<p>{{ product }}</p>
+<p>{{ $product }}</p>
 {% endsection %}
 
 {% section('header') %}
-<i>{{ year }}</i>
+<i>{{ $year }}</i>
 {% endsection %}
