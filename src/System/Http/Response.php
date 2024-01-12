@@ -352,7 +352,7 @@ class Response
                     continue;
                 }
 
-                $this->headers->setRaw($$header);
+                $this->headers->setRaw($header);
                 continue;
             }
 
