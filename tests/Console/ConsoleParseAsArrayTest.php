@@ -61,4 +61,15 @@ class ConsoleParseAsArrayTest extends TestCase
             $this->assertEquals('Command cant be modify', $th->getMessage());
         }
     }
+
+    /** @test */
+    public function itCanCheckOptionHasExitOrNot()
+    {
+        $command = 'php cli test --true="false"';
+        $argv    = explode(' ', $command);
+        $cli     = new Command($argv);
+
+        $this->assertTrue((fn () => $this->{'hasOption'}('true'))->call($cli));
+        $this->assertFalse((fn () => $this->{'hasOption'}('not-exist'))->call($cli));
+    }
 }
