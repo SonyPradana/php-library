@@ -12,28 +12,28 @@ class TextTest extends TestCase
     /** @test */
     public function canCreateNewIntanceUsingConstructor()
     {
-        $class = new Text('text');
+        $class = new text('text');
 
-        $this->assertInstanceOf(Text::class, $class);
+        $this->assertInstanceOf(text::class, $class);
     }
 
     /** @test */
     public function canCreateNewIntanceUsingHelper()
     {
-        $this->assertInstanceOf(Text::class, string('text'));
-        $this->assertInstanceOf(Text::class, text('text'));
+        $this->assertInstanceOf(text::class, string('text'));
+        $this->assertInstanceOf(text::class, text('text'));
     }
 
     /** @test */
     public function canCreateNewIntanceUsingSTRClass()
     {
-        $this->assertInstanceOf(Text::class, Str::of('text'));
+        $this->assertInstanceOf(text::class, Str::of('text'));
     }
 
     /** @test */
     public function canSetGetCurrentText()
     {
-        $class = new Text('text');
+        $class = new text('text');
 
         $this->assertEquals('text', $class->getText());
     }
@@ -41,7 +41,7 @@ class TextTest extends TestCase
     /** @test */
     public function canSetGetCurrentTextUsingToString()
     {
-        $class = new Text('text');
+        $class = new text('text');
 
         $this->assertEquals('text', $class);
     }
@@ -49,7 +49,7 @@ class TextTest extends TestCase
     /** @test */
     public function canSetNewTextWhitoutReset()
     {
-        $class = new Text('text');
+        $class = new text('text');
         $class->upper()->lower()->firstUpper();
         $class->text('string');
 
@@ -60,7 +60,7 @@ class TextTest extends TestCase
     /** @test */
     public function canSetGetLogOfString()
     {
-        $class = new Text('text');
+        $class = new text('text');
         $class->upper()->lower()->firstUpper();
 
         $this->assertIsArray($class->logs());
@@ -78,7 +78,7 @@ class TextTest extends TestCase
     /** @test */
     public function canSetReset()
     {
-        $class = new Text('text');
+        $class = new text('text');
         $class->upper()->lower()->firstUpper();
         $class->reset();
 
@@ -89,7 +89,7 @@ class TextTest extends TestCase
     /** @test */
     public function canSetRefresh()
     {
-        $class = new Text('text');
+        $class = new text('text');
         $class->upper()->lower()->firstUpper();
         $class->refresh('string');
 
@@ -100,7 +100,7 @@ class TextTest extends TestCase
     /** @test */
     public function canChainNonStringAndContinueChainWithoutBreak()
     {
-        $class = new Text('text');
+        $class = new text('text');
         $class->upper()->firstUpper();
 
         $this->assertTrue($class->startsWith('T'));

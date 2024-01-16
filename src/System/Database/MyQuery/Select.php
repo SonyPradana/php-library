@@ -9,7 +9,7 @@ use System\Database\MyQuery;
 use System\Database\MyQuery\Join\AbstractJoin;
 use System\Database\MyQuery\Traits\ConditionTrait;
 
-final class Select extends Fetch
+final class Select extends MyQuery\Fetch
 {
     use ConditionTrait;
 
@@ -48,7 +48,7 @@ final class Select extends Fetch
      * @param string[] $column_name Selected column
      * @param MyPDO    $PDO         MyPdo
      *
-     * @return Select
+     * @return MyQuery\Select
      */
     public static function from(string $table_name, array $column_name, MyPDO $PDO)
     {
