@@ -117,7 +117,7 @@ class HelpCommand extends Command
             }
         }
 
-        $printer = new Style();
+        $printer = new style();
         $printer->push($this->banner)->textGreen();
         $printer
             ->newLines(2)
@@ -242,10 +242,10 @@ class HelpCommand extends Command
                 }
 
                 style('Avilabe command:')->newLines()->out();
-                $this->printCommands(new Style())->out();
+                $this->printCommands(new style())->out();
 
                 style('Avilable options:')->newLines()->out();
-                $this->printOptions(new Style())->out();
+                $this->printOptions(new style())->out();
 
                 return 0;
             }

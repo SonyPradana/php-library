@@ -46,7 +46,7 @@ class RouteCommand extends Command
 
     public function main(): int
     {
-        $print = new Style();
+        $print = new style();
         $print->tap(Alert::render()->ok('route list'));
         foreach (Router::getRoutes() as $key => $route) {
             $method = $this->methodToStye($route['method']);
@@ -71,10 +71,10 @@ class RouteCommand extends Command
     /**
      * @param string|string[] $methods
      */
-    private function methodToStye($methods): Style
+    private function methodToStye($methods): style
     {
         if (is_array($methods)) {
-            $group  = new Style();
+            $group  = new style();
             $length = count($methods);
             for ($i=0; $i < $length; $i++) {
                 $group->tap($this->coloringMethod($methods[$i]));
@@ -89,22 +89,22 @@ class RouteCommand extends Command
         return $this->coloringMethod($methods);
     }
 
-    private function coloringMethod(string $method): Style
+    private function coloringMethod(string $method): style
     {
         $method = strtoupper($method);
 
         if ($method === 'GET') {
-            return (new Style($method))->textBlue();
+            return (new style($method))->textBlue();
         }
 
         if ($method === 'POST' || $method === 'PUT') {
-            return (new Style($method))->textYellow();
+            return (new style($method))->textYellow();
         }
 
         if ($method === 'DELETE') {
-            return (new Style($method))->textRed();
+            return (new style($method))->textRed();
         }
 
-        return (new Style($method))->textDim();
+        return (new style($method))->textDim();
     }
 }
