@@ -95,6 +95,7 @@ class MigrationCommand extends Command
             '--force'             => 'Force runing migration/database query in production.',
             '--seed'              => 'Run seeder after migration.',
             '--seed-namespace'    => 'Run seeder after migration using class namespace.',
+            '--yes'               => 'Accept it without having it ask any questions',
           ],
           'relation'  => [
             'migrate'                   => ['--take', '--seed', '--dry-run', '--force'],
@@ -136,6 +137,10 @@ class MigrationCommand extends Command
      */
     private function confirmation($message): bool
     {
+        if ($this->option('yes', false)) {
+            return true;
+        }
+
         /* @var bool */
         return (new Prompt($message, [
             'yes' => fn () => true,
@@ -218,7 +223,7 @@ class MigrationCommand extends Command
             return 2;
         }
 
-        $print   = new Style();
+        $print   = new style();
         $width   = $this->getWidth(40, 60);
         $batch   = false;
         $migrate = $this->baseMigrate($batch);
@@ -277,7 +282,7 @@ class MigrationCommand extends Command
 
         // run migration
 
-        $print   = new Style();
+        $print   = new style();
         $migrate = $this->baseMigrate()->sort();
         $width   = $this->getWidth(40, 60);
 
@@ -371,7 +376,7 @@ class MigrationCommand extends Command
      */
     public function rollbacks($batch, int $take): int
     {
-        $print   = new Style();
+        $print   = new style();
         $width   = $this->getWidth(40, 60);
 
         $migrate = false === $batch
@@ -508,7 +513,7 @@ class MigrationCommand extends Command
     public function tableShow(string $table): int
     {
         $table = (new MyQuery(PDO::instance()))->table($table)->info();
-        $print = new Style("\n");
+        $print = new style("\n");
         $width = $this->getWidth(40, 60);
 
         $print->push('column')->textYellow()->bold()->resetDecorate()->newLines();
@@ -539,7 +544,7 @@ class MigrationCommand extends Command
 
     public function status(): int
     {
-        $print = new Style();
+        $print = new style();
         $print->tap(info('show migration status'));
         $width = $this->getWidth(40, 60);
         foreach ($this->getMigrationTable() as $migration_name => $batch) {

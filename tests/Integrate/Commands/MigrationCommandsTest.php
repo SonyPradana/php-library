@@ -191,4 +191,15 @@ final class MigrationCommandsTest extends \RealDatabaseConnectionTest
         $this->assertEquals(0, $exit);
         $this->assertTrue(Str::contains($out, 'Migration table alredy exist on your database table.'));
     }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanPassConfirmationUsingOptionYes()
+    {
+        $confirmation = (fn () => $this->{'confirmation'}('message?'))->call(new MigrationCommand(['cli', 'db:create'], ['yes' => true]));
+        $this->assertTrue($confirmation);
+    }
 }
