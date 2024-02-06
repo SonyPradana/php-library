@@ -13,7 +13,7 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanRenderTextColorTerminalCode()
     {
-        $cmd  = new style('text');
+        $cmd  = new Style('text');
         $text = $cmd->textBlue();
 
         $this->assertEquals(sprintf('%s[34;49mtext%s[0m', chr(27), chr(27)), $text, 'text must return blue text terminal code');
@@ -22,7 +22,7 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanRenderBgColorTerminalCode()
     {
-        $cmd  = new style('text');
+        $cmd  = new Style('text');
         $text = $cmd->bgBlue();
 
         $this->assertEquals(sprintf('%s[39;44mtext%s[0m', chr(27), chr(27)), $text, 'text must return blue bankground terminal code');
@@ -31,7 +31,7 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanRenderTextAndBgColorTerminalCode()
     {
-        $cmd  = new style('text');
+        $cmd  = new Style('text');
         $text = $cmd->textRed()->bgBlue();
 
         $this->assertEquals(sprintf('%s[31;44mtext%s[0m', chr(27), chr(27)), $text, 'text must return red text and blue text terminal code');
@@ -40,12 +40,12 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanRenderColorUsingRawRuleInterface()
     {
-        $cmd  = new style('text');
+        $cmd  = new Style('text');
         $text = $cmd->raw(Colors::hexText('#ffd787'));
 
         $this->assertEquals(sprintf('%s[38;2;255;215;135;49mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
 
-        $cmd  = new style('text');
+        $cmd  = new Style('text');
         $text = $cmd->raw(Colors::rgbText(0, 0, 0));
 
         $this->assertEquals(sprintf('%s[38;2;0;0;0;49mtext%s[0m', chr(27), chr(27)), $text);
@@ -54,7 +54,7 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanRenderColorRaw()
     {
-        $cmd  = new style('text');
+        $cmd  = new Style('text');
         $text = $cmd->raw('38;2;0;0;0');
 
         $this->assertEquals(sprintf('%s[39;49;38;2;0;0;0mtext%s[0m', chr(27), chr(27)), $text);
@@ -63,7 +63,7 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanRenderColorMultyRaw()
     {
-        $cmd  = new style('text');
+        $cmd  = new Style('text');
         $text = $cmd
             ->raw('38;2;0;0;0')
             ->raw('48;2;255;255;255');
@@ -74,7 +74,7 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanRenderChainCode()
     {
-        $cmd = new style('text');
+        $cmd = new Style('text');
 
         ob_start();
         $cmd('i')
@@ -115,21 +115,21 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanRenderTextColorTerminalCodeWithPushNewLineTabsSpaces()
     {
-        $cmd  = new style('text');
+        $cmd  = new Style('text');
         $text = $cmd
             ->textBlue()
             ->tabs(2)
         ;
         $this->assertEquals(sprintf('%s[34;49mtext%s[0m%s[39;49m%s%s[0m', chr(27), chr(27), chr(27), "\t\t", chr(27)), $text);
 
-        $cmd  = new style('text');
+        $cmd  = new Style('text');
         $text = $cmd
             ->textBlue()
             ->new_lines(2)
         ;
         $this->assertEquals(sprintf('%s[34;49mtext%s[0m%s[39;49m%s%s[0m', chr(27), chr(27), chr(27), "\n\n", chr(27)), $text);
 
-        $cmd  = new style('text');
+        $cmd  = new Style('text');
         $text = $cmd
             ->textBlue()
             ->repeat('.', 5)
@@ -140,7 +140,7 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanRenderColorUsingTextColor()
     {
-        $cmd  = new style('text');
+        $cmd  = new Style('text');
         $text = $cmd->textColor(Colors::hexText('#ffd787'));
 
         $this->assertEquals(sprintf('%s[38;2;255;215;135;49mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
@@ -149,7 +149,7 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanRenderColorUsingTextColorWithHexString()
     {
-        $cmd  = new style('text');
+        $cmd  = new Style('text');
         $text = $cmd->textColor('#ffd787');
 
         $this->assertEquals(sprintf('%s[38;2;255;215;135;49mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
@@ -158,7 +158,7 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanRenderColorUsingBgColor()
     {
-        $cmd  = new style('text');
+        $cmd  = new Style('text');
         $text = $cmd->bgColor(Colors::hexBg('#ffd787'));
 
         $this->assertEquals(sprintf('%s[39;48;2;255;215;135mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
@@ -167,7 +167,7 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanRenderColorUsingBgColorWithHexString()
     {
-        $cmd  = new style('text');
+        $cmd  = new Style('text');
         $text = $cmd->bgColor('#ffd787');
 
         $this->assertEquals(sprintf('%s[39;48;2;255;215;135mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
@@ -176,11 +176,11 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanRenderColorVariantUsingMagicCall()
     {
-        $text = (new style('text'))->text_red_500();
+        $text = (new Style('text'))->text_red_500();
 
         $this->assertEquals(sprintf('%s[38;2;239;68;68;49mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
 
-        $text = (new style('text'))->bg_blue_500();
+        $text = (new Style('text'))->bg_blue_500();
 
         $this->assertEquals(sprintf('%s[39;48;2;59;130;246mtext%s[0m', chr(27), chr(27)), $text, 'text must return raw color terminal code');
     }
@@ -189,7 +189,7 @@ final class StyleTest extends TestCase
     public function itCanThrowExceptionWhenColorVariantNotRegister()
     {
         try {
-            (new style('text'))->text_red_10();
+            (new Style('text'))->text_red_10();
         } catch (Throwable $th) {
             $this->assertEquals('Undefined constant self::RED_10', $th->getMessage());
         }
@@ -198,7 +198,7 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanCountTextLengthWithoutRuleCounted()
     {
-        $text = new style('12345');
+        $text = new Style('12345');
         $text->bgBlue()->textWhite()->underline();
 
         $this->assertEquals(5, $text->length());
@@ -207,7 +207,7 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanCountTextNumberLengthWithoutRuleCounted()
     {
-        $text = new style(12345);
+        $text = new Style(12345);
         $text->bgBlue()->textWhite()->underline();
 
         $this->assertEquals(5, $text->length());
@@ -224,10 +224,10 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanPushUsingStyle()
     {
-        $cmd  = new style('text');
+        $cmd  = new Style('text');
         $cmd->textBlue();
 
-        $tap = new style('text2');
+        $tap = new Style('text2');
         $tap->textRed();
 
         // push using tab
@@ -244,7 +244,7 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanRenderAndResetDecorate()
     {
-        $cmd  = new style('text');
+        $cmd  = new Style('text');
         $text = $cmd->textBlue()->resetDecorate();
 
         $this->assertEquals(sprintf('%s[34;49mtext%s[0m', chr(27), chr(27)), $text, 'text must return blue text terminal code');
@@ -253,7 +253,7 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanRenderAndResetDecorateUsingRawReset()
     {
-        $cmd  = new style('text');
+        $cmd  = new Style('text');
         $text = $cmd->textBlue()->rawReset([0, 22]);
 
         $this->assertEquals(sprintf('%s[34;49mtext%s[0;22m', chr(27), chr(27)), $text, 'text must return blue text terminal code');
@@ -262,7 +262,7 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanPrintUsingYield()
     {
-        $cmd = new style('text');
+        $cmd = new Style('text');
 
         ob_start();
         $cmd('i')
@@ -280,7 +280,7 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanPrintUsingYieldAndContinue()
     {
-        $cmd = new style('text');
+        $cmd = new Style('text');
 
         ob_start();
         $cmd('i')
@@ -299,7 +299,7 @@ final class StyleTest extends TestCase
     /** @test */
     public function itCanPrintUsingYieldContinueAndOut()
     {
-        $cmd = new style('text');
+        $cmd = new Style('text');
 
         ob_start();
         $cmd('i')
@@ -319,7 +319,7 @@ final class StyleTest extends TestCase
     /** @test */
     public function itOnlyPrintIfConditionTrue()
     {
-        $cmd = new style('text');
+        $cmd = new Style('text');
         ob_start();
         $cmd('i')
             ->textDim()

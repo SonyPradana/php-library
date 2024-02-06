@@ -416,7 +416,7 @@ abstract class MyModel
      *
      * @param MyPDO $pdo PDO DI
      */
-    public static function call(MyPDO $pdo = null): self
+    public static function call(?MyPDO $pdo = null): self
     {
         /* @phpstan-ignore-next-line */
         return new static($pdo);

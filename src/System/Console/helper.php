@@ -176,7 +176,7 @@ if (!function_exists('exit_prompt')) {
      * @param string|Style            $title
      * @param array<string, callable> $options
      */
-    function exit_prompt($title, array $options = null): void
+    function exit_prompt($title, ?array $options = null): void
     {
         $signal = defined('SIGINT') ? constant('SIGINT') : 2;
         $options ??= [

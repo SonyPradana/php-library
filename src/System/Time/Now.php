@@ -57,7 +57,7 @@ class Now
     /** @var int|float */
     private $age;
 
-    public function __construct(string $date_format = 'now', string $time_zone = null)
+    public function __construct(string $date_format = 'now', ?string $time_zone = null)
     {
         if (null !== $time_zone) {
             $time_zone = new \DateTimeZone($time_zone);
