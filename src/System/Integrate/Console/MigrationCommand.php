@@ -631,7 +631,7 @@ class MigrationCommand extends Command
         $pair = DB::table('migration')
             ->select()
             ->get()
-            ->assocBy(static fn ($item) => [$item['migration'] => $item['batch']]);
+            ->assocBy(static fn ($item) => [$item['migration'] => (int) $item['batch']]);
 
         return $pair;
     }
