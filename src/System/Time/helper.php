@@ -11,7 +11,7 @@ if (!function_exists('now')) {
      *
      * @return System\Time\Now
      */
-    function now(string $date_format = 'now', string $time_zone = null)
+    function now(string $date_format = 'now', ?string $time_zone = null)
     {
         return new System\Time\Now($date_format, $time_zone);
     }

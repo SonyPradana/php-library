@@ -398,7 +398,7 @@ class Response
      *
      * @return self
      */
-    public function header(string $header, string $value = null)
+    public function header(string $header, ?string $value = null)
     {
         if (null === $value) {
             $this->headers->setRaw($header);

@@ -223,7 +223,7 @@ class MigrationCommand extends Command
             return 2;
         }
 
-        $print   = new style();
+        $print   = new Style();
         $width   = $this->getWidth(40, 60);
         $batch   = false;
         $migrate = $this->baseMigrate($batch);
@@ -282,7 +282,7 @@ class MigrationCommand extends Command
 
         // run migration
 
-        $print   = new style();
+        $print   = new Style();
         $migrate = $this->baseMigrate()->sort();
         $width   = $this->getWidth(40, 60);
 
@@ -376,7 +376,7 @@ class MigrationCommand extends Command
      */
     public function rollbacks($batch, int $take): int
     {
-        $print   = new style();
+        $print   = new Style();
         $width   = $this->getWidth(40, 60);
 
         $migrate = false === $batch
@@ -513,7 +513,7 @@ class MigrationCommand extends Command
     public function tableShow(string $table): int
     {
         $table = (new MyQuery(PDO::instance()))->table($table)->info();
-        $print = new style("\n");
+        $print = new Style("\n");
         $width = $this->getWidth(40, 60);
 
         $print->push('column')->textYellow()->bold()->resetDecorate()->newLines();
@@ -544,7 +544,7 @@ class MigrationCommand extends Command
 
     public function status(): int
     {
-        $print = new style();
+        $print = new Style();
         $print->tap(info('show migration status'));
         $width = $this->getWidth(40, 60);
         foreach ($this->getMigrationTable() as $migration_name => $batch) {

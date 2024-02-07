@@ -9,7 +9,7 @@ use System\Database\MyQuery;
 use System\Database\MyQuery\Join\AbstractJoin;
 use System\Database\MyQuery\Traits\ConditionTrait;
 
-final class Select extends MyQuery\Fetch
+final class Select extends Fetch
 {
     use ConditionTrait;
 
@@ -21,7 +21,7 @@ final class Select extends MyQuery\Fetch
      *
      * @return void
      */
-    public function __construct(string $table_name, array $columns_name, MyPDO $PDO, array $options = null)
+    public function __construct(string $table_name, array $columns_name, MyPDO $PDO, ?array $options = null)
     {
         $this->_table  = $table_name;
         $this->_column = $columns_name;
@@ -48,7 +48,7 @@ final class Select extends MyQuery\Fetch
      * @param string[] $column_name Selected column
      * @param MyPDO    $PDO         MyPdo
      *
-     * @return MyQuery\Select
+     * @return Select
      */
     public static function from(string $table_name, array $column_name, MyPDO $PDO)
     {
@@ -156,7 +156,7 @@ final class Select extends MyQuery\Fetch
      *
      * @return self
      */
-    public function order(string $column_name, int $order_using = MyQuery::ORDER_ASC, string $belong_to = null)
+    public function order(string $column_name, int $order_using = MyQuery::ORDER_ASC, ?string $belong_to = null)
     {
         $order             = $order_using == 0 ? 'ASC' : 'DESC';
         $belong_to         = $belong_to ?? $this->_table;

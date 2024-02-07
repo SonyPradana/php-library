@@ -55,7 +55,7 @@ abstract class AbstractJoin
      *
      * @return AbstractJoin
      */
-    public static function ref(string $ref_table, string $id, string $ref_id = null)
+    public static function ref(string $ref_table, string $id, ?string $ref_id = null)
     {
         /* @phpstan-ignore-next-line */
         return (new static())
@@ -117,7 +117,7 @@ abstract class AbstractJoin
      *
      * @return self
      */
-    public function compare(string $main_column, string $compire_column = null)
+    public function compare(string $main_column, ?string $compire_column = null)
     {
         $compire_column = $compire_column ?? $main_column;
 
