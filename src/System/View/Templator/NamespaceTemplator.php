@@ -22,8 +22,8 @@ class NamespaceTemplator extends AbstractTemplatorParse
             $template
         );
 
-        if (null === $this->namespaces) {
-            return '';
+        if (0 === count($this->namespaces)) {
+            return $template;
         }
 
         $namespace = array_map(fn ($use) => "namespace {$use};", $this->namespaces);
