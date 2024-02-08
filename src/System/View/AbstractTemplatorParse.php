@@ -8,6 +8,12 @@ abstract class AbstractTemplatorParse
 {
     protected string $templateDir;
     protected string $cacheDir;
+    /**
+     * Namaspace poller.
+     *
+     * @var string[]
+     */
+    protected $namespaces = [];
 
     final public function __construct(string $templateDir, string $cacheDir)
     {
