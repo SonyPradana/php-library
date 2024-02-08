@@ -11,6 +11,7 @@ use System\View\Templator\ContinueTemplator;
 use System\View\Templator\EachTemplator;
 use System\View\Templator\IfTemplator;
 use System\View\Templator\IncludeTemplator;
+use System\View\Templator\NamespaceTemplator;
 use System\View\Templator\NameTemplator;
 use System\View\Templator\PHPTemplator;
 use System\View\Templator\SectionTemplator;
@@ -120,6 +121,7 @@ class Templator
             CommentTemplator::class,
             ContinueTemplator::class,
             BreakTemplator::class,
+            NamespaceTemplator::class,
         ], function ($template, $templator) {
             $templator = new $templator($this->templateDir, $this->cacheDir);
             if ($templator instanceof IncludeTemplator) {
