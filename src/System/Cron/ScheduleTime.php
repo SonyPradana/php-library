@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace System\Cron;
 
+use Closure;
+
 class ScheduleTime
 {
     /**
@@ -61,6 +63,11 @@ class ScheduleTime
      * Reatry if condition is true.
      */
     private bool $retry_condition = false;
+
+    /**
+     * Skip task (due) in some condition.
+     */
+    private bool $skip = false;
 
     private ?InterpolateInterface $logger;
 
@@ -151,11 +158,27 @@ class ScheduleTime
         return $this->retry_condition;
     }
 
+    /**
+     * Skip schedule in due time.
+     *
+     * @param bool|\Closure(): bool $skip_when True if skip the due schedule
+     */
+    public function skip($skip_when): self
+    {
+        if ($skip_when instanceof \Closure) {
+            $skip_when = $skip_when();
+        }
+
+        $this->skip = $skip_when;
+
+        return $this;
+    }
+
     // TODO: get next due time
 
     public function exect(): void
     {
-        if ($this->isDue()) {
+        if ($this->isDue() && false === $this->skip) {
             // stopwatch
             $watch_start = microtime(true);
 
