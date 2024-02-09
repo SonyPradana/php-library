@@ -6,7 +6,7 @@ namespace System\View\Templator;
 
 use System\View\AbstractTemplatorParse;
 
-class NamespaceTemplator extends AbstractTemplatorParse
+class UseTemplator extends AbstractTemplatorParse
 {
     public function parse(string $template): string
     {
@@ -15,20 +15,20 @@ class NamespaceTemplator extends AbstractTemplatorParse
         $result = preg_replace_callback(
             '/{%\s*use\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/',
             function ($matches) {
-                $this->namespaces[] = $matches[1];
+                $this->uses[] = $matches[1];
 
                 return '';
             },
             $template
         );
 
-        if (0 === count($this->namespaces)) {
+        if (0 === count($this->uses)) {
             return $template;
         }
 
-        $namespace = array_map(fn ($use) => "namespace {$use};", $this->namespaces);
-        $namespace = implode("\n", $namespace);
-        $header    = "<?php\n/* begain namespace */\n{$namespace}\n/* end namespace */\n?>\n";
+        $uses      = array_map(fn ($use) => "use {$use};", $this->uses);
+        $uses      = implode("\n", $uses);
+        $header    = "<?php\n/* begain uses */\n{$uses}\n/* end uses */\n?>\n";
 
         return $header . $result;
     }
