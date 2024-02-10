@@ -7,7 +7,7 @@ namespace System\Test\View\Templator;
 use PHPUnit\Framework\TestCase;
 use System\View\Templator;
 
-final class PhpDataTest extends TestCase
+final class PhpTest extends TestCase
 {
     /**
      * @test
@@ -16,6 +16,6 @@ final class PhpDataTest extends TestCase
     {
         $templator = new Templator(__DIR__, __DIR__);
         $out       = $templator->templates('<html><head></head><body>{% php %} echo \'taylor\'; {% endphp %}</body></html>');
-        $this->assertEquals('<html><head></head><body><h1>my name is <?php echo htmlspecialchars($__[\'full.name\'] ); ?> </h1></body></html>', $out);
+        $this->assertEquals('<html><head></head><body><?php  echo \'taylor\';  ?></body></html>', $out);
     }
 }
