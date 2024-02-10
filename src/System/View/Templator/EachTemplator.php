@@ -12,13 +12,13 @@ class EachTemplator extends AbstractTemplatorParse
     {
         $template = preg_replace(
             '/{%\s*foreach\s+([^%]+)\s+as\s+([^%]+)\s*=>\s*([^%]+)\s*%}(.*?){%\s*endforeach\s*%}/s',
-            '<?php foreach ($$1 as $$2 => $$3): ?>$4<?php endforeach; ?>',
+            '<?php foreach ($1 as $2 => $3): ?>$4<?php endforeach; ?>',
             $template
         );
 
         $template = preg_replace(
             '/{%\s*foreach\s+([^%]+)\s+as\s+([^%]+)\s*%}(.*?){%\s*endforeach\s*%}/s',
-            '<?php foreach ($$1 as $$2): ?>$3<?php endforeach; ?>',
+            '<?php foreach ($1 as $2): ?>$3<?php endforeach; ?>',
             $template
         );
 

@@ -19,7 +19,7 @@ class NameTemplator extends AbstractTemplatorParse
 
         $template = preg_replace('/{{\s*([^}]+)\s*\?\?\s*([^:}]+)\s*:\s*([^}]+)\s*}}/',
             '<?php echo ($1 !== null) ? $1 : $3; ?>',
-            preg_replace('/{{\s*([^}]+)\s*}}/', '<?php echo htmlspecialchars($$1); ?>', $template)
+            preg_replace('/{{\s*([^}]+)\s*}}/', '<?php echo htmlspecialchars($1); ?>', $template)
         );
 
         foreach ($rawBlocks as $rawBlock) {
