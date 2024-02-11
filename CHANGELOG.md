@@ -6,6 +6,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.28.0] - 2024-02-11
+### Changed
+- Changed Tempaltor required dolar sign to declare variable (name, each, set and if).
+
+## [0.27.4] - 2024-02-09
+### Changed
+- Changed migration command migrate table info type.
+
+### Added
+- Added Templator imoport directive.
+- Added cron schedule skip when due time.
+
+## [0.27.3] - 2024-01-09
+### Changed
+- Support Templator slot in inline directive.
+
+### Added
+- Added suport cli command prompt to accept yes using option `--yes`.
+- Added function to check param exist `Command::has`.
+
+## [0.27.2] - 2024-01-12
+### Fixed
+- Remove double dolar sign in variable
+
+## [0.27.1] - 2024-01-11
+### Changed
+- Allowed templator each using key and value pairing.
+
 ## [0.27.0] - 2024-01-09
 ### Changed
 - Integrate command using pattern command instead of class command.
