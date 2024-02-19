@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Database\MyModel;
 
 // use System\Collection\Collection;
+
 use System\Collection\CollectionImmutable;
 use System\Database\MyModel\Query\Select;
 use System\Database\MyPDO;
@@ -70,12 +71,7 @@ class Model
 
     public function __debugInfo()
     {
-        $columns = [];
-        foreach ($this->columns as $key => $column) {
-            $columns[$key] = array_filter($column, fn ($k) => false === in_array($k, $this->stash), ARRAY_FILTER_USE_KEY);
-        }
-
-        return $columns;
+        return $this->getColumns();
     }
 
     /**
@@ -153,6 +149,21 @@ class Model
 
     // core -----------------------------
 
+    /**
+     * Get first collomn.
+     *
+     * @return array<string, mixed>
+     */
+    public function first(): array
+    {
+        $columns = $this->getColumns();
+        if (null === ($key = array_key_first($columns))) {
+            throw new \Exception('Empty columns, try to assgin using read.');
+        }
+
+        return $columns[$key];
+    }
+
     /** @return Collection<int, static> */
     public function get(): Collection
     {
@@ -170,6 +181,22 @@ class Model
         }
 
         return new Collection($collection);
+    }
+
+    public function insert(): bool
+    {
+        $insert = MyQuery::from($this->table_name, $this->pdo);
+        foreach ($this->columns as $column) {
+            $success = $insert->insert()
+                ->values($column)
+                ->execute();
+
+            if (!$success) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function read(): bool
@@ -305,7 +332,24 @@ class Model
         return $change;
     }
 
+    // static ---------------------
+
     // protected ------------------
+
+    /**
+     * Get current column without stash.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    protected function getColumns(): array
+    {
+        $columns = [];
+        foreach ($this->columns as $key => $column) {
+            $columns[$key] = array_filter($column, fn ($k) => false === in_array($k, $this->stash), ARRAY_FILTER_USE_KEY);
+        }
+
+        return $columns;
+    }
 
     // private --------------------
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Test\Database\Model;
 
+use System\Database\MyModel\Model;
 use System\Test\Database\BaseConnection;
 
 final class BaseModelTest extends BaseConnection
@@ -26,6 +27,16 @@ final class BaseModelTest extends BaseConnection
         $this->dropConnection();
     }
 
+    public function user(bool $read = true): User
+    {
+        $user = new User('user', [[]], $this->pdo, ['user' => ['taylor']]);
+        if ($read) {
+            $user->read();
+        }
+
+        return $user;
+    }
+
     /**
      * @test
      *
@@ -33,7 +44,15 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanCreateData()
     {
-        $this->markTestSkipped('tdd');
+        $user = new User('users', [
+            [
+                'user'     => 'nuno',
+                'password' => password_hash('password', PASSWORD_DEFAULT),
+                'stat'     => 50,
+            ],
+        ], $this->pdo);
+
+        $this->assertTrue($user->insert());
     }
 
     /**
@@ -43,7 +62,9 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanReadData()
     {
-        $this->markTestSkipped('tdd');
+        $user = new User('user', [[]], $this->pdo, ['user' => ['taylor']]);
+
+        $this->assertTrue($user->read());
     }
 
     /**
@@ -73,7 +94,12 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanGetFirst()
     {
-        $this->markTestSkipped('tdd');
+        $users = $this->user();
+
+        $this->assertEquals([
+            'user' => 'taylor',
+            'stat' => 100,
+        ], $users->first());
     }
 
     /**
@@ -263,4 +289,12 @@ final class BaseModelTest extends BaseConnection
     {
         $this->markTestSkipped('tdd');
     }
+}
+
+class User extends Model
+{
+    protected string $table_name  = 'users';
+    protected string $primery_key = 'user';
+    /** @var string[] Hide from shoing column */
+    protected $stash = ['password'];
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace System\Test\Database\Model;
 
-use System\Database\MyModel\Model;
 use System\Test\Database\BaseConnection;
 
 final class CollectionModelTest extends BaseConnection
@@ -167,10 +166,4 @@ final class CollectionModelTest extends BaseConnection
     {
         $this->markTestSkipped('TDD');
     }
-}
-
-class User extends Model
-{
-    protected string $table_name  = 'users';
-    protected string $primery_key = 'user';
 }
