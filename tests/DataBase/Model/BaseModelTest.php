@@ -29,7 +29,7 @@ final class BaseModelTest extends BaseConnection
 
     public function user(bool $read = true): User
     {
-        $user = new User('user', [[]], $this->pdo, ['user' => ['taylor']]);
+        $user = new User($this->pdo, [[]], ['user' => ['taylor']]);
         if ($read) {
             $user->read();
         }
@@ -44,13 +44,13 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanCreateData()
     {
-        $user = new User('users', [
+        $user = new User($this->pdo, [
             [
                 'user'     => 'nuno',
                 'password' => password_hash('password', PASSWORD_DEFAULT),
                 'stat'     => 50,
             ],
-        ], $this->pdo);
+        ], [[]]);
 
         $this->assertTrue($user->insert());
     }
@@ -62,7 +62,7 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanReadData()
     {
-        $user = new User('user', [[]], $this->pdo, ['user' => ['taylor']]);
+        $user = new User($this->pdo, [[]], ['user' => ['taylor']]);
 
         $this->assertTrue($user->read());
     }

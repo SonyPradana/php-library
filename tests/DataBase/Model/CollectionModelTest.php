@@ -28,7 +28,7 @@ final class CollectionModelTest extends BaseConnection
 
     public function user(): User
     {
-        $user = new User('user', [[]], $this->pdo, ['user' => ['taylor']]);
+        $user = new User($this->pdo, [[]], ['user' => ['taylor']]);
         $user->read();
 
         return $user;

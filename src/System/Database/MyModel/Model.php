@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace System\Database\MyModel;
 
-// use System\Collection\Collection;
-
 use System\Collection\CollectionImmutable;
 use System\Database\MyModel\Query\Select;
 use System\Database\MyPDO;
@@ -19,7 +17,7 @@ class Model
 
     protected string $table_name;
 
-    protected string $primery_key;
+    protected string $primery_key = 'id';
 
     /** @var array<int, array<string, mixed>> */
     protected $columns;
@@ -28,10 +26,10 @@ class Model
     protected $indentifer;
 
     /** @var string[] Hide from shoing column */
-    protected $stash;
+    protected $stash = [];
 
     /** @var string[] Set Column cant be modify */
-    protected $resistant;
+    protected $resistant = [];
 
     /** @var array<int, array<string, mixed>> Orginal data from database */
     protected $fresh;
@@ -46,27 +44,19 @@ class Model
     // magic ----------------------
 
     /**
-     * @param array<string, string[]> $indentifer
      * @param array<string, mixed>    $column
-     * @param string[]                $stash
-     * @param string[]                $resistant
+     * @param array<string, string[]> $indentifer
      */
     public function __construct(
-        string $table,
-        array $column,
         MyPDO $pdo,
-        array $indentifer = [[]],
-        string $primery_key = 'id',
-        array $stash = [],
-        array $resistant = []
+        array $column,
+        array $indentifer
     ) {
-        $this->table_name ??= $table;
-        $this->columns ??= $this->fresh = $column;
-        $this->pdo ??= $pdo;
-        $this->indentifer ??= $indentifer;
-        $this->primery_key ??= $primery_key;
-        $this->stash ??= $stash;
-        $this->resistant ??= $resistant;
+        $this->pdo        = $pdo;
+        $this->columns    = $this->fresh = $column;
+        $this->indentifer = $indentifer;
+        // auto table
+        $this->table_name ??= strtolower(__CLASS__);
     }
 
     public function __debugInfo()
@@ -169,7 +159,7 @@ class Model
     {
         $collection = [];
         foreach ($this->columns as $column) {
-            $collection[] = new static(
+            $collection[] = (new static($this->pdo, [[]], [[]]))->setUp(
                 $this->table_name,
                 [$column],
                 $this->pdo,
