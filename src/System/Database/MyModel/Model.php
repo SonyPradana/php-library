@@ -116,8 +116,11 @@ class Model
      */
     public function setter(string $key, $val): self
     {
-        if (key_exists($key, $this->columns) && !in_array($key, $this->resistant)) {
-            $this->columns[$key] = $val;
+        $this->firstColumn($current);
+        if (key_exists($key, $this->columns[$current]) && !in_array($key, $this->resistant)) {
+            $this->columns[$current][$key] = $val;
+
+            return $this;
         }
 
         return $this;
@@ -140,11 +143,13 @@ class Model
     // core -----------------------------
 
     /**
-     * Get first collomn.
+     * Get first collomn without stash.
+     *
+     * @param int|string|null $key ByRef key
      *
      * @return array<string, mixed>
      */
-    public function first(): array
+    public function first(&$key = null): array
     {
         $columns = $this->getColumns();
         if (null === ($key = array_key_first($columns))) {
@@ -306,16 +311,15 @@ class Model
     {
         $change = [];
 
-        foreach ($this->columns as $key => $column) {
-            if (array_key_exists($key, $this->fresh)) {
-                $change[$key] = $column;
-                continue;
-            }
-            foreach ($column as $key_item => $item) {
-                if (array_key_exists($key_item, $this->fresh[$key]) && $this->fresh[$key][$key_item] !== $item) {
-                    $change[$key] = $item;
-                    continue 2;
-                }
+        $column = $this->firstColumn($current);
+        if (false === array_key_exists($current, $this->fresh)) {
+            return $column;
+        }
+
+        foreach ($column as $key => $value) {
+            if (array_key_exists($key, $this->fresh[$current])
+            && $this->fresh[$current][$key] !== $value) {
+                $change[$key] = $value;
             }
         }
 
@@ -339,6 +343,22 @@ class Model
         }
 
         return $columns;
+    }
+
+    /**
+     * Get first collumn.
+     *
+     * @param int|string|null $key ByRef key
+     *
+     * @return array<string, mixed>
+     */
+    protected function firstColumn(&$key = null): array
+    {
+        if (null === ($key = array_key_first($this->columns))) {
+            throw new \Exception('Empty columns, try to assgin using read.');
+        }
+
+        return $this->columns[$key];
     }
 
     // private --------------------

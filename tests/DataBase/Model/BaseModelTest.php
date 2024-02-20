@@ -74,7 +74,11 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanUpdateData()
     {
-        $this->markTestSkipped('tdd');
+        $user = $this->user();
+
+        $user->setter('stat', 75);
+
+        $this->assertTrue($user->update());
     }
 
     /**
@@ -84,7 +88,8 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanDeleteData()
     {
-        $this->markTestSkipped('tdd');
+        $user = $this->user();
+        $this->assertTrue($user->delete());
     }
 
     /**
@@ -129,7 +134,9 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanCheckisClean()
     {
-        $this->markTestSkipped('tdd');
+        $user = $this->user();
+        $this->assertTrue($user->isClean(), 'Check all column');
+        $this->assertTrue($user->isClean('stat'), 'Check spesifik column');
     }
 
     /**
@@ -139,7 +146,10 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanCheckisDirty()
     {
-        $this->markTestSkipped('tdd');
+        $user = $this->user();
+        $user->setter('stat', 75);
+        $this->assertTrue($user->isDirty(), 'Check all column');
+        $this->assertTrue($user->isDirty('stat'), 'Check spesifik column');
     }
 
     /**
