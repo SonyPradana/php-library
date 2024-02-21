@@ -251,12 +251,13 @@ class Model
     {
         $ref = MyQuery::from($this->table_name, $this->pdo)
             ->select([$table . '.*'])
-            ->join(InnerJoin::ref($table, $this->primery_key, $ref))
-            ->equal($this->primery_key, $this->indentifer[$this->primery_key])
-            ->single()
-        ;
+            ->join(InnerJoin::ref($table, $this->primery_key, $ref));
 
-        return new CollectionImmutable($ref);
+        foreach ($this->indentifer as $column_name => $value) {
+            $ref->in($column_name, $value);
+        }
+
+        return new CollectionImmutable($ref->single());
     }
 
     /**
@@ -266,13 +267,13 @@ class Model
     {
         $ref = MyQuery::from($this->table_name, $this->pdo)
             ->select([$table . '.*'])
-            ->join(InnerJoin::ref($table, $this->primery_key, $ref))
-            ->equal($this->primery_key, $this->indentifer[$this->primery_key])
-            ->get()
-            ->immutable()
-        ;
+            ->join(InnerJoin::ref($table, $this->primery_key, $ref));
 
-        return new CollectionImmutable($ref);
+        foreach ($this->indentifer as $column_name => $value) {
+            $ref->in($column_name, $value);
+        }
+
+        return new CollectionImmutable($ref->get()->immutable());
     }
 
     /**

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Test\Database\Model;
 
 use System\Database\MyModel\Model;
+use System\Database\MyQuery\Insert;
 use System\Test\Database\BaseConnection;
 
 final class BaseModelTest extends BaseConnection
@@ -35,6 +36,47 @@ final class BaseModelTest extends BaseConnection
         }
 
         return $user;
+    }
+
+    private function createProfileSchema(): bool
+    {
+        return $this
+           ->pdo
+           ->query('CREATE TABLE `profiles` (
+                `user`      varchar(32)  NOT NULL,
+                `name`      varchar(100) NOT NULL,
+                `gender`    varchar(10) NOT NULL,
+                PRIMARY KEY (`user`)
+            )')
+           ->execute();
+    }
+
+    private function createProfiles($profiles): bool
+    {
+        return (new Insert('profiles', $this->pdo))
+            ->rows($profiles)
+            ->execute();
+    }
+
+    private function createOrderSchema(): bool
+    {
+        return $this
+           ->pdo
+           ->query('CREATE TABLE `orders` (
+                `id`   varchar(3)  NOT NULL,
+                `user` varchar(32)  NOT NULL,
+                `name` varchar(100) NOT NULL,
+                `type` varchar(30) NOT NULL,
+                PRIMARY KEY (`id`)
+            )')
+           ->execute();
+    }
+
+    private function createOrders($orders): bool
+    {
+        return (new Insert('orders', $this->pdo))
+            ->rows($orders)
+            ->execute();
     }
 
     /**
@@ -114,7 +156,18 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanGetHasOne()
     {
-        $this->markTestSkipped('tdd');
+        // profile
+        $profile = [
+            'user'   => 'taylor',
+            'name'   => 'taylor otwell',
+            'gender' => 'male',
+        ];
+        $this->createProfileSchema();
+        $this->createProfiles([$profile]);
+
+        $user   = $this->user();
+        $result = $user->hasOne('profiles', 'user');
+        $this->assertEquals($profile, $result->toArray());
     }
 
     /**
@@ -124,7 +177,26 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanGetHasMany()
     {
-        $this->markTestSkipped('tdd');
+        // order
+        $order = [
+            [
+                'id'     => '1',
+                'user'   => 'taylor',
+                'name'   => 'order 1',
+                'type'   => 'gadget',
+            ], [
+                'id'     => '3',
+                'user'   => 'taylor',
+                'name'   => 'order 2',
+                'type'   => 'gadget',
+            ],
+        ];
+        $this->createOrderSchema();
+        $this->createOrders($order);
+
+        $user   = $this->user();
+        $result = $user->hasMany('orders', 'user');
+        $this->assertEquals($order, $result->toArray());
     }
 
     /**
@@ -159,7 +231,13 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanGetChangeColumn()
     {
-        $this->markTestSkipped('tdd');
+        $user = $this->user();
+        $this->assertEquals([], $user->changes(), 'original fresh data');
+        // modify
+        $user->setter('stat', 75);
+        $this->assertEquals([
+            'stat' => 75,
+        ], $user->changes(), 'change first column');
     }
 
     /**
