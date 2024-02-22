@@ -108,7 +108,7 @@ class Model
 
     public function __isset(string $name): bool
     {
-        return array_key_exists($name, $this->columns);
+        return array_key_exists($name, $this->first());
     }
 
     /**
@@ -129,15 +129,15 @@ class Model
     /**
      * Getter.
      *
-     * @param mixed|null $defaul
+     * @param mixed|null $default
      */
-    public function getter(string $key, $defaul = null)
+    public function getter(string $key, $default = null)
     {
         if (array_key_exists($key, $this->stash)) {
             throw new \Exception("Cant read this colum `{$key}`");
         }
 
-        return $this->columns[$key] ?? $defaul;
+        return $this->first()[$key] ?? $default;
     }
 
     // core -----------------------------

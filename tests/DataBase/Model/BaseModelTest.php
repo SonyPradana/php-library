@@ -245,9 +245,11 @@ final class BaseModelTest extends BaseConnection
      *
      * @group database
      */
-    public function itCanGetHiddeColumn()
+    public function itCanHiddeColumn()
     {
-        $this->markTestSkipped('tdd');
+        $user = $this->user();
+
+        $this->assertArrayNotHasKey('password', $user->first(), 'password must hidden by stash');
     }
 
     // getter setter - should return firts query
@@ -259,7 +261,10 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanGetUsingGetterInColumn()
     {
-        $this->markTestSkipped('tdd');
+        $user = $this->user();
+
+        $columns = (fn () => $this->{'columns'})->call($user);
+        $this->assertEquals($columns[0]['stat'], $user->getter('stat', 0));
     }
 
     /**
@@ -269,7 +274,11 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanSetUsingSetterterInColumn()
     {
-        $this->markTestSkipped('tdd');
+        $user = $this->user();
+
+        $user->setter('stat', 80);
+        $columns = (fn () => $this->{'columns'})->call($user);
+        $this->assertEquals(80, $columns[0]['stat']);
     }
 
     /**
@@ -279,7 +288,10 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanGetUsingMagicGetterInColumn()
     {
-        $this->markTestSkipped('tdd');
+        $user = $this->user();
+
+        $columns = (fn () => $this->{'columns'})->call($user);
+        $this->assertEquals($columns[0]['stat'], $user->stat);
     }
 
     /**
@@ -289,7 +301,11 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanSetUsingMagicSetterterInColumn()
     {
-        $this->markTestSkipped('tdd');
+        $user = $this->user();
+
+        $user->stat = 80;
+        $columns    = (fn () => $this->{'columns'})->call($user);
+        $this->assertEquals(80, $columns[0]['stat']);
     }
 
     // array access
