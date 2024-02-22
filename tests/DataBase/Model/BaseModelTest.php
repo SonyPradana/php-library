@@ -252,6 +252,24 @@ final class BaseModelTest extends BaseConnection
         $this->assertArrayNotHasKey('password', $user->first(), 'password must hidden by stash');
     }
 
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanConvertToArray()
+    {
+        $user = $this->user();
+
+        $this->assertEquals([
+            [
+                'user' => 'taylor',
+                'stat' => 100,
+            ],
+        ], $user->toArray());
+        $this->assertIsIterable($user);
+    }
+
     // getter setter - should return firts query
 
     /**
@@ -279,6 +297,18 @@ final class BaseModelTest extends BaseConnection
         $user->setter('stat', 80);
         $columns = (fn () => $this->{'columns'})->call($user);
         $this->assertEquals(80, $columns[0]['stat']);
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanCheckExist()
+    {
+        $user = $this->user();
+
+        $this->assertTrue($user->has('user'));
     }
 
     /**
@@ -317,7 +347,10 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanGetUsingArray()
     {
-        $this->markTestSkipped('tdd');
+        $user = $this->user();
+
+        $columns = (fn () => $this->{'columns'})->call($user);
+        $this->assertEquals($columns[0]['stat'], $user['stat']);
     }
 
     /**
@@ -327,7 +360,11 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanSetUsingArray()
     {
-        $this->markTestSkipped('tdd');
+        $user = $this->user();
+
+        $user['stat'] = 80;
+        $columns      = (fn () => $this->{'columns'})->call($user);
+        $this->assertEquals(80, $columns[0]['stat']);
     }
 
     /**
@@ -335,19 +372,26 @@ final class BaseModelTest extends BaseConnection
      *
      * @group database
      */
-    public function itCanCheckUsingArray()
+    public function itCanCheckUsingMagicIsset()
     {
-        $this->markTestSkipped('tdd');
+        $user = $this->user();
+        $this->assertTrue(isset($user['user']));
     }
 
     /**
+     * Unset is not perform anythink.
+     *
      * @test
      *
      * @group database
      */
     public function itCanUnsetUsingArray()
     {
-        $this->markTestSkipped('tdd');
+        $user = $this->user();
+
+        unset($user['stat']);
+        $columns = (fn () => $this->{'columns'})->call($user);
+        $this->assertEquals(100, $columns[0]['stat']);
     }
 
     // still can get collection
@@ -359,7 +403,17 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanGetCollection()
     {
-        $this->markTestSkipped('tdd');
+        $user = $this->user();
+
+        $columns = (fn () => $this->{'columns'})->call($user);
+        $models  = $user->get()->toArray();
+
+        // tranform to column
+        $arr = [];
+        foreach ($models as $new) {
+            $arr[]= (fn () => $this->{'columns'})->call($new)[0];
+        }
+        $this->assertEquals($columns, $arr);
     }
 
     // find user by some condition (static)

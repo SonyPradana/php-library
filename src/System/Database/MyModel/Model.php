@@ -11,7 +11,14 @@ use System\Database\MyQuery;
 use System\Database\MyQuery\Join\InnerJoin;
 use System\Database\MyQuery\Query;
 
-class Model
+/**
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @extends \ArrayAccess<TKey, TValue>
+ * @extends \IteratorAggregate<TKey, TValue>
+ */
+class Model implements \ArrayAccess, \IteratorAggregate
 {
     protected MyPDO $pdo;
 
@@ -107,6 +114,11 @@ class Model
     }
 
     public function __isset(string $name): bool
+    {
+        return $this->has($name);
+    }
+
+    public function has(string $name): bool
     {
         return array_key_exists($name, $this->first());
     }
@@ -325,6 +337,49 @@ class Model
         }
 
         return $change;
+    }
+
+    public function toArray(): array
+    {
+        return $this->getColumns();
+    }
+
+    // array access --------------
+
+    /**
+     * @param TKey $offset
+     */
+    public function offsetExists($offset): bool
+    {
+        return $this->has($offset);
+    }
+
+    /**
+     * @param TKey $offset
+     *
+     * @return TValue|null
+     */
+    #[\ReturnTypeWillChange]
+    public function offsetGet($offset)
+    {
+        return $this->getter($offset, null);
+    }
+
+    public function offsetSet($offset, $value): void
+    {
+        $this->setter($offset, $value);
+    }
+
+    public function offsetUnset($offset): void
+    {
+    }
+
+    /**
+     * @return \Traversable<TKey, TValue>
+     */
+    public function getIterator(): \Traversable
+    {
+        return new \ArrayIterator($this->first());
     }
 
     // static ---------------------
