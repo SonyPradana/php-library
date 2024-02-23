@@ -425,7 +425,9 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanFindUsingId()
     {
-        $this->markTestSkipped('tdd');
+        $user = User::find('taylor', $this->pdo);
+
+        $this->assertTrue($user->has('user'));
     }
 
     /**
@@ -433,9 +435,31 @@ final class BaseModelTest extends BaseConnection
      *
      * @group database
      */
-    public function itCanFindUingWhere()
+    public function itCanFindUsingWhere()
     {
-        $this->markTestSkipped('tdd');
+        $user = User::where('user = :user', [
+            'user' => 'taylor',
+        ], $this->pdo);
+
+        $this->assertTrue($user->has('user'));
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanFindAll()
+    {
+        $columns = (fn () => $this->{'columns'})->call($this->user());
+        $models  = User::all($this->pdo)->toArray();
+
+        // tranform to column
+        $arr = [];
+        foreach ($models as $new) {
+            $arr[]= (fn () => $this->{'columns'})->call($new)[0];
+        }
+        $this->assertEquals($columns, $arr);
     }
 
     /**

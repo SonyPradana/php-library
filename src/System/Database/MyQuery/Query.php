@@ -247,4 +247,17 @@ abstract class Query
     {
         return $this->_binds;
     }
+
+    /**
+     * Add costume where.
+     *
+     * @param Bind[] $binds
+     */
+    public function whereBinds(string $where, $binds): void
+    {
+        $this->_where[] = $where;
+        foreach ($binds as $bind) {
+            $this->_binds[] = $bind;
+        }
+    }
 }

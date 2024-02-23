@@ -8,6 +8,7 @@ use System\Collection\CollectionImmutable;
 use System\Database\MyModel\Query\Select;
 use System\Database\MyPDO;
 use System\Database\MyQuery;
+use System\Database\MyQuery\Bind;
 use System\Database\MyQuery\Join\InnerJoin;
 use System\Database\MyQuery\Query;
 
@@ -43,7 +44,15 @@ class Model implements \ArrayAccess, \IteratorAggregate
 
     // test -----------------------
     /** @var array<string, mixed> Currrent columns use to diplay */
-    public $current;
+    private $current;
+
+    private ?string $where = null;
+
+    /**
+     * Binder array(['key', 'val']).
+     *
+     * @var Bind[] Binder for PDO bind */
+    protected $binds = [];
 
     private Select $select;
     private Select $select_multy;
@@ -384,6 +393,40 @@ class Model implements \ArrayAccess, \IteratorAggregate
 
     // static ---------------------
 
+    public static function find($id, MyPDO $pdo): static
+    {
+        $model          = new static($pdo, [], []);
+        $model->where   = "(`{$model->table_name}`.`{$model->primery_key}` = :id)";
+        $model->binds[] = Bind::set('id', $id)->prefixBind('');
+
+        $model->read();
+
+        return $model;
+    }
+
+    public static function where(string $where_condition, $binder, MyPDO $pdo): static
+    {
+        $model        = new static($pdo, [], []);
+        $model->where = $where_condition;
+        foreach ($binder as $bind => $value) {
+            $model->binds[] = Bind::set($bind, $value)->prefixBind('');
+        }
+        $model->read();
+
+        return $model;
+    }
+
+    /**
+     * @return Collection<int, static>
+     */
+    public static function all(MyPDO $pdo): Collection
+    {
+        $model        = new static($pdo, [], []);
+        $model->read();
+
+        return $model->get();
+    }
+
     // protected ------------------
 
     /**
@@ -446,6 +489,11 @@ class Model implements \ArrayAccess, \IteratorAggregate
 
     private function fetch(Query $base_query)
     {
+        // costume where
+        if (null !== $this->where) {
+            $base_query->whereBinds($this->where, $this->binds);
+        }
+
         [$query, $binds] = $this->builder($base_query);
 
         $this->pdo->query($query);
@@ -460,6 +508,11 @@ class Model implements \ArrayAccess, \IteratorAggregate
 
     private function execute(Query $base_query): bool
     {
+        // costume where
+        if (null !== $this->where) {
+            $base_query->whereBinds($this->where, $this->binds);
+        }
+
         [$query, $binds] = $this->builder($base_query);
 
         if ($query != null) {
