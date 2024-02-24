@@ -249,15 +249,25 @@ abstract class Query
     }
 
     /**
-     * Add costume where.
-     *
-     * @param Bind[] $binds
+     * Add where condition from where referans.
      */
-    public function whereBinds(string $where, $binds): void
+    public function whereRef(?Where $ref): static
     {
-        $this->_where[] = $where;
-        foreach ($binds as $bind) {
+        if (null === $ref) {
+            return $this;
+        }
+        $conditon = $ref->get();
+        foreach ($conditon['binds'] as $bind) {
             $this->_binds[] = $bind;
         }
+        foreach ($conditon['where'] as $where) {
+            $this->_where[] = $where;
+        }
+        foreach ($conditon['filters'] as $name => $filter) {
+            $this->_filters[$name] = $filter;
+        }
+        $this->_strict_mode = $conditon['isStrict'];
+
+        return $this;
     }
 }

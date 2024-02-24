@@ -30,7 +30,8 @@ final class BaseModelTest extends BaseConnection
 
     public function user(bool $read = true): User
     {
-        $user = new User($this->pdo, [[]], ['user' => ['taylor']]);
+        $user = new User($this->pdo, []);
+        $user->indentifer()->equal('user', 'taylor');
         if ($read) {
             $user->read();
         }

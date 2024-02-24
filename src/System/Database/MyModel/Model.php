@@ -11,6 +11,7 @@ use System\Database\MyQuery;
 use System\Database\MyQuery\Bind;
 use System\Database\MyQuery\Join\InnerJoin;
 use System\Database\MyQuery\Query;
+use System\Database\MyQuery\Where;
 
 /**
  * @template TKey of array-key
@@ -30,9 +31,6 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /** @var array<int, array<string, mixed>> */
     protected $columns;
 
-    /** @var array<string, string[]> */
-    protected $indentifer;
-
     /** @var string[] Hide from shoing column */
     protected $stash = [];
 
@@ -46,7 +44,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /** @var array<string, mixed> Currrent columns use to diplay */
     private $current;
 
-    private ?string $where = null;
+    private ?Where $where = null;
 
     /**
      * Binder array(['key', 'val']).
@@ -60,17 +58,16 @@ class Model implements \ArrayAccess, \IteratorAggregate
     // magic ----------------------
 
     /**
-     * @param array<string, mixed>    $column
-     * @param array<string, string[]> $indentifer
+     * @param array<string, mixed> $column
+     *
+     * @final
      */
     public function __construct(
         MyPDO $pdo,
-        array $column,
-        array $indentifer
+        array $column
     ) {
         $this->pdo        = $pdo;
         $this->columns    = $this->fresh = $column;
-        $this->indentifer = $indentifer;
         // auto table
         $this->table_name ??= strtolower(__CLASS__);
     }
@@ -81,16 +78,14 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * @param array<string, string[]> $indentifer
-     * @param array<string, mixed>    $column
-     * @param string[]                $stash
-     * @param string[]                $resistant
+     * @param array<string, mixed> $column
+     * @param string[]             $stash
+     * @param string[]             $resistant
      */
     public function setUp(
         string $table,
         array $column,
         MyPDO $pdo,
-        array $indentifer,
         string $primery_key,
         array $stash,
         array $resistant
@@ -98,7 +93,6 @@ class Model implements \ArrayAccess, \IteratorAggregate
         $this->table_name  = $table;
         $this->columns     = $this->fresh = $column;
         $this->pdo         = $pdo;
-        $this->indentifer  = $indentifer;
         $this->primery_key = $primery_key;
         $this->stash       = $stash;
         $this->resistant   = $resistant;
@@ -163,6 +157,11 @@ class Model implements \ArrayAccess, \IteratorAggregate
 
     // core -----------------------------
 
+    public function indentifer(): Where
+    {
+        return $this->where = new Where($this->table_name);
+    }
+
     /**
      * Get first collomn without stash.
      *
@@ -189,7 +188,6 @@ class Model implements \ArrayAccess, \IteratorAggregate
                 $this->table_name,
                 [$column],
                 $this->pdo,
-                [$this->primery_key => [$column[$this->primery_key]]],
                 $this->primery_key,
                 $this->stash,
                 $this->resistant
@@ -219,10 +217,6 @@ class Model implements \ArrayAccess, \IteratorAggregate
     {
         $query = new Select($this->table_name, ['*'], $this->pdo);
 
-        foreach ($this->indentifer as $column_name => $value) {
-            $query->in($column_name, $value);
-        }
-
         $all = $this->fetch($query);
 
         if ([] === $all) {
@@ -246,11 +240,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
                 $this->changes()
             );
 
-        foreach ($this->indentifer as $column_name => $value) {
-            $update->in($column_name, $value);
-        }
-
-        return $this->changing($update->execute());
+        return $this->changing($this->execute($update));
     }
 
     public function delete(): bool
@@ -258,11 +248,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
         $delete = MyQuery::from($this->table_name, $this->pdo)
             ->delete();
 
-        foreach ($this->indentifer as $column_name => $value) {
-            $delete->in($column_name, $value);
-        }
-
-        return $this->changing($delete->execute());
+        return $this->changing($this->execute($delete));
     }
 
     /**
@@ -272,13 +258,11 @@ class Model implements \ArrayAccess, \IteratorAggregate
     {
         $ref = MyQuery::from($this->table_name, $this->pdo)
             ->select([$table . '.*'])
-            ->join(InnerJoin::ref($table, $this->primery_key, $ref));
+            ->join(InnerJoin::ref($table, $this->primery_key, $ref))
+            ->whereRef($this->where)
+            ->single();
 
-        foreach ($this->indentifer as $column_name => $value) {
-            $ref->in($column_name, $value);
-        }
-
-        return new CollectionImmutable($ref->single());
+        return new CollectionImmutable($ref);
     }
 
     /**
@@ -288,13 +272,11 @@ class Model implements \ArrayAccess, \IteratorAggregate
     {
         $ref = MyQuery::from($this->table_name, $this->pdo)
             ->select([$table . '.*'])
-            ->join(InnerJoin::ref($table, $this->primery_key, $ref));
+            ->join(InnerJoin::ref($table, $this->primery_key, $ref))
+            ->whereRef($this->where)
+            ->get();
 
-        foreach ($this->indentifer as $column_name => $value) {
-            $ref->in($column_name, $value);
-        }
-
-        return new CollectionImmutable($ref->get()->immutable());
+        return new CollectionImmutable($ref->immutable());
     }
 
     /**
@@ -396,8 +378,8 @@ class Model implements \ArrayAccess, \IteratorAggregate
     public static function find($id, MyPDO $pdo): static
     {
         $model          = new static($pdo, [], []);
-        $model->where   = "(`{$model->table_name}`.`{$model->primery_key}` = :id)";
-        $model->binds[] = Bind::set('id', $id)->prefixBind('');
+        $model->where   = (new Where($model->table_name))
+            ->equal($model->primery_key, $id);
 
         $model->read();
 
@@ -406,11 +388,14 @@ class Model implements \ArrayAccess, \IteratorAggregate
 
     public static function where(string $where_condition, $binder, MyPDO $pdo): static
     {
-        $model        = new static($pdo, [], []);
-        $model->where = $where_condition;
+        $model = new static($pdo, [], []);
+        $map   = [];
         foreach ($binder as $bind => $value) {
-            $model->binds[] = Bind::set($bind, $value)->prefixBind('');
+            $map[] = [$bind, $value];
         }
+
+        $model->where = (new Where($model->table_name))
+            ->where($where_condition, $map);
         $model->read();
 
         return $model;
@@ -471,14 +456,6 @@ class Model implements \ArrayAccess, \IteratorAggregate
         return $change;
     }
 
-    // public function baseBinding(Query $query): Query
-    // {
-    //     foreach ($this->indentifer as $column_name => $value) {
-    //         $query->in($column_name, $value);
-    //     }
-    //     return $query;
-    // }
-
     private function builder($query): array
     {
         return [
@@ -490,9 +467,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     private function fetch(Query $base_query)
     {
         // costume where
-        if (null !== $this->where) {
-            $base_query->whereBinds($this->where, $this->binds);
-        }
+        $base_query->whereRef($this->where);
 
         [$query, $binds] = $this->builder($base_query);
 
@@ -509,9 +484,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     private function execute(Query $base_query): bool
     {
         // costume where
-        if (null !== $this->where) {
-            $base_query->whereBinds($this->where, $this->binds);
-        }
+        $base_query->whereRef($this->where);
 
         [$query, $binds] = $this->builder($base_query);
 
