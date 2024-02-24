@@ -9,7 +9,7 @@ use System\Database\MyQuery;
 use System\Database\MyQuery\Join\AbstractJoin;
 use System\Database\MyQuery\Traits\ConditionTrait;
 
-class Select extends Fetch
+final class Select extends Fetch
 {
     use ConditionTrait;
 

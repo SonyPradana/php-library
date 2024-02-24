@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace System\Database\MyModel;
 
 use System\Collection\CollectionImmutable;
-use System\Database\MyModel\Query\Select;
 use System\Database\MyPDO;
 use System\Database\MyQuery;
 use System\Database\MyQuery\Bind;
 use System\Database\MyQuery\Join\InnerJoin;
 use System\Database\MyQuery\Query;
+use System\Database\MyQuery\Select;
 use System\Database\MyQuery\Where;
 
 /**
@@ -51,9 +51,6 @@ class Model implements \ArrayAccess, \IteratorAggregate
      *
      * @var Bind[] Binder for PDO bind */
     protected $binds = [];
-
-    private Select $select;
-    private Select $select_multy;
 
     // magic ----------------------
 
@@ -248,7 +245,8 @@ class Model implements \ArrayAccess, \IteratorAggregate
         $delete = MyQuery::from($this->table_name, $this->pdo)
             ->delete();
 
-        return $this->changing($this->execute($delete));
+return $this->changing($this->execute($delete));
+
     }
 
     /**
