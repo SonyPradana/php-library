@@ -77,6 +77,6 @@ class Where
 
     public function isEmpty(): bool
     {
-        return $this->_binds === [] && $this->_where === [] && $this->_filters === [] && $this->_strict_mode = true;
+        return [] === $this->_binds && [] === $this->_where && [] === $this->_filters && true === $this->_strict_mode;
     }
 }
