@@ -125,8 +125,9 @@ trait ConditionTrait
      */
     public function whereExist(Select $select)
     {
+        $binds          = (fn () => $this->{'_binds'})->call($select);
         $this->_where[] = 'EXISTS (' . $select->__toString() . ')';
-        foreach ($select->_binds as $binds) {
+        foreach ($binds as $binds) {
             $this->_binds[] = $binds;
         }
 
@@ -142,8 +143,9 @@ trait ConditionTrait
      */
     public function whereNotExist(Select $select)
     {
+        $binds          = (fn () => $this->{'_binds'})->call($select);
         $this->_where[] = 'NOT EXISTS (' . $select->__toString() . ')';
-        foreach ($select->_binds as $binds) {
+        foreach ($binds as $binds) {
             $this->_binds[] = $binds;
         }
 

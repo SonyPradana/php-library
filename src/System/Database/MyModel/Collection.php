@@ -10,7 +10,7 @@ use System\Collection\Collection as BaseCollection;
  * @template TKey of array-key
  * @template Model
  *
- * @extends AbstractCollectionImmutable<TKey, Model>
+ * @extends BaseCollection<TKey, Model>
  */
 class Collection extends BaseCollection
 {

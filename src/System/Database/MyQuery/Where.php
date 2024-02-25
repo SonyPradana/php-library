@@ -52,7 +52,7 @@ class Where
      *  - filter
      *  - isStrict.
      *
-     *  @return array<string, Bind[]|string[]|array<string, string>|bool
+     * @return array<string, Bind[]|string[]|array<string, string>|bool>
      */
     public function get(): array
     {

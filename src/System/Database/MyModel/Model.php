@@ -17,8 +17,8 @@ use System\Database\MyQuery\Where;
  * @template TKey of array-key
  * @template TValue
  *
- * @extends \ArrayAccess<TKey, TValue>
- * @extends \IteratorAggregate<TKey, TValue>
+ * @implements \ArrayAccess<TKey, TValue>
+ * @implements \IteratorAggregate<TKey, TValue>
  */
 class Model implements \ArrayAccess, \IteratorAggregate
 {
@@ -28,7 +28,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
 
     protected string $primery_key = 'id';
 
-    /** @var array<int, array<string, mixed>> */
+    /** @var array<array<TKey, TValue>> */
     protected $columns;
 
     /** @var string[] Hide from shoing column */
@@ -37,12 +37,8 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /** @var string[] Set Column cant be modify */
     protected $resistant = [];
 
-    /** @var array<int, array<string, mixed>> Orginal data from database */
+    /** @var array<array<TKey, TValue>> Orginal data from database */
     protected $fresh;
-
-    // test -----------------------
-    /** @var array<string, mixed> Currrent columns use to diplay */
-    private $current;
 
     private ?Where $where = null;
 
@@ -55,7 +51,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     // magic ----------------------
 
     /**
-     * @param array<string, mixed> $column
+     * @param array<TKey, TValue> $column
      *
      * @final
      */
@@ -75,9 +71,11 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * @param array<string, mixed> $column
-     * @param string[]             $stash
-     * @param string[]             $resistant
+     * @param array<array<TKey, TValue>> $column
+     * @param string[]                   $stash
+     * @param string[]                   $resistant
+     *
+     * @return static
      */
     public function setUp(
         string $table,
@@ -99,6 +97,8 @@ class Model implements \ArrayAccess, \IteratorAggregate
 
     /**
      * Getter.
+     *
+     * @return TValue
      */
     public function __get(string $name)
     {
@@ -107,6 +107,8 @@ class Model implements \ArrayAccess, \IteratorAggregate
 
     /**
      * Setter.
+     *
+     * @param TValue $value
      */
     public function __set(string $name, $value)
     {
@@ -125,12 +127,16 @@ class Model implements \ArrayAccess, \IteratorAggregate
 
     /**
      * Setter.
+     *
+     * @param TValue $value
+     *
+     * @return static
      */
-    public function setter(string $key, $val): self
+    public function setter(string $key, $value): self
     {
         $this->firstColumn($current);
         if (key_exists($key, $this->columns[$current]) && !in_array($key, $this->resistant)) {
-            $this->columns[$current][$key] = $val;
+            $this->columns[$current][$key] = $value;
 
             return $this;
         }
@@ -142,6 +148,8 @@ class Model implements \ArrayAccess, \IteratorAggregate
      * Getter.
      *
      * @param mixed|null $default
+     *
+     * @return TValue
      */
     public function getter(string $key, $default = null)
     {
@@ -164,7 +172,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      *
      * @param int|string|null $key ByRef key
      *
-     * @return array<string, mixed>
+     * @return array<TKey, TValue>
      */
     public function first(&$key = null): array
     {
@@ -181,7 +189,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     {
         $collection = [];
         foreach ($this->columns as $column) {
-            $collection[] = (new static($this->pdo, [[]], [[]]))->setUp(
+            $collection[] = (new static($this->pdo, []))->setUp(
                 $this->table_name,
                 [$column],
                 $this->pdo,
@@ -225,9 +233,12 @@ class Model implements \ArrayAccess, \IteratorAggregate
         return true;
     }
 
+    /**
+     * Update column from database.
+     */
     public function update(): bool
     {
-        if ($this->isClean) {
+        if ($this->isClean()) {
             return false;
         }
 
@@ -245,8 +256,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
         $delete = MyQuery::from($this->table_name, $this->pdo)
             ->delete();
 
-return $this->changing($this->execute($delete));
-
+        return $this->changing($this->execute($delete));
     }
 
     /**
@@ -309,6 +319,11 @@ return $this->changing($this->execute($delete));
         return !$this->isClean($column);
     }
 
+    /**
+     * Get change (diff) between fresh and current column.
+     *
+     * @return array<TKey, TValue>
+     */
     public function changes(): array
     {
         $change = [];
@@ -328,6 +343,11 @@ return $this->changing($this->execute($delete));
         return $change;
     }
 
+    /**
+     * Convert model column to array.
+     *
+     * @return array<array<TKey, TValue>>
+     */
     public function toArray(): array
     {
         return $this->getColumns();
@@ -373,9 +393,14 @@ return $this->changing($this->execute($delete));
 
     // static ---------------------
 
+    /**
+     * Find model using defined primery key.
+     *
+     * @param int|string $id
+     */
     public static function find($id, MyPDO $pdo): static
     {
-        $model          = new static($pdo, [], []);
+        $model          = new static($pdo, []);
         $model->where   = (new Where($model->table_name))
             ->equal($model->primery_key, $id);
 
@@ -384,9 +409,14 @@ return $this->changing($this->execute($delete));
         return $model;
     }
 
-    public static function where(string $where_condition, $binder, MyPDO $pdo): static
+    /**
+     * Find model using costume where.
+     *
+     * @param array<string|int> $binder
+     */
+    public static function where(string $where_condition, array $binder, MyPDO $pdo): static
     {
-        $model = new static($pdo, [], []);
+        $model = new static($pdo, []);
         $map   = [];
         foreach ($binder as $bind => $value) {
             $map[] = [$bind, $value];
@@ -404,7 +434,7 @@ return $this->changing($this->execute($delete));
      */
     public static function all(MyPDO $pdo): Collection
     {
-        $model        = new static($pdo, [], []);
+        $model = new static($pdo, []);
         $model->read();
 
         return $model->get();
@@ -415,7 +445,7 @@ return $this->changing($this->execute($delete));
     /**
      * Get current column without stash.
      *
-     * @return array<int, array<string, mixed>>
+     * @return array<array<TKey, TValue>>
      */
     protected function getColumns(): array
     {
@@ -432,7 +462,7 @@ return $this->changing($this->execute($delete));
      *
      * @param int|string|null $key ByRef key
      *
-     * @return array<string, mixed>
+     * @return array<TKey, TValue>
      */
     protected function firstColumn(&$key = null): array
     {
@@ -454,7 +484,12 @@ return $this->changing($this->execute($delete));
         return $change;
     }
 
-    private function builder($query): array
+    /**
+     * Get binder.
+     *
+     * @return array<Bind[]|string>
+     */
+    private function builder(Query $query): array
     {
         return [
             (fn () => $this->{'builder'}())->call($query),
@@ -462,6 +497,11 @@ return $this->changing($this->execute($delete));
         ];
     }
 
+    /**
+     * Fetch pdo query result.
+     *
+     * @return mixed[]|false
+     */
     private function fetch(Query $base_query)
     {
         // costume where
