@@ -81,6 +81,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
         string $table,
         array $column,
         MyPDO $pdo,
+        Where $where,
         string $primery_key,
         array $stash,
         array $resistant
@@ -88,6 +89,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
         $this->table_name  = $table;
         $this->columns     = $this->fresh = $column;
         $this->pdo         = $pdo;
+        $this->where       = $where;
         $this->primery_key = $primery_key;
         $this->stash       = $stash;
         $this->resistant   = $resistant;
@@ -187,19 +189,25 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /** @return Collection<int, static> */
     public function get(): Collection
     {
-        $collection = [];
+        $collection = new Collection([]);
         foreach ($this->columns as $column) {
-            $collection[] = (new static($this->pdo, []))->setUp(
+            $where = new Where($this->table_name);
+            if (array_key_exists($this->primery_key, $column)) {
+                $where->equal($this->primery_key, $column[$this->primery_key]);
+            }
+
+            $collection->push((new static($this->pdo, []))->setUp(
                 $this->table_name,
                 [$column],
                 $this->pdo,
+                $where,
                 $this->primery_key,
                 $this->stash,
                 $this->resistant
-            );
+            ));
         }
 
-        return new Collection($collection);
+        return $collection;
     }
 
     public function insert(): bool
