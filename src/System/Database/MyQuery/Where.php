@@ -63,4 +63,20 @@ class Where
             'isStrict'  => $this->_strict_mode,
         ];
     }
+
+    /**
+     * Reset all condition.
+     */
+    public function flush(): void
+    {
+        $this->_binds       = [];
+        $this->_where       = [];
+        $this->_filters     = [];
+        $this->_strict_mode = true;
+    }
+
+    public function isEmpty(): bool
+    {
+        return $this->_binds === [] && $this->_where === [] && $this->_filters === [] && $this->_strict_mode = true;
+    }
 }

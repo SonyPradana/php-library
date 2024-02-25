@@ -450,6 +450,18 @@ final class BaseModelTest extends BaseConnection
      *
      * @group database
      */
+    public function itCanFindUsingEqual()
+    {
+        $user = User::equal('user', 'taylor', $this->pdo);
+
+        $this->assertTrue($user->has('user'));
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
     public function itCanFindAll()
     {
         $columns = (fn () => $this->{'columns'})->call($this->user());

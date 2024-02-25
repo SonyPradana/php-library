@@ -438,6 +438,22 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
+     * Find model using costume equal.
+     *
+     * @param TKey   $column_name
+     * @param TValue $value
+     */
+    public static function equal($column_name, $value, MyPDO $pdo): static
+    {
+        $model = new static($pdo, []);
+
+        $model->indentifer()->equal($column_name, $value);
+        $model->read();
+
+        return $model;
+    }
+
+    /**
      * @return Collection<int, static>
      */
     public static function all(MyPDO $pdo): Collection
@@ -529,7 +545,6 @@ class Model implements \ArrayAccess, \IteratorAggregate
 
     private function execute(Query $base_query): bool
     {
-        // costume where
         $base_query->whereRef($this->where);
 
         [$query, $binds] = $this->builder($base_query);
