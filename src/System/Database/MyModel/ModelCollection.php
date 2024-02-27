@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Database\MyModel;
 
-use System\Collection\Collection as BaseCollection;
+use System\Collection\Collection;
 use System\Database\MyQuery\Delete;
 use System\Database\MyQuery\Update;
 
@@ -12,9 +12,9 @@ use System\Database\MyQuery\Update;
  * @template TKey of array-key
  * @template Model
  *
- * @extends BaseCollection<TKey, Model>
+ * @extends Collection<TKey, Model>
  */
-class Collection extends BaseCollection
+class ModelCollection extends Collection
 {
     /** @var Model */
     private $model;

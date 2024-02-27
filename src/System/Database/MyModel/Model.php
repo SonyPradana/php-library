@@ -204,10 +204,10 @@ class Model implements \ArrayAccess, \IteratorAggregate
         return $columns[$key];
     }
 
-    /** @return Collection<int, static> */
-    public function get(): Collection
+    /** @return ModelCollection<int, static> */
+    public function get(): ModelCollection
     {
-        $collection = new Collection([], $this);
+        $collection = new ModelCollection([], $this);
         foreach ($this->columns as $column) {
             $where = new Where($this->table_name);
             if (array_key_exists($this->primery_key, $column)) {
@@ -508,9 +508,9 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * @return Collection<int, static>
+     * @return ModelCollection<int, static>
      */
-    public static function all(MyPDO $pdo): Collection
+    public static function all(MyPDO $pdo): ModelCollection
     {
         $model = new static($pdo, []);
         $model->read();
