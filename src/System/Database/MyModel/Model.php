@@ -204,7 +204,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
         return $columns[$key];
     }
 
-    /** @return ModelCollection<int, static> */
+    /** @return ModelCollection<static<TKey, TValue>> */
     public function get(): ModelCollection
     {
         $collection = new ModelCollection([], $this);
@@ -214,6 +214,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
                 $where->equal($this->primery_key, $column[$this->primery_key]);
             }
 
+            /* @phpstan-ignore-next-line */
             $collection->push((new static($this->pdo, []))->setUp(
                 $this->table_name,
                 [$column],
@@ -508,7 +509,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * @return ModelCollection<int, static>
+     * @return ModelCollection<static<TKey, TValue>>
      */
     public static function all(MyPDO $pdo): ModelCollection
     {

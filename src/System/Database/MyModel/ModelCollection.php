@@ -9,19 +9,19 @@ use System\Database\MyQuery\Delete;
 use System\Database\MyQuery\Update;
 
 /**
- * @template TKey of array-key
- * @template Model
+ * @template T of Model<array-key, TValue>
+ * @template TValue
  *
- * @extends Collection<TKey, Model>
+ * @extends Collection<array-key, T>
  */
 class ModelCollection extends Collection
 {
-    /** @var Model */
+    /** @var T */
     private $model;
 
     /**
-     * @param iterable<TKey, Model> $models
-     * @param Model                 $of
+     * @param iterable<array-key, T> $models
+     * @param T                      $of
      */
     public function __construct($models, $of)
     {
@@ -31,8 +31,6 @@ class ModelCollection extends Collection
 
     /**
      * Get value of primery key from first collumn/record.
-     *
-     * @template TValue
      *
      * @return TValue[]
      *
@@ -58,6 +56,11 @@ class ModelCollection extends Collection
         return !$this->isClean($column);
     }
 
+    /**
+     * Global update (base on primerykey).
+     *
+     * @param array<array-key, TValue> $values
+     */
     public function update(array $values): bool
     {
         $table_name  = (fn () => $this->{'table_name'})->call($this->model);
