@@ -40,7 +40,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /** @var array<array<TKey, TValue>> Orginal data from database */
     protected $fresh;
 
-    private ?Where $where = null;
+    protected ?Where $where = null;
 
     /**
      * Binder array(['key', 'val']).
@@ -63,6 +63,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
         $this->columns    = $this->fresh = $column;
         // auto table
         $this->table_name ??= strtolower(__CLASS__);
+        $this->where = new Where($this->table_name);
     }
 
     public function __debugInfo()
@@ -164,6 +165,23 @@ class Model implements \ArrayAccess, \IteratorAggregate
 
     // core -----------------------------
 
+    /**
+     * Get value of primery key from first collumn/record.
+     *
+     * @return TValue
+     *
+     * @throws \Exception No records founds
+     */
+    public function getPrimeryKey()
+    {
+        $first = $this->first();
+        if (false === array_key_exists($this->primery_key, $first)) {
+            throw new \Exception('this ' . __CLASS__ . 'model doest contain correct record, plase check your query.');
+        }
+
+        return $first[$this->primery_key];
+    }
+
     public function indentifer(): Where
     {
         return $this->where = new Where($this->table_name);
@@ -189,7 +207,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /** @return Collection<int, static> */
     public function get(): Collection
     {
-        $collection = new Collection([]);
+        $collection = new Collection([], $this);
         foreach ($this->columns as $column) {
             $where = new Where($this->table_name);
             if (array_key_exists($this->primery_key, $column)) {
@@ -265,6 +283,15 @@ class Model implements \ArrayAccess, \IteratorAggregate
             ->delete();
 
         return $this->changing($this->execute($delete));
+    }
+
+    public function isExist(): bool
+    {
+        $query = new Select($this->table_name, [$this->primery_key], $this->pdo);
+
+        $query->whereRef($this->where);
+
+        return $this->execute($query);
     }
 
     /**
@@ -415,6 +442,33 @@ class Model implements \ArrayAccess, \IteratorAggregate
         $model->read();
 
         return $model;
+    }
+
+    /**
+     * Find model using defined primery key.
+     *
+     * @param TValue              $id
+     * @param array<TKey, TValue> $column
+     *
+     * @throws \Exception cant inset data
+     */
+    public static function findOrCreate($id, array $column, MyPDO $pdo): static
+    {
+        $model          = new static($pdo, [$column]);
+        $model->where   = (new Where($model->table_name))
+            ->equal($model->primery_key, $id);
+
+        if ($model->isExist()) {
+            $model->read();
+
+            return $model;
+        }
+
+        if ($model->insert()) {
+            return $model;
+        }
+
+        throw new \Exception('Cant inset data.');
     }
 
     /**

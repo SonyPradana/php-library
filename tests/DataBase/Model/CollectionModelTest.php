@@ -12,11 +12,22 @@ final class CollectionModelTest extends BaseConnection
     {
         $this->createConnection();
         $this->createUserSchema();
+        $password = password_hash('password', PASSWORD_DEFAULT);
         $this->createUser([
             [
+                'user'     => 'nuno',
+                'password' => $password,
+                'stat'     => 90,
+            ],
+            [
                 'user'     => 'taylor',
-                'password' => password_hash('password', PASSWORD_DEFAULT),
+                'password' => $password,
                 'stat'     => 100,
+            ],
+            [
+                'user'     => 'pradana',
+                'password' => $password,
+                'stat'     => 80,
             ],
         ]);
     }
@@ -26,14 +37,13 @@ final class CollectionModelTest extends BaseConnection
         $this->dropConnection();
     }
 
-    public function user(): User
+    public function users(): User
     {
-        $user = new User($this->pdo, [[]], ['user' => ['taylor']]);
+        $user = new User($this->pdo, []);
         $user->read();
 
         return $user;
     }
-
     // item collection test
 
     /**
@@ -43,7 +53,7 @@ final class CollectionModelTest extends BaseConnection
      */
     public function shouldReturnModelEveryItems()
     {
-        $users = $this->user();
+        $users = $this->users();
 
         foreach ($users->get() as $user) {
             $this->assertTrue($user instanceof User);
@@ -57,7 +67,9 @@ final class CollectionModelTest extends BaseConnection
      */
     public function itCanGetAllIds()
     {
-        $this->markTestSkipped('TDD');
+        $users = $this->users()->get();
+
+        $this->assertEqualsCanonicalizing(['nuno', 'taylor', 'pradana'], $users->getPrimeryKey());
     }
 
     /**
@@ -67,7 +79,7 @@ final class CollectionModelTest extends BaseConnection
      */
     public function itCanCheckIsClean()
     {
-        $users = $this->user();
+        $users = $this->users();
 
         $this->assertTrue($users->get()->isclean());
     }
@@ -79,10 +91,9 @@ final class CollectionModelTest extends BaseConnection
      */
     public function itCanCheckIsDirty()
     {
-        $this->markTestSkipped('TDD');
-        $users = $this->user();
+        $users = $this->users();
 
-        $this->assertTrue($users->get()->isDirty());
+        $this->assertFalse($users->get()->isDirty());
     }
 
     // crud eager load
@@ -94,7 +105,7 @@ final class CollectionModelTest extends BaseConnection
      */
     public function itCanReadData()
     {
-        $users = $this->user();
+        $users = $this->users();
 
         foreach ($users->get() as $user) {
             $this->assertTrue($user->read());
@@ -108,7 +119,12 @@ final class CollectionModelTest extends BaseConnection
      */
     public function itCanUpdateData()
     {
-        $this->markTestSkipped('TDD');
+        $users = $this->users();
+
+        foreach ($users->get() as $user) {
+            $user->setter('stat', 0);
+            $this->assertTrue($user->update());
+        }
     }
 
     /**
@@ -118,31 +134,11 @@ final class CollectionModelTest extends BaseConnection
      */
     public function itCanDeleteData()
     {
-        $users = $this->user();
+        $users = $this->users();
 
         foreach ($users->get() as $user) {
             $this->assertTrue($user->delete());
         }
-    }
-
-    /**
-     * @test
-     *
-     * @group database
-     */
-    public function itCanGetHasOne()
-    {
-        $this->markTestSkipped('tdd');
-    }
-
-    /**
-     * @test
-     *
-     * @group database
-     */
-    public function itCanGetHasMany()
-    {
-        $this->markTestSkipped('tdd');
     }
 
     // crud upstream
@@ -154,7 +150,11 @@ final class CollectionModelTest extends BaseConnection
      */
     public function itCanUpdateAllWithSingleQuery()
     {
-        $this->markTestSkipped('TDD');
+        $update = $this->users()->get()->update([
+            'stat' => 0,
+        ]);
+
+        $this->assertTrue($update);
     }
 
     /**
@@ -164,6 +164,8 @@ final class CollectionModelTest extends BaseConnection
      */
     public function itCanDeleteAllWithSingleQuery()
     {
-        $this->markTestSkipped('TDD');
+        $delete = $this->users()->get()->delete();
+
+        $this->assertTrue($delete);
     }
 }

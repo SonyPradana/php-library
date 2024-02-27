@@ -230,6 +230,18 @@ final class BaseModelTest extends BaseConnection
      *
      * @group database
      */
+    public function itCanCheckColumnIsExist()
+    {
+        $user = $this->user();
+
+        $this->assertTrue($user->isExist());
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
     public function itCanGetChangeColumn()
     {
         $user = $this->user();
@@ -269,6 +281,18 @@ final class BaseModelTest extends BaseConnection
             ],
         ], $user->toArray());
         $this->assertIsIterable($user);
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanGetFirstPrimeryKey()
+    {
+        $user = $this->user();
+
+        $this->assertEquals('taylor', $user->getPrimeryKey());
     }
 
     // getter setter - should return firts query
@@ -482,7 +506,31 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanFindOrCreate()
     {
-        $this->markTestSkipped('tdd');
+        $user = User::findOrCreate('taylor', [
+            'user'     => 'taylor',
+            'password' => 'password',
+            'stat'     => 100,
+        ], $this->pdo);
+
+        $this->assertTrue($user->isExist());
+        $this->assertEquals('taylor', $user->getter('user', 'nuno'));
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanFindOrCreateButNotExits()
+    {
+        $user = User::findOrCreate('pradana', [
+            'user'     => 'pradana',
+            'password' => 'password',
+            'stat'     => 100,
+        ], $this->pdo);
+
+        $this->assertTrue($user->isExist());
+        $this->assertEquals('pradana', $user->getter('user', 'nuno'));
     }
 }
 

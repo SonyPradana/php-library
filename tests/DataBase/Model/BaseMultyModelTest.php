@@ -97,24 +97,6 @@ final class BaseMultyModelTest extends BaseConnection
      *
      * @group database
      */
-    public function itCanCreateData()
-    {
-        $user = new User($this->pdo, [
-            [
-                'user'     => 'jesicca',
-                'password' => password_hash('password', PASSWORD_DEFAULT),
-                'stat'     => 50,
-            ],
-        ], [[]]);
-
-        $this->assertTrue($user->insert());
-    }
-
-    /**
-     * @test
-     *
-     * @group database
-     */
     public function itCanReadData()
     {
         $user = new User($this->pdo, [[]], ['user' => ['taylor']]);
@@ -493,6 +475,30 @@ final class BaseMultyModelTest extends BaseConnection
      */
     public function itCanFindOrCreate()
     {
-        $this->markTestSkipped('tdd');
+        $user = User::findOrCreate('taylor', [
+            'user'     => 'taylor',
+            'password' => 'password',
+            'stat'     => 100,
+        ], $this->pdo);
+
+        $this->assertTrue($user->isExist());
+        $this->assertEquals('taylor', $user->getter('user', 'nuno'));
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanFindOrCreateButNotExits()
+    {
+        $user = User::findOrCreate('pradana2', [
+            'user'     => 'pradana2',
+            'password' => 'password',
+            'stat'     => 100,
+        ], $this->pdo);
+
+        $this->assertTrue($user->isExist());
+        $this->assertEquals('pradana2', $user->getter('user', 'pradana'));
     }
 }

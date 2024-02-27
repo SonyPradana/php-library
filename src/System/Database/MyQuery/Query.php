@@ -253,7 +253,7 @@ abstract class Query
      */
     public function whereRef(?Where $ref): static
     {
-        if (null === $ref) {
+        if ($ref->isEmpty()) {
             return $this;
         }
         $conditon = $ref->get();
