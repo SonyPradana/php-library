@@ -48,6 +48,13 @@ class Model implements \ArrayAccess, \IteratorAggregate
      * @var Bind[] Binder for PDO bind */
     protected $binds = [];
 
+    // costume select -------------
+
+    protected int $limit_start    = 0;
+    protected int $limit_end      = 0;
+    protected int $offset         = 0;
+    protected string $sort_order  = '';
+
     // magic ----------------------
 
     /**
@@ -249,6 +256,8 @@ class Model implements \ArrayAccess, \IteratorAggregate
     {
         $query = new Select($this->table_name, ['*'], $this->pdo);
 
+        $query->sortOrderRef($this->limit_start, $this->limit_end, $this->offset, $this->sort_order);
+
         $all = $this->fetch($query);
 
         if ([] === $all) {
@@ -387,6 +396,95 @@ class Model implements \ArrayAccess, \IteratorAggregate
     public function toArray(): array
     {
         return $this->getColumns();
+    }
+
+    // costume select ------------
+
+    /**
+     * Set data start for feact all data.
+     *
+     * @param int $limit_start limit start
+     * @param int $limit_end   limit end
+     *
+     * @return static
+     */
+    public function limit(int $limit_start, int $limit_end)
+    {
+        $this->limitStart($limit_start);
+        $this->limitEnd($limit_end);
+
+        return $this;
+    }
+
+    /**
+     * Set data start for feact all data.
+     *
+     * @param int $value limit start default is 0
+     *
+     * @return static
+     */
+    public function limitStart(int $value)
+    {
+        $this->limit_start = $value < 0 ? 0 : $value;
+
+        return $this;
+    }
+
+    /**
+     * Set data end for feact all data
+     * zero value meaning no data show.
+     *
+     * @param int $value limit start default
+     *
+     * @return static
+     */
+    public function limitEnd(int $value)
+    {
+        $this->limit_end = $value < 0 ? 0 : $value;
+
+        return $this;
+    }
+
+    /**
+     * Set offest.
+     *
+     * @param int $value offet
+     *
+     * @return static
+     */
+    public function offset(int $value)
+    {
+        $this->offset = $value < 0 ? 0 : $value;
+
+        return $this;
+    }
+
+    /**
+     * Set limit using limit and offset.
+     *
+     * @return static
+     */
+    public function limitOffset(int $limit, int $offset)
+    {
+        return $this
+            ->limitStart($limit)
+            ->limitEnd(0)
+            ->offset($offset);
+    }
+
+    /**
+     * Set sort column and order
+     * column name must register.
+     *
+     * @return static
+     */
+    public function order(string $column_name, int $order_using = MyQuery::ORDER_ASC, ?string $belong_to = null)
+    {
+        $order            = $order_using == 0 ? 'ASC' : 'DESC';
+        $belong_to        = $belong_to ?? $this->table_name;
+        $this->sort_order = "ORDER BY `$belong_to`.`$column_name` $order";
+
+        return $this;
     }
 
     // array access --------------

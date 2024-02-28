@@ -105,7 +105,7 @@ final class BaseModelTest extends BaseConnection
      */
     public function itCanReadData()
     {
-        $user = new User($this->pdo, [[]], ['user' => ['taylor']]);
+        $user = new User($this->pdo, []);
 
         $this->assertTrue($user->read());
     }

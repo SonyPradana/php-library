@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Test\Database\Model;
 
 use System\Database\MyModel\Model;
+use System\Database\MyQuery;
 use System\Database\MyQuery\Insert;
 use System\Test\Database\BaseConnection;
 
@@ -111,6 +112,53 @@ final class CostumeModelTest extends BaseConnection
             $this->assertEquals('male', $profile->getter('gender'));
             $this->assertGreaterThan(30, $profile->getter('gender'));
         }
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanlimitOrder(): void
+    {
+        $profiles = $this->profiles();
+        $profiles->limitEnd(2);
+        $profiles->read();
+
+        $this->assertEquals(2, $profiles->get()->count());
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanlimitOffset(): void
+    {
+        $profiles = $this->profiles();
+        $profiles->limitOffset(1, 2);
+        $profiles->read();
+
+        $this->assertEquals(1, $profiles->get()->count());
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanShortOrder(): void
+    {
+        $profiles = $this->profiles();
+
+        $profiles->order('user', MyQuery::ORDER_ASC);
+        $profiles->read();
+        $this->assertEquals([
+            'user'   => 'jesica',
+            'name'   => 'jesica w',
+            'gender' => 'female',
+            'age'    => 38,
+        ], $profiles->first());
     }
 }
 

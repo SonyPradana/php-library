@@ -201,4 +201,12 @@ final class Select extends Fetch
 
         return "LIMIT $this->_limit_start, $this->_limit_end";
     }
+
+    public function sortOrderRef(int $limit_start, int $limit_end, int $offset, string $sort_ordder): void
+    {
+        $this->_limit_start = $limit_start;
+        $this->_limit_end   = $limit_end;
+        $this->_offset      = $offset;
+        $this->_sort_order  = $sort_ordder;
+    }
 }
