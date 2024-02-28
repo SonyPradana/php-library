@@ -73,6 +73,9 @@ class Model implements \ArrayAccess, \IteratorAggregate
         $this->where = new Where($this->table_name);
     }
 
+    /**
+     * Debug information, stash exclude from showing.
+     */
     public function __debugInfo()
     {
         return $this->getColumns();
@@ -125,11 +128,17 @@ class Model implements \ArrayAccess, \IteratorAggregate
         $this->setter($name, $value);
     }
 
+    /**
+     * Check first column has key.
+     */
     public function __isset(string $name): bool
     {
         return $this->has($name);
     }
 
+    /**
+     * Check first column contains key.
+     */
     public function has(string $name): bool
     {
         return array_key_exists($name, $this->first());
@@ -189,6 +198,9 @@ class Model implements \ArrayAccess, \IteratorAggregate
         return $first[$this->primery_key];
     }
 
+    /**
+     * Costume where condition (overwrite where).
+     */
     public function indentifer(): Where
     {
         return $this->where = new Where($this->table_name);
@@ -211,7 +223,11 @@ class Model implements \ArrayAccess, \IteratorAggregate
         return $columns[$key];
     }
 
-    /** @return ModelCollection<static<TKey, TValue>> */
+    /**
+     * Fetch query return as model collection.
+     *
+     * @return ModelCollection<static<TKey, TValue>>
+     */
     public function get(): ModelCollection
     {
         $collection = new ModelCollection([], $this);
@@ -236,6 +252,9 @@ class Model implements \ArrayAccess, \IteratorAggregate
         return $collection;
     }
 
+    /**
+     * Insert all column to database.
+     */
     public function insert(): bool
     {
         $insert = MyQuery::from($this->table_name, $this->pdo);
@@ -252,6 +271,9 @@ class Model implements \ArrayAccess, \IteratorAggregate
         return true;
     }
 
+    /*
+     * Read record base where condition given.
+     */
     public function read(): bool
     {
         $query = new Select($this->table_name, ['*'], $this->pdo);
@@ -287,6 +309,9 @@ class Model implements \ArrayAccess, \IteratorAggregate
         return $this->changing($this->execute($update));
     }
 
+    /*
+     * Delete record base on where condition given.
+     */
     public function delete(): bool
     {
         $delete = MyQuery::from($this->table_name, $this->pdo)
@@ -295,6 +320,9 @@ class Model implements \ArrayAccess, \IteratorAggregate
         return $this->changing($this->execute($delete));
     }
 
+    /**
+     * Check where condition has rocord or not.
+     */
     public function isExist(): bool
     {
         $query = new Select($this->table_name, [$this->primery_key], $this->pdo);
@@ -333,7 +361,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * Check current column has modify o not.
+     * Check current column has modify or not.
      */
     public function isClean(?string $column = null): bool
     {
@@ -359,6 +387,9 @@ class Model implements \ArrayAccess, \IteratorAggregate
         return true;
     }
 
+    /**
+     * Check current coulmn has modify or not.
+     */
     public function isDirty(?string $column = null): bool
     {
         return !$this->isClean($column);
@@ -607,6 +638,8 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
+     * Fetch all records.
+     *
      * @return ModelCollection<static<TKey, TValue>>
      */
     public static function all(MyPDO $pdo): ModelCollection
@@ -652,6 +685,9 @@ class Model implements \ArrayAccess, \IteratorAggregate
 
     // private --------------------
 
+    /**
+     * Get column change status (compare with fresh record).
+     */
     private function changing(bool $change): bool
     {
         if ($change) {
@@ -696,6 +732,9 @@ class Model implements \ArrayAccess, \IteratorAggregate
         return $this->pdo->resultset();
     }
 
+    /**
+     * Execute query with where condition given.
+     */
     private function execute(Query $base_query): bool
     {
         $base_query->whereRef($this->where);
