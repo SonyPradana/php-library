@@ -14,11 +14,8 @@ use System\Database\MyQuery\Select;
 use System\Database\MyQuery\Where;
 
 /**
- * @template TKey of array-key
- * @template TValue
- *
- * @implements \ArrayAccess<TKey, TValue>
- * @implements \IteratorAggregate<TKey, TValue>
+ * @implements \ArrayAccess<array-key, mixed>
+ * @implements \IteratorAggregate<array-key, mixed>
  */
 class Model implements \ArrayAccess, \IteratorAggregate
 {
@@ -28,7 +25,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
 
     protected string $primery_key = 'id';
 
-    /** @var array<array<TKey, TValue>> */
+    /** @var array<array<array-key, mixed>> */
     protected $columns;
 
     /** @var string[] Hide from shoing column */
@@ -37,7 +34,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /** @var string[] Set Column cant be modify */
     protected $resistant = [];
 
-    /** @var array<array<TKey, TValue>> Orginal data from database */
+    /** @var array<array<array-key, mixed>> Orginat data from database */
     protected $fresh;
 
     protected ?Where $where = null;
@@ -58,7 +55,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     // magic ----------------------
 
     /**
-     * @param array<TKey, TValue> $column
+     * @param array<array-key, mixed> $column
      *
      * @final
      */
@@ -82,9 +79,9 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * @param array<array<TKey, TValue>> $column
-     * @param string[]                   $stash
-     * @param string[]                   $resistant
+     * @param array<array<array-key, mixed>> $column
+     * @param string[]                       $stash
+     * @param string[]                       $resistant
      *
      * @return static
      */
@@ -111,7 +108,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /**
      * Getter.
      *
-     * @return TValue
+     * @return mixed
      */
     public function __get(string $name)
     {
@@ -121,7 +118,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /**
      * Setter.
      *
-     * @param TValue $value
+     * @param mixed $value
      */
     public function __set(string $name, $value)
     {
@@ -147,7 +144,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /**
      * Setter.
      *
-     * @param TValue $value
+     * @param mixed $value
      *
      * @return static
      */
@@ -168,7 +165,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      *
      * @param mixed|null $default
      *
-     * @return TValue
+     * @return mixed
      */
     public function getter(string $key, $default = null)
     {
@@ -184,7 +181,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /**
      * Get value of primery key from first collumn/record.
      *
-     * @return TValue
+     * @return mixed
      *
      * @throws \Exception No records founds
      */
@@ -211,7 +208,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      *
      * @param int|string|null $key ByRef key
      *
-     * @return array<TKey, TValue>
+     * @return array<array-key, mixed>
      */
     public function first(&$key = null): array
     {
@@ -226,10 +223,11 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /**
      * Fetch query return as model collection.
      *
-     * @return ModelCollection<static<TKey, TValue>>
+     * @return ModelCollection<array-key, static>
      */
     public function get(): ModelCollection
     {
+        /** @var ModelCollection<array-key, static> */
         $collection = new ModelCollection([], $this);
         foreach ($this->columns as $column) {
             $where = new Where($this->table_name);
@@ -237,7 +235,6 @@ class Model implements \ArrayAccess, \IteratorAggregate
                 $where->equal($this->primery_key, $column[$this->primery_key]);
             }
 
-            /* @phpstan-ignore-next-line */
             $collection->push((new static($this->pdo, []))->setUp(
                 $this->table_name,
                 [$column],
@@ -398,7 +395,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /**
      * Get change (diff) between fresh and current column.
      *
-     * @return array<TKey, TValue>
+     * @return array<array-key, mixed>
      */
     public function changes(): array
     {
@@ -422,7 +419,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /**
      * Convert model column to array.
      *
-     * @return array<array<TKey, TValue>>
+     * @return array<array<array-key, mixed>>
      */
     public function toArray(): array
     {
@@ -521,7 +518,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     // array access --------------
 
     /**
-     * @param TKey $offset
+     * @param array-key $offset
      */
     public function offsetExists($offset): bool
     {
@@ -529,9 +526,9 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * @param TKey $offset
+     * @param array-key $offset
      *
-     * @return TValue|null
+     * @return mixed|null
      */
     #[\ReturnTypeWillChange]
     public function offsetGet($offset)
@@ -549,7 +546,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * @return \Traversable<TKey, TValue>
+     * @return \Traversable<array-key, mixed>
      */
     public function getIterator(): \Traversable
     {
@@ -577,8 +574,8 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /**
      * Find model using defined primery key.
      *
-     * @param TValue              $id
-     * @param array<TKey, TValue> $column
+     * @param mixed                   $id
+     * @param array<array-key, mixed> $column
      *
      * @throws \Exception cant inset data
      */
@@ -624,8 +621,8 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /**
      * Find model using costume equal.
      *
-     * @param TKey   $column_name
-     * @param TValue $value
+     * @param array-key $column_name
+     * @param mixed     $value
      */
     public static function equal($column_name, $value, MyPDO $pdo): static
     {
@@ -640,7 +637,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /**
      * Fetch all records.
      *
-     * @return ModelCollection<static<TKey, TValue>>
+     * @return ModelCollection<static<array-key, mixed>>
      */
     public static function all(MyPDO $pdo): ModelCollection
     {
@@ -655,7 +652,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /**
      * Get current column without stash.
      *
-     * @return array<array<TKey, TValue>>
+     * @return array<array<array-key, mixed>>
      */
     protected function getColumns(): array
     {
@@ -672,7 +669,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      *
      * @param int|string|null $key ByRef key
      *
-     * @return array<TKey, TValue>
+     * @return array<array-key, mixed>
      */
     protected function firstColumn(&$key = null): array
     {

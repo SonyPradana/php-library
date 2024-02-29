@@ -9,19 +9,16 @@ use System\Database\MyQuery\Delete;
 use System\Database\MyQuery\Update;
 
 /**
- * @template T of Model<array-key, TValue>
- * @template TValue
- *
- * @extends Collection<array-key, T>
+ * @extends Collection<array-key, Model>
  */
 class ModelCollection extends Collection
 {
-    /** @var T */
+    /** @var Model */
     private $model;
 
     /**
-     * @param iterable<array-key, T> $models
-     * @param T                      $of
+     * @param iterable<array-key, Model> $models
+     * @param Model                      $of
      */
     public function __construct($models, $of)
     {
@@ -32,7 +29,7 @@ class ModelCollection extends Collection
     /**
      * Get value of primery key from first collumn/record.
      *
-     * @return TValue[]
+     * @return mixed[]
      *
      * @throws \Exception No records founds
      */
@@ -59,7 +56,7 @@ class ModelCollection extends Collection
     /**
      * Global update (base on primerykey).
      *
-     * @param array<array-key, TValue> $values
+     * @param array<array-key, mixed> $values
      */
     public function update(array $values): bool
     {
