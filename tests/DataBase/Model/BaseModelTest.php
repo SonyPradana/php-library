@@ -167,8 +167,49 @@ final class BaseModelTest extends BaseConnection
         $this->createProfiles([$profile]);
 
         $user   = $this->user();
+        $result = $user->hasOne(Profile::class, 'user');
+        $this->assertEquals($profile, $result->first());
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanGetHasOneUsingMagicGetter()
+    {
+        // profile
+        $profile = [
+            'user'   => 'taylor',
+            'name'   => 'taylor otwell',
+            'gender' => 'male',
+        ];
+        $this->createProfileSchema();
+        $this->createProfiles([$profile]);
+
+        $user   = $this->user();
+        $this->assertEquals($profile, $user->profile);
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanGetHasOneWithTableName()
+    {
+        // profile
+        $profile = [
+            'user'   => 'taylor',
+            'name'   => 'taylor otwell',
+            'gender' => 'male',
+        ];
+        $this->createProfileSchema();
+        $this->createProfiles([$profile]);
+
+        $user   = $this->user();
         $result = $user->hasOne('profiles', 'user');
-        $this->assertEquals($profile, $result->toArray());
+        $this->assertEquals($profile, $result->first());
     }
 
     /**
@@ -196,8 +237,8 @@ final class BaseModelTest extends BaseConnection
         $this->createOrders($order);
 
         $user   = $this->user();
-        $result = $user->hasMany('orders', 'user');
-        $this->assertEquals($order, $result->toArray());
+        $result = $user->hasMany(Order::class, 'user');
+        $this->assertEquals($order, $result->toArrayArray());
     }
 
     /**
@@ -205,7 +246,64 @@ final class BaseModelTest extends BaseConnection
      *
      * @group database
      */
-    public function itCanCheckisClean()
+    public function itCanGetHasManyWithMagicGetter()
+    {
+        // order
+        $order = [
+            [
+                'id'     => '1',
+                'user'   => 'taylor',
+                'name'   => 'order 1',
+                'type'   => 'gadget',
+            ], [
+                'id'     => '3',
+                'user'   => 'taylor',
+                'name'   => 'order 2',
+                'type'   => 'gadget',
+            ],
+        ];
+        $this->createOrderSchema();
+        $this->createOrders($order);
+
+        $user   = $this->user();
+        $this->assertEquals($order, $user->orders);
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanGetHasManyWithTableName()
+    {
+        // order
+        $order = [
+            [
+                'id'     => '1',
+                'user'   => 'taylor',
+                'name'   => 'order 1',
+                'type'   => 'gadget',
+            ], [
+                'id'     => '3',
+                'user'   => 'taylor',
+                'name'   => 'order 2',
+                'type'   => 'gadget',
+            ],
+        ];
+        $this->createOrderSchema();
+        $this->createOrders($order);
+
+        $user   = $this->user();
+        $result = $user->hasMany(Order::class, 'user');
+        $this->assertEquals($order, $result->toArrayArray());
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanCheckisCleanWith()
     {
         $user = $this->user();
         $this->assertTrue($user->isClean(), 'Check all column');
@@ -540,4 +638,19 @@ class User extends Model
     protected string $primery_key = 'user';
     /** @var string[] Hide from shoing column */
     protected $stash = ['password'];
+
+    public function profile()
+    {
+        return $this->hasOne(Profile::class, 'user');
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'user');
+    }
+}
+
+class Order extends Model
+{
+    protected string $table_name = 'orders';
 }

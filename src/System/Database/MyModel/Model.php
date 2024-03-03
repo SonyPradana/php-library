@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace System\Database\MyModel;
 
-use System\Collection\CollectionImmutable;
 use System\Database\MyPDO;
 use System\Database\MyQuery;
 use System\Database\MyQuery\Bind;
@@ -112,6 +111,17 @@ class Model implements \ArrayAccess, \IteratorAggregate
      */
     public function __get(string $name)
     {
+        if (method_exists($this, $name)) {
+            $highorder = $this->{$name}();
+            if (is_a($highorder, Model::class)) {
+                return $highorder->first();
+            }
+
+            if (is_a($highorder, ModelCollection::class)) {
+                return $highorder->toArrayArray();
+            }
+        }
+
         return $this->getter($name);
     }
 
@@ -330,31 +340,59 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * @return CollectionImmutable<string, mixed>
+     * Get get model relation.
+     *
+     * @param class-string|string $model
+     *
+     * @return Model
      */
-    public function hasOne(string $table, string $ref = 'id')
+    public function hasOne($model, ?string $ref = null)
     {
-        $ref = MyQuery::from($this->table_name, $this->pdo)
-            ->select([$table . '.*'])
-            ->join(InnerJoin::ref($table, $this->primery_key, $ref))
+        if (class_exists($model)) {
+            $model      = new $model($this->pdo, []);
+            $table_name = $model->table_name;
+            $join_ref   = $ref ?? $model->primery_key;
+        } else {
+            $table_name = $model;
+            $join_ref   = $ref ?? $this->primery_key;
+            $model      = new Model($this->pdo, []);
+        }
+        $result   = MyQuery::from($this->table_name, $this->pdo)
+            ->select([$table_name . '.*'])
+            ->join(InnerJoin::ref($table_name, $this->primery_key, $join_ref))
             ->whereRef($this->where)
             ->single();
+        $model->columns = $model->fresh = [$result];
 
-        return new CollectionImmutable($ref);
+        return $model;
     }
 
     /**
-     * @return CollectionImmutable<string|int, mixed>
+     * Get get model relation.
+     *
+     * @param class-string|string $model
+     *
+     * @return ModelCollection<array-key, Model>
      */
-    public function hasMany(string $table, string $ref = 'id')
+    public function hasMany($model, ?string $ref = null)
     {
-        $ref = MyQuery::from($this->table_name, $this->pdo)
-            ->select([$table . '.*'])
-            ->join(InnerJoin::ref($table, $this->primery_key, $ref))
-            ->whereRef($this->where)
-            ->get();
+        if (class_exists($model)) {
+            $model      = new $model($this->pdo, []);
+            $table_name = $model->table_name;
+            $join_ref   = $ref ?? $model->primery_key;
+        } else {
+            $table_name = $model;
+            $join_ref   = $ref ?? $this->primery_key;
+            $model      = new Model($this->pdo, []);
+        }
+        $result = MyQuery::from($this->table_name, $this->pdo)
+             ->select([$table_name . '.*'])
+             ->join(InnerJoin::ref($table_name, $this->primery_key, $join_ref))
+             ->whereRef($this->where)
+             ->get();
+        $model->columns = $model->fresh = $result->toArray();
 
-        return new CollectionImmutable($ref->immutable());
+        return $model->get();
     }
 
     /**

@@ -43,18 +43,24 @@ class ModelCollection extends Collection
         return $primeryKeys;
     }
 
+    /**
+     *  Check every Model has clean column.
+     */
     public function isClean(?string $column = null): bool
     {
         return $this->every(fn ($model) => $model->isClean($column));
     }
 
+    /**
+     * Check every Model has dirty column.
+     */
     public function isDirty(?string $column = null): bool
     {
         return !$this->isClean($column);
     }
 
     /**
-     * Global update (base on primerykey).
+     * Update using query using model primery key.
      *
      * @param array<array-key, mixed> $values
      */
@@ -70,6 +76,9 @@ class ModelCollection extends Collection
         return $update->execute();
     }
 
+    /**
+     * Delete using query using model primery key.
+     */
     public function delete(): bool
     {
         $table_name  = (fn () => $this->{'table_name'})->call($this->model);
@@ -80,5 +89,21 @@ class ModelCollection extends Collection
         $delete->in($primery_key, $this->getPrimeryKey());
 
         return $delete->execute();
+    }
+
+    /**
+     * Convert array of model to pure array;.
+     *
+     * @return array<array-key, mixed>
+     */
+    public function toArrayArray(): array
+    {
+        /** @var array<array-key, mixed> */
+        $arr = [];
+        foreach ($this->collection as $model) {
+            $arr = array_merge($arr, $model->toArray());
+        }
+
+        return $arr;
     }
 }

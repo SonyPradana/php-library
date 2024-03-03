@@ -161,8 +161,27 @@ final class BaseMultyModelTest extends BaseConnection
         $this->createProfiles([$profile]);
 
         $user   = $this->users();
-        $result = $user->hasOne('profiles', 'user');
-        $this->assertEquals($profile, $result->toArray());
+        $this->assertEquals($profile, $user->profile()->first());
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanGetHasOneUsingMagicGetter()
+    {
+        // profile
+        $profile = [
+            'user'   => 'taylor',
+            'name'   => 'taylor otwell',
+            'gender' => 'male',
+        ];
+        $this->createProfileSchema();
+        $this->createProfiles([$profile]);
+
+        $user   = $this->users();
+        $this->assertEquals($profile, $user->profile);
     }
 
     /**
@@ -190,8 +209,8 @@ final class BaseMultyModelTest extends BaseConnection
         $this->createOrders($order);
 
         $user   = $this->users();
-        $result = $user->hasMany('orders', 'user');
-        $this->assertEquals($order, $result->toArray());
+        $result = $user->hasMany(Order::class, 'user');
+        $this->assertEquals($order, $result->toArrayArray());
     }
 
     /**
