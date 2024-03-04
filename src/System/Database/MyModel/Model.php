@@ -721,7 +721,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     // private --------------------
 
     /**
-     * Get column change status (compare with fresh record).
+     * Reverse fresh column with current column.
      */
     private function changing(bool $change): bool
     {
