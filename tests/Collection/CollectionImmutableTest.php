@@ -251,4 +251,34 @@ class CollectionImmutableTest extends TestCase
 
         $this->assertEquals(10, $coll->min('rank'));
     }
+
+    /**
+     * @test
+     */
+    public function itCanPluck()
+    {
+        $coll = [
+            ['user' => 'taylor'],
+            ['user' => 'nuno'],
+            ['user' => 'pradana'],
+        ];
+        $coll = new CollectionImmutable($coll);
+
+        $this->assertEquals(['taylor', 'nuno', 'pradana'], $coll->pluck('user'));
+    }
+
+    /**
+     * @test
+     */
+    public function itCanPluckKey()
+    {
+        $coll = [
+            ['id' => 1, 'user' => 'taylor'],
+            ['id' => 2, 'user' => 'nuno'],
+            ['id' => 3, 'user' => 'pradana'],
+        ];
+        $coll = new CollectionImmutable($coll);
+
+        $this->assertEquals([1 => 'taylor', 2 => 'nuno', 3 => 'pradana'], $coll->pluck('user', 'id'));
+    }
 }

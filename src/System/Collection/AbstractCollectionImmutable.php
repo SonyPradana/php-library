@@ -127,6 +127,33 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
         return array_values($this->collection);
     }
 
+    /**
+     * Puck given value by array key.
+     *
+     * @param TKey      $value Pluck key target as value
+     * @param TKey|null $key   Pluck key target as key
+     *
+     * @return array<TKey, TValue>
+     */
+    public function pluck($value, $key = null)
+    {
+        $results = [];
+
+        foreach ($this->collection as $item) {
+            $itemValue = is_array($item) ? $item[$value] : $item->{$value};
+
+            if (is_null($key)) {
+                $results[] = $itemValue;
+                continue;
+            }
+
+            $itemKey           = is_array($item) ? $item[$key] : $item->{$key};
+            $results[$itemKey] = $itemValue;
+        }
+
+        return $results;
+    }
+
     public function count(): int
     {
         return count($this->collection);
