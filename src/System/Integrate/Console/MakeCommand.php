@@ -163,6 +163,7 @@ class MakeCommand extends Command
         info('Creating Model class in ' . $model_location)->out(false);
 
         $class = new Generate($name);
+        $class->customizeTemplate("<?php\n\ndeclare(strict_types=1);\n{{before}}{{comment}}\n{{rule}}class\40{{head}}\n{\n{{body}}}{{end}}");
         $class->tabSize(4);
         $class->tabIndent(' ');
         $class->setEndWithNewLine();

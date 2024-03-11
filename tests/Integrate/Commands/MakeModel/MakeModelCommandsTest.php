@@ -7,8 +7,6 @@ namespace System\Test\Integrate\Commands\MakeCommandModel;
 use System\Integrate\Console\MakeCommand;
 use System\Test\Integrate\Commands\CommandTest;
 
-use function System\Console\ok;
-
 final class MakeModelCommandsTest extends CommandTest
 {
     protected function setUp(): void
@@ -95,5 +93,4 @@ final class MakeModelCommandsTest extends CommandTest
 
         $this->assertFails($exit);
     }
-
 }
