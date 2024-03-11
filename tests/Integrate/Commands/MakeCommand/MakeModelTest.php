@@ -7,7 +7,7 @@ namespace System\Test\Integrate\Commands\MakeCommandModel;
 use System\Integrate\Console\MakeCommand;
 use System\Test\Integrate\Commands\CommandTest;
 
-final class MakeModelCommandsTest extends CommandTest
+final class MakeModelTest extends CommandTest
 {
     protected function setUp(): void
     {
