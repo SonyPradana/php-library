@@ -39,7 +39,8 @@
         "files": [
             "tests/DataBase/BaseConnection.php",
             "tests/DataBase/QueryStringTest.php",
-            "tests/DataBase/RealDatabaseConnectionTest.php"
+            "tests/DataBase/RealDatabaseConnectionTest.php",
+            "tests/Integrate/Commands/CommandTest.php"
         ]
     },
     "extra": {

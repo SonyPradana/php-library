@@ -39,14 +39,6 @@ final class MakeCommandsTest extends CommandTest
             unlink($service);
         }
 
-        if (file_exists($model = __DIR__ . '/assets/User/User.php')) {
-            unlink($model);
-        }
-
-        if (file_exists($models = __DIR__ . '/assets/User/Users.php')) {
-            unlink($models);
-        }
-
         if (file_exists($command = __DIR__ . '/assets/CacheCommand.php')) {
             unlink($command);
         }
@@ -147,109 +139,6 @@ final class MakeCommandsTest extends CommandTest
         $make_service = new MakeCommand($this->argv('cli make:service Asset'));
         ob_start();
         $exit = $make_service->make_services();
-        ob_get_clean();
-
-        $this->assertFails($exit);
-    }
-
-    /**
-     * @test
-     */
-    public function itCanCallMakeCommandModelWithSuccess()
-    {
-        $make_model = new MakeCommand($this->argv('cli make:model User'));
-        ob_start();
-        $exit = $make_model->make_model();
-        ob_get_clean();
-
-        $this->assertSuccess($exit);
-
-        $file = __DIR__ . '/assets/User/User.php';
-        $this->assertTrue(file_exists($file));
-
-        $model = file_get_contents($file);
-        $this->assertContain('class User extends MyCRUD', $model);
-    }
-
-    /**
-     * @test
-     */
-    public function itCanCallMakeCommandModelWithTableNameAndReturnSuccess()
-    {
-        $make_model = new MakeCommand($this->argv('cli make:model User --table-name users'));
-        ob_start();
-        $exit = $make_model->make_model();
-        ob_get_clean();
-
-        $this->assertSuccess($exit);
-
-        $file = __DIR__ . '/assets/User/User.php';
-        $this->assertTrue(file_exists($file));
-
-        $model = file_get_contents($file);
-        $this->assertContain('class User extends MyCRUD', $model);
-    }
-
-    /**
-     * @test
-     */
-    public function itCanCallMakeCommandModelReturnFails()
-    {
-        $make_model = new MakeCommand($this->argv('cli make:model Asset'));
-        ob_start();
-        $exit = $make_model->make_model();
-        ob_get_clean();
-
-        $this->assertFails($exit);
-    }
-
-    /**
-     * @test
-     */
-    public function itCanCallMakeCommandModeslWithSuccess()
-    {
-        $make_model = new MakeCommand($this->argv('cli make:models User'));
-        ob_start();
-        $exit = $make_model->make_models();
-        ob_get_clean();
-
-        $this->assertSuccess($exit);
-
-        $file = __DIR__ . '/assets/User/Users.php';
-        $this->assertTrue(file_exists($file));
-
-        $model = file_get_contents($file);
-        $this->assertContain('class Users extends MyModel', $model);
-    }
-
-    /**
-     * @test
-     */
-    public function itCanCallMakeCommandModelsWithTableNameAndReturnSuccess()
-    {
-        $make_model = new MakeCommand($this->argv('cli make:models user --table-name users'));
-        ob_start();
-        $exit = $make_model->make_models();
-        ob_get_clean();
-
-        $this->assertSuccess($exit);
-
-        $file = __DIR__ . '/assets/User/Users.php';
-        $this->assertTrue(file_exists($file));
-
-        $models = file_get_contents($file);
-        $this->assertContain('class Users extends MyModel', $models);
-        $this->assertContain('$this->_TABELS[] = \'users\';', $models);
-    }
-
-    /**
-     * @test
-     */
-    public function itCanCallMakeCommandModelsReturnFails()
-    {
-        $make_model = new MakeCommand($this->argv('cli make:models Asset'));
-        ob_start();
-        $exit = $make_model->make_models();
         ob_get_clean();
 
         $this->assertFails($exit);

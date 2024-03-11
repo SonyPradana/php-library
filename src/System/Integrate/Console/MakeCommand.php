@@ -7,6 +7,8 @@ namespace System\Integrate\Console;
 use System\Console\Command;
 use System\Console\Traits\CommandTrait;
 use System\Support\Facades\DB;
+use System\Template\Generate;
+use System\Template\Property;
 
 use function System\Console\fail;
 use function System\Console\info;
@@ -16,6 +18,7 @@ use function System\Console\warn;
 
 /**
  * @property bool $update
+ * @property bool $force
  */
 class MakeCommand extends Command
 {
@@ -40,9 +43,6 @@ class MakeCommand extends Command
             'pattern' => 'make:model',
             'fn'      => [MakeCommand::class, 'make_model'],
         ], [
-            'pattern' => 'make:models',
-            'fn'      => [MakeCommand::class, 'make_models'],
-        ], [
             'pattern' => 'make:command',
             'fn'      => [MakeCommand::class, 'make_command'],
         ], [
@@ -62,20 +62,19 @@ class MakeCommand extends Command
                 'make:view'       => 'Generate new view',
                 'make:service'    => 'Generate new service',
                 'make:model'      => 'Generate new model',
-                'make:models'     => 'Generate new models',
                 'make:command'    => 'Generate new command',
                 'make:migration'  => 'Generate new migration file',
             ],
             'options'   => [
-                '--table-name' => 'Set table column when creating model/models.',
+                '--table-name' => 'Set table column when creating model.',
                 '--update'     => 'Generate migration file with alter (update).',
+                '--force'      => 'Force to creating template.',
             ],
             'relation'  => [
                 'make:controller' => ['[controller_name]'],
                 'make:view'       => ['[view_name]'],
                 'make:service'    => ['[service_name]'],
-                'make:model'      => ['[model_name]', '--table-name'],
-                'make:models'     => ['[models_name]', '--table-name'],
+                'make:model'      => ['[model_name]', '--table-name', '--force'],
                 'make:command'    => ['[command_name]'],
                 'make:migration'  => ['[table_name]', '--update'],
             ],
@@ -151,63 +150,55 @@ class MakeCommand extends Command
     public function make_model(): int
     {
         info('Making model file...')->out(false);
+        $name           = ucfirst($this->OPTION[0]);
+        $model_location = model_path() . $name . '.php';
 
-        $name = ucfirst($this->OPTION[0]);
+        if (file_exists($model_location) && false === $this->option('force', false)) {
+            warn('File already exist')->out(false);
+            fail('Failed Create model file')->out();
 
-        $success = $this->makeTemplate($name, [
-            'template_location' => __DIR__ . '/stubs/model',
-            'save_location'     => model_path(),
-            'pattern'           => '__model__',
-            'surfix'            => '.php',
-        ], $name . '/');
-        $file_name = model_path() . $name . '/' . $name . '.php';
+            return 1;
+        }
 
+        info('Creating Model class in ' . $model_location)->out(false);
+
+        $class = new Generate($name);
+        $class->tabSize(4);
+        $class->tabIndent(' ');
+        $class->setEndWithNewLine();
+        $class->namespace('App\\Models\\' . $name);
+        $class->uses(['System\Database\MyModel\Model']);
+        $class->extend('Model');
+
+        $primery_key = 'id';
+        $table_name  = $this->OPTION[0];
         if ($this->option('table-name', false)) {
             $table_name = $this->option('table-name');
-            $success    = $this->FillModelDatabase($file_name, $table_name);
+            info("Getting Information from table {$table_name}.")->out(false);
+            try {
+                foreach (DB::table($table_name)->info() as $column) {
+                    $class->addComment('@property mixed $' . $column['COLUMN_NAME']);
+                    if ('PRI' === $column['COLUMN_KEY']) {
+                        $primery_key = $column['COLUMN_NAME'];
+                    }
+                }
+            } catch (\Throwable $th) {
+                warn($th->getMessage())->out(false);
+            }
         }
 
-        if ($success) {
-            ok('Finish created model file')->out();
+        $class->addProperty('table_name')->visibility(Property::PROTECTED_)->dataType('string')->expecting(" = '{$table_name}'");
+        $class->addProperty('primery_key')->visibility(Property::PROTECTED_)->dataType('string')->expecting("= '{$primery_key}'");
 
-            return 0;
+        if (false === file_put_contents($model_location, $class->generate())) {
+            fail('Failed Create model file')->out();
+
+            return 1;
         }
 
-        fail('Failed Create model file')->out();
+        ok("Finish created model file `App\\Models\\{$name}`")->out();
 
-        return 1;
-    }
-
-    public function make_models(): int
-    {
-        info('Making models file...')->out(false);
-
-        $name = ucfirst($this->OPTION[0]);
-
-        $success = $this->makeTemplate($name, [
-            'template_location' => __DIR__ . '/stubs/models',
-            'save_location'     => model_path(),
-            'pattern'           => '__models__',
-            'surfix'            => 's.php',
-        ], $name . '/');
-
-        if ($this->option('table-name', false)) {
-            $table_name = $this->option('table-name');
-            $this->FillModelsDatabase(
-                model_path() . $name . '/' . $name . 's.php',
-                $table_name
-            );
-        }
-
-        if ($success) {
-            ok('Finish created models file')->out();
-
-            return 0;
-        }
-
-        fail('Failed Create model file')->out();
-
-        return 1;
+        return 0;
     }
 
     /**
@@ -300,63 +291,5 @@ class MakeCommand extends Command
         ok('Success create migration file.')->out();
 
         return 0;
-    }
-
-    /**
-     * Fill template with property
-     * base on databe table.
-     *
-     * @param string $model_location File location (models)
-     * @param string $table_name     Tabel name to sync with models
-     *
-     * @return bool True if templete success copie
-     */
-    private function FillModelDatabase(string $model_location, string $table_name)
-    {
-        info($model_location)->out(false);
-        info($table_name)->out(false);
-
-        $template_column = '';
-        $primery_key     = 'id';
-        try {
-            $columns = [];
-            foreach (DB::table($table_name)->info() as $column) {
-                $columns[] = "'{$column['COLUMN_NAME']}' => null,";
-                if ('PRI' === $column['COLUMN_KEY']) {
-                    $primery_key = $column['COLUMN_NAME'];
-                }
-            }
-            $template_column = implode("\n\t\t", $columns);
-        } catch (\Throwable $th) {
-            warn($th->getMessage())->out(false);
-        }
-
-        $getContent = file_get_contents($model_location);
-        $getContent = str_replace('__table__', $table_name, $getContent);
-        $getContent = str_replace('// __column__', $template_column, $getContent);
-        $getContent = str_replace('__primery__', $primery_key, $getContent);
-        $isCopied   = file_put_contents($model_location, $getContent);
-
-        return $isCopied === false ? false : true;
-    }
-
-    /**
-     * Fill template with property
-     * base on database table.
-     *
-     * @param string $model_location File location (models)
-     * @param string $table_name     Tabel name to sync with models
-     *
-     * @return bool True if templete success copie
-     */
-    private function FillModelsDatabase(string $model_location, string $table_name)
-    {
-        info($model_location)->out();
-        info($table_name)->out();
-        $getContent = file_get_contents($model_location);
-        $getContent = str_replace('__table__', $table_name, $getContent);
-        $isCopied   = file_put_contents($model_location, $getContent);
-
-        return $isCopied === false ? false : true;
     }
 }

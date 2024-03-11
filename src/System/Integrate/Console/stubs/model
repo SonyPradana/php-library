@@ -3,21 +3,14 @@
 
 namespace App\Models\__model__;
 
-use System\Database\MyCRUD;
-use System\Support\Facades\PDO;
+use System\Database\MyModel\Model;
 
-class __model__ extends MyCRUD
+/**
+ * property:
+ */
+class __model__ extends Model
 {
-    protected $TABLE_NAME = '__table__';
+  protected string $table_name = '__table__';
+  protected string $primery_key = '__primery__';
 
-    protected $PRIMERY_KEY = '__primery__';
-    
-    protected $COLUMNS = [
-        // __column__
-    ];
-    
-    public function __construct()
-    {
-        $this->PDO = PDO::instance();
-    }
 }
