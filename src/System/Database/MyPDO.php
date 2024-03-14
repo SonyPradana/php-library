@@ -19,6 +19,19 @@ class MyPDO
     protected $configs;
 
     /**
+     * Query prepare statment;.
+     */
+    protected string $query;
+
+    /**
+     * Log query when execute and fatching.
+     * - query.
+     *
+     * @var array<int, array<string, mixed>>
+     */
+    protected $logs = [];
+
+    /**
      * @param array<string, string> $configs
      */
     public function __construct(array $configs)
@@ -89,7 +102,7 @@ class MyPDO
      */
     public function query(string $query): self
     {
-        $this->stmt = $this->dbh->prepare($query);
+        $this->stmt = $this->dbh->prepare($this->query = $query);
 
         return $this;
     }
@@ -135,7 +148,13 @@ class MyPDO
      */
     public function execute()
     {
-        return $this->stmt->execute();
+        $start    = microtime(true);
+        $execute  = $this->stmt->execute();
+        $elapsed  = round((microtime(true) - $start) * 1000, 2);
+
+        $this->addLog($this->query, $elapsed);
+
+        return $execute;
     }
 
     /**
@@ -233,5 +252,31 @@ class MyPDO
     public function cancelTransaction(): bool
     {
         return $this->dbh->rollBack();
+    }
+
+    protected function addLog(string $query, float $elapsed_time): void
+    {
+        $this->logs[] = [
+            'query' => $query,
+            'time'  => $elapsed_time,
+        ];
+    }
+
+    /**
+     * Flush logs query.
+     */
+    public function flushLogs(): void
+    {
+        $this->logs = [];
+    }
+
+    /**
+     * Get logs query.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getLogs(): array
+    {
+        return $this->logs;
     }
 }
