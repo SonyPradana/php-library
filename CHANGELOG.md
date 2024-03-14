@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.29.0] - 2024-03-15
+### Added
+- Rewrite `Model::class` merge `MyModel::class` and `MyCRUD::class`, adding without deprecated/removing (yet).
+- Added `Collection::pluck()` pluck collection with key.
+- Added `MyPdo::logs` to get query logs and time execution.
+
+### Changed
+- Change stub file for `Model::class` default using `Model::class`.
+
+### Removed
+- Removed stub for `MyCrud::class` aka `Model` and `MyModel::class` aka `Models`.
+
+
 ## [0.28.0] - 2024-02-11
 ### Changed
 - Changed Tempaltor required dolar sign to declare variable (name, each, set and if).
