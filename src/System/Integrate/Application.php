@@ -200,10 +200,10 @@ final class Application extends Container
         // check file exis
         $configs = $this->defaultConfigs();
         $paths   = [
-           'app.config.php',
-           'database.config.php',
-           'pusher.config.php',
-           'cachedriver.config.php',
+            'app.config.php',
+            'database.config.php',
+            'pusher.config.php',
+            'cachedriver.config.php',
         ];
         foreach ($paths as $path) {
             $file_path = $config_path . $path;

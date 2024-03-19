@@ -45,17 +45,17 @@ class SeedCommand extends Command
     public function printHelp(): array
     {
         return [
-          'commands'  => [
-            'db:seed'   => 'Run seeding',
-            'make:seed' => 'Create new seeder class',
-          ],
-          'options'   => [
-            '--class'      => 'Target class (will add `Database\\Seeders\\`)',
-            '--name-space' => 'Target class with full namespace',
-          ],
-          'relation'  => [
-            'db:seed' => ['--class', '--name-space'],
-          ],
+            'commands'  => [
+                'db:seed'   => 'Run seeding',
+                'make:seed' => 'Create new seeder class',
+            ],
+            'options'   => [
+                '--class'      => 'Target class (will add `Database\\Seeders\\`)',
+                '--name-space' => 'Target class with full namespace',
+            ],
+            'relation'  => [
+                'db:seed' => ['--class', '--name-space'],
+            ],
         ];
     }
 
@@ -67,9 +67,9 @@ class SeedCommand extends Command
 
         /* @var bool */
         return (new Prompt(style('Runing seeder in production?')->textRed(), [
-                'yes' => fn () => true,
-                'no'  => fn () => false,
-            ], 'no'))
+            'yes' => fn () => true,
+            'no'  => fn () => false,
+        ], 'no'))
             ->selection([
                 style('yes')->textDim(),
                 ' no',

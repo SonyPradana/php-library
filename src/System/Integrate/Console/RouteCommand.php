@@ -36,11 +36,11 @@ class RouteCommand extends Command
     public function printHelp()
     {
         return [
-          'commands'  => [
-            'route:list' => 'Get route list information',
-          ],
-          'options'   => [],
-          'relation'  => [],
+            'commands'  => [
+                'route:list' => 'Get route list information',
+            ],
+            'options'   => [],
+            'relation'  => [],
         ];
     }
 
