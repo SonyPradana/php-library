@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Models\User;
+namespace App\Models;
 
 use System\Database\MyModel\Model;
 

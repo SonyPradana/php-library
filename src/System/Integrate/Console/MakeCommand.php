@@ -167,7 +167,7 @@ class MakeCommand extends Command
         $class->tabSize(4);
         $class->tabIndent(' ');
         $class->setEndWithNewLine();
-        $class->namespace('App\\Models\\' . $name);
+        $class->namespace('App\\Models');
         $class->uses(['System\Database\MyModel\Model']);
         $class->extend('Model');
 
