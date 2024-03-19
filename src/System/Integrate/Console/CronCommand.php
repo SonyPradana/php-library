@@ -40,13 +40,13 @@ class CronCommand extends Command
     public function printHelp()
     {
         return [
-          'commands'  => [
-            'cron'      => 'Run cron job (all shadule)',
-            'cron:work' => 'Run virtual cron job in terminal (ansync)',
-            'cron:list' => 'Get list of shadule',
-          ],
-          'options'   => [],
-          'relation'  => [],
+            'commands'  => [
+                'cron'      => 'Run cron job (all shadule)',
+                'cron:work' => 'Run virtual cron job in terminal (ansync)',
+                'cron:list' => 'Get list of shadule',
+            ],
+            'options'   => [],
+            'relation'  => [],
         ];
     }
 

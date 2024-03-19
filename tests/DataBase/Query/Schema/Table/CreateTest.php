@@ -85,8 +85,8 @@ final class CreateTest extends \QueryStringTest
     {
         $schema = new Create('testing_db', 'test', $this->pdo_schame);
         $schema->collumns([
-                (new Column())->raw('PersonID int'),
-                (new Column())->raw('LastName varchar(255)'),
+            (new Column())->raw('PersonID int'),
+            (new Column())->raw('LastName varchar(255)'),
         ]);
         $schema->primaryKey('PersonID');
 

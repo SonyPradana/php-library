@@ -76,36 +76,36 @@ class MigrationCommand extends Command
     public function printHelp()
     {
         return [
-          'commands'  => [
-            'migrate'                  => 'Run migration (up)',
-            'migrate:fresh'            => 'Drop database and run migrations',
-            'migrate:reset'            => 'Rolling back all migrations (down)',
-            'migrate:refresh'          => 'Rolling back and run migration all',
-            'migrate:rollback'         => 'Rolling back last migrations (down)',
-            'migrate:init'             => 'Initialize migartion table',
-            'migrate:status'           => 'Show migartion status.',
-            'database:create'          => 'Create database',
-            'database:drop'            => 'Drop database',
-            'database:show'            => 'Show database table',
-          ],
-          'options'   => [
-            '--take'              => 'Number of migrations to be run.',
-            '--batch'             => 'Batch migration excution.',
-            '--dry-run'           => 'Excute migration but olny get query output.',
-            '--force'             => 'Force runing migration/database query in production.',
-            '--seed'              => 'Run seeder after migration.',
-            '--seed-namespace'    => 'Run seeder after migration using class namespace.',
-            '--yes'               => 'Accept it without having it ask any questions',
-          ],
-          'relation'  => [
-            'migrate'                   => ['--take', '--seed', '--dry-run', '--force'],
-            'migrate:fresh'             => ['--seed', '--dry-run', '--force'],
-            'migrate:reset'             => ['--dry-run', '--force'],
-            'migrate:refresh'           => ['--seed', '--dry-run', '--force'],
-            'migrate:rollback'          => ['--batch', '--take', '--dry-run', '--force'],
-            'database:create'           => ['--force'],
-            'database:drop'             => ['--force'],
-          ],
+            'commands'  => [
+                'migrate'                  => 'Run migration (up)',
+                'migrate:fresh'            => 'Drop database and run migrations',
+                'migrate:reset'            => 'Rolling back all migrations (down)',
+                'migrate:refresh'          => 'Rolling back and run migration all',
+                'migrate:rollback'         => 'Rolling back last migrations (down)',
+                'migrate:init'             => 'Initialize migartion table',
+                'migrate:status'           => 'Show migartion status.',
+                'database:create'          => 'Create database',
+                'database:drop'            => 'Drop database',
+                'database:show'            => 'Show database table',
+            ],
+            'options'   => [
+                '--take'              => 'Number of migrations to be run.',
+                '--batch'             => 'Batch migration excution.',
+                '--dry-run'           => 'Excute migration but olny get query output.',
+                '--force'             => 'Force runing migration/database query in production.',
+                '--seed'              => 'Run seeder after migration.',
+                '--seed-namespace'    => 'Run seeder after migration using class namespace.',
+                '--yes'               => 'Accept it without having it ask any questions',
+            ],
+            'relation'  => [
+                'migrate'                   => ['--take', '--seed', '--dry-run', '--force'],
+                'migrate:fresh'             => ['--seed', '--dry-run', '--force'],
+                'migrate:reset'             => ['--dry-run', '--force'],
+                'migrate:refresh'           => ['--seed', '--dry-run', '--force'],
+                'migrate:rollback'          => ['--batch', '--take', '--dry-run', '--force'],
+                'database:create'           => ['--force'],
+                'database:drop'             => ['--force'],
+            ],
         ];
     }
 
@@ -122,9 +122,9 @@ class MigrationCommand extends Command
 
         /* @var bool */
         return (new Prompt(style('Runing migration/database in production?')->textRed(), [
-                'yes' => fn () => true,
-                'no'  => fn () => false,
-            ], 'no'))
+            'yes' => fn () => true,
+            'no'  => fn () => false,
+        ], 'no'))
             ->selection([
                 style('yes')->textDim(),
                 ' no',
