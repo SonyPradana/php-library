@@ -49,7 +49,7 @@ class SectionTemplator extends AbstractTemplatorParse
                     }
                 }
 
-                return true;
+                return '';
             },
             $template
         );
