@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\View\Templator;
 
+use System\Text\Str;
 use System\View\AbstractTemplatorParse;
 
 class SectionTemplator extends AbstractTemplatorParse
@@ -34,6 +35,22 @@ class SectionTemplator extends AbstractTemplatorParse
         $template = preg_replace_callback(
             '/{%\s*section\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}(.*?){%\s*endsection\s*%}/s',
             fn ($matches) => $this->sections[$matches[1]] = trim($matches[2]),
+            $template
+        );
+
+        $template = preg_replace_callback(
+            '/{%\s*sections\s*\\s*%}(.*?){%\s*endsections\s*%}/s',
+            function ($matches) {
+                $lines = explode("\n", $matches[1]);
+                foreach ($lines as $line) {
+                    if (Str::contains($line, ':')) {
+                        $current                           = explode(':', trim($line));
+                        $this->sections[trim($current[0])] = trim($current[1]);
+                    }
+                }
+
+                return '';
+            },
             $template
         );
 
