@@ -120,6 +120,22 @@ if (!function_exists('commands_path')) {
     }
 }
 
+if (!function_exists('storage_path')) {
+    /**
+     * Get aplication storage path, base on config file.
+     *
+     * @param string $surfix_path Add string end of path
+     *
+     * @return string storage path folder
+     */
+    function storage_path(string $surfix_path = ''): string
+    {
+        $path = app()->storage_path() . $surfix_path;
+
+        return $path;
+    }
+}
+
 if (!function_exists('cache_path')) {
     /**
      * Get aplication cache path, base on config file.
