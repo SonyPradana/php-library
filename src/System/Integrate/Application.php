@@ -68,6 +68,11 @@ final class Application extends Container
     private $command_path;
 
     /**
+     * Storage_path.
+     */
+    private string $storage_path;
+
+    /**
      * Cache path.
      *
      * @var string
@@ -224,7 +229,7 @@ final class Application extends Container
         $this->setContollerPath($configs['CONTROLLER_PATH']);
         $this->setServicesPath($configs['SERVICES_PATH']);
         $this->setComponentPath($configs['COMPONENT_PATH']);
-        $this->setCommandPath($configs['COMMNAD_PATH']);
+        $this->setCommandPath($configs['COMMAND_PATH']);
         $this->setCachePath($configs['CACHE_PATH']);
         $this->setConfigPath($configs['CONFIG']);
         $this->setMiddlewarePath($configs['MIDDLEWARE']);
@@ -232,6 +237,7 @@ final class Application extends Container
         $this->setMigrationPath($configs['MIGRATION_PATH']);
         $this->setPublicPath($configs['PUBLIC_PATH']);
         $this->setSeederPath($configs['SEEDER_PATH']);
+        $this->setStoragePath($configs['STORAGE_PATH']);
         // pusher config
         $this->set('config.pusher_id', $configs['PUSHER_APP_ID']);
         $this->set('config.pusher_key', $configs['PUSHER_APP_KEY']);
@@ -258,18 +264,20 @@ final class Application extends Container
             'APP_KEY'               => '',
             'ENVIRONMENT'           => 'dev',
 
-            'MODEL_PATH'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR,
-            'VIEW_PATH'             => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
-            'CONTROLLER_PATH'       => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR,
-            'SERVICES_PATH'         => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'services' . DIRECTORY_SEPARATOR,
-            'COMPONENT_PATH'        => DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR,
-            'COMMNAD_PATH'          => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'commands' . DIRECTORY_SEPARATOR,
-            'CACHE_PATH'            => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR,
-            'CONFIG'                => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR,
-            'MIDDLEWARE'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'middleware' . DIRECTORY_SEPARATOR,
+            'COMMAND_PATH'          => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Commands' . DIRECTORY_SEPARATOR,
+            'CONTROLLER_PATH'       => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR,
+            'MODEL_PATH'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR,
+            'MIDDLEWARE'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Middlewares' . DIRECTORY_SEPARATOR,
             'SERVICE_PROVIDER'      => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Providers' . DIRECTORY_SEPARATOR,
-            'MIGRATION_PATH'        => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migrations' . DIRECTORY_SEPARATOR,
+            'CONFIG'                => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR,
+            'SERVICES_PATH'         => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'services' . DIRECTORY_SEPARATOR,
+            'VIEW_PATH'             => DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
+            'COMPONENT_PATH'        => DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR,
+            'STORAGE_PATH'          => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR,
+            'CACHE_PATH'            => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR,
+            'CACHE_VIEW_PATH'       => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR,
             'PUBLIC_PATH'           => DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR,
+            'MIGRATION_PATH'        => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migration' . DIRECTORY_SEPARATOR,
             'SEEDER_PATH'           => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'seeders' . DIRECTORY_SEPARATOR,
 
             'PROVIDERS'             => [
@@ -437,6 +445,21 @@ final class Application extends Container
     {
         $this->command_path = $this->base_path . $path;
         $this->set('path.command', $this->command_path);
+
+        return $this;
+    }
+
+    /**
+     * Set storage path.
+     *
+     * @param string $path Storage path
+     *
+     * @return self
+     */
+    public function setStoragePath(string $path)
+    {
+        $this->storage_path = $this->base_path . $path;
+        $this->set('path.storage', $this->storage_path);
 
         return $this;
     }
@@ -612,6 +635,16 @@ final class Application extends Container
     public function command_path()
     {
         return $this->get('path.command');
+    }
+
+    /**
+     * Get storage path.
+     *
+     * @return string
+     */
+    public function storage_path()
+    {
+        return $this->get('path.storage');
     }
 
     /**
