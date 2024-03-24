@@ -3,7 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use System\Integrate\Application;
 
-final class FacedeTest extends TestCase
+final class FacadeTest extends TestCase
 {
     /** @test */
     final public function itCanCallstatic()
