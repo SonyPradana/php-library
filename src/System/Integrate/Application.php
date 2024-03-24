@@ -229,7 +229,7 @@ final class Application extends Container
         $this->setContollerPath($configs['CONTROLLER_PATH']);
         $this->setServicesPath($configs['SERVICES_PATH']);
         $this->setComponentPath($configs['COMPONENT_PATH']);
-        $this->setCommandPath($configs['COMMNAD_PATH']);
+        $this->setCommandPath($configs['COMMAND_PATH']);
         $this->setCachePath($configs['CACHE_PATH']);
         $this->setConfigPath($configs['CONFIG']);
         $this->setMiddlewarePath($configs['MIDDLEWARE']);
@@ -264,7 +264,7 @@ final class Application extends Container
             'APP_KEY'               => '',
             'ENVIRONMENT'           => 'dev',
 
-            'COMMNAD_PATH'          => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Commands' . DIRECTORY_SEPARATOR,
+            'COMMAND_PATH'          => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Commands' . DIRECTORY_SEPARATOR,
             'CONTROLLER_PATH'       => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR,
             'MODEL_PATH'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR,
             'MIDDLEWARE'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Middlewares' . DIRECTORY_SEPARATOR,
