@@ -153,6 +153,13 @@ final class Application extends Container
     private $isBooted = false;
 
     /**
+     * Terminate callback register.
+     *
+     * @var callable[]
+     */
+    private $terminateCallback = [];
+
+    /**
      * Contructor.
      *
      * @param string $base_path application path
@@ -825,5 +832,31 @@ final class Application extends Container
         $this->providers[] = $provider_class_name;
 
         return $provider;
+    }
+
+    /*
+     * Register terminating callbacks.
+     *
+     * @param callback $terminateCallback
+     */
+    public function registerTerminate($terminateCallback): self
+    {
+        $this->registerTerminate[] = $terminateCallback;
+
+        return $this;
+    }
+
+    /**
+     * Terminate the application.
+     */
+    public function terminate(): void
+    {
+        $index = 0;
+
+        while ($index < count($this->registerTerminate)) {
+            $this->call($this->registerTerminate[$index]);
+
+            $index++;
+        }
     }
 }

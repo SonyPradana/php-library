@@ -81,6 +81,24 @@ class ApplicationTest extends TestCase
         $this->assertTrue(Request::hasMacro('upload'));
     }
 
+    /**
+     * @test
+     */
+    public function itCanTerminateAfterApplicationDone()
+    {
+        $app = new Application('/');
+        $app->registerTerminate(static function () {
+            echo 'terminated.';
+        });
+        ob_start();
+        echo 'application started.';
+        echo 'application ended.';
+        $app->terminate();
+        $out = ob_get_clean();
+
+        $this->assertEquals('application started.application ended.terminated.', $out);
+    }
+
     private function defaultConfigs()
     {
         return [
