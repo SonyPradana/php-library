@@ -841,7 +841,7 @@ final class Application extends Container
      */
     public function registerTerminate($terminateCallback): self
     {
-        $this->registerTerminate[] = $terminateCallback;
+        $this->terminateCallback[] = $terminateCallback;
 
         return $this;
     }
@@ -853,8 +853,8 @@ final class Application extends Container
     {
         $index = 0;
 
-        while ($index < count($this->registerTerminate)) {
-            $this->call($this->registerTerminate[$index]);
+        while ($index < count($this->terminateCallback)) {
+            $this->call($this->terminateCallback[$index]);
 
             $index++;
         }
