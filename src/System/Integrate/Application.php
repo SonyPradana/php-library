@@ -834,10 +834,10 @@ final class Application extends Container
         return $provider;
     }
 
-    /*
+    /**
      * Register terminating callbacks.
      *
-     * @param callback $terminateCallback
+     * @param callable $terminateCallback
      */
     public function registerTerminate($terminateCallback): self
     {
