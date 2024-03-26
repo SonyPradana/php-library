@@ -7,16 +7,17 @@ namespace System\Integrate\Http;
 use System\Container\Container;
 use System\Http\Request;
 use System\Http\Response;
+use System\Router\Router;
 
 class Karnel
 {
     /** @var Container */
     protected $app;
 
-    /** @var array<int, class-string> Global middleware */
+    /** @var array<int, class-string|callable> Global middleware */
     protected $middleware = [];
 
-    /** @var array<int, class-string> Middleware has register */
+    /** @var array<int, class-string|callable> Middleware has register */
     protected $middleware_used = [];
 
     /**
@@ -56,7 +57,7 @@ class Karnel
      */
     public function terminate(Request $request, Response $response): void
     {
-        $middleware = $this->dispatcher($request)['middleware'];
+        $middleware = $this->dispatcherMiddleware($request) ?? [];
         foreach (array_merge($this->middleware, $middleware) as $middleware) {
             if (method_exists($middleware, 'terminate')) {
                 $this->app->call([$middleware, 'terminate'], ['request' => $request, 'response' => $response]);
@@ -96,6 +97,16 @@ class Karnel
      */
     protected function dispatcher(Request $request): array
     {
-        return ['callable' => new Response(), 'parameters' => [], 'middleware'];
+        return ['callable' => new Response(), 'parameters' => [], 'middleware' => []];
+    }
+
+    /**
+     * Dispatch to get requets middleware.
+     *
+     * @return array<int, class-string|callable>|null
+     */
+    protected function dispatcherMiddleware(Request $request)
+    {
+        return Router::current()['middleware'] ?? [];
     }
 }

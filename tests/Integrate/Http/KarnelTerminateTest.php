@@ -23,25 +23,21 @@ final class KarnelTerminateTest extends TestCase
         );
 
         $this->karnel = new class($this->app) extends Karnel {
-            protected function dispatcher(Request $request): array
+            public function handle(Request $request)
+            {
+                return new Response('ok');
+            }
+
+            protected function dispatcherMiddleware(Request $request)
             {
                 return [
-                    'callable'   => fn () => new Response('ok', 200),
-                    'parameters' => [],
-                    'middleware' => [
-                        new class() {
-                            public function handle(Request $request, Closure $next): Response
-                            {
-                                return $next($request);
-                            }
-
-                            public function terminate(Request $request, Response $respone)
-                            {
-                                echo $request->getUrl();
-                                echo $respone->getContent();
-                            }
-                        },
-                    ],
+                    new class() {
+                        public function terminate(Request $request, Response $respone)
+                        {
+                            echo $request->getUrl();
+                            echo $respone->getContent();
+                        }
+                    },
                 ];
             }
         };
@@ -58,7 +54,7 @@ final class KarnelTerminateTest extends TestCase
     {
         $karnel      = $this->app->make(Karnel::class);
         $response    = $karnel->handle(
-            $request = new Request('test/')
+            $request = new Request('/test')
         );
 
         $this->app->registerTerminate(static function () {
@@ -69,6 +65,6 @@ final class KarnelTerminateTest extends TestCase
         $karnel->terminate($request, $response);
         $out = ob_get_clean();
 
-        $this->assertEquals('test/terminated.', $out);
+        $this->assertEquals('/testterminated.', $out);
     }
 }
