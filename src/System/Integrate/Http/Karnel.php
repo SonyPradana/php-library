@@ -52,6 +52,22 @@ class Karnel
     }
 
     /**
+     * Terminate Requesr and Response.
+     */
+    public function terminate(Request $request, Response $response): void
+    {
+        $middleware = $this->dispatcher($request)['middleware'];
+        foreach (array_merge($this->middleware, $middleware) as $middleware) {
+            if (method_exists($middleware, 'terminate')) {
+                $this->app->call([$middleware, 'terminate'], ['request' => $request, 'response' => $response]);
+            }
+        }
+        if (method_exists($this->app, 'terminate')) {
+            $this->app->{'terminate'}();
+        }
+    }
+
+    /**
      * @param callable|mixed[]|string $callable   function to call
      * @param mixed[]                 $parameters parameters to use
      *
