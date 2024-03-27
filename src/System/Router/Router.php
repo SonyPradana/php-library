@@ -17,7 +17,7 @@ class Router
         'prefix'     => '',
         'middleware' => [],
     ];
-    /** @var Route */
+    /** @var Route|null */
     private static $current;
 
     /**
@@ -128,8 +128,10 @@ class Router
 
     /**
      * Get current route.
+     *
+     * @return Route|null
      */
-    public static function current(): Route
+    public static function current()
     {
         return self::$current;
     }

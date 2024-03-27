@@ -49,7 +49,7 @@ final class KarnelTest extends TestCase
                                     return $respone;
                                 }
 
-                                return new Respones('forbidden', 403);
+                                return new Response('forbidden', 403);
                             }
                         },
                     ],

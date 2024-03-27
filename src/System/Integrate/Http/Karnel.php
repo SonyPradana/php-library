@@ -7,6 +7,7 @@ namespace System\Integrate\Http;
 use System\Container\Container;
 use System\Http\Request;
 use System\Http\Response;
+use System\Router\Router;
 
 class Karnel
 {
@@ -52,6 +53,22 @@ class Karnel
     }
 
     /**
+     * Terminate Requesr and Response.
+     */
+    public function terminate(Request $request, Response $response): void
+    {
+        $middleware = $this->dispatcherMiddleware($request) ?? [];
+        foreach (array_merge($this->middleware, $middleware) as $middleware) {
+            if (method_exists($middleware, 'terminate')) {
+                $this->app->call([$middleware, 'terminate'], ['request' => $request, 'response' => $response]);
+            }
+        }
+        if (method_exists($this->app, 'terminate')) {
+            $this->app->{'terminate'}();
+        }
+    }
+
+    /**
      * @param callable|mixed[]|string $callable   function to call
      * @param mixed[]                 $parameters parameters to use
      *
@@ -80,6 +97,16 @@ class Karnel
      */
     protected function dispatcher(Request $request): array
     {
-        return ['callable' => new Response(), 'parameters' => [], 'middleware'];
+        return ['callable' => new Response(), 'parameters' => [], 'middleware' => []];
+    }
+
+    /**
+     * Dispatch to get requets middleware.
+     *
+     * @return array<int, class-string>|null
+     */
+    protected function dispatcherMiddleware(Request $request)
+    {
+        return Router::current()['middleware'] ?? [];
     }
 }
