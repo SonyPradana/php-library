@@ -14,10 +14,10 @@ class Karnel
     /** @var Container */
     protected $app;
 
-    /** @var array<int, class-string|callable> Global middleware */
+    /** @var array<int, class-string> Global middleware */
     protected $middleware = [];
 
-    /** @var array<int, class-string|callable> Middleware has register */
+    /** @var array<int, class-string> Middleware has register */
     protected $middleware_used = [];
 
     /**
@@ -103,7 +103,7 @@ class Karnel
     /**
      * Dispatch to get requets middleware.
      *
-     * @return array<int, class-string|callable>|null
+     * @return array<int, class-string>|null
      */
     protected function dispatcherMiddleware(Request $request)
     {

@@ -30,15 +30,7 @@ final class KarnelTerminateTest extends TestCase
 
             protected function dispatcherMiddleware(Request $request)
             {
-                return [
-                    new class() {
-                        public function terminate(Request $request, Response $respone)
-                        {
-                            echo $request->getUrl();
-                            echo $respone->getContent();
-                        }
-                    },
-                ];
+                return [TestKarnelTerminate::class];
             }
         };
     }
@@ -66,5 +58,14 @@ final class KarnelTerminateTest extends TestCase
         $out = ob_get_clean();
 
         $this->assertEquals('/testterminated.', $out);
+    }
+}
+
+class TestKarnelTerminate
+{
+    public function terminate(Request $request, Response $respone)
+    {
+        echo $request->getUrl();
+        echo $respone->getContent();
     }
 }
