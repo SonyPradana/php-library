@@ -99,6 +99,21 @@ class ApplicationTest extends TestCase
         $this->assertEquals('application started.application ended.terminated.', $out);
     }
 
+    /**
+     * @test
+     */
+    public function itCanDetectMaintenenceMode()
+    {
+        $app = new Application('/');
+
+        $this->assertFalse($app->isDownMaintenanceMode());
+
+        // maintenan mode
+        $app->setStoragePath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR);
+
+        $this->assertTrue(!$app->isDownMaintenanceMode());
+    }
+
     private function defaultConfigs()
     {
         return [

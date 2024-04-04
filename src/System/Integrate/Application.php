@@ -859,4 +859,12 @@ final class Application extends Container
             $index++;
         }
     }
+
+    /**
+     * Determinate application maintenence mode.
+     */
+    public function isDownMaintenanceMode(): bool
+    {
+        return file_exists($this->storage_path() . 'app' . DIRECTORY_SEPARATOR . 'maintenance.php');
+    }
 }
