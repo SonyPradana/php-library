@@ -1,0 +1,34 @@
+<?php
+
+declare(strict_types=1);
+
+if (false === file_exists($down = __DIR__.'/down')) {
+    return;
+}
+
+/** @var array<string, mixed> */
+$data = require_once $down;
+
+// if (false === array_key_exists('template', $data)) {
+if (! isset($data['template'])) {
+    return;
+}
+
+// if (array_key_exists('redirect', $data) && $_SERVER['REQUEST_URI'] !== $data['redirect']) {
+if (isset($data['redirect']) && $_SERVER['REQUEST_URI'] !== $data['redirect']) {
+    http_response_code(302);
+    header('Location: '.$data['redirect']);
+
+    exit;
+}
+
+http_response_code($data['status'] ?? 503);
+
+// if (array_key_exists('retry', $data)) {
+if (isset($data['retry'])) {
+    header('Retry-After: '.$data['retry']);
+}
+
+echo $data['template'];
+
+exit;
