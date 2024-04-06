@@ -111,7 +111,38 @@ class ApplicationTest extends TestCase
         // maintenan mode
         $app->setStoragePath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR);
 
-        $this->assertTrue(!$app->isDownMaintenanceMode());
+        $this->assertTrue($app->isDownMaintenanceMode());
+    }
+
+    /**
+     * @test
+     */
+    public function itCanGetDown()
+    {
+        $app = new Application('/');
+        $app->setStoragePath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR);
+
+        $this->assertEquals([
+            'redirect' => null,
+            'retry'    => 15,
+            'status'   => 503,
+            'template' => null,
+        ], $app->getDownData());
+    }
+
+    /**
+     * @test
+     */
+    public function itCanGetDownDefault()
+    {
+        $app = new Application('/');
+
+        $this->assertEquals([
+            'redirect' => null,
+            'retry'    => null,
+            'status'   => 503,
+            'template' => null,
+        ], $app->getDownData());
     }
 
     private function defaultConfigs()
