@@ -104,12 +104,12 @@ class ApplicationTest extends TestCase
      */
     public function itCanDetectMaintenenceMode()
     {
-        $app = new Application('/');
+        $app = new Application(__DIR__);
 
         $this->assertFalse($app->isDownMaintenanceMode());
 
         // maintenan mode
-        $app->setStoragePath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR);
+        $app->setStoragePath(DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR);
 
         $this->assertTrue($app->isDownMaintenanceMode());
     }
@@ -119,8 +119,8 @@ class ApplicationTest extends TestCase
      */
     public function itCanGetDown()
     {
-        $app = new Application('/');
-        $app->setStoragePath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR);
+        $app = new Application(__DIR__);
+        $app->setStoragePath(DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR);
 
         $this->assertEquals([
             'redirect' => null,
