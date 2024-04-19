@@ -55,6 +55,7 @@ final class PreventRequestInMaintenanceTest extends TestCase
 
         $this->assertEquals('<h1>Test</h1>', $handle->getContent());
         $this->assertEquals(15, $handle->headers->get('Retry-After'));
+        $this->assertEquals(503, $handle->getStatusCode());
     }
 
     /**
