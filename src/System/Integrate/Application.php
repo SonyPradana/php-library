@@ -859,4 +859,40 @@ final class Application extends Container
             $index++;
         }
     }
+
+    /**
+     * Determinate application maintenence mode.
+     */
+    public function isDownMaintenanceMode(): bool
+    {
+        return file_exists($this->storage_path() . 'app' . DIRECTORY_SEPARATOR . 'maintenance.php');
+    }
+
+    /**
+     * Get down maintenance file config.
+     *
+     * @return array<string, string|int|null>
+     */
+    public function getDownData(): array
+    {
+        $default = [
+            'redirect' => null,
+            'retry'    => null,
+            'status'   => 503,
+            'template' => null,
+        ];
+
+        if (false === file_exists($down = $this->storage_path() . 'app' . DIRECTORY_SEPARATOR . 'down')) {
+            return $default;
+        }
+
+        /** @var array<string, string|int|null> */
+        $config = include $down;
+
+        foreach ($config as $key => $value) {
+            $default[$key] = $value;
+        }
+
+        return $default;
+    }
 }

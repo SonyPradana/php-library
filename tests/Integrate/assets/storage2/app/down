@@ -1,0 +1,10 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'redirect' => '/test',
+    'retry' => 15,
+    'status' => 503,
+    'template' => null,
+];

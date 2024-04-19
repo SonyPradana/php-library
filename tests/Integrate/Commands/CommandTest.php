@@ -25,6 +25,7 @@ class CommandTest extends TestCase
         $this->app->setConfigPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR);
         $this->app->setMigrationPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'migration' . DIRECTORY_SEPARATOR);
         $this->app->setSeederPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'seeders' . DIRECTORY_SEPARATOR);
+        $this->app->setStoragePath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR);
     }
 
     protected function tearDown(): void
@@ -49,11 +50,6 @@ class CommandTest extends TestCase
     protected function assertFails(int $code): void
     {
         Assert::assertGreaterThan(0, $code, 'Command exit with fail code');
-    }
-
-    public function testAlwaysTrue()
-    {
-        $this->assertSuccess(0);
     }
 
     public function assertContain(string $contain, string $in)

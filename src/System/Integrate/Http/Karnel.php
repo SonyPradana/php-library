@@ -7,6 +7,7 @@ namespace System\Integrate\Http;
 use System\Container\Container;
 use System\Http\Request;
 use System\Http\Response;
+use System\Integrate\Http\Middleware\MaintenanceMiddleware;
 use System\Router\Router;
 
 class Karnel
@@ -15,7 +16,9 @@ class Karnel
     protected $app;
 
     /** @var array<int, class-string> Global middleware */
-    protected $middleware = [];
+    protected $middleware = [
+        MaintenanceMiddleware::class,
+    ];
 
     /** @var array<int, class-string> Middleware has register */
     protected $middleware_used = [];

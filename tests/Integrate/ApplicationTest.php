@@ -99,6 +99,52 @@ class ApplicationTest extends TestCase
         $this->assertEquals('application started.application ended.terminated.', $out);
     }
 
+    /**
+     * @test
+     */
+    public function itCanDetectMaintenenceMode()
+    {
+        $app = new Application(__DIR__);
+
+        $this->assertFalse($app->isDownMaintenanceMode());
+
+        // maintenan mode
+        $app->setStoragePath(DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR);
+
+        $this->assertTrue($app->isDownMaintenanceMode());
+    }
+
+    /**
+     * @test
+     */
+    public function itCanGetDown()
+    {
+        $app = new Application(__DIR__);
+        $app->setStoragePath(DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR);
+
+        $this->assertEquals([
+            'redirect' => null,
+            'retry'    => 15,
+            'status'   => 503,
+            'template' => null,
+        ], $app->getDownData());
+    }
+
+    /**
+     * @test
+     */
+    public function itCanGetDownDefault()
+    {
+        $app = new Application('/');
+
+        $this->assertEquals([
+            'redirect' => null,
+            'retry'    => null,
+            'status'   => 503,
+            'template' => null,
+        ], $app->getDownData());
+    }
+
     private function defaultConfigs()
     {
         return [
