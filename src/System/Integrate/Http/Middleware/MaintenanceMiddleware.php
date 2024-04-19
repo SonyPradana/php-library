@@ -7,6 +7,7 @@ namespace System\Integrate\Http\Middleware;
 use System\Http\Request;
 use System\Http\Response;
 use System\Integrate\Application;
+use System\Integrate\Http\Exception\HttpException;
 
 class MaintenanceMiddleware
 {
@@ -31,6 +32,8 @@ class MaintenanceMiddleware
 
                 return new Response($data['template'], $data['status'] ?? 503, $header);
             }
+
+            throw new HttpException($data['status'] ?? 503, 'Service Unavailable');
         }
 
         return $next($request);
