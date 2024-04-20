@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.30.0] - 2024-04-20
+### Added
+- Added Templator multy section.
+- Added Application Storage Path.
+- Added Http Karnel terminate.
+- Added Application Maintenace Mode.
+
 ## [0.29.0] - 2024-03-15
 ### Added
 - Rewrite `Model::class` merge `MyModel::class` and `MyCRUD::class`, adding without deprecated/removing (yet).
