@@ -369,3 +369,17 @@ if (!function_exists('redirect')) {
         return new RedirectResponse($url);
     }
 }
+
+if (!function_exists('abort')) {
+    /**
+     * Abrot application to http exception.
+     *
+     * @param array<string, string> $headers
+     *
+     * @throws HttpException
+     */
+    function abort(int $code, string $message = '', array $headers = []): void
+    {
+        app()->abort($code, $message, $headers);
+    }
+}

@@ -4,6 +4,7 @@ use PHPUnit\Framework\TestCase;
 use System\Http\Request;
 use System\Integrate\Application;
 use System\Integrate\Exceptions\ApplicationNotAvailable;
+use System\Integrate\Http\Exception\HttpException;
 
 class ApplicationTest extends TestCase
 {
@@ -143,6 +144,13 @@ class ApplicationTest extends TestCase
             'status'   => 503,
             'template' => null,
         ], $app->getDownData());
+    }
+
+    /** @test */
+    public function itCanAbortApplication()
+    {
+        $this->expectException(HttpException::class);
+        (new Application(__DIR__))->abort(500);
     }
 
     private function defaultConfigs()

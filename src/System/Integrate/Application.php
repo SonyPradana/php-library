@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Integrate;
 
 use System\Container\Container;
+use System\Integrate\Http\Exception\HttpException;
 use System\Integrate\Providers\IntegrateServiceProvider;
 
 final class Application extends Container
@@ -894,5 +895,17 @@ final class Application extends Container
         }
 
         return $default;
+    }
+
+    /**
+     * Abrot application to http exception.
+     *
+     * @param array<string, string> $headers
+     *
+     * @throws HttpException
+     */
+    public function abort(int $code, string $message = '', array $headers = []): void
+    {
+        throw new HttpException($code, $message, null, $headers);
     }
 }
