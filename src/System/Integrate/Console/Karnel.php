@@ -6,6 +6,7 @@ namespace System\Integrate\Console;
 
 use System\Console\Style\Style;
 use System\Container\Container;
+use System\Integrate\Exceptions\Handler;
 
 class Karnel
 {
@@ -46,10 +47,16 @@ class Karnel
                     \DI\autowire($cmd->class())->constructor($arguments, $cmd->defaultOption())
                 );
 
-                $service = $this->app->get($cmd->class());
-                $this->app->call($cmd->call());
+                try {
+                    $service = $this->app->get($cmd->class());
+                    $this->app->call($cmd->call());
 
-                return $this->exit_code = $service->exit ?? 0;
+                    return $this->exit_code = $service->exit ?? 0;
+                } catch (\Throwable $th) {
+                    $this->app->get(Handler::class)->report($th);
+
+                    return $this->exit_code = 1;
+                }
             }
         }
 
