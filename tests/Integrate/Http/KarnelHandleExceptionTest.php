@@ -43,7 +43,7 @@ final class KarnelHandleExceptionTest extends TestCase
             }
         };
 
-        $this->handler = new class() extends Handler {
+        $this->handler = new class($this->app) extends Handler {
             public function render(Request $request, Throwable $th): Response
             {
                 return new Response($th->getMessage(), 500);

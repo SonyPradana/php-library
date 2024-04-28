@@ -51,9 +51,14 @@ final class HandlerTest extends TestCase
             }
         };
 
-        $this->handler = new class() extends Handler {
+        $this->handler = new class($this->app) extends Handler {
             public function render(Request $request, \Throwable $th): Response
             {
+                // try to bypass test for json format
+                if ($request->isJson()) {
+                    return $this->handleJsonResponse($th);
+                }
+
                 if ($th instanceof HttpException) {
                     return new Response($th->getMessage(), $th->getStatusCode(), $th->getHeaders());
                 }
@@ -91,5 +96,44 @@ final class HandlerTest extends TestCase
         $karnel->handle(new Request('/test'));
 
         $this->assertEquals(['Test Exception'], HandlerTest::$logs);
+    }
+
+    /** @test */
+    public function itCanRenderJson()
+    {
+        $this->app->set('environment', 'prod');
+        $karnel      = $this->app->make(Karnel::class);
+        $response    = $karnel->handle(new Request('/test', [], [], [], [], [], [
+            'content-type' => 'application/json',
+        ]));
+
+        $this->assertEquals([
+            'code'     => 500,
+            'messages' => [
+                'message'   => 'Internal Server Error',
+            ],
+        ], $response->getContent());
+        $this->assertEquals(500, $response->getStatusCode());
+    }
+
+    /** @test */
+    public function itCanRenderJsonForDev()
+    {
+        $this->app->set('environment', 'dev');
+        $karnel      = $this->app->make(Karnel::class);
+        $response    = $karnel->handle(new Request('/test', [], [], [], [], [], [
+            'content-type' => 'application/json',
+        ]));
+
+        $this->assertEquals([
+            'code'     => 500,
+            'messages' => [
+                'message'   => 'Test Exception',
+                'exception' => 'System\Integrate\Http\Exception\HttpException',
+                'file'      => 'C:\Users\angge\r\savanna-lib\tests\Integrate\Exceptions\HandlerTest.php',
+                'line'      => 44,
+            ],
+        ], $response->getContent());
+        $this->assertEquals(500, $response->getStatusCode());
     }
 }
