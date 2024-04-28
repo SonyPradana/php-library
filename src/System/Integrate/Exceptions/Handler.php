@@ -18,6 +18,11 @@ class Handler
         $this->app = $application;
     }
 
+    /**
+     * Render exception.
+     *
+     * @throws \Throwable
+     */
     public function render(Request $request, \Throwable $th): Response
     {
         if ($request->isJson()) {
