@@ -336,4 +336,16 @@ class TemplatorTest extends TestCase
 
         $this->assertEquals('<html><head></head><body><h1>my name is taylor otwell </h1></body></html>', trim($out));
     }
+
+    /** @test */
+    public function itCanCheckTemplateFileExist(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator($loader, $cache);
+
+        $this->assertTrue($view->viewExist('php.php'));
+        $this->assertFalse($view->viewExist('notexist.php'));
+    }
 }

@@ -79,6 +79,17 @@ class Templator
     }
 
     /**
+     * Check view file exist.
+     */
+    public function viewExist(string $templateName): bool
+    {
+        $templateName .= $this->suffix;
+        $templatePath  = $this->templateDir . DIRECTORY_SEPARATOR . $templateName;
+
+        return file_exists($templatePath);
+    }
+
+    /**
      * @param array<string, mixed> $data
      */
     private function getView(string $tempalte_path, array $data): string
