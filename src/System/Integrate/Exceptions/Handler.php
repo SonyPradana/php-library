@@ -16,14 +16,14 @@ class Handler
     /**
      * Do not report exception list.
      *
-     * @var array<int, class-string>
+     * @var array<int, class-string<\Throwable>>
      */
     protected array $dont_report = [];
 
     /**
      * Do not report exception list internal (framework).
      *
-     * @var array<int, class-string>
+     * @var array<int, class-string<\Throwable>>
      */
     protected array $dont_report_internal = [
         HttpException::class,
@@ -64,7 +64,7 @@ class Handler
     protected function dontReport(\Throwable $th): bool
     {
         foreach (array_merge($this->dont_report, $this->dont_report_internal) as $report) {
-            if ($report instanceof $th) {
+            if ($th instanceof $report) {
                 return true;
             }
         }
