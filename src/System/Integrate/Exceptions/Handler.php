@@ -13,6 +13,22 @@ class Handler
 {
     protected Container $app;
 
+    /**
+     * Do not report exception list.
+     *
+     * @var array<int, class-string<\Throwable>>
+     */
+    protected array $dont_report = [];
+
+    /**
+     * Do not report exception list internal (framework).
+     *
+     * @var array<int, class-string<\Throwable>>
+     */
+    protected array $dont_report_internal = [
+        HttpException::class,
+    ];
+
     public function __construct(Container $application)
     {
         $this->app = $application;
@@ -37,6 +53,23 @@ class Handler
      */
     public function report(\Throwable $th): void
     {
+        if ($this->dontReport($th)) {
+            return;
+        }
+    }
+
+    /**
+     * Determinate if exception in list of do not report.
+     */
+    protected function dontReport(\Throwable $th): bool
+    {
+        foreach (array_merge($this->dont_report, $this->dont_report_internal) as $report) {
+            if ($th instanceof $report) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function handleJsonResponse(\Throwable $th): Response
