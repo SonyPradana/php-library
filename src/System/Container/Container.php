@@ -12,6 +12,8 @@ use DI\Container as DIContainer;
 class Container extends DIContainer implements \ArrayAccess
 {
     /**
+     * Offest exist check.
+     *
      * @param string $offset
      */
     public function offsetExists($offset): bool
@@ -20,6 +22,8 @@ class Container extends DIContainer implements \ArrayAccess
     }
 
     /**
+     * Get the value.
+     *
      * @param string|class-string<mixed> $offset entry name or a class name
      *
      * @return mixed
@@ -27,10 +31,12 @@ class Container extends DIContainer implements \ArrayAccess
     #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
-        return $this->get($offset);
+        return $this->make($offset);
     }
 
     /**
+     * Set the value.
+     *
      * @param string $offset
      * @param mixed  $value
      */
@@ -39,7 +45,11 @@ class Container extends DIContainer implements \ArrayAccess
         $this->set($offset, $value);
     }
 
+    /**
+     * Unset the value.
+     */
     public function offsetUnset($offset): void
     {
+        unset($this->resolvedEntries[$offset]);
     }
 }

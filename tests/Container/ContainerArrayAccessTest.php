@@ -51,6 +51,6 @@ class ContainerArrayAccessTest extends TestCase
         $container->set('test01', 1);
         unset($container['test01']);
 
-        $this->assertEquals(1, $container->get('test01'));
+        $this->assertFalse($container->has('test01'));
     }
 }
