@@ -47,6 +47,8 @@ class Container extends DIContainer implements \ArrayAccess
 
     /**
      * Unset the value.
+     *
+     * @param string $offset
      */
     public function offsetUnset($offset): void
     {
