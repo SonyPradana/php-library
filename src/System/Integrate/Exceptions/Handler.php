@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Integrate\Exceptions;
 
 use System\Container\Container;
+use System\Http\Exceptions;
 use System\Http\Request;
 use System\Http\Response;
 use System\Integrate\Http\Exception\HttpException;
@@ -26,6 +27,7 @@ class Handler
      * @var array<int, class-string<\Throwable>>
      */
     protected array $dont_report_internal = [
+        Exceptions\HttpResponse::class,
         HttpException::class,
     ];
 
