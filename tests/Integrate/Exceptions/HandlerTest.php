@@ -125,15 +125,11 @@ final class HandlerTest extends TestCase
             'content-type' => 'application/json',
         ]));
 
-        $this->assertEquals([
-            'code'     => 500,
-            'messages' => [
-                'message'   => 'Test Exception',
-                'exception' => 'System\Integrate\Http\Exception\HttpException',
-                'file'      => 'C:\Users\angge\r\savanna-lib\tests\Integrate\Exceptions\HandlerTest.php',
-                'line'      => 44,
-            ],
-        ], $response->getContent());
+        $content = $response->getContent();
+        $this->assertEquals('Test Exception', $content['messages']['message']);
+        $this->assertEquals('System\Integrate\Http\Exception\HttpException', $content['messages']['exception']);
+        // skip meggase.file issue test with diferent platform
+        $this->assertEquals(44, $content['messages']['line']);
         $this->assertEquals(500, $response->getStatusCode());
     }
 }
