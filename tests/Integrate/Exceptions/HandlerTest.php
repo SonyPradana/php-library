@@ -51,9 +51,14 @@ final class HandlerTest extends TestCase
             }
         };
 
-        $this->handler = new class() extends Handler {
+        $this->handler = new class($this->app) extends Handler {
             public function render(Request $request, \Throwable $th): Response
             {
+                // try to bypass test for json format
+                if ($request->isJson()) {
+                    return $this->handleJsonResponse($th);
+                }
+
                 if ($th instanceof HttpException) {
                     return new Response($th->getMessage(), $th->getStatusCode(), $th->getHeaders());
                 }
@@ -91,5 +96,40 @@ final class HandlerTest extends TestCase
         $karnel->handle(new Request('/test'));
 
         $this->assertEquals(['Test Exception'], HandlerTest::$logs);
+    }
+
+    /** @test */
+    public function itCanRenderJson()
+    {
+        $this->app->set('environment', 'prod');
+        $karnel      = $this->app->make(Karnel::class);
+        $response    = $karnel->handle(new Request('/test', [], [], [], [], [], [
+            'content-type' => 'application/json',
+        ]));
+
+        $this->assertEquals([
+            'code'     => 500,
+            'messages' => [
+                'message'   => 'Internal Server Error',
+            ],
+        ], $response->getContent());
+        $this->assertEquals(500, $response->getStatusCode());
+    }
+
+    /** @test */
+    public function itCanRenderJsonForDev()
+    {
+        $this->app->set('environment', 'dev');
+        $karnel      = $this->app->make(Karnel::class);
+        $response    = $karnel->handle(new Request('/test', [], [], [], [], [], [
+            'content-type' => 'application/json',
+        ]));
+
+        $content = $response->getContent();
+        $this->assertEquals('Test Exception', $content['messages']['message']);
+        $this->assertEquals('System\Integrate\Http\Exception\HttpException', $content['messages']['exception']);
+        // skip meggase.file issue test with diferent platform
+        $this->assertEquals(44, $content['messages']['line']);
+        $this->assertEquals(500, $response->getStatusCode());
     }
 }
