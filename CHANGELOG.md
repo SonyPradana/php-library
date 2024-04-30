@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.31.0] - 2024-04-30
+### Added
+- Application abort `Application::abort()` or `abort()` shorthand for throw `HttpException::class`.
+- Added `Handler::class` to catch exception in `Karnel::class`.
+- Added response json exception handler in `Handler::class`.
+- Added `Handler::dont_report` to except no report.
+- Added `HttpResponse::class` to register response in exception.
+- Added `Templator::viewExist()` to check template file exist.
+- Added `handler::handleHttpException` to transform httpException to Response view.
+
+### Changed
+- `Container::class` implements ArrayAccess.
+
 ## [0.30.0] - 2024-04-20
 ### Added
 - Added Templator multy section.
