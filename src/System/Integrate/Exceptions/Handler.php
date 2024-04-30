@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace System\Integrate\Exceptions;
 
+use Exception;
 use System\Container\Container;
 use System\Http\Exceptions;
 use System\Http\Request;
 use System\Http\Response;
 use System\Integrate\Http\Exception\HttpException;
+use System\View\Templator;
 
 class Handler
 {
@@ -45,6 +47,14 @@ class Handler
     {
         if ($request->isJson()) {
             return $this->handleJsonResponse($th);
+        }
+
+        if ($th instanceof Exceptions\HttpResponse) {
+            return $th->getResponse();
+        }
+
+        if ($th instanceof HttpException) {
+            return $this->handleHttpException($th);
         }
 
         throw $th;
@@ -100,6 +110,22 @@ class Handler
         }
 
         return $respone->json();
+    }
+
+    protected function handleHttpException(HttpException $e): Response
+    {
+        /** @var Templator */
+        $view = $this->app->make('view.instance');
+
+        $code = $view->viewExist('pages/' . $e->getStatusCode())
+            ? $e->getStatusCode()
+            : 500;
+
+        $response = view('pages/' . $code);
+        $response->setResponeCode($e->getStatusCode());
+        $response->headers->add($e->getHeaders());
+
+        return $response;
     }
 
     private function isDev(): bool

@@ -11,6 +11,8 @@ use System\Integrate\Application;
 use System\Integrate\Exceptions\Handler;
 use System\Integrate\Http\Exception\HttpException;
 use System\Integrate\Http\Karnel;
+use System\Text\Str;
+use System\View\Templator;
 
 final class HandlerTest extends TestCase
 {
@@ -129,7 +131,26 @@ final class HandlerTest extends TestCase
         $this->assertEquals('Test Exception', $content['messages']['message']);
         $this->assertEquals('System\Integrate\Http\Exception\HttpException', $content['messages']['exception']);
         // skip meggase.file issue test with diferent platform
-        $this->assertEquals(44, $content['messages']['line']);
+        $this->assertEquals(46, $content['messages']['line']);
         $this->assertEquals(500, $response->getStatusCode());
+    }
+
+    /** @test */
+    public function itCanRenderHttpException()
+    {
+        $this->app->set('view.instance', fn () => new Templator(__DIR__ . '/assets/', __DIR__ . '/assets/'));
+        $this->app->set(
+            'view.response',
+            fn () => fn (string $view, array $data = []): Response => (new Response())->setContent(
+                $this->app->make('view.instance')->render("{$view}.template.php", $data)
+            )
+        );
+
+        $handler = $this->app->make(Handler::class);
+
+        $exception = new HttpException(500, 'Internal Error', null, []);
+        $render    = (fn () => $this->{'handleHttpException'}($exception))->call($handler);
+
+        $this->assertTrue(Str::contains($render->getContent(), '<h1>Success</h1>'));
     }
 }
