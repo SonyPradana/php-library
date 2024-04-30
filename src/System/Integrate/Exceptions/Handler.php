@@ -33,6 +33,9 @@ class Handler
         HttpException::class,
     ];
 
+    protected string $view_prefix = '.template.php';
+    protected string $view_sufix = 'pages/';
+
     public function __construct(Container $application)
     {
         $this->app = $application;
@@ -116,12 +119,11 @@ class Handler
     {
         /** @var Templator */
         $view = $this->app->make('view.instance');
-
-        $code = $view->viewExist('pages/' . $e->getStatusCode())
+        $code = $view->viewExist($this->view_sufix . $e->getStatusCode() . $this->view_prefix)
             ? $e->getStatusCode()
             : 500;
 
-        $response = view('pages/' . $code);
+        $response = view($this->view_sufix . $code);
         $response->setResponeCode($e->getStatusCode());
         $response->headers->add($e->getHeaders());
 
