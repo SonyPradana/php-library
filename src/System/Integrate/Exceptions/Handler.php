@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace System\Integrate\Exceptions;
 
-use Exception;
 use System\Container\Container;
 use System\Http\Exceptions;
 use System\Http\Request;
@@ -116,8 +115,7 @@ class Handler
     {
         /** @var Templator */
         $view = $this->app->make('view.instance');
-
-        $code = $view->viewExist('pages/' . $e->getStatusCode())
+        $code = $view->viewExist('pages/' . $e->getStatusCode() . '.template.php')
             ? $e->getStatusCode()
             : 500;
 
