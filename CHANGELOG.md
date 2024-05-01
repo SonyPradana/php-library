@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.31.1] - 2024-05-01
+### Fixed
+- Fixed view template finder by hard code suffix and prefix view file, the next version will handle by `ViewFinder::class`.
+
 ## [0.31.0] - 2024-04-30
 ### Added
 - Application abort `Application::abort()` or `abort()` shorthand for throw `HttpException::class`.
