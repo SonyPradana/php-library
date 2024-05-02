@@ -52,7 +52,7 @@ class TemplatorFinder
             return $this->views[$view_name];
         }
 
-        return $this->views[] = $this->findInPath($view_name, $this->paths);
+        return $this->views[$view_name] = $this->findInPath($view_name, $this->paths);
     }
 
     /**
