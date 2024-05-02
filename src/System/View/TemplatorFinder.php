@@ -27,7 +27,7 @@ class TemplatorFinder
      *
      * @var string[]
      */
-    protected array $extensions = ['.temlate.php'];
+    protected array $extensions;
 
     /**
      * Create new View Finder intance.
@@ -37,8 +37,8 @@ class TemplatorFinder
      */
     public function __construct(array $paths, ?array $extensions = null)
     {
-        $this->paths = $paths;
-        $this->extensions ??= $extensions;
+        $this->paths      = $paths;
+        $this->extensions = $extensions ?? ['.temlate.php'];
     }
 
     /**
@@ -82,7 +82,7 @@ class TemplatorFinder
      *
      * @throws ViewFileNotFound
      */
-    public function findInPath(string $view_name, array $paths): string
+    protected function findInPath(string $view_name, array $paths): string
     {
         foreach ($paths as $path) {
             foreach ($this->extensions as $extenstion) {
@@ -110,7 +110,7 @@ class TemplatorFinder
     /**
      * Add exteention in first array.
      */
-    public function addExctention(string $extension): self
+    public function addExctension(string $extension): self
     {
         array_unshift($this->extensions, $extension);
 
