@@ -37,7 +37,9 @@ class TemplatorFinder
      */
     public function __construct(array $paths, ?array $extensions = null)
     {
-        $this->paths      = $paths;
+        foreach ($paths as $path) {
+            $this->paths[] = $this->resolvePath($path);
+        }
         $this->extensions = $extensions ?? ['.temlate.php'];
     }
 
@@ -66,7 +68,9 @@ class TemplatorFinder
 
         foreach ($this->paths as $path) {
             foreach ($this->extensions as $extenstion) {
-                if (file_exists($path . $view_name . $extenstion)) {
+                if (file_exists($file = $path . DIRECTORY_SEPARATOR . $view_name . $extenstion)) {
+                    $this->views[$view_name] = $file;
+
                     return true;
                 }
             }
@@ -86,7 +90,7 @@ class TemplatorFinder
     {
         foreach ($paths as $path) {
             foreach ($this->extensions as $extenstion) {
-                if (file_exists($find = $path . $view_name . $extenstion)) {
+                if (file_exists($find = $path . DIRECTORY_SEPARATOR . $view_name . $extenstion)) {
                     return $find;
                 }
             }
@@ -101,7 +105,7 @@ class TemplatorFinder
     public function addPath(string $path): self
     {
         if (!isset($this->paths[$path])) {
-            $this->paths[] = $path;
+            $this->paths[] = $this->resolvePath($path);
         }
 
         return $this;
@@ -110,7 +114,7 @@ class TemplatorFinder
     /**
      * Add exteention in first array.
      */
-    public function addExctension(string $extension): self
+    public function addExtension(string $extension): self
     {
         array_unshift($this->extensions, $extension);
 
@@ -123,5 +127,17 @@ class TemplatorFinder
     public function flush(): void
     {
         $this->views = [];
+    }
+
+    /**
+     * Resolve the path.
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    protected function resolvePath($path)
+    {
+        return realpath($path) ?: $path;
     }
 }

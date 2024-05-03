@@ -18,13 +18,13 @@ class SectionTemplator extends AbstractTemplatorParse
         if (!array_key_exists(1, $matches_layout)) {
             return $template;
         }
-        $templatePath = $this->templateDir . '/' . $matches_layout[1];
 
-        if (!file_exists($templatePath)) {
+        if (false === $this->finder->exists($matches_layout[1])) {
             throw new \Exception('Template file not found: ' . $matches_layout[1]);
         }
 
-        $layout = file_get_contents($templatePath);
+        $templatePath = $this->finder->find($matches_layout[1]);
+        $layout       = file_get_contents($templatePath);
 
         $template = preg_replace_callback(
             '/{%\s*section\s*\(\s*[\'"]([^\'"]+)[\'"]\s*,\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/s',

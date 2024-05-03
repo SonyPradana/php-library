@@ -6,8 +6,9 @@ namespace System\View;
 
 abstract class AbstractTemplatorParse
 {
-    protected string $templateDir;
+    protected TemplatorFinder $finder;
     protected string $cacheDir;
+
     /**
      * Uses poller.
      *
@@ -15,9 +16,9 @@ abstract class AbstractTemplatorParse
      */
     protected $uses = [];
 
-    final public function __construct(string $templateDir, string $cacheDir)
+    final public function __construct(TemplatorFinder $finder, string $cacheDir)
     {
-        $this->templateDir = $templateDir;
+        $this->finder      = $finder;
         $this->cacheDir    = $cacheDir;
     }
 
