@@ -7,6 +7,8 @@ namespace System\Test\Integrate\Commands;
 use PHPUnit\Framework\TestCase;
 use System\Integrate\Application;
 use System\Integrate\Console\ViewCommand;
+use System\View\Templator;
+use System\View\TemplatorFinder;
 
 final class ViewCommandsTest extends TestCase
 {
@@ -15,16 +17,26 @@ final class ViewCommandsTest extends TestCase
      */
     public function itCanCompileFromTemplatorFiles(): void
     {
-        (new Application(''))
-            ->setCachePath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'view_cache' . DIRECTORY_SEPARATOR)
-            ->setViewPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR)
-        ;
+        $app = new Application(__DIR__);
+
+        $app->setCachePath(DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'view_cache' . DIRECTORY_SEPARATOR);
+        $app->setViewPath(DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR);
+
+        $app->set(
+            TemplatorFinder::class,
+            fn () => new TemplatorFinder([view_path()], ['.php', ''])
+        );
+
+        $app->set(
+            Templator::class,
+            fn (TemplatorFinder $finder) => new Templator($finder, $app->cache_path())
+        );
 
         $view_command = new ViewCommand(['php', 'cli', 'view:cache'], [
             'prefix' => '*.php',
         ]);
         ob_start();
-        $exit = $view_command->cache();
+        $exit = $view_command->cache($app->make(Templator::class));
         ob_get_clean();
 
         $this->assertEquals(0, $exit);

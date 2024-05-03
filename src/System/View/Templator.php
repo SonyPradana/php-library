@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace System\View;
 
-use System\View\Exceptions\ViewFileNotFound;
 use System\View\Templator\BreakTemplator;
 use System\View\Templator\CommentTemplator;
 use System\View\Templator\ContinueTemplator;
@@ -19,15 +18,21 @@ use System\View\Templator\UseTemplator;
 
 class Templator
 {
-    private string $templateDir;
+    protected TemplatorFinder $finder;
     private string $cacheDir;
     public string $suffix = '';
     public int $max_depth = 5;
 
-    public function __construct(string $templateDir, string $cacheDir)
+    /**
+     * Create new intance.
+     *
+     * @param TemplatorFinder|string $finder If String will genarte TemplatorFinder with default extension
+     */
+    public function __construct($finder, string $cacheDir)
     {
-        $this->templateDir = $templateDir;
-        $this->cacheDir    = $cacheDir;
+        // Backwards compatibility with templator finder.
+        $this->finder    = is_string($finder) ? new TemplatorFinder([$finder]) : $finder;
+        $this->cacheDir  = $cacheDir;
     }
 
     /**
@@ -36,11 +41,7 @@ class Templator
     public function render(string $templateName, array $data, bool $cache = true): string
     {
         $templateName .= $this->suffix;
-        $templatePath  = $this->templateDir . '/' . $templateName;
-
-        if (!file_exists($templatePath)) {
-            throw new ViewFileNotFound($templatePath);
-        }
+        $templatePath  = $this->finder->find($templateName);
 
         $cachePath = $this->cacheDir . '/' . md5($templateName) . '.php';
 
@@ -62,11 +63,7 @@ class Templator
     public function compile(string $template_name): string
     {
         $template_name .= $this->suffix;
-        $template_dir  = $this->templateDir . '/' . $template_name;
-
-        if (!file_exists($template_dir)) {
-            throw new ViewFileNotFound($template_dir);
-        }
+        $template_dir  = $this->finder->find($template_name);
 
         $cachePath = $this->cacheDir . '/' . md5($template_name) . '.php';
 
@@ -84,9 +81,8 @@ class Templator
     public function viewExist(string $templateName): bool
     {
         $templateName .= $this->suffix;
-        $templatePath  = $this->templateDir . DIRECTORY_SEPARATOR . $templateName;
 
-        return file_exists($templatePath);
+        return $this->finder->exists($templateName);
     }
 
     /**
@@ -134,7 +130,7 @@ class Templator
             BreakTemplator::class,
             UseTemplator::class,
         ], function ($template, $templator) {
-            $templator = new $templator($this->templateDir, $this->cacheDir);
+            $templator = new $templator($this->finder, $this->cacheDir);
             if ($templator instanceof IncludeTemplator) {
                 $templator->maksDept($this->max_depth);
             }

@@ -13,6 +13,7 @@ use System\Integrate\Http\Exception\HttpException;
 use System\Integrate\Http\Karnel;
 use System\Text\Str;
 use System\View\Templator;
+use System\View\TemplatorFinder;
 
 final class HandlerTest extends TestCase
 {
@@ -131,18 +132,35 @@ final class HandlerTest extends TestCase
         $this->assertEquals('Test Exception', $content['messages']['message']);
         $this->assertEquals('System\Integrate\Http\Exception\HttpException', $content['messages']['exception']);
         // skip meggase.file issue test with diferent platform
-        $this->assertEquals(46, $content['messages']['line']);
+        $this->assertEquals(47, $content['messages']['line']);
         $this->assertEquals(500, $response->getStatusCode());
     }
 
     /** @test */
     public function itCanRenderHttpException()
     {
-        $this->app->set('view.instance', fn () => new Templator(__DIR__ . '/assets/', __DIR__ . '/assets/'));
+        $this->app->set(
+            TemplatorFinder::class,
+            fn () => new TemplatorFinder([
+                __DIR__ . '/assets',
+                __DIR__ . '/assets/pages',
+            ], ['.php', '.template.php'])
+        );
+
+        $this->app->set(
+            Templator::class,
+            fn (TemplatorFinder $finder) => new Templator($finder, __DIR__ . '/assets')
+        );
+
+        $this->app->set(
+            'view.instance',
+            fn (TemplatorFinder $finder) => new Templator($finder, __DIR__ . '/assets')
+        );
+
         $this->app->set(
             'view.response',
-            fn () => fn (string $view, array $data = []): Response => (new Response())->setContent(
-                $this->app->make('view.instance')->render("{$view}.template.php", $data)
+            fn () => fn (string $view_path, array $portal = []): Response => new Response(
+                $this->app->make(Templator::class)->render($view_path, $portal)
             )
         );
 

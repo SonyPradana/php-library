@@ -6,6 +6,7 @@ namespace System\Test\View\Templator;
 
 use PHPUnit\Framework\TestCase;
 use System\View\Templator;
+use System\View\TemplatorFinder;
 
 final class CommentTest extends TestCase
 {
@@ -14,7 +15,7 @@ final class CommentTest extends TestCase
      */
     public function itCanRenderEachBreak()
     {
-        $templator = new Templator(__DIR__, __DIR__);
+        $templator = new Templator(new TemplatorFinder([__DIR__], ['']), __DIR__);
         $out       = $templator->templates('<html><head></head><body>{# this a comment #}</body></html>');
         $this->assertEquals('<html><head></head><body><?php /* this a comment */ ?></body></html>', $out);
     }

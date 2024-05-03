@@ -6,6 +6,7 @@ namespace System\Test\View\Templator;
 
 use PHPUnit\Framework\TestCase;
 use System\View\Templator;
+use System\View\TemplatorFinder;
 
 final class SlotTest extends TestCase
 {
@@ -14,7 +15,7 @@ final class SlotTest extends TestCase
      */
     public function itCanRenderSectionScope()
     {
-        $templator = new Templator(__DIR__ . '/view/', __DIR__);
+        $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
         $out       = $templator->templates('{% extend(\'section.template\') %} {% section(\'title\') %}<strong>taylor</strong>{% endsection %}');
         $this->assertEquals('<p><strong>taylor</strong></p>', trim($out));
     }
@@ -24,7 +25,7 @@ final class SlotTest extends TestCase
      */
     public function itThrowWhenExtendNotFound()
     {
-        $templator = new Templator(__DIR__ . '/view/', __DIR__);
+        $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
         try {
             $templator->templates('{% extend(\'section.html\') %} {% section(\'title\') %}<strong>taylor</strong>{% endsection %}');
         } catch (\Throwable $th) {
@@ -37,7 +38,7 @@ final class SlotTest extends TestCase
      */
     public function itCanRenderSectionInline()
     {
-        $templator = new Templator(__DIR__ . '/view/', __DIR__);
+        $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
         $out       = $templator->templates('{% extend(\'section.template\') %} {% section(\'title\', \'taylor\') %}');
         $this->assertEquals('<p>taylor</p>', trim($out));
     }
@@ -47,7 +48,7 @@ final class SlotTest extends TestCase
      */
     public function itCanRenderSectionInlineEscape()
     {
-        $templator = new Templator(__DIR__ . '/view/', __DIR__);
+        $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
         $out       = $templator->templates('{% extend(\'section.template\') %} {% section(\'title\', \'<script>alert(1)</script>\') %}');
         $this->assertEquals('<p>&lt;script&gt;alert(1)&lt;/script&gt;</p>', trim($out));
     }
@@ -57,7 +58,7 @@ final class SlotTest extends TestCase
      */
     public function itCanRenderMultySection()
     {
-        $templator = new Templator(__DIR__ . '/view/', __DIR__);
+        $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
         $out       = $templator->templates('
             {% extend(\'section.template\') %}
 

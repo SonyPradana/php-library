@@ -22,13 +22,13 @@ class IncludeTemplator extends AbstractTemplatorParse
         return preg_replace_callback(
             '/{%\s*include\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/',
             function ($matches) {
-                $templatePath = $this->templateDir . '/' . $matches[1];
-
-                if (!file_exists($templatePath)) {
+                if (false === $this->finder->exists($matches[1])) {
                     throw new \Exception('Template file not found: ' . $matches[1]);
                 }
 
+                $templatePath     = $this->finder->find($matches[1]);
                 $includedTemplate = file_get_contents($templatePath);
+
                 if ($this->maks_dept === 0) {
                     return $includedTemplate;
                 }
