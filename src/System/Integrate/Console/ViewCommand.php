@@ -62,10 +62,8 @@ class ViewCommand extends Command
         ];
     }
 
-    public function cache(): int
+    public function cache(Templator $templator): int
     {
-        $templator = new Templator(view_path(), cache_path());
-
         $files = glob(view_path() . $this->prefix);
         if (false === $files) {
             return 1;
