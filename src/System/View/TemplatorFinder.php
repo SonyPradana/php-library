@@ -11,7 +11,7 @@ class TemplatorFinder
     /**
      * View file location has register.
      *
-     * @var string[]
+     * @var array<string, string>
      */
     protected array $views = [];
 
@@ -127,6 +127,26 @@ class TemplatorFinder
     public function flush(): void
     {
         $this->views = [];
+    }
+
+    /**
+     * Get paths registered.
+     *
+     * @return string[]
+     */
+    public function getPaths(): array
+    {
+        return $this->paths;
+    }
+
+    /**
+     * Get Extension registered.
+     *
+     * @return string[]
+     */
+    public function getExtensions(): array
+    {
+        return $this->extensions;
     }
 
     /**

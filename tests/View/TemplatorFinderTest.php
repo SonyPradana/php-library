@@ -112,4 +112,28 @@ class TemplatorFinderTest extends TestCase
         $views = (fn () => $this->{'views'})->call($view);
         $this->assertCount(0, $views);
     }
+
+    /**
+     * @test
+     */
+    public function itCanGetPathsRegistered(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+
+        $view = new TemplatorFinder([$loader], ['.php']);
+
+        $this->assertEquals([$loader], $view->getPaths());
+    }
+
+    /**
+     * @test
+     */
+    public function itCanGetExtensionsRegistered(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+
+        $view = new TemplatorFinder([$loader], ['.php']);
+
+        $this->assertEquals(['.php'], $view->getExtensions());
+    }
 }
