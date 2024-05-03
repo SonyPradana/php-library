@@ -26,12 +26,12 @@ class Templator
     /**
      * Create new intance.
      *
-     * @param TemplatorFinder|string $finder if String will genarte TemplatorFinder with empty extension
+     * @param TemplatorFinder|string $finder If String will genarte TemplatorFinder with default extension
      */
     public function __construct($finder, string $cacheDir)
     {
         // Backwards compatibility with templator finder.
-        $this->finder    = is_string($finder) ? new TemplatorFinder([$finder], ['']) : $finder;
+        $this->finder    = is_string($finder) ? new TemplatorFinder([$finder]) : $finder;
         $this->cacheDir  = $cacheDir;
     }
 

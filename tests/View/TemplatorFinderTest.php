@@ -86,6 +86,21 @@ class TemplatorFinderTest extends TestCase
     /**
      * @test
      */
+    public function itCanNotAddMultyPath(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+
+        $view = new TemplatorFinder([], ['.php']);
+        $view->addPath($loader);
+        $view->addPath($loader);
+        $view->addPath($loader);
+
+        $this->assertEquals([$loader], $view->getPaths());
+    }
+
+    /**
+     * @test
+     */
     public function itCanAddExtension(): void
     {
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';

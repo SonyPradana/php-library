@@ -360,6 +360,10 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
-        $this->assertInstanceOf(Templator::class, new Templator($loader, $cache));
+        $template = new Templator($loader, $cache);
+        $this->assertInstanceOf(Templator::class, $template);
+        $finder = (fn () => $this->{'finder'})->call($template);
+        $this->assertEquals(['.template.php', '.php'], $finder->getExtensions());
+        $this->assertEquals([$loader], $finder->getPaths());
     }
 }

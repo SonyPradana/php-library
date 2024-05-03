@@ -20,7 +20,7 @@ class TemplatorFinder
      *
      * @var string[]
      */
-    protected array $paths;
+    protected array $paths = [];
 
     /**
      * Extetions.
@@ -40,7 +40,7 @@ class TemplatorFinder
         foreach ($paths as $path) {
             $this->paths[] = $this->resolvePath($path);
         }
-        $this->extensions = $extensions ?? ['.temlate.php'];
+        $this->extensions = $extensions ?? ['.template.php', '.php'];
     }
 
     /**
@@ -104,7 +104,7 @@ class TemplatorFinder
      */
     public function addPath(string $path): self
     {
-        if (!isset($this->paths[$path])) {
+        if (false === in_array($path, $this->paths)) {
             $this->paths[] = $this->resolvePath($path);
         }
 
