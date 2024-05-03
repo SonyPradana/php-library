@@ -23,10 +23,16 @@ class Templator
     public string $suffix = '';
     public int $max_depth = 5;
 
-    public function __construct(TemplatorFinder $finder, string $cacheDir)
+    /**
+     * Create new intance.
+     *
+     * @param TemplatorFinder|string $finder if String will genarte TemplatorFinder with empty extension
+     */
+    public function __construct($finder, string $cacheDir)
     {
-        $this->finder      = $finder;
-        $this->cacheDir    = $cacheDir;
+        // Backwards compatibility with templator finder.
+        $this->finder    = is_string($finder) ? new TemplatorFinder([$finder], ['']) : $finder;
+        $this->cacheDir  = $cacheDir;
     }
 
     /**

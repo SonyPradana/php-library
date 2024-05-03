@@ -349,4 +349,17 @@ class TemplatorTest extends TestCase
         $this->assertTrue($view->viewExist('php.php'));
         $this->assertFalse($view->viewExist('notexist.php'));
     }
+
+    /**
+     * Backwash compability test.
+     *
+     * @test
+     */
+    public function itCanMakeTemplatorUsingString(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $this->assertInstanceOf(Templator::class, new Templator($loader, $cache));
+    }
 }
