@@ -6,6 +6,7 @@ namespace System\Test\View\Templator;
 
 use PHPUnit\Framework\TestCase;
 use System\View\Templator;
+use System\View\TemplatorFinder;
 
 final class IfTest extends TestCase
 {
@@ -14,7 +15,7 @@ final class IfTest extends TestCase
      */
     public function itCanRenderIf()
     {
-        $templator = new Templator(__DIR__, __DIR__);
+        $templator = new Templator(new TemplatorFinder([__DIR__]), __DIR__);
         $out       = $templator->templates('<html><head></head><body><h1>{% if ($true === true) %} show {% endif %}</h1><h1>{% if ($true === false) %} show {% endif %}</h1></body></html>');
         $this->assertEquals('<html><head></head><body><h1><?php if (($true === true) ): ?> show <?php endif; ?></h1><h1><?php if (($true === false) ): ?> show <?php endif; ?></h1></body></html>', $out);
     }

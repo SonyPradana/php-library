@@ -6,6 +6,7 @@ namespace System\Test\View\Templator;
 
 use PHPUnit\Framework\TestCase;
 use System\View\Templator;
+use System\View\TemplatorFinder;
 
 final class SetTest extends TestCase
 {
@@ -14,7 +15,7 @@ final class SetTest extends TestCase
      */
     public function itCanRenderSetString()
     {
-        $templator = new Templator(__DIR__, __DIR__);
+        $templator = new Templator(new TemplatorFinder([__DIR__], ['']), __DIR__);
         $out       = $templator->templates('{% set $foo=\'bar\' %}');
         $this->assertEquals('<?php $foo = \'bar\'; ?>', $out);
     }
@@ -24,7 +25,7 @@ final class SetTest extends TestCase
      */
     public function itCanRenderSetInt()
     {
-        $templator = new Templator(__DIR__, __DIR__);
+        $templator = new Templator(new TemplatorFinder([__DIR__], ['']), __DIR__);
         $out       = $templator->templates('{% set $bar=123 %}');
         $this->assertEquals('<?php $bar = 123; ?>', $out);
     }
@@ -34,7 +35,7 @@ final class SetTest extends TestCase
      */
     public function itCanRenderSetArray()
     {
-        $templator = new Templator(__DIR__, __DIR__);
+        $templator = new Templator(new TemplatorFinder([__DIR__], ['']), __DIR__);
         $out       = $templator->templates('{% set $arr=[12, \'34\'] %}');
         $this->assertEquals('<?php $arr = [12, \'34\']; ?>', $out);
     }
