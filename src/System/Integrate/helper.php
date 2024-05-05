@@ -59,6 +59,18 @@ if (!function_exists('view_path')) {
     }
 }
 
+if (!function_exists('view_paths')) {
+    /**
+     * Get aplication view paths, base on config file.
+     *
+     * @return string[] View path folder
+     */
+    function view_paths(): array
+    {
+        return app()->view_paths();
+    }
+}
+
 if (!function_exists('controllers_path')) {
     /**
      * Get aplication controllers path, base on config file.

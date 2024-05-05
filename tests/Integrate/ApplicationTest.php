@@ -202,6 +202,16 @@ class ApplicationTest extends TestCase
             'MEMCACHED_HOST'        => '127.0.0.1',
             'MEMCACHED_PASS'        => '',
             'MEMCACHED_PORT'        => 6379,
+
+            // view config
+            'VIEW_PATHS' => [
+                DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
+            ],
+            'VIEW_EXTENSIONS' => [
+                '.templator.php',
+                '.php',
+            ],
+            'COMPILED_VIEW' => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR,
         ];
     }
 }

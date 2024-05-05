@@ -109,6 +109,13 @@ final class Application extends Container
     private $view_path;
 
     /**
+     * View paths.
+     *
+     * @var string[]
+     */
+    private array $view_paths;
+
+    /**
      * Migration path.
      */
     private string $migraton_path;
@@ -217,6 +224,7 @@ final class Application extends Container
             'database.config.php',
             'pusher.config.php',
             'cachedriver.config.php',
+            'view.config.php',
         ];
         foreach ($paths as $path) {
             $file_path = $config_path . $path;
@@ -234,6 +242,7 @@ final class Application extends Container
         // application path
         $this->setModelPath($configs['MODEL_PATH']);
         $this->setViewPath($configs['VIEW_PATH']);
+        $this->setViewPaths($configs['VIEW_PATHS']);
         $this->setContollerPath($configs['CONTROLLER_PATH']);
         $this->setServicesPath($configs['SERVICES_PATH']);
         $this->setComponentPath($configs['COMPONENT_PATH']);
@@ -313,6 +322,16 @@ final class Application extends Container
             'MEMCACHED_HOST'        => '127.0.0.1',
             'MEMCACHED_PASS'        => '',
             'MEMCACHED_PORT'        => 6379,
+
+            // view config
+            'VIEW_PATHS' => [
+                DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
+            ],
+            'VIEW_EXTENSIONS' => [
+                '.templator.php',
+                '.php',
+            ],
+            'COMPILED_VIEW' => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR,
         ];
     }
 
@@ -393,6 +412,19 @@ final class Application extends Container
     {
         $this->view_path = $this->base_path . $path;
         $this->set('path.view', $this->view_path);
+
+        return $this;
+    }
+
+    /**
+     * Set view paths.
+     *
+     * @param string[] $paths View paths
+     */
+    public function setViewPaths(array $paths): self
+    {
+        $this->view_paths = $paths;
+        $this->set('paths.view', $this->view_paths);
 
         return $this;
     }
@@ -603,6 +635,16 @@ final class Application extends Container
     public function view_path()
     {
         return $this->get('path.view');
+    }
+
+    /**
+     * Get view paths.
+     *
+     * @return string[]
+     */
+    public function view_paths(): array
+    {
+        return $this->get('paths.view');
     }
 
     /**
