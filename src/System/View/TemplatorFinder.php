@@ -37,9 +37,7 @@ class TemplatorFinder
      */
     public function __construct(array $paths, ?array $extensions = null)
     {
-        foreach ($paths as $path) {
-            $this->paths[] = $this->resolvePath($path);
-        }
+        $this->setPaths($paths);
         $this->extensions = $extensions ?? ['.template.php', '.php'];
     }
 
@@ -127,6 +125,21 @@ class TemplatorFinder
     public function flush(): void
     {
         $this->views = [];
+    }
+
+    /**
+     * Set paths registered.
+     *
+     * @param string[] $paths
+     */
+    public function setPaths(array $paths): self
+    {
+        $this->paths = [];
+        foreach ($paths as $path) {
+            $this->paths[] = $this->resolvePath($path);
+        }
+
+        return $this;
     }
 
     /**
