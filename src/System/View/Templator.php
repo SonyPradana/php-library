@@ -36,6 +36,16 @@ class Templator
     }
 
     /**
+     * Set Finder.
+     */
+    public function setFinder(TemplatorFinder $finder): self
+    {
+        $this->finder = $finder;
+
+        return $this;
+    }
+
+    /**
      * @param array<string, mixed> $data
      */
     public function render(string $templateName, array $data, bool $cache = true): string
