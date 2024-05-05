@@ -114,6 +114,23 @@ class Handler
 
     protected function handleHttpException(HttpException $e): Response
     {
+        $view = $this->registerViewPath();
+        $code = $view->viewExist((string) $e->getStatusCode())
+            ? $e->getStatusCode()
+            : 500;
+
+        $response = view((string) $code);
+        $response->setResponeCode($e->getStatusCode());
+        $response->headers->add($e->getHeaders());
+
+        return $response;
+    }
+
+    /**
+     * Register error view path.
+     */
+    public function registerViewPath(): Templator
+    {
         $view_path = $this->app->get('path.view');
         /** @var TemplatorFinder */
         $finder = $this->app->make(TemplatorFinder::class);
@@ -124,15 +141,8 @@ class Handler
         /** @var Templator */
         $view = $this->app->make('view.instance');
         $view->setFinder($finder);
-        $code = $view->viewExist((string) $e->getStatusCode())
-            ? $e->getStatusCode()
-            : 500;
 
-        $response = view((string) $code);
-        $response->setResponeCode($e->getStatusCode());
-        $response->headers->add($e->getHeaders());
-
-        return $response;
+        return $view;
     }
 
     private function isDev(): bool
