@@ -10,6 +10,7 @@ use System\Http\Request;
 use System\Http\Response;
 use System\Integrate\Http\Exception\HttpException;
 use System\View\Templator;
+use System\View\TemplatorFinder;
 
 class Handler
 {
@@ -113,13 +114,21 @@ class Handler
 
     protected function handleHttpException(HttpException $e): Response
     {
+        $view_path = $this->app->get('path.view');
+        /** @var TemplatorFinder */
+        $finder = $this->app->make(TemplatorFinder::class);
+        $finder->setPaths([
+            $view_path . 'pages/', // find default first
+        ]);
+
         /** @var Templator */
         $view = $this->app->make('view.instance');
-        $code = $view->viewExist('pages/' . $e->getStatusCode() . '.template.php')
+        $view->setFinder($finder);
+        $code = $view->viewExist((string) $e->getStatusCode())
             ? $e->getStatusCode()
             : 500;
 
-        $response = view('pages/' . $code);
+        $response = view((string) $code);
         $response->setResponeCode($e->getStatusCode());
         $response->headers->add($e->getHeaders());
 

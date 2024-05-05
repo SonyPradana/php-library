@@ -44,7 +44,7 @@ final class HandlerTest extends TestCase
         $this->karnel = new class($this->app) extends Karnel {
             protected function dispatcher(Request $request): array
             {
-                throw new HttpException(500, 'Test Exception');
+                throw new HttpException(429, 'Too Many Request');
 
                 return [
                     'callable'   => fn () => new Response('ok', 200),
@@ -88,8 +88,8 @@ final class HandlerTest extends TestCase
         $karnel      = $this->app->make(Karnel::class);
         $response    = $karnel->handle(new Request('/test'));
 
-        $this->assertEquals('Test Exception', $response->getContent());
-        $this->assertEquals(500, $response->getStatusCode());
+        $this->assertEquals('Too Many Request', $response->getContent());
+        $this->assertEquals(429, $response->getStatusCode());
     }
 
     /** @test */
@@ -98,7 +98,7 @@ final class HandlerTest extends TestCase
         $karnel      = $this->app->make(Karnel::class);
         $karnel->handle(new Request('/test'));
 
-        $this->assertEquals(['Test Exception'], HandlerTest::$logs);
+        $this->assertEquals(['Too Many Request'], HandlerTest::$logs);
     }
 
     /** @test */
@@ -116,7 +116,7 @@ final class HandlerTest extends TestCase
                 'message'   => 'Internal Server Error',
             ],
         ], $response->getContent());
-        $this->assertEquals(500, $response->getStatusCode());
+        $this->assertEquals(429, $response->getStatusCode());
     }
 
     /** @test */
@@ -129,16 +129,17 @@ final class HandlerTest extends TestCase
         ]));
 
         $content = $response->getContent();
-        $this->assertEquals('Test Exception', $content['messages']['message']);
+        $this->assertEquals('Too Many Request', $content['messages']['message']);
         $this->assertEquals('System\Integrate\Http\Exception\HttpException', $content['messages']['exception']);
         // skip meggase.file issue test with diferent platform
         $this->assertEquals(47, $content['messages']['line']);
-        $this->assertEquals(500, $response->getStatusCode());
+        $this->assertEquals(429, $response->getStatusCode());
     }
 
     /** @test */
     public function itCanRenderHttpException()
     {
+        $this->app->setViewPath('/assets/');
         $this->app->set(
             TemplatorFinder::class,
             fn () => new TemplatorFinder([
@@ -152,10 +153,7 @@ final class HandlerTest extends TestCase
             fn (TemplatorFinder $finder) => new Templator($finder, __DIR__ . '/assets')
         );
 
-        $this->app->set(
-            'view.instance',
-            fn (TemplatorFinder $finder) => new Templator($finder, __DIR__ . '/assets')
-        );
+        $this->app->set('view.instance', $this->app->get(Templator::class));
 
         $this->app->set(
             'view.response',
@@ -166,9 +164,9 @@ final class HandlerTest extends TestCase
 
         $handler = $this->app->make(Handler::class);
 
-        $exception = new HttpException(500, 'Internal Error', null, []);
+        $exception = new HttpException(429, 'Internal Error', null, []);
         $render    = (fn () => $this->{'handleHttpException'}($exception))->call($handler);
 
-        $this->assertTrue(Str::contains($render->getContent(), '<h1>Success</h1>'));
+        $this->assertTrue(Str::contains($render->getContent(), '<h1>Too Many Request</h1>'));
     }
 }
