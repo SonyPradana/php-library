@@ -366,4 +366,23 @@ class TemplatorTest extends TestCase
         $this->assertEquals(['.template.php', '.php'], $finder->getExtensions());
         $this->assertEquals([$loader], $finder->getPaths());
     }
+
+    /**
+     * @test
+     *
+     * @covers \Templator::setFinder
+     */
+    public function itCanSetNewFinder()
+    {
+        $loader     = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache      = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+        $finder     = new TemplatorFinder([$loader]);
+        $templator  = new Templator(new TemplatorFinder([$loader], ['.php']), $cache);
+        $get_finder = (fn () => $this->{'finder'})->call($templator);
+        $this->assertNotSame($finder, $get_finder);
+
+        $templator->setFinder($finder);
+        $get_finder = (fn () => $this->{'finder'})->call($templator);
+        $this->assertSame($finder, $get_finder);
+    }
 }
