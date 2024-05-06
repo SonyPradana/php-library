@@ -266,7 +266,7 @@ final class Application extends Container
         $this->set('config.pusher_key', $configs['PUSHER_APP_KEY']);
         $this->set('config.pusher_secret', $configs['PUSHER_APP_SECRET']);
         $this->set('config.pusher_cluster', $configs['PUSHER_APP_CLUSTER']);
-        $this->set('view.extensions', $configs['VIEW_EXTENSIONS']);
+        $this->set('config.view.extensions', $configs['VIEW_EXTENSIONS']);
         // load provider
         $this->providers = $configs['PROVIDERS'];
         $this->defineder($configs);
