@@ -77,8 +77,15 @@ final class Application extends Container
      * Cache path.
      *
      * @var string
+     *
+     * @deprecated version 0.32 use compiled_view_path
      */
     private $cache_path;
+
+    /**
+     * Compaile view path.
+     */
+    private string $compiled_view_path;
 
     /**
      * Config path.
@@ -248,6 +255,7 @@ final class Application extends Container
         $this->setComponentPath($configs['COMPONENT_PATH']);
         $this->setCommandPath($configs['COMMAND_PATH']);
         $this->setCachePath($configs['CACHE_PATH']);
+        $this->setCompiledViewPath($configs['COMPILED_VIEW_PATH']);
         $this->setConfigPath($configs['CONFIG']);
         $this->setMiddlewarePath($configs['MIDDLEWARE']);
         $this->setProviderPath($configs['SERVICE_PROVIDER']);
@@ -331,7 +339,7 @@ final class Application extends Container
                 '.templator.php',
                 '.php',
             ],
-            'COMPILED_VIEW' => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR,
+            'COMPILED_VIEW_PATH' => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR,
         ];
     }
 
@@ -520,6 +528,19 @@ final class Application extends Container
     }
 
     /**
+     * Set compiled view path.
+     *
+     * @param string $path Compil view path
+     */
+    public function setCompiledViewPath(string $path): self
+    {
+        $this->compiled_view_path = $this->base_path . $path;
+        $this->set('path.compiled_view_path', $this->compiled_view_path);
+
+        return $this;
+    }
+
+    /**
      * Set config path.
      *
      * @param string $path config path
@@ -631,6 +652,8 @@ final class Application extends Container
      * Get view path.
      *
      * @return string
+     *
+     * @deprecated version 0.32
      */
     public function view_path()
     {
@@ -705,6 +728,16 @@ final class Application extends Container
     public function cache_path()
     {
         return $this->get('path.cache');
+    }
+
+    /**
+     * Get compailed path.
+     *
+     * @return string
+     */
+    public function compiled_view_path()
+    {
+        return $this->get('path.compiled_view_path');
     }
 
     /**

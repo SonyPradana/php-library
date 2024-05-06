@@ -158,10 +158,24 @@ if (!function_exists('cache_path')) {
      * @param string $surfix_path Add string end of path
      *
      * @return string Cache path folder
+     *
+     * @deprecated version 0.32 use compiled_view_path() insted.
      */
     function cache_path(string $surfix_path = ''): string
     {
         $path = app()->cache_path() . $surfix_path;
+
+        return $path;
+    }
+}
+
+if (!function_exists('compiled_view_path')) {
+    /**
+     * Get aplication compailed path., base on config file.
+     */
+    function compiled_view_path(): string
+    {
+        $path = app()->compiled_view_path();
 
         return $path;
     }
