@@ -263,11 +263,12 @@ final class Application extends Container
         $this->setPublicPath($configs['PUBLIC_PATH']);
         $this->setSeederPath($configs['SEEDER_PATH']);
         $this->setStoragePath($configs['STORAGE_PATH']);
-        // pusher config
+        // other config
         $this->set('config.pusher_id', $configs['PUSHER_APP_ID']);
         $this->set('config.pusher_key', $configs['PUSHER_APP_KEY']);
         $this->set('config.pusher_secret', $configs['PUSHER_APP_SECRET']);
         $this->set('config.pusher_cluster', $configs['PUSHER_APP_CLUSTER']);
+        $this->set('view.extensions', $configs['VIEW_EXTENSIONS']);
         // load provider
         $this->providers = $configs['PROVIDERS'];
         $this->defineder($configs);
