@@ -78,7 +78,7 @@ final class Application extends Container
      *
      * @var string
      *
-     * @deprecated version 0.32 use compiled_view_path
+     * @deprecated version 0.32 use compiled_view_path isnted.
      */
     private $cache_path;
 
@@ -109,11 +109,9 @@ final class Application extends Container
     private $service_provider_path;
 
     /**
-     * View path.
-     *
-     * @var string
+     * Base view path.
      */
-    private $view_path;
+    private string $view_path;
 
     /**
      * View paths.
@@ -411,13 +409,11 @@ final class Application extends Container
     }
 
     /**
-     * Set view path.
+     * Set base view path.
      *
-     * @param string $path View path
-     *
-     * @return self
+     * @param string $path Base view path
      */
-    public function setViewPath(string $path)
+    public function setViewPath(string $path): self
     {
         $this->view_path = $this->base_path . $path;
         $this->set('path.view', $this->view_path);
@@ -519,6 +515,8 @@ final class Application extends Container
      * @param string $path Cache path
      *
      * @return self
+     *
+     * @deprecated version 0.32 use compiled_view_path isnted.
      */
     public function setCachePath(string $path)
     {
@@ -650,13 +648,9 @@ final class Application extends Container
     }
 
     /**
-     * Get view path.
-     *
-     * @return string
-     *
-     * @deprecated version 0.32
+     * Get base view path.
      */
-    public function view_path()
+    public function view_path(): string
     {
         return $this->get('path.view');
     }
@@ -725,6 +719,8 @@ final class Application extends Container
      * Get cache path.
      *
      * @return string
+     *
+     * @deprecated version 0.32 use compiled_view_path isnted.
      */
     public function cache_path()
     {

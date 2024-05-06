@@ -42,14 +42,15 @@ if (!function_exists('model_path')) {
 
 if (!function_exists('view_path')) {
     /**
-     * Get aplication view path, base on config file.
+     * Get aplication base view path, use for get located view frame work..
      * Remember since 0.32 view path is not single string (array of string).
+     * This also include in `view_paths()`.
      *
      * @param string $surfix_path Add string end of path
      *
      * @return string View path folder
      *
-     * @deprecated version 0.32 use view_paths insted.
+     * @version  0.32.0
      */
     function view_path(string $surfix_path = ''): string
     {
@@ -64,6 +65,8 @@ if (!function_exists('view_paths')) {
      * Get aplication view paths, base on config file.
      *
      * @return string[] View path folder
+     *
+     * @version 0.32.0
      */
     function view_paths(): array
     {
