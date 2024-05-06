@@ -77,8 +77,15 @@ final class Application extends Container
      * Cache path.
      *
      * @var string
+     *
+     * @deprecated version 0.32 use compiled_view_path isnted.
      */
     private $cache_path;
+
+    /**
+     * Compaile view path.
+     */
+    private string $compiled_view_path;
 
     /**
      * Config path.
@@ -102,11 +109,16 @@ final class Application extends Container
     private $service_provider_path;
 
     /**
-     * View path.
-     *
-     * @var string
+     * Base view path.
      */
-    private $view_path;
+    private string $view_path;
+
+    /**
+     * View paths.
+     *
+     * @var string[]
+     */
+    private array $view_paths;
 
     /**
      * Migration path.
@@ -217,6 +229,7 @@ final class Application extends Container
             'database.config.php',
             'pusher.config.php',
             'cachedriver.config.php',
+            'view.config.php',
         ];
         foreach ($paths as $path) {
             $file_path = $config_path . $path;
@@ -234,11 +247,13 @@ final class Application extends Container
         // application path
         $this->setModelPath($configs['MODEL_PATH']);
         $this->setViewPath($configs['VIEW_PATH']);
+        $this->setViewPaths($configs['VIEW_PATHS']);
         $this->setContollerPath($configs['CONTROLLER_PATH']);
         $this->setServicesPath($configs['SERVICES_PATH']);
         $this->setComponentPath($configs['COMPONENT_PATH']);
         $this->setCommandPath($configs['COMMAND_PATH']);
         $this->setCachePath($configs['CACHE_PATH']);
+        $this->setCompiledViewPath($configs['COMPILED_VIEW_PATH']);
         $this->setConfigPath($configs['CONFIG']);
         $this->setMiddlewarePath($configs['MIDDLEWARE']);
         $this->setProviderPath($configs['SERVICE_PROVIDER']);
@@ -246,11 +261,12 @@ final class Application extends Container
         $this->setPublicPath($configs['PUBLIC_PATH']);
         $this->setSeederPath($configs['SEEDER_PATH']);
         $this->setStoragePath($configs['STORAGE_PATH']);
-        // pusher config
+        // other config
         $this->set('config.pusher_id', $configs['PUSHER_APP_ID']);
         $this->set('config.pusher_key', $configs['PUSHER_APP_KEY']);
         $this->set('config.pusher_secret', $configs['PUSHER_APP_SECRET']);
         $this->set('config.pusher_cluster', $configs['PUSHER_APP_CLUSTER']);
+        $this->set('config.view.extensions', $configs['VIEW_EXTENSIONS']);
         // load provider
         $this->providers = $configs['PROVIDERS'];
         $this->defineder($configs);
@@ -313,6 +329,16 @@ final class Application extends Container
             'MEMCACHED_HOST'        => '127.0.0.1',
             'MEMCACHED_PASS'        => '',
             'MEMCACHED_PORT'        => 6379,
+
+            // view config
+            'VIEW_PATHS' => [
+                DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
+            ],
+            'VIEW_EXTENSIONS' => [
+                '.templator.php',
+                '.php',
+            ],
+            'COMPILED_VIEW_PATH' => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR,
         ];
     }
 
@@ -383,16 +409,27 @@ final class Application extends Container
     }
 
     /**
-     * Set view path.
+     * Set base view path.
      *
-     * @param string $path View path
-     *
-     * @return self
+     * @param string $path Base view path
      */
-    public function setViewPath(string $path)
+    public function setViewPath(string $path): self
     {
         $this->view_path = $this->base_path . $path;
         $this->set('path.view', $this->view_path);
+
+        return $this;
+    }
+
+    /**
+     * Set view paths.
+     *
+     * @param string[] $paths View paths
+     */
+    public function setViewPaths(array $paths): self
+    {
+        $this->view_paths = $paths;
+        $this->set('paths.view', $this->view_paths);
 
         return $this;
     }
@@ -478,11 +515,26 @@ final class Application extends Container
      * @param string $path Cache path
      *
      * @return self
+     *
+     * @deprecated version 0.32 use compiled_view_path isnted.
      */
     public function setCachePath(string $path)
     {
         $this->cache_path = $this->base_path . $path;
         $this->set('path.cache', $this->cache_path);
+
+        return $this;
+    }
+
+    /**
+     * Set compiled view path.
+     *
+     * @param string $path Compil view path
+     */
+    public function setCompiledViewPath(string $path): self
+    {
+        $this->compiled_view_path = $this->base_path . $path;
+        $this->set('path.compiled_view_path', $this->compiled_view_path);
 
         return $this;
     }
@@ -596,13 +648,21 @@ final class Application extends Container
     }
 
     /**
-     * Get view path.
-     *
-     * @return string
+     * Get base view path.
      */
-    public function view_path()
+    public function view_path(): string
     {
         return $this->get('path.view');
+    }
+
+    /**
+     * Get view paths.
+     *
+     * @return string[]
+     */
+    public function view_paths(): array
+    {
+        return $this->get('paths.view');
     }
 
     /**
@@ -659,10 +719,22 @@ final class Application extends Container
      * Get cache path.
      *
      * @return string
+     *
+     * @deprecated version 0.32 use compiled_view_path isnted.
      */
     public function cache_path()
     {
         return $this->get('path.cache');
+    }
+
+    /**
+     * Get compailed path.
+     *
+     * @return string
+     */
+    public function compiled_view_path()
+    {
+        return $this->get('path.compiled_view_path');
     }
 
     /**
