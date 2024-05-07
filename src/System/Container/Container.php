@@ -12,6 +12,17 @@ use DI\Container as DIContainer;
 class Container extends DIContainer implements \ArrayAccess
 {
     /**
+     * Set entry alias conntainer.
+     */
+    public function alias(string $abstract, string $alias): void
+    {
+        if ($abstract === $alias) {
+            throw new \Exception("{$abstract} is aliased to itself.");
+        }
+        $this->set($abstract, $this->get($alias));
+    }
+
+    /**
      * Offest exist check.
      *
      * @param string $offset
