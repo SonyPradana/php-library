@@ -149,11 +149,9 @@ final class HandlerTest extends TestCase
         );
 
         $this->app->set(
-            Templator::class,
+            'view.instance',
             fn (TemplatorFinder $finder) => new Templator($finder, __DIR__ . '/assets')
         );
-
-        $this->app->set('view.instance', $this->app->get(Templator::class));
 
         $this->app->set(
             'view.response',

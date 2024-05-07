@@ -28,7 +28,7 @@ final class ViewCommandsTest extends TestCase
         );
 
         $app->set(
-            Templator::class,
+            'view.instance',
             fn (TemplatorFinder $finder) => new Templator($finder, $app->cache_path())
         );
 
