@@ -15,10 +15,12 @@ class ContainerTest extends TestCase
     public function itCanAlias()
     {
         $container = new Container();
+        $container->alias('framework', 'fast');
         $container->set('framework', fn () => 'php-mvc');
-        $container->alias('fast', 'framework');
 
         $this->assertEquals($container->get('framework'), $container->get('fast'));
+        $this->assertEquals($container->make('framework'), $container->make('fast'));
+        $this->assertTrue($container->has('fast'));
     }
 
     /**

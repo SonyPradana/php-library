@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace System\Integrate;
 
 use System\Container\Container;
+use System\Http\Request;
 use System\Integrate\Http\Exception\HttpException;
 use System\Integrate\Providers\IntegrateServiceProvider;
+use System\View\Templator;
+use System\View\TemplatorFinder;
 
 final class Application extends Container
 {
@@ -196,6 +199,9 @@ final class Application extends Container
         // boot provider
         $this->registerProvider();
         $this->bootProvider();
+
+        // register container alias
+        $this->registerAlias();
     }
 
     /**
@@ -979,5 +985,21 @@ final class Application extends Container
     public function abort(int $code, string $message = '', array $headers = []): void
     {
         throw new HttpException($code, $message, null, $headers);
+    }
+
+    /**
+     * Register aliases to container.
+     */
+    protected function registerAlias(): void
+    {
+        foreach ([
+            'request'       => [Request::class],
+            'view.instance' => [Templator::class],
+            'vite.gets'     => [Vite::class],
+        ] as $abstrack => $aliases) {
+            foreach ($aliases as $alias) {
+                $this->alias($abstrack, $alias);
+            }
+        }
     }
 }
