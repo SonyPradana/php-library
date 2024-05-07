@@ -23,7 +23,7 @@ final class ViewTest extends TestCase
         );
 
         $app->set(
-            Templator::class,
+            'view.instance',
             fn (TemplatorFinder $finder) => new Templator($finder, __DIR__ . '/assets/cache')
         );
 
