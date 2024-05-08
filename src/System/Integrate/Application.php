@@ -875,16 +875,17 @@ final class Application extends Container
 
     /**
      * Flush or reset application (static).
-     *
-     * @return void
      */
-    public function flush()
+    public function flush(): void
     {
         static::$app = null;
 
-        $this->providers        = [];
-        $this->looded_providers = [];
-        $this->booted_providers = [];
+        $this->providers         = [];
+        $this->looded_providers  = [];
+        $this->booted_providers  = [];
+        $this->terminateCallback = [];
+
+        parent::flush();
     }
 
     /**

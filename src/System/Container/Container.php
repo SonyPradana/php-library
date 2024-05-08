@@ -75,6 +75,16 @@ class Container extends DIContainer implements \ArrayAccess
     }
 
     /**
+     * Flush container.
+     */
+    public function flush(): void
+    {
+        $this->aliases              = [];
+        $this->resolvedEntries      = [];
+        $this->entriesBeingResolved = [];
+    }
+
+    /**
      * Offest exist check.
      *
      * @param string $offset

@@ -37,4 +37,26 @@ class ContainerTest extends TestCase
             $this->assertEquals('framework is aliased to itself.', $th->getMessage());
         }
     }
+
+    /**
+     * @test
+     */
+    public function itCanFlushContainer()
+    {
+        $container = new Container();
+        $container->alias('framework', 'fast');
+        $container->set('framework', fn () => 'php-mvc');
+        $container->make('framework');
+        $container->get('framework');
+        $container->has('framework');
+
+        $this->assertNotEmpty((fn () => $this->{'aliases'})->call($container));
+        $this->assertNotEmpty((fn () => $this->{'resolvedEntries'})->call($container));
+
+        $container->flush();
+
+        $this->assertEmpty((fn () => $this->{'aliases'})->call($container));
+        $this->assertEmpty((fn () => $this->{'resolvedEntries'})->call($container));
+        $this->assertEmpty((fn () => $this->{'entriesBeingResolved'})->call($container));
+    }
 }
