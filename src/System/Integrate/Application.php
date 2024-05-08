@@ -880,9 +880,10 @@ final class Application extends Container
     {
         static::$app = null;
 
-        $this->providers        = [];
-        $this->looded_providers = [];
-        $this->booted_providers = [];
+        $this->providers         = [];
+        $this->looded_providers  = [];
+        $this->booted_providers  = [];
+        $this->terminateCallback = [];
 
         parent::flush();
     }
