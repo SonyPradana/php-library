@@ -153,6 +153,29 @@ class ApplicationTest extends TestCase
         (new Application(__DIR__))->abort(500);
     }
 
+    /** @test */
+    public function itCanCallDeprecatedMethod()
+    {
+        $app = new Application(__DIR__);
+
+        $this->assertEquals($app->basePath(), $app->base_path());
+        $this->assertEquals($app->appPath(), $app->app_path());
+        $this->assertEquals($app->modelPath(), $app->model_path());
+        $this->assertEquals($app->viewPath(), $app->view_path());
+        $this->assertEquals($app->servicesPath(), $app->services_path());
+        $this->assertEquals($app->componentPath(), $app->component_path());
+        $this->assertEquals($app->commandPath(), $app->command_path());
+        $this->assertEquals($app->storagePath(), $app->storage_path());
+        $this->assertEquals($app->cachePath(), $app->cache_path());
+        $this->assertEquals($app->compiledViewPath(), $app->compiled_view_path());
+        $this->assertEquals($app->configPath(), $app->config_path());
+        $this->assertEquals($app->middlewarePath(), $app->middleware_path());
+        $this->assertEquals($app->providerPath(), $app->provider_path());
+        $this->assertEquals($app->migrationPath(), $app->migration_path());
+        $this->assertEquals($app->seederPath(), $app->seeder_path());
+        $this->assertEquals($app->publicPath(), $app->public_path());
+    }
+
     private function defaultConfigs()
     {
         return [
