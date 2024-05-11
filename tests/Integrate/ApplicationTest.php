@@ -208,7 +208,7 @@ class ApplicationTest extends TestCase
                 DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
             ],
             'VIEW_EXTENSIONS' => [
-                '.templator.php',
+                '.template.php',
                 '.php',
             ],
             'COMPILED_VIEW_PATH' => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR,
