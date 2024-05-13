@@ -158,7 +158,7 @@ class Method
      */
     public function body($body): self
     {
-        $body = $body ?? [];
+        $body ??= [];
 
         $this->body = is_array($body)
             ? $body

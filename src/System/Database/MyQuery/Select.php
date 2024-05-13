@@ -158,8 +158,8 @@ final class Select extends Fetch
      */
     public function order(string $column_name, int $order_using = MyQuery::ORDER_ASC, ?string $belong_to = null)
     {
-        $order             = $order_using == 0 ? 'ASC' : 'DESC';
-        $belong_to         = $belong_to ?? $this->_table;
+        $order = 0 === $order_using ? 'ASC' : 'DESC';
+        $belong_to ??= $this->_table;
         $this->_sort_order = "ORDER BY `$belong_to`.`$column_name` $order";
 
         return $this;
