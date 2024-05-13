@@ -349,12 +349,14 @@ class Model implements \ArrayAccess, \IteratorAggregate
     public function hasOne($model, ?string $ref = null)
     {
         if (class_exists($model)) {
-            $model      = new ($model($this->pdo, []));
+            /** @var object */
+            $model      = new $model($this->pdo, []);
             $table_name = $model->table_name;
             $join_ref   = $ref ?? $model->primery_key;
         } else {
             $table_name = $model;
             $join_ref   = $ref ?? $this->primery_key;
+            /** @var object */
             $model      = new Model($this->pdo, []);
         }
         $result   = MyQuery::from($this->table_name, $this->pdo)
@@ -377,12 +379,14 @@ class Model implements \ArrayAccess, \IteratorAggregate
     public function hasMany($model, ?string $ref = null)
     {
         if (class_exists($model)) {
-            $model      = new ($model($this->pdo, []));
+            /** @var object */
+            $model      = new $model($this->pdo, []);
             $table_name = $model->table_name;
             $join_ref   = $ref ?? $model->primery_key;
         } else {
             $table_name = $model;
             $join_ref   = $ref ?? $this->primery_key;
+            /** @var object */
             $model      = new Model($this->pdo, []);
         }
         $result = MyQuery::from($this->table_name, $this->pdo)
