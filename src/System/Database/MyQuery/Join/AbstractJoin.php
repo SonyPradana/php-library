@@ -119,7 +119,7 @@ abstract class AbstractJoin
      */
     public function compare(string $main_column, ?string $compire_column = null)
     {
-        $compire_column = $compire_column ?? $main_column;
+        $compire_column ??= $main_column;
 
         $this->_compereColumn[] = [
             $main_column, $compire_column,

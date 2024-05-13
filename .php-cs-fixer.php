@@ -4,7 +4,7 @@ $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__ . DIRECTORY_SEPARATOR . 'tests')
     ->in(__DIR__ . DIRECTORY_SEPARATOR . 'src')
     ->exclude(__DIR__ . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'Template')
-    ->append(['.php-cs-fixer.php']);
+    ->append(['.php-cs-fixer.php', 'rector.php']);
 
 $rules = [
     '@Symfony'                => true,
