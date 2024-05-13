@@ -215,17 +215,11 @@ class Generate
 
     private function ruleText(): string
     {
-        switch ($this->rule) {
-            case self::SET_CLASS:
-            case self::SET_ABSTRACT:
-                return 'abstract';
-
-            case self::SET_TRAIT:
-                return 'trait';
-
-            default:
-                return '';
-        }
+        return match ($this->rule) {
+            self::SET_CLASS, self::SET_ABSTRACT => 'abstract',
+            self::SET_TRAIT => 'trait',
+            default         => '',
+        };
     }
 
     /**
