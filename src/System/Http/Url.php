@@ -15,7 +15,7 @@ class Url
     /**
      * @var array<int|string, string>|null
      */
-    private ?array $query;
+    private ?array $query = null;
     private ?string $fragment;
 
     /**

@@ -69,7 +69,7 @@ class ScheduleTime
      */
     private bool $skip = false;
 
-    private ?InterpolateInterface $logger;
+    private ?InterpolateInterface $logger = null;
 
     /**
      * Contructor.
