@@ -140,11 +140,9 @@ class CronCommand extends Command
 
     public function scheduler(Schedule $schedule): void
     {
-        $schedule->call(function () {
-            return [
-                'code' => 200,
-            ];
-        })
+        $schedule->call(fn () => [
+            'code' => 200,
+        ])
         ->retry(2)
         ->justInTime()
         ->animusly()
