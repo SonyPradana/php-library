@@ -356,7 +356,6 @@ class Model implements \ArrayAccess, \IteratorAggregate
         } else {
             $table_name = $model;
             $join_ref   = $ref ?? $this->primery_key;
-            /** @var object */
             $model      = new Model($this->pdo, []);
         }
         $result   = MyQuery::from($this->table_name, $this->pdo)
@@ -386,7 +385,6 @@ class Model implements \ArrayAccess, \IteratorAggregate
         } else {
             $table_name = $model;
             $join_ref   = $ref ?? $this->primery_key;
-            /** @var object */
             $model      = new Model($this->pdo, []);
         }
         $result = MyQuery::from($this->table_name, $this->pdo)
