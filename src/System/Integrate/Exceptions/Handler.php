@@ -102,7 +102,8 @@ class Handler
                 'code'     => $respone->getStatusCode(),
                 'messages' => [
                     'message'   => $th->getMessage(),
-                    'exception' => get_class($th),
+                    'exception' => g
+$th::class,
                     'file'      => $th->getFile(),
                     'line'      => $th->getLine(),
                 ],
