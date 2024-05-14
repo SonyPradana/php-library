@@ -9,10 +9,10 @@ if (!function_exists('now')) {
      * @param string $date_format Set current time
      * @param string $time_zone   Set timezone
      *
-     * @return \System\Time\Now
+     * @return System\Time\Now
      */
-    function now(string $date_format = 'now', string $time_zone = null)
+    function now(string $date_format = 'now', ?string $time_zone = null)
     {
-        return new \System\Time\Now($date_format, $time_zone);
+        return new System\Time\Now($date_format, $time_zone);
     }
 }

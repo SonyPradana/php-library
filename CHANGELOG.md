@@ -6,6 +6,118 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.31.1] - 2024-05-01
+### Fixed
+- Fixed view template finder by hard code suffix and prefix view file, the next version will handle by `ViewFinder::class`.
+
+## [0.31.0] - 2024-04-30
+### Added
+- Application abort `Application::abort()` or `abort()` shorthand for throw `HttpException::class`.
+- Added `Handler::class` to catch exception in `Karnel::class`.
+- Added response json exception handler in `Handler::class`.
+- Added `Handler::dont_report` to except no report.
+- Added `HttpResponse::class` to register response in exception.
+- Added `Templator::viewExist()` to check template file exist.
+- Added `handler::handleHttpException` to transform httpException to Response view.
+
+### Changed
+- `Container::class` implements ArrayAccess.
+
+## [0.30.0] - 2024-04-20
+### Added
+- Added Templator multy section.
+- Added Application Storage Path.
+- Added Http Karnel terminate.
+- Added Application Maintenace Mode.
+
+## [0.29.0] - 2024-03-15
+### Added
+- Rewrite `Model::class` merge `MyModel::class` and `MyCRUD::class`, adding without deprecated/removing (yet).
+- Added `Collection::pluck()` pluck collection with key.
+- Added `MyPdo::logs` to get query logs and time execution.
+
+### Changed
+- Change stub file for `Model::class` default using `Model::class`.
+
+### Removed
+- Removed stub for `MyCrud::class` aka `Model` and `MyModel::class` aka `Models`.
+
+
+## [0.28.0] - 2024-02-11
+### Changed
+- Changed Tempaltor required dolar sign to declare variable (name, each, set and if).
+
+## [0.27.4] - 2024-02-09
+### Changed
+- Changed migration command migrate table info type.
+
+### Added
+- Added Templator imoport directive.
+- Added cron schedule skip when due time.
+
+## [0.27.3] - 2024-01-09
+### Changed
+- Support Templator slot in inline directive.
+
+### Added
+- Added suport cli command prompt to accept yes using option `--yes`.
+- Added function to check param exist `Command::has`.
+
+## [0.27.2] - 2024-01-12
+### Fixed
+- Remove double dolar sign in variable
+
+## [0.27.1] - 2024-01-11
+### Changed
+- Allowed templator each using key and value pairing.
+
+## [0.27.0] - 2024-01-09
+### Changed
+- Integrate command using pattern command instead of class command.
+- Run Migration command base on table migration (batch).
+- Changed parent parameter in templator template, `$data` -> `$__` and `$template` -> `$__file_name__`.
+- Separate templator to small part/class.
+
+### Added
+- Added seeder option after run migration command.
+- Added `Collection::max` and `Collection::min`.
+- Added `Style::outIf` print/echo when condition true.
+- Added costume tick cosole progressbar `ProgressBar::tickWith`.
+
+
+## [0.26.1] - 2023-12-19
+### Fixed
+- Fixed adding multy premerykey and unique in schema builder.
+- Fixed when adding default constrait.
+
+### Changed
+- Changed add `NULL` when `Constrait::notnull` parameter is false.
+
+### Added
+- Added second parameter optional wrap quote value in `Constrait::default`.
+- Added new default constrait `Constrait::defaultNull` shortcut for add default is `NULL`.
+- Added Unsigned for integer data type in schema builder.
+
+## [0.26.0] - 2023-12-09
+### Changed
+- Changed `App` property and use `MyPDO` insted.
+- Changed native array map instead using `Collection::map` in `Str::mask`.
+- Changed folder structur for `Macro` trait.
+- Chenged `Str::fill*` using native `string_pad`.
+- Changed `ServeCommand::serve` named argument with option command `--port`.
+- Changed how `Templator::getView` include php file (encapsulation).
+
+### Added
+- Added new Collection method `Collection::where`, `Collection::whereIn`, `Collection::whereNotIn`.
+- Added `Karnel::class` command similar when cant match any command.
+- Added `Url::parseRequest` to parse url using `Request::class`.
+- Added `ServeCommand::serve` with new option `--expose`.
+- Added `Templator::compile` get compiled templator file without run php file.
+- Added new command `ViewCommand::cache` and `ViewCommand::clear`.
+- Added new `Templator` syntax `{% set foo='bar' %}` to set variable.
+- Added new `Templator` syntax `{% raw %}{% endraw %}` to give raw template without compile any variable.
+- Added new `Templator` syntax `{% break %}` and `{% continue %}`.
+
 ## [0.25.0] - 2023-11-04
 ### Fixed
 - Fixed `HelpCommand` using commandmap to find command helper.

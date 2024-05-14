@@ -35,7 +35,7 @@ final class MakeCommandsWithDatabaseTest extends \RealDatabaseConnectionTest
         parent::tearDown();
         $this->app->flush();
 
-        if (file_exists($client =  __DIR__ . '/assets/Client/Client.php')) {
+        if (file_exists($client =  __DIR__ . '/assets/Client.php')) {
             unlink($client);
         }
     }
@@ -54,11 +54,11 @@ final class MakeCommandsWithDatabaseTest extends \RealDatabaseConnectionTest
 
         $this->assertEquals(0, $exit);
 
-        $file = __DIR__ . '/assets/Client/Client.php';
+        $file = __DIR__ . '/assets/Client.php';
         $this->assertTrue(file_exists($file));
 
         $model = file_get_contents($file);
-        $this->assertTrue(Str::contains($model, 'protected $' . "TABLE_NAME = 'users'"));
-        $this->assertTrue(Str::contains($model, 'protected $' . "PRIMERY_KEY = 'user'"));
+        $this->assertTrue(Str::contains($model, 'protected string $' . "table_name  = 'users'"));
+        $this->assertTrue(Str::contains($model, 'protected string $' . "primery_key = 'user'"));
     }
 }

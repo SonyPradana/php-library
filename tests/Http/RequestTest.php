@@ -237,7 +237,7 @@ class RequestTest extends TestCase
 
         try {
             $request->all();
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $this->assertEquals('Request body is empty.', $th->getMessage());
         }
     }
@@ -251,7 +251,7 @@ class RequestTest extends TestCase
 
         try {
             $request->all();
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $this->assertEquals('Could not decode request body.', $th->getMessage());
         }
     }
@@ -360,7 +360,7 @@ class RequestTest extends TestCase
     {
         Request::macro(
             'validate',
-            fn (\Closure $rule = null, \Closure $filter = null) => Validator::make($this->{'all'}(), $rule, $filter)
+            fn (?Closure $rule = null, ?Closure $filter = null) => Validator::make($this->{'all'}(), $rule, $filter)
         );
 
         // get

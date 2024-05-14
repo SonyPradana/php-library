@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use System\Http\Response;
 use System\Integrate\Testing\TestResponse;
 
-final class ResponseStatusTrait extends TestCase
+final class ResponseStatusTest extends TestCase
 {
     /**
      * @test

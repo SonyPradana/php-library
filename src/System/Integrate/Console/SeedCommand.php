@@ -45,17 +45,17 @@ class SeedCommand extends Command
     public function printHelp(): array
     {
         return [
-          'commands'  => [
-            'db:seed'   => 'Run seeding',
-            'make:seed' => 'Create new seeder class',
-          ],
-          'options'   => [
-            '--class'      => 'Target class (will add `Database\\Seeders\\`)',
-            '--name-space' => 'Target class with full namespace',
-          ],
-          'relation'  => [
-            'db:seed' => ['--class', '--name-space'],
-          ],
+            'commands'  => [
+                'db:seed'   => 'Run seeding',
+                'make:seed' => 'Create new seeder class',
+            ],
+            'options'   => [
+                '--class'      => 'Target class (will add `Database\\Seeders\\`)',
+                '--name-space' => 'Target class with full namespace',
+            ],
+            'relation'  => [
+                'db:seed' => ['--class', '--name-space'],
+            ],
         ];
     }
 
@@ -67,9 +67,9 @@ class SeedCommand extends Command
 
         /* @var bool */
         return (new Prompt(style('Runing seeder in production?')->textRed(), [
-                'yes' => fn () => true,
-                'no'  => fn () => false,
-            ], 'no'))
+            'yes' => fn () => true,
+            'no'  => fn () => false,
+        ], 'no'))
             ->selection([
                 style('yes')->textDim(),
                 ' no',
@@ -87,6 +87,12 @@ class SeedCommand extends Command
             return 2;
         }
 
+        if (null !== $class && null !== $namespace) {
+            warn('Use only one class or namespace, be specific.')->out(false);
+
+            return 1;
+        }
+
         if (null === $class && null !== $namespace) {
             $class = $namespace;
         }
@@ -96,9 +102,7 @@ class SeedCommand extends Command
         }
 
         if (null === $class && null === $namespace) {
-            warn('command db:seed require --class or --name-space flag follow by class name.')->out(false);
-
-            return 1;
+            $class = 'Database\\Seeders\\DatabaseSeeder';
         }
 
         if (false === class_exists($class)) {
@@ -111,7 +115,7 @@ class SeedCommand extends Command
         try {
             app()->call([$class, 'run']);
 
-            ok('Success run seeder')->out(false);
+            ok('Success run seeder ' . $class)->out(false);
         } catch (\Throwable $th) {
             warn($th->getMessage())->out(false);
             $exit = 1;

@@ -194,6 +194,14 @@ class Command implements \ArrayAccess
     }
 
     /**
+     * Get exist option status.
+     */
+    protected function hasOption(string $name): bool
+    {
+        return array_key_exists($name, $this->option_mapper);
+    }
+
+    /**
      * Get all option array positional.
      *
      * @return string[]

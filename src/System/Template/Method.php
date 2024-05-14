@@ -68,23 +68,12 @@ class Method
         $pre[] = $this->is_static ? 'static' : '';
 
         // visibility
-        switch ($this->visibility) {
-            case self::PUBLIC_:
-                $pre[] = 'public';
-                break;
-
-            case self::PRIVATE_:
-                $pre[] = 'private';
-                break;
-
-            case self::PROTECTED_:
-                $pre[] = 'protected';
-                break;
-
-            default:
-                $pre[] = '';
-                break;
-        }
+        $pre[] = match ($this->visibility) {
+            self::PUBLIC_    => 'public',
+            self::PRIVATE_   => 'private',
+            self::PROTECTED_ => 'protected',
+            default          => '',
+        };
 
         // {{final}}{{visibility}}{{static}}
         $pre    = array_filter($pre);
@@ -169,7 +158,7 @@ class Method
      */
     public function body($body): self
     {
-        $body = $body ?? [];
+        $body ??= [];
 
         $this->body = is_array($body)
             ? $body

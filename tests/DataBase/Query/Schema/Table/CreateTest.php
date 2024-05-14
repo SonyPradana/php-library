@@ -24,6 +24,21 @@ final class CreateTest extends \QueryStringTest
     }
 
     /** @test */
+    public function itCanGenerateQueryUsingWithMultyPrimeryKey()
+    {
+        $schema = new Create('testing_db', 'test', $this->pdo_schame);
+        $schema->addColumn()->raw('PersonID int');
+        $schema->addColumn()->raw('LastName varchar(255)');
+        $schema->primaryKey('PersonID');
+        $schema->primaryKey('LastName');
+
+        $this->assertEquals(
+            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), PRIMARY KEY (`PersonID`, `LastName`) )',
+            $schema->__toString()
+        );
+    }
+
+    /** @test */
     public function itCanGenerateQueryUsingAddColumnWithoutPrimeryKey()
     {
         $schema = new Create('testing_db', 'test', $this->pdo_schame);
@@ -51,12 +66,27 @@ final class CreateTest extends \QueryStringTest
     }
 
     /** @test */
+    public function itCanGenerateQueryUsingAddColumnWithMultyUnique()
+    {
+        $schema = new Create('testing_db', 'test', $this->pdo_schame);
+        $schema->addColumn()->raw('PersonID int');
+        $schema->addColumn()->raw('LastName varchar(255)');
+        $schema->unique('PersonID');
+        $schema->unique('LastName');
+
+        $this->assertEquals(
+            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), UNIQUE (`PersonID`, `LastName`) )',
+            $schema->__toString()
+        );
+    }
+
+    /** @test */
     public function itCanGenerateQueryUsingColumns()
     {
         $schema = new Create('testing_db', 'test', $this->pdo_schame);
         $schema->collumns([
-                (new Column())->raw('PersonID int'),
-                (new Column())->raw('LastName varchar(255)'),
+            (new Column())->raw('PersonID int'),
+            (new Column())->raw('LastName varchar(255)'),
         ]);
         $schema->primaryKey('PersonID');
 
@@ -81,15 +111,30 @@ final class CreateTest extends \QueryStringTest
     }
 
     /** @test */
+    public function itCanGenerateDefaultConstraint()
+    {
+        $schema = new Create('testing_db', 'test', $this->pdo_schame);
+        $schema('PersonID')->int()->unsigned()->default(1);
+        $schema('LastName')->varchar(255)->default('-');
+        $schema('sufix')->varchar(15)->defaultNull();
+        $schema->primaryKey('PersonID');
+
+        $this->assertEquals(
+            "CREATE TABLE testing_db.test ( `PersonID` int UNSIGNED DEFAULT 1, `LastName` varchar(255) DEFAULT '-', `sufix` varchar(15) DEFAULT NULL, PRIMARY KEY (`PersonID`) )",
+            $schema->__toString()
+        );
+    }
+
+    /** @test */
     public function itCanGenerateQueryWithDatatypeAndConstrait()
     {
         $schema = new Create('testing_db', 'test', $this->pdo_schame);
         $schema('PersonID')->int()->notNull();
-        $schema('LastName')->varchar(255);
+        $schema('LastName')->varchar(255)->null();
         $schema->primaryKey('PersonID');
 
         $this->assertEquals(
-            'CREATE TABLE testing_db.test ( `PersonID` int NOT NULL, `LastName` varchar(255), PRIMARY KEY (`PersonID`) )',
+            'CREATE TABLE testing_db.test ( `PersonID` int NOT NULL, `LastName` varchar(255) NULL, PRIMARY KEY (`PersonID`) )',
             $schema->__toString()
         );
     }

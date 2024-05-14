@@ -4,6 +4,7 @@ use PHPUnit\Framework\TestCase;
 use System\Http\Request;
 use System\Integrate\Application;
 use System\Integrate\Exceptions\ApplicationNotAvailable;
+use System\Integrate\Http\Exception\HttpException;
 
 class ApplicationTest extends TestCase
 {
@@ -81,6 +82,100 @@ class ApplicationTest extends TestCase
         $this->assertTrue(Request::hasMacro('upload'));
     }
 
+    /**
+     * @test
+     */
+    public function itCanTerminateAfterApplicationDone()
+    {
+        $app = new Application('/');
+        $app->registerTerminate(static function () {
+            echo 'terminated.';
+        });
+        ob_start();
+        echo 'application started.';
+        echo 'application ended.';
+        $app->terminate();
+        $out = ob_get_clean();
+
+        $this->assertEquals('application started.application ended.terminated.', $out);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanDetectMaintenenceMode()
+    {
+        $app = new Application(__DIR__);
+
+        $this->assertFalse($app->isDownMaintenanceMode());
+
+        // maintenan mode
+        $app->setStoragePath(DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR);
+
+        $this->assertTrue($app->isDownMaintenanceMode());
+    }
+
+    /**
+     * @test
+     */
+    public function itCanGetDown()
+    {
+        $app = new Application(__DIR__);
+        $app->setStoragePath(DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR);
+
+        $this->assertEquals([
+            'redirect' => null,
+            'retry'    => 15,
+            'status'   => 503,
+            'template' => null,
+        ], $app->getDownData());
+    }
+
+    /**
+     * @test
+     */
+    public function itCanGetDownDefault()
+    {
+        $app = new Application('/');
+
+        $this->assertEquals([
+            'redirect' => null,
+            'retry'    => null,
+            'status'   => 503,
+            'template' => null,
+        ], $app->getDownData());
+    }
+
+    /** @test */
+    public function itCanAbortApplication()
+    {
+        $this->expectException(HttpException::class);
+        (new Application(__DIR__))->abort(500);
+    }
+
+    /** @test */
+    public function itCanCallDeprecatedMethod()
+    {
+        $app = new Application(__DIR__);
+
+        $this->assertEquals($app->basePath(), $app->base_path());
+        $this->assertEquals($app->appPath(), $app->app_path());
+        $this->assertEquals($app->modelPath(), $app->model_path());
+        $this->assertEquals($app->viewPath(), $app->view_path());
+        $this->assertEquals($app->servicesPath(), $app->services_path());
+        $this->assertEquals($app->componentPath(), $app->component_path());
+        $this->assertEquals($app->commandPath(), $app->command_path());
+        $this->assertEquals($app->storagePath(), $app->storage_path());
+        $this->assertEquals($app->cachePath(), $app->cache_path());
+        $this->assertEquals($app->compiledViewPath(), $app->compiled_view_path());
+        $this->assertEquals($app->configPath(), $app->config_path());
+        $this->assertEquals($app->middlewarePath(), $app->middleware_path());
+        $this->assertEquals($app->providerPath(), $app->provider_path());
+        $this->assertEquals($app->migrationPath(), $app->migration_path());
+        $this->assertEquals($app->seederPath(), $app->seeder_path());
+        $this->assertEquals($app->publicPath(), $app->public_path());
+    }
+
     private function defaultConfigs()
     {
         return [
@@ -90,20 +185,21 @@ class ApplicationTest extends TestCase
             'APP_KEY'               => '',
             'ENVIRONMENT'           => 'dev',
 
-            'MODEL_PATH'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'model' . DIRECTORY_SEPARATOR,
-            'VIEW_PATH'             => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
-            'CONTROLLER_PATH'       => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR,
-            'SERVICES_PATH'         => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'services' . DIRECTORY_SEPARATOR,
-            'COMPONENT_PATH'        => DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR,
-            'COMMNAD_PATH'          => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'commands' . DIRECTORY_SEPARATOR,
-            'CACHE_PATH'            => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR,
-            'CONFIG'                => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR,
-            'MIDDLEWARE'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'middleware' . DIRECTORY_SEPARATOR,
+            'COMMAND_PATH'          => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Commands' . DIRECTORY_SEPARATOR,
+            'CONTROLLER_PATH'       => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR,
+            'MODEL_PATH'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR,
+            'MIDDLEWARE'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Middlewares' . DIRECTORY_SEPARATOR,
             'SERVICE_PROVIDER'      => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Providers' . DIRECTORY_SEPARATOR,
-            'MIGRATION_PATH'        => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migrations' . DIRECTORY_SEPARATOR,
+            'CONFIG'                => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR,
+            'SERVICES_PATH'         => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'services' . DIRECTORY_SEPARATOR,
+            'VIEW_PATH'             => DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
+            'COMPONENT_PATH'        => DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR,
+            'STORAGE_PATH'          => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR,
+            'CACHE_PATH'            => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR,
+            'CACHE_VIEW_PATH'       => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR,
             'PUBLIC_PATH'           => DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR,
+            'MIGRATION_PATH'        => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migration' . DIRECTORY_SEPARATOR,
             'SEEDER_PATH'           => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'seeders' . DIRECTORY_SEPARATOR,
-
             'PROVIDERS'             => [
                 // provider class name
             ],
@@ -129,6 +225,16 @@ class ApplicationTest extends TestCase
             'MEMCACHED_HOST'        => '127.0.0.1',
             'MEMCACHED_PASS'        => '',
             'MEMCACHED_PORT'        => 6379,
+
+            // view config
+            'VIEW_PATHS' => [
+                DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
+            ],
+            'VIEW_EXTENSIONS' => [
+                '.template.php',
+                '.php',
+            ],
+            'COMPILED_VIEW_PATH' => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR,
         ];
     }
 }

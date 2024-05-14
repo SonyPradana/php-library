@@ -35,8 +35,11 @@ class Karnel
     {
         // handle command empty
         $baseArgs = $arguments[1] ?? '--help';
+        $commands = [];
 
         foreach ($this->commands() as $cmd) {
+            $commands = array_merge($commands, $cmd->patterns(), $cmd->cmd());
+
             if ($cmd->isMatch($baseArgs)) {
                 $this->app->set(
                     $cmd->class(),
@@ -50,18 +53,55 @@ class Karnel
             }
         }
 
+        // did you mean
+        $count   = 0;
+        $similar = (new Style('Did you mean?'))->textLightYellow()->newLines();
+        foreach ($this->similar($baseArgs, $commands, 4) as $term => $level) {
+            $similar->push('    > ')->push($term)->textYellow()->newLines();
+            $count++;
+        }
+
         // if command not register
-        (new Style())
-            ->push('Command Not Found, run help command')->textRed()->newLines(2)
-            ->push('> ')->textDim()
-            ->push('php ')->textYellow()
-            ->push('cli ')
-            ->push('--help')->textDim()
-            ->newLines()
-            ->out()
-        ;
+        if (0 === $count) {
+            (new Style())
+                ->push('Command Not Found, run help command')->textRed()->newLines(2)
+                ->push('> ')->textDim()
+                ->push('php ')->textYellow()
+                ->push('cli ')
+                ->push('--help')->textDim()
+                ->newLines()
+                ->out()
+            ;
+
+            return $this->exit_code = 1;
+        }
+
+        $similar->out();
 
         return $this->exit_code = 1;
+    }
+
+    /**
+     * Return similar from given array, compare with key.
+     *
+     * @param string[] $matchs
+     *
+     * @return array<string, int> Sorted from simalar
+     */
+    private function similar(string $find, $matchs, int $threshold = -1)
+    {
+        $closest = [];
+        $find    = strtolower($find);
+
+        foreach ($matchs as $match) {
+            $level = levenshtein($find, strtolower($match));
+            if ($level <= $threshold) {
+                $closest[$match] = $level;
+            }
+        }
+        asort($closest);
+
+        return $closest;
     }
 
     /**

@@ -36,7 +36,7 @@ class Crypt
         return hash('sha256', $passphrase, true);
     }
 
-    public function encrypt(string $plain_text, string $passphrase = null): string
+    public function encrypt(string $plain_text, ?string $passphrase = null): string
     {
         $hash = $passphrase === null ? null : $this->hash($passphrase);
 
@@ -51,7 +51,7 @@ class Crypt
         );
     }
 
-    public function decrypt(string $encrypted, string $passphrase = null): string
+    public function decrypt(string $encrypted, ?string $passphrase = null): string
     {
         $hash = $passphrase === null ? null : $this->hash($passphrase);
 

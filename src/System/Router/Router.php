@@ -17,7 +17,7 @@ class Router
         'prefix'     => '',
         'middleware' => [],
     ];
-    /** @var Route */
+    /** @var Route|null */
     private static $current;
 
     /**
@@ -128,8 +128,10 @@ class Router
 
     /**
      * Get current route.
+     *
+     * @return Route|null
      */
-    public static function current(): Route
+    public static function current()
     {
         return self::$current;
     }
@@ -447,7 +449,7 @@ class Router
             ->multimatch($multimatch)
             ->run(
                 fn ($current, $params) => call_user_func_array($current, $params),
-                fn ($path) => call_user_func_array(self::$pathNotFound, [$path]),
+                fn ($path)          => call_user_func_array(self::$pathNotFound, [$path]),
                 fn ($path, $method) => call_user_func_array(self::$methodNotAllowed, [$path, $method])
             );
 

@@ -3,6 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use System\Text\Str;
 use System\View\Templator;
+use System\View\TemplatorFinder;
 
 class TemplatorTest extends TestCase
 {
@@ -32,7 +33,7 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
-        $view = new Templator($loader, $cache);
+        $view = new Templator(new TemplatorFinder([$loader], ['']), $cache);
         $out  = $view->render('php.php', []);
 
         $this->assertEquals('<html><head></head><body>taylor</body></html>', trim($out));
@@ -48,7 +49,7 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
-        $view = new Templator($loader, $cache);
+        $view = new Templator(new TemplatorFinder([$loader], ['']), $cache);
         $out  = $view->render('include.php', []);
 
         $this->assertSee(trim($out), '<p>taylor</p>');
@@ -64,7 +65,7 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
-        $view = new Templator($loader, $cache);
+        $view = new Templator(new TemplatorFinder([$loader], ['']), $cache);
         $out  = $view->render('nesting.include.php', []);
 
         $this->assertSee(trim($out), '<p>taylor</p>');
@@ -80,7 +81,7 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
-        $view = new Templator($loader, $cache);
+        $view = new Templator(new TemplatorFinder([$loader], ['']), $cache);
         $out  = $view->render('naming.php', ['name' => 'taylor', 'age' => 17]);
 
         $this->assertEquals('<html><head></head><body><h1>your taylor, ages 17 </h1></body></html>', trim($out));
@@ -96,7 +97,7 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
-        $view = new Templator($loader, $cache);
+        $view = new Templator(new TemplatorFinder([$loader], ['']), $cache);
         $out  = $view->render('naming-ternary.php', ['age' => false]);
 
         $this->assertEquals('<html><head></head><body><h1>your nuno, ages 28 </h1></body></html>', trim($out));
@@ -112,7 +113,7 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
-        $view = new Templator($loader, $cache);
+        $view = new Templator(new TemplatorFinder([$loader], ['']), $cache);
         $out  = $view->render('Groups/nesting.php', ['name' => 'taylor', 'age' => 17]);
 
         $this->assertEquals('<html><head></head><body><h1>your taylor, ages 17 </h1></body></html>', trim($out));
@@ -124,7 +125,7 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
-        $view = new Templator($loader, $cache);
+        $view = new Templator(new TemplatorFinder([$loader], ['']), $cache);
         $out  = $view->render('if.php', ['true' => true]);
 
         $this->assertEquals('<html><head></head><body><h1> show </h1><h1></h1></body></html>', trim($out));
@@ -140,7 +141,7 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
-        $view = new Templator($loader, $cache);
+        $view = new Templator(new TemplatorFinder([$loader], ['']), $cache);
         $out  = $view->render('else.php', ['true' => false]);
 
         $this->assertEquals('<html><head></head><body><h1> hide </body></html>', trim($out));
@@ -156,7 +157,7 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
-        $view = new Templator($loader, $cache);
+        $view = new Templator(new TemplatorFinder([$loader], ['']), $cache);
         $out  = $view->render('each.php', ['numbsers' => [1, 2, 3]]);
 
         $this->assertEquals('<html><head></head><body>123</body></html>', trim($out));
@@ -174,7 +175,7 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
-        $view = new Templator($loader, $cache);
+        $view = new Templator(new TemplatorFinder([$loader], ['']), $cache);
         $out  = $view->render('slot.php', [
             'title'   => 'taylor otwell',
             'product' => 'laravel',
@@ -194,7 +195,7 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
-        $view = new Templator($loader, $cache);
+        $view = new Templator(new TemplatorFinder([$loader], ['']), $cache);
 
         try {
             $view->render('slot_miss.php', [
@@ -202,7 +203,7 @@ class TemplatorTest extends TestCase
                 'product' => 'laravel',
                 'year'    => 2023,
             ]);
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $this->assertEquals("Slot with extends 'Slots/layout.php' required 'title'", $th->getMessage());
         }
     }
@@ -215,7 +216,7 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
-        $view         = new Templator($loader, $cache);
+        $view         = new Templator(new TemplatorFinder([$loader], ['']), $cache);
         $view->suffix = '.php';
         $out          = $view->render('portofolio', [
             'title'    => 'cool portofolio',
@@ -234,7 +235,7 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
-        $view = new Templator($loader, $cache);
+        $view = new Templator(new TemplatorFinder([$loader], ['']), $cache);
         $out  = $view->render('comment.php', []);
 
         $this->assertBlind($out, 'this a comment');
@@ -250,7 +251,7 @@ class TemplatorTest extends TestCase
         $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
         $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
 
-        $view = new Templator($loader, $cache);
+        $view = new Templator(new TemplatorFinder([$loader], ['']), $cache);
         $out  = $view->render('repeat.include.php', []);
 
         $this->assertEquals(6, substr_count($out, 'some text'));
@@ -258,5 +259,130 @@ class TemplatorTest extends TestCase
         // without cache
         $out  = $view->render('repeat.include.php', [], false);
         $this->assertEquals(6, substr_count($out, 'some text'));
+    }
+
+    /** @test */
+    public function itCanCompailTemplateFile(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator(new TemplatorFinder([$loader], ['']), $cache);
+        $out  = $view->compile('include.php');
+
+        $this->assertSee(trim($out), '<p>taylor</p>');
+        $this->assertFileExists($cache . DIRECTORY_SEPARATOR . md5('include.php') . '.php');
+    }
+
+    /** @test */
+    public function itCanCompileSetTemplate(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator(new TemplatorFinder([$loader], ['']), $cache);
+        $out  = $view->compile('set.php');
+
+        $contain = Str::contains($out, '<?php $foo = \'bar\'; ?>');
+        $this->assertTrue($contain);
+        $contain = Str::contains($out, '<?php $bar = 123; ?>');
+        $this->assertTrue($contain);
+        $contain = Str::contains($out, '<?php $arr = [12, \'34\']; ?>');
+        $this->assertTrue($contain);
+    }
+
+    public function itCanRenderNameTemplateWithRaw(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator(new TemplatorFinder([$loader], ['']), $cache);
+        $out  = $view->render('namingskip.php', ['render'=>'oke']);
+
+        $this->assertEquals('<html><head></head><body><h1>oke, your {{ name }}, ages {{ age }}</h1></body></html>', trim($out));
+    }
+
+    /** @test */
+    public function itCanRenderEachBreakTemplate(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator(new TemplatorFinder([$loader], ['']), $cache);
+        $out  = $view->render('eachbreak.php', ['numbsers' => [1, 2, 3]]);
+
+        $this->assertEquals('<html><head></head><body></body></html>', trim($out));
+    }
+
+    /** @test */
+    public function itCanRenderEachContinueTemplate(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator(new TemplatorFinder([$loader], ['']), $cache);
+        $out  = $view->render('eachcontinue.php', ['numbsers' => [1, 2, 3]]);
+
+        $this->assertEquals('<html><head></head><body></body></html>', trim($out));
+    }
+
+    /** @test */
+    public function itCanGetRawParameterData(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator(new TemplatorFinder([$loader], ['']), $cache);
+        $out  = $view->render('parent-data.php', ['full.name' => 'taylor otwell']);
+
+        $this->assertEquals('<html><head></head><body><h1>my name is taylor otwell </h1></body></html>', trim($out));
+    }
+
+    /** @test */
+    public function itCanCheckTemplateFileExist(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $view = new Templator(new TemplatorFinder([$loader], ['']), $cache);
+
+        $this->assertTrue($view->viewExist('php.php'));
+        $this->assertFalse($view->viewExist('notexist.php'));
+    }
+
+    /**
+     * Backwash compability test.
+     *
+     * @test
+     */
+    public function itCanMakeTemplatorUsingString(): void
+    {
+        $loader  = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache   = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+
+        $template = new Templator($loader, $cache);
+        $this->assertInstanceOf(Templator::class, $template);
+        $finder = (fn () => $this->{'finder'})->call($template);
+        $this->assertEquals(['.template.php', '.php'], $finder->getExtensions());
+        $this->assertEquals([$loader], $finder->getPaths());
+    }
+
+    /**
+     * @test
+     *
+     * @covers \Templator::setFinder
+     */
+    public function itCanSetNewFinder()
+    {
+        $loader     = __DIR__ . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'Templators';
+        $cache      = __DIR__ . DIRECTORY_SEPARATOR . 'caches';
+        $finder     = new TemplatorFinder([$loader]);
+        $templator  = new Templator(new TemplatorFinder([$loader], ['.php']), $cache);
+        $get_finder = (fn () => $this->{'finder'})->call($templator);
+        $this->assertNotSame($finder, $get_finder);
+
+        $templator->setFinder($finder);
+        $get_finder = (fn () => $this->{'finder'})->call($templator);
+        $this->assertSame($finder, $get_finder);
     }
 }

@@ -8,21 +8,21 @@
         }
     ],
     "require": {
-        "php": "^7.4 || ^8.0",
+        "php": "^8.0",
         "php-di/php-di": "^6.4 || ^7.0",
         "sonypradana/validator": "^0.8",
-        "savanna-php/collection": "^0.25",
-        "savanna-php/console": "^0.25",
-        "savanna-php/container": "^0.25",
-        "savanna-php/cron": "^0.25",
-        "savanna-php/database": "^0.25",
-        "savanna-php/file": "^0.25",
-        "savanna-php/http": "^0.25",
-        "savanna-php/router": "^0.25",
-        "savanna-php/support": "^0.25",
-        "savanna-php/template": "^0.25",
-        "savanna-php/text": "^0.25",
-        "savanna-php/time": "^0.25"
+        "savanna-php/collection": "^0.31",
+        "savanna-php/console": "^0.31",
+        "savanna-php/container": "^0.31",
+        "savanna-php/cron": "^0.31",
+        "savanna-php/database": "^0.31",
+        "savanna-php/file": "^0.31",
+        "savanna-php/http": "^0.31",
+        "savanna-php/router": "^0.31",
+        "savanna-php/support": "^0.31",
+        "savanna-php/template": "^0.31",
+        "savanna-php/text": "^0.31",
+        "savanna-php/time": "^0.31"
     },
     "autoload": {
         "psr-4": {

@@ -3,7 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use System\Integrate\Application;
 
-final class FacedeTest extends TestCase
+final class FacadeTest extends TestCase
 {
     /** @test */
     final public function itCanCallstatic()
@@ -14,7 +14,7 @@ final class FacedeTest extends TestCase
         require_once __DIR__ . DIRECTORY_SEPARATOR . 'Sample' . DIRECTORY_SEPARATOR . 'FacadesTestClass.php';
         new FacadesTestClass($app);
 
-        FacadesTestClass::year(2024);
+        FacadesTestClass::year(2025);
         $year = FacadesTestClass::isNextYear();
 
         $this->assertTrue($year);

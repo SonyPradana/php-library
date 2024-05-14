@@ -21,7 +21,7 @@ final class Select extends Fetch
      *
      * @return void
      */
-    public function __construct(string $table_name, array $columns_name, MyPDO $PDO, array $options = null)
+    public function __construct(string $table_name, array $columns_name, MyPDO $PDO, ?array $options = null)
     {
         $this->_table  = $table_name;
         $this->_column = $columns_name;
@@ -156,10 +156,10 @@ final class Select extends Fetch
      *
      * @return self
      */
-    public function order(string $column_name, int $order_using = MyQuery::ORDER_ASC, string $belong_to = null)
+    public function order(string $column_name, int $order_using = MyQuery::ORDER_ASC, ?string $belong_to = null)
     {
-        $order             = $order_using == 0 ? 'ASC' : 'DESC';
-        $belong_to         = $belong_to ?? $this->_table;
+        $order = 0 === $order_using ? 'ASC' : 'DESC';
+        $belong_to ??= $this->_table;
         $this->_sort_order = "ORDER BY `$belong_to`.`$column_name` $order";
 
         return $this;
@@ -200,5 +200,13 @@ final class Select extends Fetch
         }
 
         return "LIMIT $this->_limit_start, $this->_limit_end";
+    }
+
+    public function sortOrderRef(int $limit_start, int $limit_end, int $offset, string $sort_ordder): void
+    {
+        $this->_limit_start = $limit_start;
+        $this->_limit_end   = $limit_end;
+        $this->_offset      = $offset;
+        $this->_sort_order  = $sort_ordder;
     }
 }

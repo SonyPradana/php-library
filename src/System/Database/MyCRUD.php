@@ -280,7 +280,7 @@ abstract class MyCRUD
         return $change;
     }
 
-    public function isClean(string $column = null): bool
+    public function isClean(?string $column = null): bool
     {
         if ($column == null) {
             return $this->COLUMNS == $this->FRESH;
@@ -293,7 +293,7 @@ abstract class MyCRUD
         return $this->COLUMNS[$column] == $this->FRESH[$column];
     }
 
-    public function isDirty(string $column = null): bool
+    public function isDirty(?string $column = null): bool
     {
         return !$this->isClean($column);
     }

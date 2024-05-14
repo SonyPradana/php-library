@@ -45,8 +45,8 @@ trait ConditionTrait
     /**
      * Insert 'where' condition in (query bulider).
      *
-     * @param string            $where_condition Spesific column name
-     * @param array<int, mixed> $binder          Bind and value (use for 'in')
+     * @param string                   $where_condition Spesific column name
+     * @param array<int, mixed[]|Bind> $binder          Bind and value (use for 'in')
      *
      * @return self
      */
@@ -55,6 +55,10 @@ trait ConditionTrait
         $this->_where[] = $where_condition;
 
         foreach ($binder as $bind) {
+            if ($bind instanceof Bind) {
+                $this->_binds[] = $bind;
+                continue;
+            }
             $this->_binds[] = Bind::set($bind[0], $bind[1])->prefixBind('');
         }
 
@@ -121,8 +125,9 @@ trait ConditionTrait
      */
     public function whereExist(Select $select)
     {
+        $binds          = (fn () => $this->{'_binds'})->call($select);
         $this->_where[] = 'EXISTS (' . $select->__toString() . ')';
-        foreach ($select->_binds as $binds) {
+        foreach ($binds as $binds) {
             $this->_binds[] = $binds;
         }
 
@@ -138,8 +143,9 @@ trait ConditionTrait
      */
     public function whereNotExist(Select $select)
     {
+        $binds          = (fn () => $this->{'_binds'})->call($select);
         $this->_where[] = 'NOT EXISTS (' . $select->__toString() . ')';
-        foreach ($select->_binds as $binds) {
+        foreach ($binds as $binds) {
             $this->_binds[] = $binds;
         }
 

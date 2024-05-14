@@ -117,4 +117,24 @@ final class ScheduleTest extends TestCase
 
         $this->assertEquals(str_repeat('works', 20), $out);
     }
+
+    /** @test */
+    public function itCanSkipScheduleEventIsDue()
+    {
+        $time_trevel = new Now('09/07/2021 00:30:00');
+        $schedule    = new Schedule($time_trevel->timestamp, $this->logger);
+        $always_false= false;
+
+        $schedule
+            ->call(function () use (&$always_false) {
+                $always_false = true;
+
+                return 'never call';
+            })
+            ->justInTime()
+            ->skip(fn (): bool => true);
+
+        $schedule->execute();
+        $this->assertFalse($always_false);
+    }
 }

@@ -4,21 +4,45 @@ declare(strict_types=1);
 
 namespace System\View;
 
-use System\View\Exceptions\ViewFileNotFound;
+use System\View\Templator\BreakTemplator;
+use System\View\Templator\CommentTemplator;
+use System\View\Templator\ContinueTemplator;
+use System\View\Templator\EachTemplator;
+use System\View\Templator\IfTemplator;
+use System\View\Templator\IncludeTemplator;
+use System\View\Templator\NameTemplator;
+use System\View\Templator\PHPTemplator;
+use System\View\Templator\SectionTemplator;
+use System\View\Templator\SetTemplator;
+use System\View\Templator\UseTemplator;
 
 class Templator
 {
-    private string $templateDir;
+    protected TemplatorFinder $finder;
     private string $cacheDir;
-    /** @var array<string, mixed> */
-    private $sections     = [];
     public string $suffix = '';
     public int $max_depth = 5;
 
-    public function __construct(string $templateDir, string $cacheDir)
+    /**
+     * Create new intance.
+     *
+     * @param TemplatorFinder|string $finder If String will genarte TemplatorFinder with default extension
+     */
+    public function __construct($finder, string $cacheDir)
     {
-        $this->templateDir = $templateDir;
-        $this->cacheDir    = $cacheDir;
+        // Backwards compatibility with templator finder.
+        $this->finder    = is_string($finder) ? new TemplatorFinder([$finder]) : $finder;
+        $this->cacheDir  = $cacheDir;
+    }
+
+    /**
+     * Set Finder.
+     */
+    public function setFinder(TemplatorFinder $finder): self
+    {
+        $this->finder = $finder;
+
+        return $this;
     }
 
     /**
@@ -27,11 +51,7 @@ class Templator
     public function render(string $templateName, array $data, bool $cache = true): string
     {
         $templateName .= $this->suffix;
-        $templatePath  = $this->templateDir . '/' . $templateName;
-
-        if (!file_exists($templatePath)) {
-            throw new ViewFileNotFound($templatePath);
-        }
+        $templatePath  = $this->finder->find($templateName);
 
         $cachePath = $this->cacheDir . '/' . md5($templateName) . '.php';
 
@@ -48,6 +68,34 @@ class Templator
     }
 
     /**
+     * Compile templator file to php file.
+     */
+    public function compile(string $template_name): string
+    {
+        $template_name .= $this->suffix;
+        $template_dir  = $this->finder->find($template_name);
+
+        $cachePath = $this->cacheDir . '/' . md5($template_name) . '.php';
+
+        $template = file_get_contents($template_dir);
+        $template = $this->templates($template);
+
+        file_put_contents($cachePath, $template);
+
+        return $template;
+    }
+
+    /**
+     * Check view file exist.
+     */
+    public function viewExist(string $templateName): bool
+    {
+        $templateName .= $this->suffix;
+
+        return $this->finder->exists($templateName);
+    }
+
+    /**
      * @param array<string, mixed> $data
      */
     private function getView(string $tempalte_path, array $data): string
@@ -57,8 +105,10 @@ class Templator
         ob_start();
 
         try {
-            extract($data);
-            include $tempalte_path;
+            (static function ($__, $__file_name__) {
+                extract($__);
+                include $__file_name__;
+            })($data, $tempalte_path);
         } catch (\Throwable $th) {
             while (ob_get_level() > $level) {
                 ob_end_clean();
@@ -72,109 +122,30 @@ class Templator
         return $out === false ? '' : ltrim($out);
     }
 
-    private function templates(string $template): string
+    /**
+     * Transform templator to php template.
+     */
+    public function templates(string $template): string
     {
-        $template = $this->templateSlot($template);
-        $template = $this->templateInclude($template, $this->max_depth);
-        $template = $this->templatePhp($template);
-        $template = $this->templateName($template);
-        $template = $this->templateIf($template);
-        $template = $this->templateEach($template);
-        $template = $this->templateComment($template);
+        return array_reduce([
+            SetTemplator::class,
+            SectionTemplator::class,
+            IncludeTemplator::class,
+            PHPTemplator::class,
+            NameTemplator::class,
+            IfTemplator::class,
+            EachTemplator::class,
+            CommentTemplator::class,
+            ContinueTemplator::class,
+            BreakTemplator::class,
+            UseTemplator::class,
+        ], function ($template, $templator) {
+            $templator = new $templator($this->finder, $this->cacheDir);
+            if ($templator instanceof IncludeTemplator) {
+                $templator->maksDept($this->max_depth);
+            }
 
-        return $template;
-    }
-
-    private function templateSlot(string $template): string
-    {
-        preg_match('/{%\s*extend\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/', $template, $matches_layout);
-        if (!array_key_exists(1, $matches_layout)) {
-            return $template;
-        }
-        $templatePath = $this->templateDir . '/' . $matches_layout[1];
-
-        if (!file_exists($templatePath)) {
-            throw new \Exception('Template file not found: ' . $matches_layout[1]);
-        }
-
-        $layout = file_get_contents($templatePath);
-
-        $template = preg_replace_callback(
-            '/{%\s*section\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}(.*?){%\s*endsection\s*%}/s',
-            fn ($matches) => $this->sections[$matches[1]] = trim($matches[2]),
-            $template
-        );
-
-        $template = preg_replace_callback(
-            "/{%\s*yield\(\'(\w+)\'\)\s*%}/",
-            function ($matches) use ($matches_layout) {
-                if (array_key_exists($matches[1], $this->sections)) {
-                    return $this->sections[$matches[1]];
-                }
-
-                throw new \Exception("Slot with extends '{$matches_layout[1]}' required '{$matches[1]}'");
-            },
-            $layout
-        );
-
-        return $template;
-    }
-
-    private function templateInclude(string $template, int $maks_dept): string
-    {
-        return preg_replace_callback(
-            '/{%\s*include\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/',
-            function ($matches) use ($maks_dept) {
-                $templatePath = $this->templateDir . '/' . $matches[1];
-
-                if (!file_exists($templatePath)) {
-                    throw new \Exception('Template file not found: ' . $matches[1]);
-                }
-
-                $includedTemplate = file_get_contents($templatePath);
-                if ($maks_dept === 0) {
-                    return $includedTemplate;
-                }
-
-                return trim($this->templateInclude($includedTemplate, --$maks_dept));
-            },
-            $template
-        );
-    }
-
-    private function templateName(string $template): string
-    {
-        return preg_replace('/{{\s*([^}]+)\s*\?\?\s*([^:}]+)\s*:\s*([^}]+)\s*}}/',
-            '<?php echo ($1 !== null) ? $1 : $3; ?>',
-            preg_replace('/{{\s*([^}]+)\s*}}/', '<?php echo htmlspecialchars($$1); ?>', $template)
-        );
-    }
-
-    private function templatePhp(string $template): string
-    {
-        return preg_replace('/{%\s*php\s*%}(.*?){%\s*endphp\s*%}/s', '<?php $1 ?>', $template);
-    }
-
-    private function templateIf(string $template): string
-    {
-        return preg_replace(
-            '/{%\s*if\s+([^%]+)\s*%}(.*?){%\s*endif\s*%}/s',
-            '<?php if ($1): ?>$2<?php endif; ?>',
-            preg_replace(
-                '/{%\s*if\s+([^%]+)\s*%}(.*?){%\s*else\s*%}(.*?){%\s*endif\s*%}/s',
-                '<?php if ($1): ?>$2<?php else: ?>$3<?php endif; ?>',
-                $template
-            )
-        );
-    }
-
-    private function templateEach(string $template): string
-    {
-        return preg_replace('/{%\s*foreach\s+([^%]+)\s+as\s+([^%]+)\s*%}(.*?){%\s*endforeach\s*%}/s', '<?php foreach ($$1 as $$2): ?>$3<?php endforeach; ?>', $template);
-    }
-
-    public function templateComment(string $template): string
-    {
-        return preg_replace('/{#\s*(.*?)\s*#}/', '<?php // $1 ?>', $template);
+            return $templator->parse($template);
+        }, $template);
     }
 }

@@ -32,7 +32,7 @@ class RouteDispatchTest extends TestCase
 
         $dispatch = $dispatcher->run(
             fn ($callable, $params) => call_user_func_array($callable, $params),
-            fn ($path) => 'not found - ',
+            fn ($path)          => 'not found - ',
             fn ($path, $method) => 'method not allowd - - ',
         );
 
@@ -48,7 +48,7 @@ class RouteDispatchTest extends TestCase
 
         $dispatch = $dispatcher->run(
             fn ($callable, $params) => call_user_func_array($callable, $params),
-            fn ($path) => 'not found - ',
+            fn ($path)          => 'not found - ',
             fn ($path, $method) => 'method not allowd - - ',
         );
 
@@ -64,7 +64,7 @@ class RouteDispatchTest extends TestCase
 
         $dispatch = $dispatcher->run(
             fn () => 'found',
-            fn ($path) => 'not found - ',
+            fn ($path)          => 'not found - ',
             fn ($path, $method) => 'method not allowd - - ',
         );
 
@@ -80,7 +80,7 @@ class RouteDispatchTest extends TestCase
 
         $dispatch = $dispatcher->run(
             fn () => 'found',
-            fn ($path) => 'not found - ',
+            fn ($path)          => 'not found - ',
             fn ($path, $method) => 'method not allowd - - ',
         );
 
@@ -96,7 +96,7 @@ class RouteDispatchTest extends TestCase
 
         $dispatch = $dispatcher->run(
             fn () => 'found',
-            fn ($path) => 'not found - ',
+            fn ($path)          => 'not found - ',
             fn ($path, $method) => 'method not allowd - - ',
         );
 

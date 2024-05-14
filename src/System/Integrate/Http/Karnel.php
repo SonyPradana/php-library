@@ -7,6 +7,9 @@ namespace System\Integrate\Http;
 use System\Container\Container;
 use System\Http\Request;
 use System\Http\Response;
+use System\Integrate\Exceptions\Handler;
+use System\Integrate\Http\Middleware\MaintenanceMiddleware;
+use System\Router\Router;
 
 class Karnel
 {
@@ -14,7 +17,9 @@ class Karnel
     protected $app;
 
     /** @var array<int, class-string> Global middleware */
-    protected $middleware = [];
+    protected $middleware = [
+        MaintenanceMiddleware::class,
+    ];
 
     /** @var array<int, class-string> Middleware has register */
     protected $middleware_used = [];
@@ -40,15 +45,40 @@ class Karnel
     {
         $this->app->set(Request::class, $request);
 
-        $dispatcher = $this->dispatcher($request);
+        try {
+            $dispatcher = $this->dispatcher($request);
 
-        $pipeline = array_reduce(
-            array_merge($this->middleware, $dispatcher['middleware']),
-            fn ($next, $middleware) => fn ($req) => $this->app->call([$middleware, 'handle'], ['request' => $req, 'next' => $next]),
-            fn () => $this->responesType($dispatcher['callable'], $dispatcher['parameters'])
-        );
+            $pipeline = array_reduce(
+                array_merge($this->middleware, $dispatcher['middleware']),
+                fn ($next, $middleware) => fn ($req) => $this->app->call([$middleware, 'handle'], ['request' => $req, 'next' => $next]),
+                fn ()                   => $this->responesType($dispatcher['callable'], $dispatcher['parameters'])
+            );
 
-        return $pipeline($request);
+            $response = $pipeline($request);
+        } catch (\Throwable $th) {
+            $handler = $this->app->get(Handler::class);
+
+            $handler->report($th);
+            $response = $handler->render($request, $th);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Terminate Requesr and Response.
+     */
+    public function terminate(Request $request, Response $response): void
+    {
+        $middleware = $this->dispatcherMiddleware($request) ?? [];
+        foreach (array_merge($this->middleware, $middleware) as $middleware) {
+            if (method_exists($middleware, 'terminate')) {
+                $this->app->call([$middleware, 'terminate'], ['request' => $request, 'response' => $response]);
+            }
+        }
+        if (method_exists($this->app, 'terminate')) {
+            $this->app->{'terminate'}();
+        }
     }
 
     /**
@@ -80,6 +110,16 @@ class Karnel
      */
     protected function dispatcher(Request $request): array
     {
-        return ['callable' => new Response(), 'parameters' => [], 'middleware'];
+        return ['callable' => new Response(), 'parameters' => [], 'middleware' => []];
+    }
+
+    /**
+     * Dispatch to get requets middleware.
+     *
+     * @return array<int, class-string>|null
+     */
+    protected function dispatcherMiddleware(Request $request)
+    {
+        return Router::current()['middleware'] ?? [];
     }
 }

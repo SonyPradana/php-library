@@ -22,22 +22,16 @@ class CronCommand extends Command
      * @var array<int, array<string, mixed>>
      */
     public static array $command = [
-      [
-        'cmd'       => 'cron',
-        'mode'      => 'full',
-        'class'     => self::class,
-        'fn'        => 'main',
-      ], [
-        'cmd'       => 'cron:list',
-        'mode'      => 'full',
-        'class'     => self::class,
-        'fn'        => 'list',
-      ], [
-        'cmd'       => 'cron:work',
-        'mode'      => 'full',
-        'class'     => self::class,
-        'fn'        => 'work',
-      ],
+        [
+            'pattern' => 'cron',
+            'fn'      => [self::class, 'main'],
+        ], [
+            'pattern' => 'cron:list',
+            'fn'      => [self::class, 'list'],
+        ], [
+            'pattern' => 'cron:work',
+            'fn'      => [self::class, 'work'],
+        ],
     ];
 
     /**
@@ -46,13 +40,13 @@ class CronCommand extends Command
     public function printHelp()
     {
         return [
-          'commands'  => [
-            'cron'      => 'Run cron job (all shadule)',
-            'cron:work' => 'Run virtual cron job in terminal (ansync)',
-            'cron:list' => 'Get list of shadule',
-          ],
-          'options'   => [],
-          'relation'  => [],
+            'commands'  => [
+                'cron'      => 'Run cron job (all shadule)',
+                'cron:work' => 'Run virtual cron job in terminal (ansync)',
+                'cron:list' => 'Get list of shadule',
+            ],
+            'options'   => [],
+            'relation'  => [],
         ];
     }
 
@@ -146,11 +140,9 @@ class CronCommand extends Command
 
     public function scheduler(Schedule $schedule): void
     {
-        $schedule->call(function () {
-            return [
-                'code' => 200,
-            ];
-        })
+        $schedule->call(fn () => [
+            'code' => 200,
+        ])
         ->retry(2)
         ->justInTime()
         ->animusly()

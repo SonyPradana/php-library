@@ -29,8 +29,8 @@ class BasicTemplateTest extends TestCase
         $class = new Generate('NewClass');
 
         $class
-      ->use(System\Template\Generate::class)
-      ->extend(\PHPUnit\Framework\TestCase::class)
+      ->use(Generate::class)
+      ->extend(TestCase::class)
       ->implement('testInterface')
       ->setEndWithNewLine();
 
@@ -47,12 +47,12 @@ class BasicTemplateTest extends TestCase
         $class = new Generate('NewClass');
 
         $class
-      ->use(System\Template\Generate::class)
-      ->extend(\PHPUnit\Framework\TestCase::class)
+      ->use(Generate::class)
+      ->extend(TestCase::class)
       ->implement('testInterface')
       ->traits([
-        PhpParser\Builder\TraitUseAdaptation::class,
-        PhpParser\Builder\TraitUse::class,
+          PhpParser\Builder\TraitUseAdaptation::class,
+          PhpParser\Builder\TraitUse::class,
       ])
       ->consts(NewConst::name('TEST'))
       ->propertys(NewProperty::name('test'))
@@ -76,12 +76,12 @@ class BasicTemplateTest extends TestCase
       ->tabIndent("\t")
       ->tabSize(2)
 
-      ->use(System\Template\Generate::class)
-      ->extend(\PHPUnit\Framework\TestCase::class)
+      ->use(Generate::class)
+      ->extend(TestCase::class)
       ->implement('testInterface')
       ->traits([
-        PhpParser\Builder\TraitUseAdaptation::class,
-        PhpParser\Builder\TraitUse::class,
+          PhpParser\Builder\TraitUseAdaptation::class,
+          PhpParser\Builder\TraitUse::class,
       ])
       ->consts(NewConst::name('TEST'))
       ->propertys(NewProperty::name('test'))
@@ -127,12 +127,12 @@ class BasicTemplateTest extends TestCase
       ->dataType('array')
       ->expecting(
           [
-            '= array(',
-            '  \'one\'    => 1,',
-            '  \'two\'    => 2,',
-            '  \'bool\'   => false,',
-            '  \'string\' => \'string\'',
-            ')',
+              '= array(',
+              '  \'one\'    => 1,',
+              '  \'two\'    => 2,',
+              '  \'bool\'   => false,',
+              '  \'string\' => \'string\'',
+              ')',
           ]
       )
       ->addVaribaleComment('array');
@@ -193,8 +193,8 @@ class BasicTemplateTest extends TestCase
       ->params(['string $case', 'int $number'])
       ->setReturnType('bool')
       ->body([
-        '$bool = true;',
-        'return $bool;',
+          '$bool = true;',
+          'return $bool;',
       ])
       ->addReturnComment('bool', 'true if true');
 
@@ -207,7 +207,7 @@ class BasicTemplateTest extends TestCase
           ->params(['string $param'])
           ->setReturnType('string')
           ->body([
-            'return $param;',
+              'return $param;',
           ])
           ->addParamComment('string', '$param', 'String param')
           ->addReturnComment('string', 'Same as param')

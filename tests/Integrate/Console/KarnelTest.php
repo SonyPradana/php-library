@@ -28,19 +28,6 @@ final class KarnelTest extends TestCase
     }
 
     /** @test */
-    public function itCanReturnNothingBecauseCommandNotFound()
-    {
-        $karnel = new NormalCommand($this->app);
-        ob_start();
-        $exit    = $karnel->handle(['cli', 'test']);
-        $out     = ob_get_clean();
-
-        $this->assertEquals(1, $exit);
-        $hasContent = Str::contains($out, 'Command Not Found, run help command');
-        $this->assertTrue($hasContent);
-    }
-
-    /** @test */
     public function itCanCallCommandUsingFullCommand()
     {
         $karnel = new NormalCommand($this->app);
@@ -165,6 +152,56 @@ final class KarnelTest extends TestCase
         $this->assertEquals(0, $exit);
         $hasContent = Str::contains($out, 'test');
         $this->assertTrue($hasContent);
+    }
+
+    /** @test */
+    public function itCanReturnNothingBecauseCommandNotFound()
+    {
+        $karnel = new NormalCommand($this->app);
+        ob_start();
+        $exit    = $karnel->handle(['cli', 'test']);
+        ob_get_clean();
+
+        $this->assertEquals(1, $exit);
+    }
+
+    /** @test */
+    public function itCanReturnCommandNotFoundBecauseNotClosetAnotherCommand()
+    {
+        $karnel = new NormalCommand($this->app);
+        ob_start();
+        $exit    = $karnel->handle(['cli', 'xzy']);
+        $out     = ob_get_clean();
+
+        $this->assertEquals(1, $exit);
+        $condition =  Str::contains($out, 'Command Not Found, run help command');
+        $this->assertTrue($condition);
+    }
+
+    /** @test */
+    public function itCanReturnSuggestionCommand()
+    {
+        $karnel = new NormalCommand($this->app);
+        ob_start();
+        $exit    = $karnel->handle(['cli', 'test']);
+        $out     = ob_get_clean();
+
+        $this->assertEquals(1, $exit);
+        $condition =  Str::contains($out, 'Did you mean?');
+        $this->assertTrue($condition);
+    }
+
+    /** @test */
+    public function itCanGivenClosetCommand()
+    {
+        $karnel = new NormalCommand($this->app);
+        ob_start();
+        $exit    = $karnel->handle(['cli', 'use:']);
+        $out     = ob_get_clean();
+
+        $this->assertEquals(1, $exit);
+        $condition =  Str::contains($out, 'use:full');
+        $this->assertTrue($condition);
     }
 }
 

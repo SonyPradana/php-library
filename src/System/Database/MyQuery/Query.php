@@ -247,4 +247,27 @@ abstract class Query
     {
         return $this->_binds;
     }
+
+    /**
+     * Add where condition from where referans.
+     */
+    public function whereRef(?Where $ref): static
+    {
+        if ($ref->isEmpty()) {
+            return $this;
+        }
+        $conditon = $ref->get();
+        foreach ($conditon['binds'] as $bind) {
+            $this->_binds[] = $bind;
+        }
+        foreach ($conditon['where'] as $where) {
+            $this->_where[] = $where;
+        }
+        foreach ($conditon['filters'] as $name => $filter) {
+            $this->_filters[$name] = $filter;
+        }
+        $this->_strict_mode = $conditon['isStrict'];
+
+        return $this;
+    }
 }

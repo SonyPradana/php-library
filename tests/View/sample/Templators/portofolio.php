@@ -1,7 +1,7 @@
 {% extend('Slots/layout2.php') %}
 
 {% section('title') %}
-{{ title }} | website
+{{ $title }} | website
 {% endsection %}
 
 {% section('body') %}
@@ -12,8 +12,8 @@
     {% include('component.php') %}
     {% if ($correct === true) %}
         <ul>
-            {% foreach products as product %}
-                <li>{{ product }}</li>
+            {% foreach $products as $product %}
+                <li>{{ $product }}</li>
             {% endforeach %}
         </ul>
     {% endif %}

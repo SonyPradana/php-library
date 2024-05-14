@@ -257,7 +257,7 @@ final class StrTest extends TestCase
 
         try {
             Str::slug($text);
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $this->assertEquals("Method slug with {$text} doest return anythink.", $th->getMessage());
         }
     }

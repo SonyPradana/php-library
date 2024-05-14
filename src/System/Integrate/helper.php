@@ -18,7 +18,7 @@ if (!function_exists('app_path')) {
      */
     function app_path(string $folder_name): string
     {
-        $path = app()->app_path();
+        $path = app()->appPath();
 
         return $path . DIRECTORY_SEPARATOR . $folder_name;
     }
@@ -34,7 +34,7 @@ if (!function_exists('model_path')) {
      */
     function model_path(string $surfix_path = ''): string
     {
-        $path = app()->model_path() . $surfix_path;
+        $path = app()->modelPath() . $surfix_path;
 
         return $path;
     }
@@ -42,17 +42,35 @@ if (!function_exists('model_path')) {
 
 if (!function_exists('view_path')) {
     /**
-     * Get aplication view path, base on config file.
+     * Get aplication base view path, use for get located view frame work..
+     * Remember since 0.32 view path is not single string (array of string).
+     * This also include in `view_paths()`.
      *
      * @param string $surfix_path Add string end of path
      *
      * @return string View path folder
+     *
+     * @version  0.32.0
      */
     function view_path(string $surfix_path = ''): string
     {
-        $path = app()->view_path() . $surfix_path;
+        $path = app()->viewPath() . $surfix_path;
 
         return $path;
+    }
+}
+
+if (!function_exists('view_paths')) {
+    /**
+     * Get aplication view paths, base on config file.
+     *
+     * @return string[] View path folder
+     *
+     * @version 0.32.0
+     */
+    function view_paths(): array
+    {
+        return app()->view_paths();
     }
 }
 
@@ -66,7 +84,7 @@ if (!function_exists('controllers_path')) {
      */
     function controllers_path(string $surfix_path = ''): string
     {
-        $path = app()->controller_path() . $surfix_path;
+        $path = app()->controllerPath() . $surfix_path;
 
         return $path;
     }
@@ -82,7 +100,7 @@ if (!function_exists('services_path')) {
      */
     function services_path(string $surfix_path = ''): string
     {
-        $path = app()->services_path() . $surfix_path;
+        $path = app()->servicesPath() . $surfix_path;
 
         return $path;
     }
@@ -98,7 +116,7 @@ if (!function_exists('component_path')) {
      */
     function component_path(string $surfix_path = ''): string
     {
-        $path = app()->component_path() . $surfix_path;
+        $path = app()->componentPath() . $surfix_path;
 
         return $path;
     }
@@ -114,7 +132,23 @@ if (!function_exists('commands_path')) {
      */
     function commands_path(string $surfix_path = ''): string
     {
-        $path = app()->command_path() . $surfix_path;
+        $path = app()->commandPath() . $surfix_path;
+
+        return $path;
+    }
+}
+
+if (!function_exists('storage_path')) {
+    /**
+     * Get aplication storage path, base on config file.
+     *
+     * @param string $surfix_path Add string end of path
+     *
+     * @return string storage path folder
+     */
+    function storage_path(string $surfix_path = ''): string
+    {
+        $path = app()->storagePath() . $surfix_path;
 
         return $path;
     }
@@ -127,10 +161,24 @@ if (!function_exists('cache_path')) {
      * @param string $surfix_path Add string end of path
      *
      * @return string Cache path folder
+     *
+     * @deprecated version 0.32 use compiled_view_path() insted.
      */
     function cache_path(string $surfix_path = ''): string
     {
-        $path = app()->cache_path() . $surfix_path;
+        $path = app()->cachePath() . $surfix_path;
+
+        return $path;
+    }
+}
+
+if (!function_exists('compiled_view_path')) {
+    /**
+     * Get aplication compailed path., base on config file.
+     */
+    function compiled_view_path(): string
+    {
+        $path = app()->compiledViewPath();
 
         return $path;
     }
@@ -146,7 +194,7 @@ if (!function_exists('config_path')) {
      */
     function config_path(string $surfix_path = ''): string
     {
-        $path = app()->config_path() . $surfix_path;
+        $path = app()->configPath() . $surfix_path;
 
         return $path;
     }
@@ -162,7 +210,7 @@ if (!function_exists('middleware_path')) {
      */
     function middleware_path(string $surfix_path = ''): string
     {
-        $path = app()->middleware_path() . $surfix_path;
+        $path = app()->middlewarePath() . $surfix_path;
 
         return $path;
     }
@@ -171,7 +219,7 @@ if (!function_exists('middleware_path')) {
 if (!function_exists('provider_path')) {
     function provider_path(string $surfix_path = ''): string
     {
-        $path = app()->provider_path() . $surfix_path;
+        $path = app()->providerPath() . $surfix_path;
 
         return $path;
     }
@@ -180,7 +228,7 @@ if (!function_exists('provider_path')) {
 if (!function_exists('migration_path')) {
     function migration_path(string $surfix_path = ''): string
     {
-        $path = app()->migration_path() . $surfix_path;
+        $path = app()->migrationPath() . $surfix_path;
 
         return $path;
     }
@@ -189,7 +237,7 @@ if (!function_exists('migration_path')) {
 if (!function_exists('seeder_path')) {
     function seeder_path(string $surfix_path = ''): string
     {
-        $path = app()->seeder_path() . $surfix_path;
+        $path = app()->seederPath() . $surfix_path;
 
         return $path;
     }
@@ -199,15 +247,13 @@ if (!function_exists('base_path')) {
     /**
      * Get base path.
      *
-     * @param string $insert_path
-     *                            Insert string in end of path
+     * @param string $insert_path Insert string in end of path
      *
-     * @return string
-     *                Base path folder
+     * @return string Base path folder
      */
     function base_path(string $insert_path = ''): string
     {
-        return app()->base_path() . $insert_path;
+        return app()->basePath() . $insert_path;
     }
 }
 
@@ -327,7 +373,7 @@ if (!function_exists('redirect_route')) {
             "/\(:\w+\)/",
             function ($matches) use ($parameter, &$valueIndex) {
                 if (!array_key_exists($matches[0], Router::$patterns)) {
-                    throw new \Exception('parameter not matches with any pattern.');
+                    throw new Exception('parameter not matches with any pattern.');
                 }
 
                 if ($valueIndex < count($parameter)) {
@@ -353,5 +399,19 @@ if (!function_exists('redirect')) {
     function redirect(string $url): RedirectResponse
     {
         return new RedirectResponse($url);
+    }
+}
+
+if (!function_exists('abort')) {
+    /**
+     * Abrot application to http exception.
+     *
+     * @param array<string, string> $headers
+     *
+     * @throws HttpException
+     */
+    function abort(int $code, string $message = '', array $headers = []): void
+    {
+        app()->abort($code, $message, $headers);
     }
 }

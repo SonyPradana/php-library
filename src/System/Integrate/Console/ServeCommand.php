@@ -6,10 +6,13 @@ namespace System\Integrate\Console;
 
 use System\Console\Command;
 use System\Console\Style\Alert;
+use System\Console\Style\Style;
 use System\Console\Traits\PrintHelpTrait;
 
-use function System\Console\style;
-
+/**
+ * @property string $port
+ * @property bool   $expose
+ */
 class ServeCommand extends Command
 {
     use PrintHelpTrait;
@@ -21,10 +24,12 @@ class ServeCommand extends Command
      */
     public static $command = [
         [
-        'cmd'       => 'serve',
-        'mode'      => 'full',
-        'class'     => ServeCommand::class,
-        'fn'        => 'main',
+            'pattern' => 'serve',
+            'fn'      => [ServeCommand::class, 'main'],
+            'default' => [
+                'port'   => 8080,
+                'expose' => false,
+            ],
         ],
     ];
 
@@ -37,30 +42,40 @@ class ServeCommand extends Command
             'commands'  => [
                 'serve' => 'Serve server with port number (default 8080)',
             ],
-            'options'   => [],
+            'options'   => [
+                '--port'   => 'Serve with costume port',
+                '--expose' => 'Make server run public network',
+            ],
             'relation'  => [
-                'serve' => ['[port]'],
+                'serve' => ['--port', '--expose'],
             ],
         ];
     }
 
     public function main(): void
     {
-        $port    = $this->OPTION[0] ?? '8080';
-        $port    = $port == '' ? '8080' : $port;
+        $port    = $this->port;
         $localIP = gethostbyname(gethostname());
 
-        style('Server runing add:')
+        $print = new Style('Server runing add:');
+
+        $print
             ->newLines()
-            ->push('Local')->tabs()->push("http://localhost:$port")->textBlue()
-            ->newLines()
-            ->push('Network')->tabs()->push("http://$localIP:$port")->textBlue()
+            ->push('Local')->tabs()->push("http://localhost:$port")->textBlue();
+
+        if ($this->expose) {
+            $print->newLines()->push('Network')->tabs()->push("http://$localIP:$port")->textBlue();
+        }
+
+        $print
             ->newLines(2)
             ->push('ctrl+c to stop server')
             ->newLines()
             ->tap(Alert::render()->info('server runing...'))
             ->out(false);
 
-        shell_exec("php -S 127.0.0.1:$port -t public/");
+        $adress = $this->expose ? '0.0.0.0' : '127.0.0.1';
+
+        shell_exec("php -S {$adress}:{$port} -t public/");
     }
 }

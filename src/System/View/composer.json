@@ -8,8 +8,8 @@
         }
     ],
     "require": {
-        "php": "^7.4 || ^8.0",
-        "savanna-php/http": "^0.25"
+        "php": "^8.0",
+        "savanna-php/http": "^0.31"
     },
     "autoload": {
         "psr-4": {

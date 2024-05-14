@@ -131,7 +131,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
         array $headers = [],
         string $method = 'GET',
         string $remoteAddress = '::1',
-        string $rawBody = null
+        ?string $rawBody = null
     ) {
         $this->initialize($url, $query, $post, $attributes, $cookies, $files, $headers, $method, $remoteAddress, $rawBody);
     }
@@ -159,7 +159,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
         array $headers = [],
         string $method = 'GET',
         string $remoteAddress = '::1',
-        string $rawBody = null
+        ?string $rawBody = null
     ) {
         $this->url             = $url;
         $this->query           = new Collection($query);
@@ -188,12 +188,12 @@ class Request implements \ArrayAccess, \IteratorAggregate
      * @return static
      */
     public function duplicate(
-        array $query = null,
-        array $post = null,
-        array $attributes = null,
-        array $cookies = null,
-        array $files = null,
-        array $headers = null
+        ?array $query = null,
+        ?array $post = null,
+        ?array $attributes = null,
+        ?array $cookies = null,
+        ?array $files = null,
+        ?array $headers = null
     ) {
         $dupplicate = clone $this;
 
@@ -250,7 +250,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
      *
      * @return array<string, string>|string
      */
-    public function getQuery(string $key = null)
+    public function getQuery(?string $key = null)
     {
         if (func_num_args() === 0) {
             return $this->query->all();
@@ -274,7 +274,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
      *
      * @return array<string, string>|string
      */
-    public function getPost(string $key = null)
+    public function getPost(?string $key = null)
     {
         if (func_num_args() === 0) {
             return $this->post->all();
@@ -288,7 +288,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
      *
      * @return array<string, array<int, string>|string>|array<int, string>|string
      */
-    public function getFile(string $key = null)
+    public function getFile(?string $key = null)
     {
         if (func_num_args() === 0) {
             return $this->files;
@@ -327,7 +327,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
      *
      * @return array<string, string>|string|null get header/s
      */
-    public function getHeaders(string $header = null)
+    public function getHeaders(?string $header = null)
     {
         if ($header === null) {
             return $this->headers;
@@ -535,7 +535,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
      *
      * @return Collection<string, string>|string|TGetDefault
      */
-    public function input(string $key = null, $default = null)
+    public function input(?string $key = null, $default = null)
     {
         $input = $this->source()->add($this->query->all());
         if (null === $key) {

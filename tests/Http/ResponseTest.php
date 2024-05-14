@@ -20,10 +20,10 @@ class ResponseTest extends TestCase
     {
         $html = '<html><head></head><body></body></html>';
         $json = [
-      'status'  => 'ok',
-      'code'    => 200,
-      'data'    => null,
-    ];
+            'status'  => 'ok',
+            'code'    => 200,
+            'data'    => null,
+        ];
 
         $this->response_html = new Response($html, 200, []);
         $this->response_json = new Response($json, 200, []);
@@ -56,9 +56,9 @@ class ResponseTest extends TestCase
         $this->assertJson($json);
         $this->assertEquals(
             [
-              'status'  => 'ok',
-              'code'    => 200,
-              'data'    => null,
+                'status'  => 'ok',
+                'code'    => 200,
+                'data'    => null,
             ],
             json_decode($json, true)
         );

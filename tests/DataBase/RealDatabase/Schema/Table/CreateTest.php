@@ -30,6 +30,43 @@ final class CreateTest extends \RealDatabaseConnectionTest
      *
      * @group database
      */
+    public function itCanExecuteQueryWithMultyPrimeryKey()
+    {
+        $schema = new Create($this->pdo_schema->configs()['database_name'], 'profiles', $this->pdo_schema);
+
+        $schema('id')->int(3)->notNull();
+        $schema('xid')->int(3)->notNull();
+        $schema('name')->varchar(32)->notNull();
+        $schema('gender')->int(1);
+        $schema->primaryKey('id');
+        $schema->primaryKey('xid');
+
+        $this->assertTrue($schema->execute());
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanExecuteQueryWithMultyUniqe()
+    {
+        $schema = new Create($this->pdo_schema->configs()['database_name'], 'profiles', $this->pdo_schema);
+
+        $schema('id')->int(3)->notNull();
+        $schema('name')->varchar(32)->notNull();
+        $schema('gender')->int(1);
+        $schema->unique('id');
+        $schema->unique('name');
+
+        $this->assertTrue($schema->execute());
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
     public function itCanGenerateCreateDatabaseWithEngine()
     {
         $schema = new Create($this->pdo_schema->configs()['database_name'], 'profiles', $this->pdo_schema);
@@ -40,6 +77,22 @@ final class CreateTest extends \RealDatabaseConnectionTest
         $schema->primaryKey('id');
         $schema->engine(Create::INNODB);
         $schema->character('utf8mb4');
+
+        $this->assertTrue($schema->execute());
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanGenerateDefaultConstraint()
+    {
+        $schema = new Create($this->pdo_schema->configs()['database_name'], 'profiles', $this->pdo_schema);
+        $schema('PersonID')->int()->unsigned()->default(1);
+        $schema('LastName')->varchar(255)->default('-');
+        $schema('sufix')->varchar(15)->defaultNull();
+        $schema->primaryKey('PersonID');
 
         $this->assertTrue($schema->execute());
     }

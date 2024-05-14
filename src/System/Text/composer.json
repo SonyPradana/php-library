@@ -8,9 +8,9 @@
         }
     ],
     "require": {
-        "php": "^7.4 || ^8.0",
+        "php": "^8.0",
         "ext-mbstring": "*",
-        "savanna-php/macroable": "^0.25"
+        "savanna-php/macroable": "^0.31"
     },
     "autoload": {
         "psr-4": {

@@ -15,7 +15,7 @@ class Url
     /**
      * @var array<int|string, string>|null
      */
-    private ?array $query;
+    private ?array $query = null;
     private ?string $fragment;
 
     /**
@@ -50,6 +50,11 @@ class Url
     public static function parse(string $url): self
     {
         return new self(parse_url($url));
+    }
+
+    public static function fromRequest(Request $from): self
+    {
+        return new self(parse_url($from->getUrl()));
     }
 
     /**

@@ -190,7 +190,7 @@ final class StyleTest extends TestCase
     {
         try {
             (new Style('text'))->text_red_10();
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $this->assertEquals('Undefined constant self::RED_10', $th->getMessage());
         }
     }
@@ -227,7 +227,7 @@ final class StyleTest extends TestCase
         $cmd  = new Style('text');
         $cmd->textBlue();
 
-        $tap = new style('text2');
+        $tap = new Style('text2');
         $tap->textRed();
 
         // push using tab
@@ -314,5 +314,48 @@ final class StyleTest extends TestCase
         $text = ob_get_clean();
 
         $this->assertEquals(sprintf('%s[2;49mi%s[0m%s[31;49mlove%s[0m%s[34;49mphp%s[0m', chr(27), chr(27), chr(27), chr(27), chr(27), chr(27)), $text, 'text must return blue text terminal code');
+    }
+
+    /** @test */
+    public function itOnlyPrintIfConditionTrue()
+    {
+        $cmd = new Style('text');
+        ob_start();
+        $cmd('i')
+            ->textDim()
+            ->push('love')
+            ->textRed()
+            ->push('php')
+            ->textBlue()
+            ->outIf(true, false);
+        $text = ob_get_clean();
+
+        $this->assertEquals(sprintf('%s[2;49mi%s[0m%s[31;49mlove%s[0m%s[34;49mphp%s[0m', chr(27), chr(27), chr(27), chr(27), chr(27), chr(27)), $text);
+
+        // using callback
+        ob_start();
+        $cmd('i')
+            ->textDim()
+            ->push('love')
+            ->textRed()
+            ->push('php')
+            ->textBlue()
+            ->outIf(fn (): bool => true, false);
+        $text = ob_get_clean();
+
+        $this->assertEquals(sprintf('%s[2;49mi%s[0m%s[31;49mlove%s[0m%s[34;49mphp%s[0m', chr(27), chr(27), chr(27), chr(27), chr(27), chr(27)), $text);
+
+        // if false
+        ob_start();
+        $cmd('i')
+            ->textDim()
+            ->push('love')
+            ->textRed()
+            ->push('php')
+            ->textBlue()
+            ->outIf(false, false);
+        $text = ob_get_clean();
+
+        $this->assertEquals('', $text);
     }
 }
