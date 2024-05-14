@@ -437,8 +437,10 @@ class Router
      * @param bool   $case_matters           Cese sensitive metters
      * @param bool   $trailing_slash_matters Trailing slash matters
      * @param bool   $multimatch             Return Multy route
+     *
+     * @return mixed
      */
-    public static function run($basepath = '', $case_matters = false, $trailing_slash_matters = false, $multimatch = false): mixed
+    public static function run($basepath = '', $case_matters = false, $trailing_slash_matters = false, $multimatch = false)
     {
         $dispatcher = RouteDispatcher::dispatchFrom($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], self::$routes);
 
