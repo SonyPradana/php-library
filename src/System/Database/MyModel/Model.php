@@ -349,6 +349,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     public function hasOne($model, ?string $ref = null)
     {
         if (class_exists($model)) {
+            /** @var object */
             $model      = new $model($this->pdo, []);
             $table_name = $model->table_name;
             $join_ref   = $ref ?? $model->primery_key;
@@ -377,6 +378,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     public function hasMany($model, ?string $ref = null)
     {
         if (class_exists($model)) {
+            /** @var object */
             $model      = new $model($this->pdo, []);
             $table_name = $model->table_name;
             $join_ref   = $ref ?? $model->primery_key;
@@ -546,8 +548,8 @@ class Model implements \ArrayAccess, \IteratorAggregate
      */
     public function order(string $column_name, int $order_using = MyQuery::ORDER_ASC, ?string $belong_to = null)
     {
-        $order            = $order_using == 0 ? 'ASC' : 'DESC';
-        $belong_to        = $belong_to ?? $this->table_name;
+        $order = 0 === $order_using ? 'ASC' : 'DESC';
+        $belong_to ??= $this->table_name;
         $this->sort_order = "ORDER BY `$belong_to`.`$column_name` $order";
 
         return $this;

@@ -116,6 +116,6 @@ class Route implements \ArrayAccess
     #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
-        return isset($this->route[$offset]) ? $this->route[$offset] : null;
+        return $this->route[$offset] ?? null;
     }
 }
