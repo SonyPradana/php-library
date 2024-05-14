@@ -140,12 +140,13 @@ final class HandlerTest extends TestCase
     public function itCanRenderHttpException()
     {
         $this->app->setViewPath('/assets/');
+        $this->app->setViewPaths([
+            '/assets/',
+            '/assets/pages/',
+        ]);
         $this->app->set(
             TemplatorFinder::class,
-            fn () => new TemplatorFinder([
-                __DIR__ . '/assets',
-                __DIR__ . '/assets/pages',
-            ], ['.php', '.template.php'])
+            fn () => new TemplatorFinder(view_paths(), ['.php', '.template.php'])
         );
 
         $this->app->set(
