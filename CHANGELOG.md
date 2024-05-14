@@ -4,7 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+### NOTED
+> This minor version is last php 7.4 supported, all path update (security and bug) for php ^7.4 | ^8.0 will push in this branch (v0.32).
+
 ## [Unreleased]
+
+## [0.32.2] - 2024-05-14
+### Fixed
+- Fixed set view paths start with base path (#324 ref from #319).
+
+## [0.32.1] - 2024-05-14
+### Fixed
+- Changed mixed return type to php doc return type.
 
 ## [0.31.1] - 2024-05-01
 ### Fixed
