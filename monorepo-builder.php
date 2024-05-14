@@ -13,7 +13,6 @@ use Symplify\MonorepoBuilder\Release\ReleaseWorker\UpdateBranchAliasReleaseWorke
 use Symplify\MonorepoBuilder\Release\ReleaseWorker\UpdateReplaceReleaseWorker;
 
 return static function (MBConfig $config): void {
-
     $config->packageDirectories([__DIR__ . '/src/System']);
 
     $config->workers([
