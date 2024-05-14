@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.32.3] - 2024-05-14
+### Fixed
+- Fixed `Handle::class` render http exception with paths not found. Added base view path, so finder can located layout / component.
+
 ## [0.32.2] - 2024-05-14
 ### Fixed
 - Fixed set view paths start with base path (#324 ref from #319).
