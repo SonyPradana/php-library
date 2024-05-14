@@ -6,7 +6,7 @@ namespace System\Test\Database\Query;
 
 use System\Database\MyQuery;
 
-final class UpdateTest extends \QueryStringTest
+final class UpdateTest extends \TestQueryString
 {
     /** @test */
     public function itCanUpdateBetween()

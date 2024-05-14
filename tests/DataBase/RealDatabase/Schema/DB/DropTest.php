@@ -6,7 +6,7 @@ namespace System\Test\Database\RealDatabase\Schema\DB;
 
 use System\Database\MySchema\DB\Drop;
 
-final class DropTest extends \RealDatabaseConnectionTest
+final class DropTest extends \TestDatabaseConnection
 {
     /**
      * @test

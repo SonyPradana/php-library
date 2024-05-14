@@ -7,7 +7,7 @@ namespace System\Test\Database\Query\Schema\Table;
 use System\Database\MySchema\Table\Column;
 use System\Database\MySchema\Table\Create;
 
-final class CreateTest extends \QueryStringTest
+final class CreateTest extends \TestQueryString
 {
     /** @test */
     public function itCanGenerateQueryUsingAddColumn()

@@ -7,7 +7,7 @@ namespace System\Test\Integrate\Commands;
 use System\Integrate\Console\RouteCommand;
 use System\Router\Router;
 
-final class RouteCommandsTest extends CommandTest
+final class RouteCommandsTest extends TestCommand
 {
     /**
      * @test

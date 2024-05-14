@@ -6,7 +6,7 @@ namespace System\Test\Integrate\Commands;
 
 use System\Integrate\Console\SeedCommand;
 
-final class SeedCommandsTest extends CommandTest
+final class SeedCommandsTest extends TestCommand
 {
     protected function setUp(): void
     {

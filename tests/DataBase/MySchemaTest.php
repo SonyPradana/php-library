@@ -7,7 +7,7 @@ namespace System\Test\Database;
 use System\Database\MySchema;
 use System\Database\MySchema\Table\Alter;
 
-final class MySchemaTest extends \RealDatabaseConnectionTest
+final class MySchemaTest extends \TestDatabaseConnection
 {
     /**
      * @test

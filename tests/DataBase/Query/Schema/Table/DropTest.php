@@ -6,7 +6,7 @@ namespace System\Test\Database\Query\Schema\Table;
 
 use System\Database\MySchema\Table\Drop;
 
-final class DropTest extends \QueryStringTest
+final class DropTest extends \TestQueryString
 {
     /** @test */
     public function itCanGenerateCreateDatabase()

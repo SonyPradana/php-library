@@ -6,7 +6,7 @@ namespace System\Test\Database\Query\Schema\Table;
 
 use System\Database\MySchema\Table\Raw;
 
-final class RawTest extends \QueryStringTest
+final class RawTest extends \TestQueryString
 {
     /** @test */
     public function itCanGenerateQueryUsingAddColumn()

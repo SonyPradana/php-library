@@ -7,7 +7,7 @@ namespace System\Test\Database\Query;
 use System\Database\MyQuery;
 use System\Database\MyQuery\Select;
 
-final class SelectTest extends \QueryStringTest
+final class SelectTest extends \TestQueryString
 {
     /** @test */
     public function itCanSelectBetween()

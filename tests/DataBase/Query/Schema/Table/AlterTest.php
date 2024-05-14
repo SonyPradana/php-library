@@ -6,7 +6,7 @@ namespace System\Test\Database\Query\Schema\Table;
 
 use System\Database\MySchema\Table\Alter;
 
-final class AlterTest extends \QueryStringTest
+final class AlterTest extends \TestQueryString
 {
     /** @test */
     public function itCanGenerateQueryUsingModifyColumn()

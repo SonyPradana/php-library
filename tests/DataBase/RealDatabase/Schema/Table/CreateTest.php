@@ -6,7 +6,7 @@ namespace System\Test\Database\RealDatabase\Schema\Table;
 
 use System\Database\MySchema\Table\Create;
 
-final class CreateTest extends \RealDatabaseConnectionTest
+final class CreateTest extends \TestDatabaseConnection
 {
     /**
      * @test

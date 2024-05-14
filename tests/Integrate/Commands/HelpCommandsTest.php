@@ -7,7 +7,7 @@ namespace System\Test\Integrate\Commands;
 use System\Console\Command;
 use System\Integrate\Console\HelpCommand;
 
-final class HelpCommandsTest extends CommandTest
+final class HelpCommandsTest extends TestCommand
 {
     private function maker(string $argv): HelpCommand
     {

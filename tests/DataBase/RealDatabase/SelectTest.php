@@ -7,7 +7,7 @@ namespace System\Test\Database\RealDatabase;
 use System\Database\MyQuery;
 use System\Database\MyQuery\Join\InnerJoin;
 
-final class SelectTest extends \RealDatabaseConnectionTest
+final class SelectTest extends \TestDatabaseConnection
 {
     private function profileFactory()
     {

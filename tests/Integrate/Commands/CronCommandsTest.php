@@ -7,7 +7,7 @@ namespace System\Test\Integrate\Commands;
 use System\Cron\InterpolateInterface;
 use System\Integrate\Console\CronCommand;
 
-final class CronCommandsTest extends CommandTest
+final class CronCommandsTest extends TestCommand
 {
     private function maker(string $argv): CronCommand
     {

@@ -6,7 +6,7 @@ namespace System\Test\Database\Query;
 
 use System\Database\MyQuery;
 
-final class InsertTest extends \QueryStringTest
+final class InsertTest extends \TestQueryString
 {
     /** @test */
     public function itCorrectInsert(): void

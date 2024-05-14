@@ -11,7 +11,7 @@ use System\Database\MyQuery\Join\InnerJoin;
 use System\Database\MyQuery\Join\LeftJoin;
 use System\Database\MyQuery\Join\RightJoin;
 
-final class JoinTest extends \QueryStringTest
+final class JoinTest extends \TestQueryString
 {
     /** @test */
     public function itCanGenerateInnerJoin()

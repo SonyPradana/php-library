@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 use System\Integrate\Application;
 use System\Text\Str;
 
-class CommandTest extends TestCase
+abstract class TestCommand extends TestCase
 {
     protected ?Application $app;
 

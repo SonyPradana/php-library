@@ -5,7 +5,7 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use System\Database\MyPDO;
 
-abstract class QueryStringTest extends TestCase
+abstract class TestQueryString extends TestCase
 {
     /** @var MyPDO */
     protected $PDO;

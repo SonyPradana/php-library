@@ -11,7 +11,7 @@ use System\Support\Facades\PDO;
 use System\Support\Facades\Schema;
 use System\Text\Str;
 
-final class MakeCommandsWithDatabaseTest extends \RealDatabaseConnectionTest
+final class MakeCommandsWithDatabaseTest extends \TestDatabaseConnection
 {
     private Application $app;
 

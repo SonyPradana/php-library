@@ -6,7 +6,7 @@ namespace System\Test\Integrate\Commands;
 
 use System\Integrate\Console\MaintenanceCommand;
 
-final class MaintenanceCommandsTest extends CommandTest
+final class MaintenanceCommandsTest extends TestCommand
 {
     protected function tearDown(): void
     {

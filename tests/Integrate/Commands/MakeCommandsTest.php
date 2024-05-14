@@ -6,7 +6,7 @@ namespace System\Test\Integrate\Commands;
 
 use System\Integrate\Console\MakeCommand;
 
-final class MakeCommandsTest extends CommandTest
+final class MakeCommandsTest extends TestCommand
 {
     protected function setUp(): void
     {

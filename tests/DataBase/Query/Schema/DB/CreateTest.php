@@ -6,7 +6,7 @@ namespace System\Test\Database\Query\Schema\DB;
 
 use System\Database\MySchema\DB\Create;
 
-final class CreateTest extends \QueryStringTest
+final class CreateTest extends \TestQueryString
 {
     /** @test */
     public function itCanGenerateCreateDatabase()

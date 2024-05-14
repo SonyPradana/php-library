@@ -11,11 +11,6 @@ class RouteControllerTest extends TestCase
 {
     protected $backup;
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     protected function tearDown(): void
     {
         Router::Reset();

@@ -6,7 +6,7 @@ namespace System\Test\Database\Query;
 
 use System\Database\MyQuery;
 
-final class DeleteTest extends \QueryStringTest
+final class DeleteTest extends \TestQueryString
 {
     /** @test */
     public function itCanDeleteBetween()

@@ -6,7 +6,7 @@ namespace System\Test\Database\Query;
 
 use System\Database\MyQuery;
 
-final class LimitTest extends \QueryStringTest
+final class LimitTest extends \TestQueryString
 {
     /** @test */
     public function itCorrectSelectQueryWithLimitOrder(): void

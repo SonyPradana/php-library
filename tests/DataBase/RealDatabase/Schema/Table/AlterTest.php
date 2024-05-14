@@ -6,7 +6,7 @@ namespace System\Test\Database\RealDatabase\Schema\Table;
 
 use System\Database\MySchema\Table\Alter;
 
-final class AlterTest extends \RealDatabaseConnectionTest
+final class AlterTest extends \TestDatabaseConnection
 {
     protected function setUp(): void
     {

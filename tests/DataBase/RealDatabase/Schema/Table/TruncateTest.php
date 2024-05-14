@@ -6,7 +6,7 @@ namespace System\Test\Database\RealDatabase\Schema\Table;
 
 use System\Database\MySchema\Table\Truncate;
 
-final class TruncateTest extends \RealDatabaseConnectionTest
+final class TruncateTest extends \TestDatabaseConnection
 {
     /**
      * @test

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace System\Test\Integrate\Commands\MakeCommandModel;
 
 use System\Integrate\Console\MakeCommand;
-use System\Test\Integrate\Commands\CommandTest;
+use System\Test\Integrate\Commands\TestCommand;
 
-final class MakeModelTest extends CommandTest
+final class MakeModelTest extends TestCommand
 {
     protected function setUp(): void
     {

@@ -11,13 +11,14 @@ use System\Support\Facades\PDO as FacadesPDO;
 use System\Support\Facades\Schema;
 use System\Text\Str;
 
-final class MigrationCommandsTest extends \RealDatabaseConnectionTest
+final class MigrationCommandsTest extends \TestDatabaseConnection
 {
     private Application $app;
 
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->app = new Application(__DIR__);
         $this->app->setMigrationPath('/database/migration/');
         $this->app->set('environment', 'dev');

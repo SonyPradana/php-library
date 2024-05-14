@@ -6,7 +6,7 @@ namespace System\Test\Database\RealDatabase;
 
 use System\Database\MyQuery;
 
-final class UpdateTest extends \RealDatabaseConnectionTest
+final class UpdateTest extends \TestDatabaseConnection
 {
     /**
      * @test
