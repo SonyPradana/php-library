@@ -102,7 +102,7 @@ class Handler
                 'code'     => $respone->getStatusCode(),
                 'messages' => [
                     'message'   => $th->getMessage(),
-                    'exception' => get_class($th),
+                    'exception' => $th::class,
                     'file'      => $th->getFile(),
                     'line'      => $th->getLine(),
                 ],
@@ -114,13 +114,15 @@ class Handler
 
     protected function handleHttpException(HttpException $e): Response
     {
-        $view = $this->registerViewPath();
-        $code = $view->viewExist((string) $e->getStatusCode())
+        $templator = $this->registerViewPath();
+        $code      = $templator->viewExist((string) $e->getStatusCode())
             ? $e->getStatusCode()
             : 500;
 
+        $this->app->set('view.instance', fn () => $templator);
+
         $response = view((string) $code);
-        $response->setResponeCode($e->getStatusCode());
+        $response->setResponeCode($code);
         $response->headers->add($e->getHeaders());
 
         return $response;
@@ -131,12 +133,11 @@ class Handler
      */
     public function registerViewPath(): Templator
     {
-        $view_path = $this->app->get('path.view');
+        $view_paths   = array_map(fn ($path): string => $path . 'pages/', $this->app->get('paths.view'));
+        $view_paths[] = $this->app->get('path.view');
         /** @var TemplatorFinder */
         $finder = $this->app->make(TemplatorFinder::class);
-        $finder->setPaths([
-            $view_path . 'pages/', // find default first
-        ]);
+        $finder->setPaths($view_paths);
 
         /** @var Templator */
         $view = $this->app->make('view.instance');
