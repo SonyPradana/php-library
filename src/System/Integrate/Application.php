@@ -6,12 +6,15 @@ namespace System\Integrate;
 
 use System\Container\Container;
 use System\Http\Request;
+use System\Integrate\Contracts\Paths;
 use System\Integrate\Http\Exception\HttpException;
 use System\Integrate\Providers\IntegrateServiceProvider;
 use System\View\Templator;
 
 final class Application extends Container
 {
+    use Paths;
+
     /**
      * Application instance.
      *
@@ -627,7 +630,7 @@ final class Application extends Container
      *
      * @return string
      */
-    public function base_path()
+    public function basePath()
     {
         return $this->get('path.bash');
     }
@@ -637,7 +640,7 @@ final class Application extends Container
      *
      * @return string
      */
-    public function app_path()
+    public function appPath()
     {
         return $this->get('path.app');
     }
@@ -647,7 +650,7 @@ final class Application extends Container
      *
      * @return string
      */
-    public function model_path()
+    public function modelPath()
     {
         return $this->get('path.model');
     }
@@ -655,7 +658,7 @@ final class Application extends Container
     /**
      * Get base view path.
      */
-    public function view_path(): string
+    public function viewPath(): string
     {
         return $this->get('path.view');
     }
@@ -675,7 +678,7 @@ final class Application extends Container
      *
      * @return string
      */
-    public function controller_path()
+    public function controllerPath()
     {
         return $this->get('path.controller');
     }
@@ -685,7 +688,7 @@ final class Application extends Container
      *
      * @return string
      */
-    public function services_path()
+    public function servicesPath()
     {
         return $this->get('path.services');
     }
@@ -695,7 +698,7 @@ final class Application extends Container
      *
      * @return string
      */
-    public function component_path()
+    public function componentPath()
     {
         return $this->get('path.component');
     }
@@ -705,7 +708,7 @@ final class Application extends Container
      *
      * @return string
      */
-    public function command_path()
+    public function commandPath()
     {
         return $this->get('path.command');
     }
@@ -715,7 +718,7 @@ final class Application extends Container
      *
      * @return string
      */
-    public function storage_path()
+    public function storagePath()
     {
         return $this->get('path.storage');
     }
@@ -727,7 +730,7 @@ final class Application extends Container
      *
      * @deprecated version 0.32 use compiled_view_path isnted.
      */
-    public function cache_path()
+    public function cachePath()
     {
         return $this->get('path.cache');
     }
@@ -737,7 +740,7 @@ final class Application extends Container
      *
      * @return string
      */
-    public function compiled_view_path()
+    public function compiledViewPath()
     {
         return $this->get('path.compiled_view_path');
     }
@@ -747,7 +750,7 @@ final class Application extends Container
      *
      * @return string
      */
-    public function config_path()
+    public function configPath()
     {
         return $this->get('path.config');
     }
@@ -757,7 +760,7 @@ final class Application extends Container
      *
      * @return string
      */
-    public function middleware_path()
+    public function middlewarePath()
     {
         return $this->get('path.middleware');
     }
@@ -767,7 +770,7 @@ final class Application extends Container
      *
      * @return string
      */
-    public function provider_path()
+    public function providerPath()
     {
         return $this->get('path.provider');
     }
@@ -775,7 +778,7 @@ final class Application extends Container
     /**
      * Get migration path.
      */
-    public function migration_path(): string
+    public function migrationPath(): string
     {
         return $this->get('path.migration');
     }
@@ -783,7 +786,7 @@ final class Application extends Container
     /**
      * Get seeder path.
      */
-    public function seeder_path(): string
+    public function seederPath(): string
     {
         return $this->get('path.seeder');
     }
@@ -791,7 +794,7 @@ final class Application extends Container
     /**
      * Get public path.
      */
-    public function public_path(): string
+    public function publicPath(): string
     {
         return $this->get('path.public');
     }
@@ -944,7 +947,7 @@ final class Application extends Container
      */
     public function isDownMaintenanceMode(): bool
     {
-        return file_exists($this->storage_path() . 'app' . DIRECTORY_SEPARATOR . 'maintenance.php');
+        return file_exists($this->storagePath() . 'app' . DIRECTORY_SEPARATOR . 'maintenance.php');
     }
 
     /**
@@ -961,7 +964,7 @@ final class Application extends Container
             'template' => null,
         ];
 
-        if (false === file_exists($down = $this->storage_path() . 'app' . DIRECTORY_SEPARATOR . 'down')) {
+        if (false === file_exists($down = $this->storagePath() . 'app' . DIRECTORY_SEPARATOR . 'down')) {
             return $default;
         }
 
