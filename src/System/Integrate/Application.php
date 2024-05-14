@@ -6,34 +6,15 @@ namespace System\Integrate;
 
 use System\Container\Container;
 use System\Http\Request;
+use System\Integrate\Contracts\Paths;
 use System\Integrate\Http\Exception\HttpException;
 use System\Integrate\Providers\IntegrateServiceProvider;
-use System\Text\Str;
 use System\View\Templator;
 
-/**
- * Method deprecated call using __call consider using recomended insted.
- *
- * @method string base_path()          Deprecated v0.32 use `basePath()` instead.
- * @method string app_path()           Deprecated v0.32 use `appPath()` instead.
- * @method string model_path()         Deprecated v0.32 use `modelPath()` instead.
- * @method string view_path()          Deprecated v0.32 use `viewPath()` instead.
- * @method string controller_path()    Deprecated v0.32 use `controllerPath()` instead.
- * @method string services_path()      Deprecated v0.32 use `servicesPath()` instead.
- * @method string component_path()     Deprecated v0.32 use `componentPath()` instead.
- * @method string command_path()       Deprecated v0.32 use `commandPath()` instead.
- * @method string storage_path()       Deprecated v0.32 use `storagePath()` instead.
- * @method string cache_path()         Deprecated v0.32 use `cachePath()` instead.
- * @method string compiled_view_path() Deprecated v0.32 use `compiledViewPath()` instead.
- * @method string config_path()        Deprecated v0.32 use `configPath()` instead.
- * @method string middleware_path()    Deprecated v0.32 use `middlewarePath()` instead.
- * @method string provider_path()      Deprecated v0.32 use `providerPath()` instead.
- * @method string migration_path()     Deprecated v0.32 use `migrationPath()` instead.
- * @method string seeder_path()        Deprecated v0.32 use `seederPath()` instead.
- * @method string public_path()        Deprecated v0.32 use `publicPath()` instead.
- */
 final class Application extends Container
 {
+    use Paths;
+
     /**
      * Application instance.
      *
@@ -1022,22 +1003,5 @@ final class Application extends Container
                 $this->alias($abstrack, $alias);
             }
         }
-    }
-
-    /**
-     * Call deprecated method.
-     *
-     * @param string[] $arguments
-     *
-     * @throws \InvalidArgumentException If method name is not exist
-     */
-    public function __call(string $name, array $arguments): string
-    {
-        $resolved_name = Str::toCamelCase($name);
-        if (method_exists($this, $resolved_name)) {
-            return $this->{$resolved_name}();
-        }
-
-        throw new \InvalidArgumentException("Method {$name} is not exist.");
     }
 }
