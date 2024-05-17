@@ -6,6 +6,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.33.0] - 2024-05-17
+### Removed
+- Removed support for php 7.4 due the new feature `Container::alias()` make modify another Container method.
+
+### Added
+- Added `Container::alias` register alias for calling register entries `get`, `make`, `has`.
+- Added `Application::registerAlias()` register alias for default application alias (#316).
+
+### Changed
+- Use `Container::flush()` to flush container and added termnited tobe flush.
+- Change or Added new Rector rule see #321 for more details (note bene php8.0 support).
+
+### Fixed
+- Fixed `Application::setViewPaths` added `basePath()` as prefix path.
+- Fixed `Handler::handleHttpException()` path not found, overwrite Templator instnace to register `TemplatorFinder::class`.
+
+### Deprecated
+- Deprecated snake case method name in `Application::class` (#318), we was changed to camel case but keep old method in trait helper call `System\Integrate\Contracts\Paths`.
+
+## [0.32.3] - 2024-05-14
+### Fixed
+- Fixed `Handle::class` render http exception with paths not found. Added base view path, so finder can located layout / component.
+
+## [0.32.2] - 2024-05-14
+### Fixed
+- Fixed set view paths start with base path (#324 ref from #319).
+
+## [0.32.1] - 2024-05-14
+### Fixed
+- Changed mixed return type to php doc return type.
+
+## [0.32.0] - 2024-05-06
+### Added
+- Added `TemplateFider::class` finder location for template engine (find, get path).
+
+### Changed
+- Changed `Templator::__construct()` using `TemplatorFinder::class` for handle find and get path.
+
 ## [0.31.1] - 2024-05-01
 ### Fixed
 - Fixed view template finder by hard code suffix and prefix view file, the next version will handle by `ViewFinder::class`.
