@@ -171,6 +171,11 @@ final class Application extends Container
     private $isBooted = false;
 
     /**
+     * Detect application has been bootstrapped.
+     */
+    private bool $isBootstrapped = false;
+
+    /**
      * Terminate callback register.
      *
      * @var callable[]
@@ -197,10 +202,6 @@ final class Application extends Container
 
         // register base provider
         $this->register(IntegrateServiceProvider::class);
-
-        // boot provider
-        $this->registerProvider();
-        $this->bootProvider();
 
         // register container alias
         $this->registerAlias();
@@ -829,7 +830,37 @@ final class Application extends Container
         return $this->environment() === 'dev';
     }
 
+    /**
+     * Detect appliaction has been booted.
+     */
+    public function isBooted(): bool
+    {
+        return $this->isBooted;
+    }
+
+    /**
+     * Detect application has been bootstrapped.
+     */
+    public function isBootstrapped(): bool
+    {
+        return $this->isBootstrapped;
+    }
+
     // core region
+
+    /**
+     * Bootstrapper.
+     *
+     * @param array<int, class-string> $bootstrappers
+     */
+    public function bootstrapWith($bootstrappers): void
+    {
+        $this->isBootstrapped = true;
+
+        foreach ($bootstrappers as $bootstrapper) {
+            $this->make($bootstrapper)->bootstrap($this);
+        }
+    }
 
     /**
      * Boot service provider.

@@ -10,9 +10,8 @@ use System\Integrate\Http\Karnel;
 
 final class KarnelTest extends TestCase
 {
-    private $app;
+    private Application $app;
     private $karnel;
-    private $middleware;
 
     protected function setUp(): void
     {
@@ -79,5 +78,13 @@ final class KarnelTest extends TestCase
             'redirect',
             $test->__toString()
         );
+    }
+
+    /** @test */
+    public function itCanBootstrap()
+    {
+        $this->assertFalse($this->app->isBootstrapped());
+        $this->app->make(Karnel::class)->bootstrap();
+        $this->assertTrue($this->app->isBootstrapped());
     }
 }

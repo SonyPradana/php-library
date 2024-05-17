@@ -6,13 +6,22 @@ namespace System\Integrate\Console;
 
 use System\Console\Style\Style;
 use System\Container\Container;
+use System\Integrate\Bootstrap\BootProviders;
+use System\Integrate\Bootstrap\RegisterProviders;
 
 class Karnel
 {
     /** @var Container */
     protected $app;
+
     /** @var int concole exit status */
     protected $exit_code;
+
+    /** @var array<int, class-string> Apllication bootstrap register. */
+    protected array $bootstrappers = [
+        RegisterProviders::class,
+        BootProviders::class,
+    ];
 
     /**
      * Set instance.
@@ -36,6 +45,8 @@ class Karnel
         // handle command empty
         $baseArgs = $arguments[1] ?? '--help';
         $commands = [];
+
+        $this->bootstrap();
 
         foreach ($this->commands() as $cmd) {
             $commands = array_merge($commands, $cmd->patterns(), $cmd->cmd());
@@ -79,6 +90,16 @@ class Karnel
         $similar->out();
 
         return $this->exit_code = 1;
+    }
+
+    /**
+     * Register bootstraper application.
+     */
+    public function bootstrap(): void
+    {
+        if (method_exists($this->app, 'bootstrapWith')) {
+            $this->app->{'bootstrapWith'}($this->bootstrappers);
+        }
     }
 
     /**

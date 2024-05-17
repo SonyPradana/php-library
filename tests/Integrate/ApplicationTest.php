@@ -154,6 +154,21 @@ class ApplicationTest extends TestCase
     }
 
     /** @test */
+    public function itCanBootstrapWith()
+    {
+        $app = new Application(__DIR__);
+
+        ob_start();
+        $app->bootstrapWith([
+            TestBootstrapProvider::class,
+        ]);
+        $out = ob_get_clean();
+
+        $this->assertEquals($out, 'TestBootstrapProvider::bootstrap');
+        $this->assertTrue($app->isBootstrapped());
+    }
+
+    /** @test */
     public function itCanCallDeprecatedMethod()
     {
         $app = new Application(__DIR__);
@@ -236,5 +251,13 @@ class ApplicationTest extends TestCase
             ],
             'COMPILED_VIEW_PATH' => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR,
         ];
+    }
+}
+
+class TestBootstrapProvider
+{
+    public function bootstrap(Application $app): void
+    {
+        echo __CLASS__ . '::' . __FUNCTION__;
     }
 }
