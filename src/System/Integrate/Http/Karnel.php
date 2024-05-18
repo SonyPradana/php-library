@@ -4,19 +4,18 @@ declare(strict_types=1);
 
 namespace System\Integrate\Http;
 
-use System\Container\Container;
 use System\Http\Request;
 use System\Http\Response;
 use System\Integrate\Bootstrap\BootProviders;
 use System\Integrate\Bootstrap\RegisterProviders;
+use System\Integrate\Application;
 use System\Integrate\Exceptions\Handler;
 use System\Integrate\Http\Middleware\MaintenanceMiddleware;
 use System\Router\Router;
 
 class Karnel
 {
-    /** @var Container */
-    protected $app;
+    protected Application $app;
 
     /** @var array<int, class-string> Global middleware */
     protected $middleware = [
@@ -34,10 +33,8 @@ class Karnel
 
     /**
      * Set instance.
-     *
-     * @param Container $app Application container
-     * */
-    public function __construct(Container $app)
+     */
+    public function __construct(Application $app)
     {
         $this->app = $app;
     }
@@ -96,9 +93,8 @@ class Karnel
                 $this->app->call([$middleware, 'terminate'], ['request' => $request, 'response' => $response]);
             }
         }
-        if (method_exists($this->app, 'terminate')) {
-            $this->app->{'terminate'}();
-        }
+
+        $this->app->terminate();
     }
 
     /**
