@@ -11,7 +11,11 @@ use System\Integrate\Bootstrap\RegisterProviders;
 
 class Karnel
 {
+    /**
+     * Application Container.
+     */
     protected Application $app;
+
     /** @var int concole exit status */
     protected $exit_code;
 
@@ -93,9 +97,7 @@ class Karnel
      */
     public function bootstrap(): void
     {
-        if (method_exists($this->app, 'bootstrapWith')) {
-            $this->app->{'bootstrapWith'}($this->bootstrappers);
-        }
+        $this->app->bootstrapWith($this->bootstrappers);
     }
 
     /**

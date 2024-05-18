@@ -6,15 +6,18 @@ namespace System\Integrate\Http;
 
 use System\Http\Request;
 use System\Http\Response;
+use System\Integrate\Application;
 use System\Integrate\Bootstrap\BootProviders;
 use System\Integrate\Bootstrap\RegisterProviders;
-use System\Integrate\Application;
 use System\Integrate\Exceptions\Handler;
 use System\Integrate\Http\Middleware\MaintenanceMiddleware;
 use System\Router\Router;
 
 class Karnel
 {
+    /**
+     * Application Container.
+     */
     protected Application $app;
 
     /** @var array<int, class-string> Global middleware */
@@ -77,9 +80,7 @@ class Karnel
      */
     public function bootstrap(): void
     {
-        if (method_exists($this->app, 'bootstrapWith')) {
-            $this->app->{'bootstrapWith'}($this->bootstrappers);
-        }
+        $this->app->bootstrapWith($this->bootstrappers);
     }
 
     /**
