@@ -5,21 +5,18 @@ declare(strict_types=1);
 namespace System\Integrate\Console;
 
 use System\Console\Style\Style;
-use System\Container\Container;
+use System\Integrate\Application;
 
 class Karnel
 {
-    /** @var Container */
-    protected $app;
+    protected Application $app;
     /** @var int concole exit status */
     protected $exit_code;
 
     /**
      * Set instance.
-     *
-     * @param Container $app Application container
-     * */
-    public function __construct(Container $app)
+     */
+    public function __construct(Application $app)
     {
         $this->app = $app;
     }
