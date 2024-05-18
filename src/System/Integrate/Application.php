@@ -892,10 +892,6 @@ final class Application extends Container
      */
     public function registerProvider()
     {
-        if (!$this->isBooted) {
-            return;
-        }
-
         foreach ($this->providers as $provider) {
             if (in_array($provider, $this->looded_providers)) {
                 continue;
