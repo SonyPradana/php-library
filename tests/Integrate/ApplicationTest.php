@@ -169,6 +169,48 @@ class ApplicationTest extends TestCase
     }
 
     /** @test */
+    public function itCanAddCallBacksBeforeAndAfterBoot()
+    {
+        $app = new Application(__DIR__);
+
+        $app->bootedCallback(static function () {
+            echo 'booted01';
+        });
+        $app->bootedCallback(static function () {
+            echo 'booted02';
+        });
+        $app->bootingCallback(static function () {
+            echo 'booting01';
+        });
+        $app->bootingCallback(static function () {
+            echo 'booting02';
+        });
+
+        ob_start();
+        $app->bootProvider();
+        $out = ob_get_clean();
+
+        $this->assertEquals($out, 'booting01booting02booted01booted02');
+        $this->assertTrue($app->isBooted());
+    }
+
+    public function itCanAddCallImediatllyIfApplicationAlredyBooted()
+    {
+        $app = new Application(__DIR__);
+
+        $app->bootProvider();
+
+        ob_start();
+        $app->bootedCallback(static function () {
+            echo 'imediatly call';
+        });
+        $out = ob_get_clean();
+
+        $this->assertTrue($app->isBooted());
+        $this->assertEquals($out, 'imediatly call');
+    }
+
+    /** @test */
     public function itCanCallDeprecatedMethod()
     {
         $app = new Application(__DIR__);

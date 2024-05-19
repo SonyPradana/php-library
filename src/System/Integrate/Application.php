@@ -183,6 +183,20 @@ final class Application extends Container
     private $terminateCallback = [];
 
     /**
+     * Registered booting callback.
+     *
+     * @var callable[]
+     */
+    protected array $booting_callbacks = [];
+
+    /**
+     * Registered booted callback.
+     *
+     * @var callable[]
+     */
+    protected array $booted_callbacks = [];
+
+    /**
      * Contructor.
      *
      * @param string $base_path application path
@@ -873,6 +887,8 @@ final class Application extends Container
             return;
         }
 
+        $this->callBootCallbacks($this->booting_callbacks);
+
         foreach ($this->providers as $provider) {
             if (in_array($provider, $this->booted_providers)) {
                 continue;
@@ -881,6 +897,8 @@ final class Application extends Container
             $this->call([$provider, 'boot']);
             $this->booted_providers[] = $provider;
         }
+
+        $this->callBootCallbacks($this->booted_callbacks);
 
         $this->isBooted = true;
     }
@@ -904,6 +922,46 @@ final class Application extends Container
     }
 
     /**
+     * Call the registered booting callbacks.
+     *
+     * @param callable[] $bootCallBacks
+     */
+    public function callBootCallbacks($bootCallBacks): void
+    {
+        $index = 0;
+
+        while ($index < count($bootCallBacks)) {
+            $this->call($bootCallBacks[$index]);
+
+            $index++;
+        }
+    }
+
+    /**
+     * Add booting call back, call before boot is calling.
+     *
+     * @param callable[] $callback
+     */
+    public function bootingCallback($callback): void
+    {
+        $this->booting_callbacks[] = $callback;
+    }
+
+    /**
+     * Add booted call back, call after boot is called.
+     *
+     * @param callable[] $callback
+     */
+    public function bootedCallback($callback): void
+    {
+        $this->booted_callbacks[] = $callback;
+
+        if ($this->isBooted()) {
+            $this->call($callback);
+        }
+    }
+
+    /**
      * Flush or reset application (static).
      */
     public function flush(): void
@@ -914,6 +972,8 @@ final class Application extends Container
         $this->looded_providers  = [];
         $this->booted_providers  = [];
         $this->terminateCallback = [];
+        $this->booting_callbacks = [];
+        $this->booted_callbacks  = [];
 
         parent::flush();
     }
