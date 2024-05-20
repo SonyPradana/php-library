@@ -203,6 +203,14 @@ final class KarnelTest extends TestCase
         $condition =  Str::contains($out, 'use:full');
         $this->assertTrue($condition);
     }
+
+    /** @test */
+    public function itCanBootstrap()
+    {
+        $this->assertFalse($this->app->isBootstrapped());
+        $this->app->make(Karnel::class)->bootstrap();
+        $this->assertTrue($this->app->isBootstrapped());
+    }
 }
 
 class NormalCommand extends Karnel

@@ -171,11 +171,30 @@ final class Application extends Container
     private $isBooted = false;
 
     /**
+     * Detect application has been bootstrapped.
+     */
+    private bool $isBootstrapped = false;
+
+    /**
      * Terminate callback register.
      *
      * @var callable[]
      */
     private $terminateCallback = [];
+
+    /**
+     * Registered booting callback.
+     *
+     * @var callable[]
+     */
+    protected array $booting_callbacks = [];
+
+    /**
+     * Registered booted callback.
+     *
+     * @var callable[]
+     */
+    protected array $booted_callbacks = [];
 
     /**
      * Contructor.
@@ -197,10 +216,6 @@ final class Application extends Container
 
         // register base provider
         $this->register(IntegrateServiceProvider::class);
-
-        // boot provider
-        $this->registerProvider();
-        $this->bootProvider();
 
         // register container alias
         $this->registerAlias();
@@ -829,7 +844,37 @@ final class Application extends Container
         return $this->environment() === 'dev';
     }
 
+    /**
+     * Detect appliaction has been booted.
+     */
+    public function isBooted(): bool
+    {
+        return $this->isBooted;
+    }
+
+    /**
+     * Detect application has been bootstrapped.
+     */
+    public function isBootstrapped(): bool
+    {
+        return $this->isBootstrapped;
+    }
+
     // core region
+
+    /**
+     * Bootstrapper.
+     *
+     * @param array<int, class-string> $bootstrappers
+     */
+    public function bootstrapWith($bootstrappers): void
+    {
+        $this->isBootstrapped = true;
+
+        foreach ($bootstrappers as $bootstrapper) {
+            $this->make($bootstrapper)->bootstrap($this);
+        }
+    }
 
     /**
      * Boot service provider.
@@ -842,6 +887,8 @@ final class Application extends Container
             return;
         }
 
+        $this->callBootCallbacks($this->booting_callbacks);
+
         foreach ($this->providers as $provider) {
             if (in_array($provider, $this->booted_providers)) {
                 continue;
@@ -850,6 +897,8 @@ final class Application extends Container
             $this->call([$provider, 'boot']);
             $this->booted_providers[] = $provider;
         }
+
+        $this->callBootCallbacks($this->booted_callbacks);
 
         $this->isBooted = true;
     }
@@ -861,10 +910,6 @@ final class Application extends Container
      */
     public function registerProvider()
     {
-        if (!$this->isBooted) {
-            return;
-        }
-
         foreach ($this->providers as $provider) {
             if (in_array($provider, $this->looded_providers)) {
                 continue;
@@ -873,6 +918,46 @@ final class Application extends Container
             $this->call([$provider, 'register']);
 
             $this->looded_providers[] = $provider;
+        }
+    }
+
+    /**
+     * Call the registered booting callbacks.
+     *
+     * @param callable[] $bootCallBacks
+     */
+    public function callBootCallbacks($bootCallBacks): void
+    {
+        $index = 0;
+
+        while ($index < count($bootCallBacks)) {
+            $this->call($bootCallBacks[$index]);
+
+            $index++;
+        }
+    }
+
+    /**
+     * Add booting call back, call before boot is calling.
+     *
+     * @param callable[] $callback
+     */
+    public function bootingCallback($callback): void
+    {
+        $this->booting_callbacks[] = $callback;
+    }
+
+    /**
+     * Add booted call back, call after boot is called.
+     *
+     * @param callable[] $callback
+     */
+    public function bootedCallback($callback): void
+    {
+        $this->booted_callbacks[] = $callback;
+
+        if ($this->isBooted()) {
+            $this->call($callback);
         }
     }
 
@@ -887,6 +972,8 @@ final class Application extends Container
         $this->looded_providers  = [];
         $this->booted_providers  = [];
         $this->terminateCallback = [];
+        $this->booting_callbacks = [];
+        $this->booted_callbacks  = [];
 
         parent::flush();
     }
