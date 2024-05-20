@@ -154,6 +154,63 @@ class ApplicationTest extends TestCase
     }
 
     /** @test */
+    public function itCanBootstrapWith()
+    {
+        $app = new Application(__DIR__);
+
+        ob_start();
+        $app->bootstrapWith([
+            TestBootstrapProvider::class,
+        ]);
+        $out = ob_get_clean();
+
+        $this->assertEquals($out, 'TestBootstrapProvider::bootstrap');
+        $this->assertTrue($app->isBootstrapped());
+    }
+
+    /** @test */
+    public function itCanAddCallBacksBeforeAndAfterBoot()
+    {
+        $app = new Application(__DIR__);
+
+        $app->bootedCallback(static function () {
+            echo 'booted01';
+        });
+        $app->bootedCallback(static function () {
+            echo 'booted02';
+        });
+        $app->bootingCallback(static function () {
+            echo 'booting01';
+        });
+        $app->bootingCallback(static function () {
+            echo 'booting02';
+        });
+
+        ob_start();
+        $app->bootProvider();
+        $out = ob_get_clean();
+
+        $this->assertEquals($out, 'booting01booting02booted01booted02');
+        $this->assertTrue($app->isBooted());
+    }
+
+    public function itCanAddCallImediatllyIfApplicationAlredyBooted()
+    {
+        $app = new Application(__DIR__);
+
+        $app->bootProvider();
+
+        ob_start();
+        $app->bootedCallback(static function () {
+            echo 'imediatly call';
+        });
+        $out = ob_get_clean();
+
+        $this->assertTrue($app->isBooted());
+        $this->assertEquals($out, 'imediatly call');
+    }
+
+    /** @test */
     public function itCanCallDeprecatedMethod()
     {
         $app = new Application(__DIR__);
@@ -236,5 +293,13 @@ class ApplicationTest extends TestCase
             ],
             'COMPILED_VIEW_PATH' => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR,
         ];
+    }
+}
+
+class TestBootstrapProvider
+{
+    public function bootstrap(Application $app): void
+    {
+        echo __CLASS__ . '::' . __FUNCTION__;
     }
 }
