@@ -205,14 +205,12 @@ final class Application extends Container
     {
         parent::__construct();
 
-        // base binding
-        static::$app = $this;
-        $this->set('app', $this);
-        $this->set(Application::class, $this);
-        $this->set(Container::class, $this);
+        // set base path
+        $this->setBasePath($base_path);
+        $this->setConfigPath($_ENV['CONFIG_PATH'] ?? DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR);
 
-        // load config and load provider
-        $this->loadConfig($base_path);
+        // base binding
+        $this->setBaseBinding();
 
         // register base provider
         $this->register(IntegrateServiceProvider::class);
@@ -232,38 +230,23 @@ final class Application extends Container
     }
 
     /**
-     * Load and set Configuration to application.
-     *
-     * @param string $base_path Base path
-     *
-     * @return void
+     * Register base binding container.
      */
-    public function loadConfig(string $base_path)
+    protected function setBaseBinding(): void
     {
-        // set base path
-        $this->setBasePath($base_path);
+        static::$app = $this;
+        $this->set('app', $this);
+        $this->set(Application::class, $this);
+        $this->set(Container::class, $this);
+    }
+
+    /**
+     * Load and set Configuration to application.
+     */
+    public function loadConfig(Config $configs): void
+    {
+        $base_path = $this->basePath();
         $this->setAppPath($base_path);
-        $config_path = $base_path . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR;
-
-        // check file exis
-        $configs = $this->defaultConfigs();
-        $paths   = [
-            'app.config.php',
-            'database.config.php',
-            'pusher.config.php',
-            'cachedriver.config.php',
-            'view.config.php',
-        ];
-        foreach ($paths as $path) {
-            $file_path = $config_path . $path;
-
-            if (file_exists($file_path)) {
-                $config     = include $file_path;
-                foreach ($config as $key => $value) {
-                    $configs[$key] = $value;
-                }
-            }
-        }
 
         // base env
         $this->set('environment', $configs['ENVIRONMENT']);
@@ -277,7 +260,6 @@ final class Application extends Container
         $this->setCommandPath($configs['COMMAND_PATH']);
         $this->setCachePath($configs['CACHE_PATH']);
         $this->setCompiledViewPath($configs['COMPILED_VIEW_PATH']);
-        $this->setConfigPath($configs['CONFIG']);
         $this->setMiddlewarePath($configs['MIDDLEWARE']);
         $this->setProviderPath($configs['SERVICE_PROVIDER']);
         $this->setMigrationPath($configs['MIGRATION_PATH']);
@@ -292,9 +274,9 @@ final class Application extends Container
         $this->set('config.view.extensions', $configs['VIEW_EXTENSIONS']);
         // load provider
         $this->providers = $configs['PROVIDERS'];
-        $this->defineder($configs);
+        $this->defineder($configs->toArray());
         // give access to get config directly
-        $this->set('config', $configs);
+        $this->set('config', fn () => $configs);
     }
 
     /**
@@ -302,7 +284,7 @@ final class Application extends Container
      *
      * @return array<string, mixed> Configs
      */
-    private function defaultConfigs()
+    public function defaultConfigs()
     {
         return [
             // app config
@@ -1086,6 +1068,7 @@ final class Application extends Container
             'request'       => [Request::class],
             'view.instance' => [Templator::class],
             'vite.gets'     => [Vite::class],
+            'config'        => [Config::class],
         ] as $abstrack => $aliases) {
             foreach ($aliases as $alias) {
                 $this->alias($abstrack, $alias);

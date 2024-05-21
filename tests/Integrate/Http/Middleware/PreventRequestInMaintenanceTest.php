@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use System\Http\Request;
 use System\Http\Response;
 use System\Integrate\Application;
+use System\Integrate\Config;
 use System\Integrate\Http\Exception\HttpException;
 use System\Integrate\Http\Middleware\MaintenanceMiddleware;
 
@@ -19,6 +20,7 @@ final class PreventRequestInMaintenanceTest extends TestCase
     public function itCanPreventRequestDuringMaintenance()
     {
         $app        = new Application(__DIR__);
+        $app->loadConfig(new Config($app->defaultConfigs()));
         $middleware = new MaintenanceMiddleware($app);
         $response   = new Response('test');
         $handle     = $middleware->handle(new Request('/'), fn (Request $request) => $response);
