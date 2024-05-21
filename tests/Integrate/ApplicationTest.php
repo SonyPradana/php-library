@@ -3,7 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use System\Http\Request;
 use System\Integrate\Application;
-use System\Integrate\Config;
+use System\Integrate\ConfigRepository;
 use System\Integrate\Exceptions\ApplicationNotAvailable;
 use System\Integrate\Http\Exception\HttpException;
 
@@ -43,7 +43,7 @@ class ApplicationTest extends TestCase
     {
         $app = new Application('/');
 
-        $app->loadConfig(new Config($app->defaultConfigs()));
+        $app->loadConfig(new ConfigRepository($app->defaultConfigs()));
         /** @var Config */
         $config = $app->get('config');
 
@@ -109,7 +109,7 @@ class ApplicationTest extends TestCase
     public function itCanDetectMaintenenceMode()
     {
         $app = new Application(__DIR__);
-        $app->loadConfig(new Config($app->defaultConfigs()));
+        $app->loadConfig(new ConfigRepository($app->defaultConfigs()));
 
         $this->assertFalse($app->isDownMaintenanceMode());
 
@@ -142,7 +142,7 @@ class ApplicationTest extends TestCase
     {
         $app = new Application('/');
 
-        $app->loadConfig(new Config($app->defaultConfigs()));
+        $app->loadConfig(new ConfigRepository($app->defaultConfigs()));
         $this->assertEquals([
             'redirect' => null,
             'retry'    => null,
@@ -219,7 +219,7 @@ class ApplicationTest extends TestCase
     public function itCanCallDeprecatedMethod()
     {
         $app = new Application(__DIR__);
-        $app->loadConfig(new Config($app->defaultConfigs()));
+        $app->loadConfig(new ConfigRepository($app->defaultConfigs()));
 
         $this->assertEquals($app->basePath(), $app->base_path());
         $this->assertEquals($app->appPath(), $app->app_path());

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace System\Integrate\Bootstrap;
 
 use System\Integrate\Application;
-use System\Integrate\Config;
+use System\Integrate\ConfigRepository;
 
 class ConfigProviders
 {
@@ -14,7 +14,7 @@ class ConfigProviders
         $config_path = $app->configPath();
         $config      =  $app->defaultConfigs();
         $has_cache   = false;
-        if (file_exists($file = $app->basePath() . 'bootsrap/cache/config.php')) {
+        if (file_exists($file = $app->getApplicationCachePath() . 'config.php')) {
             $config    = array_merge($config, require $file);
             $has_cache = true;
         }
@@ -32,6 +32,6 @@ class ConfigProviders
             }
         }
 
-        $app->loadConfig(new Config($config));
+        $app->loadConfig(new ConfigRepository($config));
     }
 }

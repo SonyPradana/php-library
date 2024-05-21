@@ -243,14 +243,15 @@ final class Application extends Container
     /**
      * Load and set Configuration to application.
      */
-    public function loadConfig(Config $configs): void
+    public function loadConfig(ConfigRepository $configs): void
     {
-        $base_path = $this->basePath();
-        $this->setAppPath($base_path);
+        // give access to get config directly
+        $this->set('config', fn (): ConfigRepository => $configs);
 
         // base env
         $this->set('environment', $configs['ENVIRONMENT']);
         // application path
+        $this->setAppPath($this->basePath());
         $this->setModelPath($configs['MODEL_PATH']);
         $this->setViewPath($configs['VIEW_PATH']);
         $this->setViewPaths($configs['VIEW_PATHS']);
@@ -275,8 +276,6 @@ final class Application extends Container
         // load provider
         $this->providers = $configs['PROVIDERS'];
         $this->defineder($configs->toArray());
-        // give access to get config directly
-        $this->set('config', fn () => $configs);
     }
 
     /**
@@ -640,6 +639,17 @@ final class Application extends Container
     public function appPath()
     {
         return $this->get('path.app');
+    }
+
+    /**
+     * Get application (bootstrapper) cach path.
+     * default './boostrap/cache/'.
+     *
+     * @return string
+     */
+    public function getApplicationCachePath()
+    {
+        return $this->basePath() . 'bootsrap' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -1068,7 +1078,7 @@ final class Application extends Container
             'request'       => [Request::class],
             'view.instance' => [Templator::class],
             'vite.gets'     => [Vite::class],
-            'config'        => [Config::class],
+            'config'        => [ConfigRepository::class],
         ] as $abstrack => $aliases) {
             foreach ($aliases as $alias) {
                 $this->alias($abstrack, $alias);

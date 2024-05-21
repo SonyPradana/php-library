@@ -6,7 +6,7 @@ namespace System\Test\Integrate\Commands;
 
 use PHPUnit\Framework\TestCase;
 use System\Integrate\Application;
-use System\Integrate\Config;
+use System\Integrate\ConfigRepository;
 use System\Integrate\Console\ViewCommand;
 use System\View\Templator;
 use System\View\TemplatorFinder;
@@ -51,7 +51,7 @@ final class ViewCommandsTest extends TestCase
     {
         // tests\Integrate\Commands\assets\view_cache
         $app = new Application('');
-        $app->loadConfig(new Config($app->defaultConfigs()));
+        $app->loadConfig(new ConfigRepository($app->defaultConfigs()));
         $app->setCachePath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'view_cache' . DIRECTORY_SEPARATOR);
 
         file_put_contents(cache_path() . 'test01.php', '');
