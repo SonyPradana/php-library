@@ -230,6 +230,7 @@ final class Application extends Container
             'pusher.config.php',
             'cachedriver.config.php',
             'view.config.php',
+            'mail.config.php',
         ];
         foreach ($paths as $path) {
             $file_path = $config_path . $path;
@@ -303,7 +304,6 @@ final class Application extends Container
             'PUBLIC_PATH'           => DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR,
             'MIGRATION_PATH'        => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migration' . DIRECTORY_SEPARATOR,
             'SEEDER_PATH'           => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'seeders' . DIRECTORY_SEPARATOR,
-
             'PROVIDERS'             => [
                 // provider class name
             ],
@@ -329,6 +329,15 @@ final class Application extends Container
             'MEMCACHED_HOST'        => '127.0.0.1',
             'MEMCACHED_PASS'        => '',
             'MEMCACHED_PORT'        => 6379,
+
+            // mialer
+            'MAIL_DRIVER'       => 'smtp',
+            'MAIL_HOST'         => '127.0.0.1',
+            'MAIL_PORT'         => 2525,
+            'MAIL_USERNAME'     => null,
+            'MAIL_PASSWORD'     => null,
+            'MAIL_ENCRYPTION'   => null,
+            'MAIL_FROM_ADDRESS' => 'email@domainname.com',
 
             // view config
             'VIEW_PATHS' => [

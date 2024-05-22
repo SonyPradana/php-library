@@ -203,6 +203,15 @@ class ApplicationTest extends TestCase
             'MEMCACHED_PASS'        => '',
             'MEMCACHED_PORT'        => 6379,
 
+            // mialer
+            'MAIL_DRIVER'       => 'smtp',
+            'MAIL_HOST'         => '127.0.0.1',
+            'MAIL_PORT'         => 2525,
+            'MAIL_USERNAME'     => null,
+            'MAIL_PASSWORD'     => null,
+            'MAIL_ENCRYPTION'   => null,
+            'MAIL_FROM_ADDRESS' => 'email@domainname.com',
+
             // view config
             'VIEW_PATHS' => [
                 DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
