@@ -21,13 +21,8 @@ class ConfigProviders
 
         if (false === $has_cache) {
             foreach (glob("{$config_path}*.config.php") as $path) {
-                $file_path = $path;
-
-                if (file_exists($file_path)) {
-                    $config     = include $file_path;
-                    foreach ($config as $key => $value) {
-                        $config[$key] = $value;
-                    }
+                foreach (include $path as $key => $value) {
+                    $config[$key] = $value;
                 }
             }
         }
