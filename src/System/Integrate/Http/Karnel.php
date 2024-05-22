@@ -8,6 +8,7 @@ use System\Http\Request;
 use System\Http\Response;
 use System\Integrate\Application;
 use System\Integrate\Bootstrap\BootProviders;
+use System\Integrate\Bootstrap\ConfigProviders;
 use System\Integrate\Bootstrap\RegisterProviders;
 use System\Integrate\Exceptions\Handler;
 use System\Integrate\Http\Middleware\MaintenanceMiddleware;
@@ -30,6 +31,7 @@ class Karnel
 
     /** @var array<int, class-string> Apllication bootstrap register. */
     protected array $bootstrappers = [
+        ConfigProviders::class,
         RegisterProviders::class,
         BootProviders::class,
     ];
