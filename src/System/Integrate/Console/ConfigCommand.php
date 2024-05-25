@@ -36,9 +36,8 @@ class ConfigCommand extends Command
     {
         return [
             'commands'  => [
-                'cron'      => 'Run cron job (all shadule)',
-                'cron:work' => 'Run virtual cron job in terminal (ansync)',
-                'cron:list' => 'Get list of shadule',
+                'config:cache' => 'Build cache application config',
+                'config:clear' => 'Remove cached application config',
             ],
             'options'   => [],
             'relation'  => [],

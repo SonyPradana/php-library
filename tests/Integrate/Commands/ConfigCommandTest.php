@@ -34,7 +34,6 @@ class ConfigCommandTest extends TestCase
         $out    = ob_get_clean();
 
         $this->assertEquals(0, $status);
-        // $this->assertStringContainsString('Clear config file has successfully', $out);
         $this->assertStringContainsString('Config file has successfully created.', $out);
 
         $app->flush();
