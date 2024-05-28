@@ -13,7 +13,7 @@ trait Paths
      */
     public function base_path(): string
     {
-        return $this->get('path.bash');
+        return $this->get('path.base');
     }
 
     /**
