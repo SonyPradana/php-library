@@ -14,7 +14,7 @@ class ConfigProvidersTest extends TestCase
      */
     public function itCanLoadConfigFromDefault()
     {
-        $app = new Application(__DIR__);
+        $app = new Application('/');
 
         (new ConfigProviders())->bootstrap($app);
         /** @var Config */
@@ -49,7 +49,7 @@ class ConfigProvidersTest extends TestCase
      */
     public function itCanLoadConfigFromCache()
     {
-        $app = new Application(__DIR__ . DIRECTORY_SEPARATOR);
+        $app = new Application(__DIR__);
 
         $app->setConfigPath(DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR);
         (new ConfigProviders())->bootstrap($app);
