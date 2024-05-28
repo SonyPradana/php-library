@@ -377,7 +377,7 @@ final class Application extends Container
     public function setBasePath(string $path)
     {
         $this->base_path = $path;
-        $this->set('path.bash', $path);
+        $this->set('path.base', $path);
 
         return $this;
     }
@@ -628,7 +628,7 @@ final class Application extends Container
      */
     public function basePath()
     {
-        return $this->get('path.bash');
+        return $this->get('path.base');
     }
 
     /**
