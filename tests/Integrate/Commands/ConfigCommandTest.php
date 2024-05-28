@@ -23,7 +23,7 @@ class ConfigCommandTest extends TestCase
      */
     public function itCanCreateConfigFile()
     {
-        $app = new Application(dirname(__DIR__) . DIRECTORY_SEPARATOR);
+        $app = new Application(dirname(__DIR__));
 
         $app->setConfigPath(DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR);
 
@@ -44,7 +44,7 @@ class ConfigCommandTest extends TestCase
      */
     public function itCanRemoveConfigFile()
     {
-        $app = new Application(dirname(__DIR__) . DIRECTORY_SEPARATOR);
+        $app = new Application(dirname(__DIR__));
 
         $app->setConfigPath(DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR);
 
