@@ -649,7 +649,7 @@ final class Application extends Container
      */
     public function getApplicationCachePath()
     {
-        return $this->basePath() . 'bootsrap' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
+        return rtrim($this->basePath(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
     }
 
     /**
