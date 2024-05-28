@@ -9,6 +9,8 @@ use System\Integrate\Application;
 use System\Integrate\Bootstrap\BootProviders;
 use System\Integrate\Bootstrap\ConfigProviders;
 use System\Integrate\Bootstrap\RegisterProviders;
+use System\Integrate\ConfigRepository;
+use System\Integrate\ValueObjects\CommandMap;
 
 class Karnel
 {
@@ -142,6 +144,9 @@ class Karnel
      */
     protected function commands()
     {
-        return [];
+        return array_map(
+            static fn ($command): CommandMap => new CommandMap($command),
+            $this->app[ConfigRepository::class]->get('commands', [])
+        );
     }
 }
