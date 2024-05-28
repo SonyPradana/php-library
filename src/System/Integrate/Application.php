@@ -932,7 +932,7 @@ final class Application extends Container
     /**
      * Add booting call back, call before boot is calling.
      *
-     * @param callable[] $callback
+     * @param callable $callback
      */
     public function bootingCallback($callback): void
     {
@@ -942,7 +942,7 @@ final class Application extends Container
     /**
      * Add booted call back, call after boot is called.
      *
-     * @param callable[] $callback
+     * @param callable $callback
      */
     public function bootedCallback($callback): void
     {
