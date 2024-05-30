@@ -12,6 +12,7 @@ class ConfigRepositoryTest extends TestCase
             'envi'  => 'test',
             'num'   => 1,
             'allow' => true,
+            'array' => ['savanna', 'php'],
         ];
 
         $config = new ConfigRepository($env);
@@ -22,6 +23,9 @@ class ConfigRepositoryTest extends TestCase
         $this->assertEquals('local', (fn () => $this->{'config'}['envi'])->call($config));
         // has
         $this->assertTrue($config->has('num'));
+        // push
+        $config->push('array', 'library');
+        $this->assertEquals(['savanna', 'php', 'library'], (fn () => $this->{'config'}['array'])->call($config));
     }
 
     /** @test */
