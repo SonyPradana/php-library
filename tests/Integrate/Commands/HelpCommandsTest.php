@@ -42,7 +42,7 @@ final class HelpCommandsTest extends CommandTest
 
         $helpCommand = new HelpCommand(['cli', '--help']);
         ob_start();
-        $exit = $helpCommand->{'main'}();
+        $exit = $helpCommand->main();
         ob_get_clean();
 
         $this->assertSuccess($exit);
