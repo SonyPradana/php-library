@@ -43,6 +43,16 @@ class ConfigRepository implements \ArrayAccess
     }
 
     /**
+     * Push value in an array items.
+     */
+    public function push(string $key, mixed $value): void
+    {
+        $array   = $this->get($key, []);
+        $array[] = $value;
+        $this->set($key, $array);
+    }
+
+    /**
      * Convert back to array.
      *
      * @return array<string, mixed>
