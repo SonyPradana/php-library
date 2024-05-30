@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Integrate\Console;
 
+use DI\Container;
 use System\Console\Style\Style;
 use System\Integrate\Application;
 use System\Integrate\Bootstrap\BootProviders;
@@ -102,6 +103,36 @@ class Karnel
     public function bootstrap(): void
     {
         $this->app->bootstrapWith($this->bootstrappers);
+    }
+
+    /**
+     * Call command using know signature.
+     * The signature doset require php as prefix.
+     * For better parse use `handle` method istead.
+     *
+     * @param array<string, string|bool|int|null> $parameter
+     *
+     * @since v0.33
+     */
+    public function call(string $signature, array $parameter = []): int
+    {
+        $arguments = explode(' ', $signature);
+        $baseArgs  = $arguments[1] ?? '--help';
+
+        $this->bootstrap();
+
+        foreach ($this->commands() as $cmd) {
+            if ($cmd->isMatch($baseArgs)) {
+                $class = $cmd->class();
+                $this->app->set($class, fn () => new $class($arguments, $parameter));
+
+                $call = $this->app->call($cmd->call());
+
+                return is_int($call) ? $call : 0;
+            }
+        }
+
+        return 1;
     }
 
     /**
