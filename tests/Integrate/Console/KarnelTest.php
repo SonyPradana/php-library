@@ -211,6 +211,17 @@ final class KarnelTest extends TestCase
         $this->app->make(Karnel::class)->bootstrap();
         $this->assertTrue($this->app->isBootstrapped());
     }
+
+    /** @test */
+    public function itCanCallCommand()
+    {
+        $karnel = new NormalCommand($this->app);
+        ob_start();
+        $exit = $karnel->call('cli use:no-int-return');
+        ob_get_clean();
+
+        $this->assertEquals(0, $exit);
+    }
 }
 
 class NormalCommand extends Karnel
@@ -264,6 +275,10 @@ class NormalCommand extends Karnel
                     'default' => 'test',
                 ],
             ]),
+            new CommandMap([
+                'pattern' => 'use:no-int-return',
+                'fn'      => [FoundedCommand::class, 'returnVoid'],
+            ]),
         ];
     }
 }
@@ -282,5 +297,9 @@ class FoundedCommand extends Command
         style($this->default)->out(false);
 
         return 0;
+    }
+
+    public function returnVoid(Application $app): void
+    {
     }
 }
