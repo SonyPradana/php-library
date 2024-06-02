@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace System\Integrate\Console;
 
+use DI\Container;
 use System\Console\Style\Style;
 use System\Integrate\Application;
 use System\Integrate\Bootstrap\BootProviders;
 use System\Integrate\Bootstrap\ConfigProviders;
 use System\Integrate\Bootstrap\RegisterProviders;
+use System\Integrate\ConfigRepository;
+use System\Integrate\ValueObjects\CommandMap;
 
 class Karnel
 {
@@ -103,6 +106,36 @@ class Karnel
     }
 
     /**
+     * Call command using know signature.
+     * The signature doset require php as prefix.
+     * For better parse use `handle` method istead.
+     *
+     * @param array<string, string|bool|int|null> $parameter
+     *
+     * @since v0.33
+     */
+    public function call(string $signature, array $parameter = []): int
+    {
+        $arguments = explode(' ', $signature);
+        $baseArgs  = $arguments[1] ?? '--help';
+
+        $this->bootstrap();
+
+        foreach ($this->commands() as $cmd) {
+            if ($cmd->isMatch($baseArgs)) {
+                $class = $cmd->class();
+                $this->app->set($class, fn () => new $class($arguments, $parameter));
+
+                $call = $this->app->call($cmd->call());
+
+                return is_int($call) ? $call : 0;
+            }
+        }
+
+        return 1;
+    }
+
+    /**
      * Return similar from given array, compare with key.
      *
      * @param string[] $matchs
@@ -142,6 +175,9 @@ class Karnel
      */
     protected function commands()
     {
-        return [];
+        return array_map(
+            static fn ($command): CommandMap => new CommandMap($command),
+            $this->app[ConfigRepository::class]->get('commands', [])
+        );
     }
 }

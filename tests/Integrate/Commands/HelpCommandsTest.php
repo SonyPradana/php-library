@@ -5,26 +5,25 @@ declare(strict_types=1);
 namespace System\Test\Integrate\Commands;
 
 use System\Console\Command;
+use System\Integrate\ConfigRepository;
 use System\Integrate\Console\HelpCommand;
 
 final class HelpCommandsTest extends CommandTest
 {
-    private function maker(string $argv): HelpCommand
+    private array $command = [];
+
+    protected function setUp(): void
     {
-        return new class($this->argv($argv)) extends HelpCommand {
-            public function __construct($argv)
-            {
-                parent::__construct($argv);
-                $this->commands = [
-                    [
-                        'cmd'       => ['-h', '--help'],
-                        'mode'      => 'full',
-                        'class'     => self::class,
-                        'fn'        => 'main',
-                    ],
-                ];
-            }
-        };
+        parent::setUp();
+        $this->app->set('config', fn () => new ConfigRepository([
+            'commands' => $this->command,
+        ]));
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        $this->command = [];
     }
 
     /**
@@ -32,7 +31,16 @@ final class HelpCommandsTest extends CommandTest
      */
     public function itCanCallHelpCommandMain()
     {
-        $helpCommand = $this->maker('php cli --help');
+        $this->command = [
+            [
+                'cmd'       => ['-h', '--help'],
+                'mode'      => 'full',
+                'class'     => HelpCommand::class,
+                'fn'        => 'main',
+            ],
+        ];
+
+        $helpCommand = new HelpCommand(['cli', '--help']);
         ob_start();
         $exit = $helpCommand->main();
         ob_get_clean();
@@ -45,19 +53,14 @@ final class HelpCommandsTest extends CommandTest
      */
     public function itCanCallHelpCommandMainWithRegesterAnotherCommand()
     {
-        $helpCommand = new class(['php', 'cli', '--help']) extends HelpCommand {
-            protected array $commands = [
-                [
-                    'pattern' => 'test',
-                    'fn'      => [RegisterHelpCommand::class, 'main'],
-                ],
-            ];
+        $this->command = [
+            [
+                'pattern' => 'test',
+                'fn'      => [RegisterHelpCommand::class, 'main'],
+            ],
+        ];
 
-            public function useCommands($commands): void
-            {
-                $this->commands = $commands;
-            }
-        };
+        $helpCommand = new HelpCommand(['cli', '--help']);
 
         ob_start();
         $exit = $helpCommand->main();
@@ -66,11 +69,20 @@ final class HelpCommandsTest extends CommandTest
         $this->assertSuccess($exit);
         $this->assertContain('some test will appere in test', $out);
         $this->assertContain('this also will display in test', $out);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanCallHelpCommandMainWithRegesterAnotherCommandUsingClass()
+    {
+        $this->command = [
+            ['class' => RegisterHelpCommand::class],
+        ];
+
+        $helpCommand = new HelpCommand(['cli', '--help']);
 
         // use old style commandmaps
-        $helpCommand->useCommands([
-            ['class' => RegisterHelpCommand::class],
-        ]);
         ob_start();
         $exit = $helpCommand->main();
         $out  = ob_get_clean();
@@ -85,7 +97,8 @@ final class HelpCommandsTest extends CommandTest
      */
     public function itCanCallHelpCommandCommandList()
     {
-        $helpCommand = $this->maker('php cli --list');
+        $helpCommand = new HelpCommand(['cli', '--list']);
+
         ob_start();
         $exit = $helpCommand->commandList();
         ob_get_clean();
@@ -98,19 +111,14 @@ final class HelpCommandsTest extends CommandTest
      */
     public function itCanCallHelpCommandCommandListWithRegisterAnotherCommand()
     {
-        $helpCommand = new class(['php', 'cli', '--list']) extends HelpCommand {
-            protected array $commands = [
-                [
-                    'pattern' => 'unit:test',
-                    'fn'      => [RegisterHelpCommand::class, 'main'],
-                ],
-            ];
+        $this->command = [
+            [
+                'pattern' => 'unit:test',
+                'fn'      => [RegisterHelpCommand::class, 'main'],
+            ],
+        ];
 
-            public function useCommands($commands): void
-            {
-                $this->commands = $commands;
-            }
-        };
+        $helpCommand = new HelpCommand(['cli', '--list']);
 
         ob_start();
         $exit = $helpCommand->commandList();
@@ -126,7 +134,7 @@ final class HelpCommandsTest extends CommandTest
      */
     public function itCanCallHelpCommandCommandHelp()
     {
-        $helpCommand = $this->maker('cli help serve');
+        $helpCommand = new HelpCommand(['cli', 'help', 'serve']);
         ob_start();
         $exit = $helpCommand->commandHelp();
         $out  = ob_get_clean();
@@ -140,7 +148,7 @@ final class HelpCommandsTest extends CommandTest
      */
     public function itCanCallHelpCommandCommandHelpButNoFound()
     {
-        $helpCommand = $this->maker('cli help main');
+        $helpCommand =  new HelpCommand(['cli', 'help', 'main']);
         ob_start();
         $exit = $helpCommand->commandHelp();
         $out  = ob_get_clean();
@@ -154,7 +162,7 @@ final class HelpCommandsTest extends CommandTest
      */
     public function itCanCallHelpCommandCommandHelpButNoResult()
     {
-        $helpCommand = $this->maker('cli help');
+        $helpCommand =  new HelpCommand(['cli', 'help']);
         ob_start();
         $exit = $helpCommand->commandHelp();
         $out  = ob_get_clean();
