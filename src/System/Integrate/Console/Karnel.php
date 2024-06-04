@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace System\Integrate\Console;
 
-use DI\Container;
 use System\Console\Style\Style;
 use System\Integrate\Application;
 use System\Integrate\Bootstrap\BootProviders;
 use System\Integrate\Bootstrap\ConfigProviders;
 use System\Integrate\Bootstrap\RegisterProviders;
-use System\Integrate\ConfigRepository;
 use System\Integrate\ValueObjects\CommandMap;
 
 class Karnel
@@ -168,13 +166,10 @@ class Karnel
     /**
      * Command route.
      *
-     * @return \System\Integrate\ValueObjects\CommandMap[]
+     * @return CommandMap[]
      */
-    protected function commands()
+    protected function commands(): array
     {
-        return array_map(
-            static fn ($command): CommandMap => new CommandMap($command),
-            $this->app[ConfigRepository::class]->get('commands', [])
-        );
+        return Util::loadCommandFromConfig($this->app);
     }
 }
