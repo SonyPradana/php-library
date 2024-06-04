@@ -8,7 +8,6 @@ use System\Console\Command;
 use System\Console\Style\Style;
 use System\Console\Traits\PrintHelpTrait;
 use System\Integrate\Application;
-use System\Integrate\ConfigRepository;
 use System\Integrate\ValueObjects\CommandMap;
 use System\Text\Str;
 
@@ -261,9 +260,6 @@ class HelpCommand extends Command
      */
     private function commandMaps()
     {
-        return array_map(
-            static fn ($command): CommandMap => new CommandMap($command),
-            Application::getIntance()[ConfigRepository::class]->get('commands', [])
-        );
+        return Util::loadCommandFromConfig(Application::getIntance());
     }
 }

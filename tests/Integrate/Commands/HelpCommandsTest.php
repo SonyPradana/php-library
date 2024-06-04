@@ -16,7 +16,7 @@ final class HelpCommandsTest extends CommandTest
     {
         parent::setUp();
         $this->app->set('config', fn () => new ConfigRepository([
-            'commands' => $this->command,
+            'commands' => [$this->command],
         ]));
     }
 

@@ -226,7 +226,7 @@ final class KarnelTest extends TestCase
 
 class NormalCommand extends Karnel
 {
-    protected function commands()
+    protected function commands(): array
     {
         return [
             // olr style
