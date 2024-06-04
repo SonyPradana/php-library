@@ -57,15 +57,12 @@ class Karnel
             $commands = array_merge($commands, $cmd->patterns(), $cmd->cmd());
 
             if ($cmd->isMatch($baseArgs)) {
-                $this->app->set(
-                    $cmd->class(),
-                    \DI\autowire($cmd->class())->constructor($arguments, $cmd->defaultOption())
-                );
+                $class = $cmd->class();
+                $this->app->set($class, fn () => new $class($arguments, $cmd->defaultOption()));
 
-                $service = $this->app->get($cmd->class());
-                $this->app->call($cmd->call());
+                $call = $this->app->call($cmd->call());
 
-                return $this->exit_code = $service->exit ?? 0;
+                return $this->exit_code = (is_int($call) ? $call : 0);
             }
         }
 
