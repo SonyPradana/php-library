@@ -1,0 +1,25 @@
+{
+    "packages": [
+        {
+            "name": "packages/package1",
+            "extra": {
+                "savanna": {
+                    "providers": [
+                        "Package//Package1//ServiceProvider::class"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "packages/package2",
+            "extra": {
+                "savanna": {
+                    "providers": [
+                        "Package//Package2//ServiceProvider::class",
+                        "Package//Package2//ServiceProvider2::class"
+                    ]
+                }
+            }
+        }
+    ]
+}
