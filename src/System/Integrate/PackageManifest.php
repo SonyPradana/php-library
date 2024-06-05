@@ -39,7 +39,9 @@ final class PackageManifest
     protected function config(): array
     {
         $this->getPackageManifest();
-        $entry = [];
+        $entry = [
+            'providers' => [],
+        ];
         foreach ($this->package_manifest ?? [] as $package) {
             foreach ($package['providers'] ?? [] as $provider) {
                 $entry['providers'][] = $provider;
