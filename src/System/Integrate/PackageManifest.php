@@ -42,7 +42,9 @@ final class PackageManifest
         $entry = [
             'providers' => [],
         ];
-        foreach ($this->package_manifest ?? [] as $package) {
+
+        foreach ($this->package_manifest ?? [] as $name => $package) {
+            $entry['packages'][] = $name;
             foreach ($package['providers'] ?? [] as $provider) {
                 $entry['providers'][] = $provider;
             }

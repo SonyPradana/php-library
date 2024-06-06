@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace System\Integrate\Console;
 
 use System\Console\Command;
+use System\Console\Style\Style;
 use System\Integrate\Application;
 use System\Integrate\PackageManifest;
 
 use function System\Console\fail;
 use function System\Console\info;
 use function System\Console\ok;
+use function System\Console\style;
 
 class PackageDiscoveryCommand extends Command
 {
@@ -46,15 +48,20 @@ class PackageDiscoveryCommand extends Command
         info('Trying build package cache.')->out(false);
         try {
             $package->build();
+
+            $packages = (fn () => $this->{'config'}()['packages'])->call($package);
+            $style = new Style();
+            foreach ($packages as $name) {
+                $lenght = $this->getWidth(40, 60) - strlen($name) - 4;
+                $style->push($name)->repeat('.', $lenght)->textDim()->push('DONE')->textGreen()->newLines();
+            }
+            $style->out(false);
         } catch (\Throwable $th) {
             fail($th->getMessage())->out(false);
             fail('Can\'t create package mainfest cahce file.')->out();
 
             return 1;
         }
-
-        ok('Package manifest has been created.')->out();
-
         return 0;
     }
 }
