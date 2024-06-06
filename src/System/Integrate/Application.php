@@ -238,6 +238,8 @@ final class Application extends Container
         $this->set('app', $this);
         $this->set(Application::class, $this);
         $this->set(Container::class, $this);
+
+        $this->set(PackageManifest::class, fn () => new PackageManifest($this->base_path, $this->getApplicationCachePath()));
     }
 
     /**
