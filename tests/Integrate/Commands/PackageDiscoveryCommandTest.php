@@ -25,7 +25,7 @@ class PackageDiscoveryCommandTest extends TestCase
     {
         $app = new Application(dirname(__DIR__) . '/assets/');
 
-        $app->setConfigPath(dirname(__DIR__) . 'assets' . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR);
+        $app->setConfigPath(dirname(__DIR__) . '/assets' . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR);
 
         // overwrite PackageManifest has been set in Application before.
         $app->set(PackageManifest::class, fn () => new PackageManifest(
@@ -34,7 +34,7 @@ class PackageDiscoveryCommandTest extends TestCase
             vendor_path: '/package/'
         ));
 
-        $discovery = new PackageDiscoveryCommand(['cli', 'package:discover']);
+        $discovery = new PackageDiscoveryCommand(['cli', 'package:discovery']);
         ob_start();
         $out = $discovery->discovery($app);
         ob_get_clean();
