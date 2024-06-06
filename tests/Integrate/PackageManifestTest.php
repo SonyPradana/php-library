@@ -76,6 +76,10 @@ class PackageManifestTest extends TestCase
                 'Package//Package2//ServiceProvider::class',
                 'Package//Package2//ServiceProvider2::class',
             ],
+            'packages' => [
+                'packages/package1',
+                'packages/package2',
+            ],
         ], $config);
     }
 
