@@ -13,7 +13,7 @@ class PackageDiscoveryCommandTest extends TestCase
 {
     protected function tearDown(): void
     {
-        if (file_exists($file = dirname(__DIR__) . '/assets/Cache/provider.php')) {
+        if (file_exists($file = dirname(__DIR__) . '/assets/cache/provider.php')) {
             @unlink($file);
         }
     }
@@ -30,14 +30,14 @@ class PackageDiscoveryCommandTest extends TestCase
         // overwrite PackageManifest has been set in Application before.
         $app->set(PackageManifest::class, fn () => new PackageManifest(
             base_path: dirname(__DIR__) . '/assets/',
-            application_cache_path: dirname(__DIR__) . '/assets/Cache/',
+            application_cache_path: dirname(__DIR__) . '/assets/cache/',
             vendor_path: '/package/'
         ));
 
         $discovery = new PackageDiscoveryCommand(['cli', 'package:discovery']);
         ob_start();
-        ob_get_clean();
         $out = $discovery->discovery($app);
+        ob_get_clean();
 
         $this->assertEquals(0, $out);
 
