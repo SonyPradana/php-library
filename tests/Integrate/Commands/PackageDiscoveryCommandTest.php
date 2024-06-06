@@ -36,8 +36,8 @@ class PackageDiscoveryCommandTest extends TestCase
 
         $discovery = new PackageDiscoveryCommand(['cli', 'package:discovery']);
         ob_start();
-        $out = $discovery->discovery($app);
         ob_get_clean();
+        $out = $discovery->discovery($app);
 
         $this->assertEquals(0, $out);
 
