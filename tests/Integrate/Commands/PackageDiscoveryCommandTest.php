@@ -25,6 +25,8 @@ class PackageDiscoveryCommandTest extends TestCase
     {
         $app = new Application(dirname(__DIR__) . '/assets/');
 
+        $app->setConfigPath(dirname(__DIR__) . 'assets' . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR);
+
         // overwrite PackageManifest has been set in Application before.
         $app->set(PackageManifest::class, fn () => new PackageManifest(
             base_path: dirname(__DIR__) . '/assets/',

@@ -11,8 +11,6 @@ use System\Integrate\PackageManifest;
 
 use function System\Console\fail;
 use function System\Console\info;
-use function System\Console\ok;
-use function System\Console\style;
 
 class PackageDiscoveryCommand extends Command
 {
@@ -50,7 +48,7 @@ class PackageDiscoveryCommand extends Command
             $package->build();
 
             $packages = (fn () => $this->{'config'}()['packages'])->call($package);
-            $style = new Style();
+            $style    = new Style();
             foreach ($packages as $name) {
                 $lenght = $this->getWidth(40, 60) - strlen($name) - 4;
                 $style->push($name)->repeat('.', $lenght)->textDim()->push('DONE')->textGreen()->newLines();
@@ -62,6 +60,7 @@ class PackageDiscoveryCommand extends Command
 
             return 1;
         }
+
         return 0;
     }
 }
