@@ -40,6 +40,18 @@ class PackageManifestTest extends TestCase
     /**
      * @test
      */
+    public function ithasBuild()
+    {
+        $package_manifest = new PackageManifest($this->base_path, $this->application_cache_path, DIRECTORY_SEPARATOR . 'package' . DIRECTORY_SEPARATOR);
+
+        $this->assertFalse($package_manifest->hasPackageManifest());
+        $package_manifest->build();
+        $this->assertTrue($package_manifest->hasPackageManifest());
+    }
+
+    /**
+     * @test
+     */
     public function itCanGetPackageManifest()
     {
         $package_manifest = new PackageManifest($this->base_path, $this->application_cache_path, DIRECTORY_SEPARATOR . 'package' . DIRECTORY_SEPARATOR);

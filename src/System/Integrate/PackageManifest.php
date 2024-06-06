@@ -62,11 +62,19 @@ final class PackageManifest
             return $this->package_manifest;
         }
 
-        if (false === file_exists($this->application_cache_path . 'provider.php')) {
+        if (false === $this->hasPackageManifest()) {
             $this->build();
         }
 
         return $this->package_manifest = require $this->application_cache_path . 'provider.php';
+    }
+
+    /**
+     * Check package has package manifest (builed).
+     */
+    public function hasPackageManifest(): bool
+    {
+        return file_exists($this->application_cache_path . 'provider.php');
     }
 
     /**
