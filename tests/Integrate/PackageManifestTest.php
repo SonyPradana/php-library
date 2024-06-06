@@ -78,8 +78,8 @@ class PackageManifestTest extends TestCase
             ],
             'packages' => [
                 'packages/package1',
-                'packages/package2'
-            ]
+                'packages/package2',
+            ],
         ], $config);
     }
 
