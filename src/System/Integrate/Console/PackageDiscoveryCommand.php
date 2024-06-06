@@ -21,7 +21,7 @@ class PackageDiscoveryCommand extends Command
      */
     public static array $command = [
         [
-            'pattern' => 'package:discover',
+            'pattern' => 'package:discovery',
             'fn'      => [self::class, 'discovery'],
         ],
     ];
