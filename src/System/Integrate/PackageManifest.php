@@ -34,7 +34,7 @@ final class PackageManifest
     /**
      * Get array of provider..
      *
-     * @return array<string, string[]>
+     * @return string[]
      */
     protected function config(string $key): array
     {
