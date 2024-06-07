@@ -7,7 +7,7 @@ class PackageManifestTest extends TestCase
 {
     private string $base_path              = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR;
     private string $application_cache_path = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
-    private string $package_manifest       = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'provider.php';
+    private string $package_manifest       = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'packages.php';
 
     public function deleteAsset()
     {
@@ -68,18 +68,12 @@ class PackageManifestTest extends TestCase
     {
         $package_manifest = new PackageManifest($this->base_path, $this->application_cache_path, DIRECTORY_SEPARATOR . 'package' . DIRECTORY_SEPARATOR);
 
-        $config = (fn () => $this->{'config'}())->call($package_manifest);
+        $config = (fn () => $this->{'config'}('providers'))->call($package_manifest);
 
         $this->assertEquals([
-            'providers' => [
-                'Package//Package1//ServiceProvider::class',
-                'Package//Package2//ServiceProvider::class',
-                'Package//Package2//ServiceProvider2::class',
-            ],
-            'packages' => [
-                'packages/package1',
-                'packages/package2',
-            ],
+            'Package//Package1//ServiceProvider::class',
+            'Package//Package2//ServiceProvider::class',
+            'Package//Package2//ServiceProvider2::class',
         ], $config);
     }
 
