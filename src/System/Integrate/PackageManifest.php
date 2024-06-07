@@ -28,7 +28,7 @@ final class PackageManifest
      */
     public function providers(): array
     {
-        return $this->config()['providers'];
+        return $this->config('providers');
     }
 
     /**
@@ -36,21 +36,23 @@ final class PackageManifest
      *
      * @return array<string, string[]>
      */
-    protected function config(): array
+    protected function config(string $key): array
     {
-        $this->getPackageManifest();
-        $entry = [
-            'providers' => [],
-        ];
+        $manifest = $this->getPackageManifest();
+        $result   = [];
 
-        foreach ($this->package_manifest ?? [] as $name => $package) {
-            $entry['packages'][] = $name;
-            foreach ($package['providers'] ?? [] as $provider) {
-                $entry['providers'][] = $provider;
+        foreach ($manifest as $configuration) {
+            if (array_key_exists($key, $configuration)) {
+                $values = (array) $configuration[$key];
+                foreach ($values as $value) {
+                    if (false === empty($value)) {
+                        $result[] = $value;
+                    }
+                }
             }
         }
 
-        return $entry;
+        return $result;
     }
 
     /**
@@ -64,11 +66,11 @@ final class PackageManifest
             return $this->package_manifest;
         }
 
-        if (false === file_exists($this->application_cache_path . 'provider.php')) {
+        if (false === file_exists($this->application_cache_path . 'packages.php')) {
             $this->build();
         }
 
-        return $this->package_manifest = require $this->application_cache_path . 'provider.php';
+        return $this->package_manifest = require $this->application_cache_path . 'packages.php';
     }
 
     /**
@@ -88,10 +90,12 @@ final class PackageManifest
         }
 
         foreach ($packages as $package) {
-            $provider[$package['name']] = $package['extra']['savanna'] ?? [''];
+            if (isset($package['extra']['savanna'])) {
+                $provider[$package['name']] = $package['extra']['savanna'];
+            }
         }
         array_filter($provider);
 
-        file_put_contents($this->application_cache_path . 'provider.php', '<?php return ' . var_export($provider, true) . ';' . PHP_EOL);
+        file_put_contents($this->application_cache_path . 'packages.php', '<?php return ' . var_export($provider, true) . ';' . PHP_EOL);
     }
 }
