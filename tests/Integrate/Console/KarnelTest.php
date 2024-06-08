@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use System\Console\Command;
 use System\Integrate\Application;
 use System\Integrate\Console\Karnel;
+use System\Integrate\PackageManifest;
 use System\Integrate\ValueObjects\CommandMap;
 use System\Text\Str;
 
@@ -20,6 +21,13 @@ final class KarnelTest extends TestCase
     protected function setUp(): void
     {
         $this->app = new Application('/');
+
+        // overwrite PackageManifest has been set in Application before.
+        $this->app->set(PackageManifest::class, fn () => new PackageManifest(
+            base_path: dirname(__DIR__) . '/assets/app2/',
+            application_cache_path: dirname(__DIR__) . '/assets/app2/bootstrap/cache/',
+            vendor_path: '/app2/package/'
+        ));
     }
 
     protected function tearDown(): void

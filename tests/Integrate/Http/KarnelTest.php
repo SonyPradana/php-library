@@ -7,6 +7,7 @@ use System\Http\Request;
 use System\Http\Response;
 use System\Integrate\Application;
 use System\Integrate\Http\Karnel;
+use System\Integrate\PackageManifest;
 
 final class KarnelTest extends TestCase
 {
@@ -16,6 +17,13 @@ final class KarnelTest extends TestCase
     protected function setUp(): void
     {
         $this->app = new Application('/');
+
+        // overwrite PackageManifest has been set in Application before.
+        $this->app->set(PackageManifest::class, fn () => new PackageManifest(
+            base_path: dirname(__DIR__) . '/assets/app2/',
+            application_cache_path: dirname(__DIR__) . '/assets/app2/bootstrap/cache/',
+            vendor_path: '/app2/package/'
+        ));
 
         $this->app->set(
             Karnel::class,

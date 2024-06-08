@@ -13,7 +13,7 @@ class ConfigCommandTest extends TestCase
     protected function tearDown(): void
     {
         // tests\Integrate\bootsrap\cache\config.php
-        if (file_exists($file = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'bootsrap' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'config.php')) {
+        if (file_exists($file = dirname(__DIR__) . '/boostrap/cache/config.php')) {
             @unlink($file);
         }
     }
@@ -23,9 +23,8 @@ class ConfigCommandTest extends TestCase
      */
     public function itCanCreateConfigFile()
     {
-        $app = new Application(dirname(__DIR__));
-
-        $app->setConfigPath(DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR);
+        $app = new Application(dirname(__DIR__) . '/assets/app1/');
+        $app->setConfigPath('/config/');
 
         $command = new ConfigCommand([]);
 
@@ -44,9 +43,8 @@ class ConfigCommandTest extends TestCase
      */
     public function itCanRemoveConfigFile()
     {
-        $app = new Application(dirname(__DIR__));
-
-        $app->setConfigPath(DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR);
+        $app = new Application(dirname(__DIR__) . '/assets/app1/');
+        $app->setConfigPath('/config/');
 
         $command = new ConfigCommand([]);
 

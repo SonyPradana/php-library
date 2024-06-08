@@ -5,9 +5,9 @@ use System\Integrate\PackageManifest;
 
 class PackageManifestTest extends TestCase
 {
-    private string $base_path              = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR;
-    private string $application_cache_path = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
-    private string $package_manifest       = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'packages.php';
+    private string $base_path              = __DIR__ . '/assets/app1/';
+    private string $application_cache_path = __DIR__ . '/assets/app1/bootstrap/cache/';
+    private string $package_manifest       = __DIR__ . '/assets/app1/bootstrap/cache/packages.php';
 
     public function deleteAsset()
     {

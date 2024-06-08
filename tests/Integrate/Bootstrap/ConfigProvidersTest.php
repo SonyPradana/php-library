@@ -32,7 +32,7 @@ class ConfigProvidersTest extends TestCase
     {
         $app = new Application(dirname(__DIR__));
 
-        $app->setConfigPath(DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR);
+        $app->setConfigPath('/assets/app2/config/');
         (new ConfigProviders())->bootstrap($app);
         /** @var Config */
         $config = $app->get('config');
@@ -49,9 +49,8 @@ class ConfigProvidersTest extends TestCase
      */
     public function itCanLoadConfigFromCache()
     {
-        $app = new Application(__DIR__);
+        $app = new Application(dirname(__DIR__) . '/assets/app2');
 
-        $app->setConfigPath(DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR);
         (new ConfigProviders())->bootstrap($app);
         /** @var Config */
         $config = $app->get('config');
