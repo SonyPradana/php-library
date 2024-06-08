@@ -32,7 +32,7 @@ class ConfigProvidersTest extends TestCase
     {
         $app = new Application(dirname(__DIR__));
 
-        $app->setConfigPath('/assets/app2/config/');
+        $app->setConfigPath('/assets/app1/config/');
         (new ConfigProviders())->bootstrap($app);
         /** @var Config */
         $config = $app->get('config');

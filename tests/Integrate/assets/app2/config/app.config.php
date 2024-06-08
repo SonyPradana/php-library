@@ -5,7 +5,7 @@ return [
     'BASEURL'               => '/',
     'time_zone'             => 'Asia/Jakarta',
     'APP_KEY'               => '',
-    'ENVIRONMENT'           => 'test',
+    'ENVIRONMENT'           => 'prod',
 
     'COMMAND_PATH'          => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Commands' . DIRECTORY_SEPARATOR,
     'CONTROLLER_PATH'       => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR,

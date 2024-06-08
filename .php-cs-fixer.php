@@ -4,7 +4,6 @@ $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__ . DIRECTORY_SEPARATOR . 'tests')
     ->in(__DIR__ . DIRECTORY_SEPARATOR . 'src')
     ->exclude(__DIR__ . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'Template')
-    ->exclude(__DIR__ . '/tests/integrate/assets')
     ->append(['.php-cs-fixer.php', 'rector.php']);
 
 $rules = [

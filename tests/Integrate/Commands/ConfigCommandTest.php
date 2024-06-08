@@ -13,7 +13,7 @@ class ConfigCommandTest extends TestCase
     protected function tearDown(): void
     {
         // tests\Integrate\bootsrap\cache\config.php
-        if (file_exists($file = dirname(__DIR__) . '/boostrap/cache/config.php')) {
+        if (file_exists($file = dirname(__DIR__) . '/assets/app1/bootstrap/cache/cache.php')) {
             @unlink($file);
         }
     }
