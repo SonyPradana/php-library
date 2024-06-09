@@ -13,7 +13,7 @@ class PackageDiscoveryCommandTest extends TestCase
 {
     protected function tearDown(): void
     {
-        if (file_exists($file = dirname(__DIR__) . '/assets/cache/provider.php')) {
+        if (file_exists($file = dirname(__DIR__) . '/assets/app1/bootstrap/cache/packages.php')) {
             @unlink($file);
         }
     }
@@ -23,14 +23,12 @@ class PackageDiscoveryCommandTest extends TestCase
      */
     public function itCanCreateConfigFile()
     {
-        $app = new Application(dirname(__DIR__) . '/assets/');
-
-        $app->setConfigPath(dirname(__DIR__) . '/assets' . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR);
+        $app = new Application(dirname(__DIR__) . '/assets/app1/');
 
         // overwrite PackageManifest has been set in Application before.
         $app->set(PackageManifest::class, fn () => new PackageManifest(
-            base_path: dirname(__DIR__) . '/assets/',
-            application_cache_path: dirname(__DIR__) . '/assets/cache/',
+            base_path: $app->basePath(),
+            application_cache_path: $app->getApplicationCachePath(),
             vendor_path: '/package/'
         ));
 
