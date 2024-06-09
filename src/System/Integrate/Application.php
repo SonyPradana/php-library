@@ -883,7 +883,7 @@ final class Application extends Container
 
         $this->callBootCallbacks($this->booting_callbacks);
 
-        foreach ($this->providers as $provider) {
+        foreach ($this->getMergeProviders() as $provider) {
             if (in_array($provider, $this->booted_providers)) {
                 continue;
             }
@@ -904,7 +904,7 @@ final class Application extends Container
      */
     public function registerProvider()
     {
-        foreach ($this->providers as $provider) {
+        foreach ($this->getMergeProviders() as $provider) {
             if (in_array($provider, $this->looded_providers)) {
                 continue;
             }
@@ -1086,5 +1086,15 @@ final class Application extends Container
                 $this->alias($abstrack, $alias);
             }
         }
+    }
+
+    /**
+     * Merge applicationproveder and vendor package provider.
+     *
+     * @return ServiceProvider[]
+     */
+    protected function getMergeProviders(): array
+    {
+        return [...$this->providers, ...$this->make(PackageManifest::class)->providers()];
     }
 }

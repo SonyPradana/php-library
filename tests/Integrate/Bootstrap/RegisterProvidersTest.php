@@ -15,10 +15,18 @@ class RegisterProvidersTest extends TestCase
         $app = new Application(dirname(__DIR__) . '/assets/app2/');
         $app->register(TestRegisterServiceProvider::class);
         $app->bootstrapWith([BootProviders::class]);
-        $this->assertCount(2, (fn () => $this->{'looded_providers'})->call($app), '1 from defult provider, 1 from this test.');
+
+        $this->assertCount(3, (fn () => $this->{'booted_providers'})->call($app), '1 from defult provider, 1 from this test, and 1 from vendor.');
     }
 }
 
 class TestRegisterServiceProvider extends ServiceProvider
 {
+}
+
+class TestVendorServiceProvider extends ServiceProvider
+{
+    public function boot()
+    {
+    }
 }
