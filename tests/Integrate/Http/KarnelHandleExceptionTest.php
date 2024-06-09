@@ -9,6 +9,7 @@ use System\Integrate\Application;
 use System\Integrate\Exceptions\Handler;
 use System\Integrate\Http\Exception\HttpException;
 use System\Integrate\Http\Karnel;
+use System\Integrate\PackageManifest;
 
 final class KarnelHandleExceptionTest extends TestCase
 {
@@ -19,6 +20,13 @@ final class KarnelHandleExceptionTest extends TestCase
     protected function setUp(): void
     {
         $this->app = new Application('/');
+
+        // overwrite PackageManifest has been set in Application before.
+        $this->app->set(PackageManifest::class, fn () => new PackageManifest(
+            base_path: dirname(__DIR__) . '/assets/app2/',
+            application_cache_path: dirname(__DIR__) . '/assets/app2/bootstrap/cache/',
+            vendor_path: '/app2/package/'
+        ));
 
         $this->app->set(
             Karnel::class,

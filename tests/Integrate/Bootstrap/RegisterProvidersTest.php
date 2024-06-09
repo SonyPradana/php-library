@@ -12,7 +12,7 @@ class RegisterProvidersTest extends TestCase
 {
     public function testBootstrap(): void
     {
-        $app = new Application(__DIR__);
+        $app = new Application(dirname(__DIR__) . '/assets/app2/');
         $app->register(TestRegisterServiceProvider::class);
         $app->bootstrapWith([BootProviders::class]);
         $this->assertCount(2, (fn () => $this->{'looded_providers'})->call($app), '1 from defult provider, 1 from this test.');

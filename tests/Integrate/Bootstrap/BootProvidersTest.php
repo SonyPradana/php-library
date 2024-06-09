@@ -11,7 +11,7 @@ class BootProvidersTest extends TestCase
 {
     public function testBootstrap(): void
     {
-        $app = new Application(__DIR__);
+        $app = new Application(dirname(__DIR__) . '/assets/app2/');
 
         $this->assertFalse($app->isBooted());
         $app->bootstrapWith([BootProviders::class]);

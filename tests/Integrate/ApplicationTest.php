@@ -176,7 +176,7 @@ class ApplicationTest extends TestCase
     /** @test */
     public function itCanAddCallBacksBeforeAndAfterBoot()
     {
-        $app = new Application(__DIR__);
+        $app = new Application(__DIR__ . '/assets/app2/');
 
         $app->bootedCallback(static function () {
             echo 'booted01';
