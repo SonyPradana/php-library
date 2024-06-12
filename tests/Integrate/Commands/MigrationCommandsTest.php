@@ -38,6 +38,7 @@ final class MigrationCommandsTest extends \RealDatabaseConnectionTest
     {
         parent::tearDown();
         Schema::drop()->table('migartion')->ifExists()->execute();
+        MigrationCommand::flushVendorMigrationPaths();
         $this->app->flush();
     }
 
@@ -201,5 +202,24 @@ final class MigrationCommandsTest extends \RealDatabaseConnectionTest
     {
         $confirmation = (fn () => $this->{'confirmation'}('message?'))->call(new MigrationCommand(['cli', 'db:create'], ['yes' => true]));
         $this->assertTrue($confirmation);
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanRunMigrationFromVendor()
+    {
+        $migrate = new MigrationCommand(['cli', 'migrate']);
+        MigrationCommand::addVendorMigrationPath(__DIR__ . '/database/vendor-migration/');
+        ob_start();
+        $exit = $migrate->main();
+        $out  = ob_get_clean();
+
+        $this->assertEquals(0, $exit);
+        $this->assertTrue(Str::contains($out, '2023_08_07_181000_users'));
+        $this->assertTrue(Str::contains($out, '2024_06_12_070600_clients'));
+        $this->assertTrue(Str::contains($out, 'DONE'));
     }
 }
