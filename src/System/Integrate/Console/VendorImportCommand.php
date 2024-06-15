@@ -74,7 +74,7 @@ class VendorImportCommand extends Command
     public function main(): int
     {
         $this->status = new ProgressBar();
-        $this->importItem(static::$modules);
+        $this->importItem(self::$modules);
 
         return 0;
     }
@@ -166,13 +166,13 @@ class VendorImportCommand extends Command
             $dst = $to . '/' . $file;
 
             if (is_dir($src)) {
-                if (false === static::importDir($src, $dst, $overwrite)) {
+                if (false === self::importDir($src, $dst, $overwrite)) {
                     closedir($dir);
 
                     return false;
                 }
             } else {
-                if (false === static::importFile($src, $dst, $overwrite)) {
+                if (false === self::importFile($src, $dst, $overwrite)) {
                     closedir($dir);
 
                     return false;
@@ -187,14 +187,16 @@ class VendorImportCommand extends Command
 
     /**
      * Register a package to the module.
+     *
+     * @param array<string, string> $name
      */
     public static function export(array $path, string $tag = ''): void
     {
-        if (false === array_key_exists($tag, static::$modules)) {
-            static::$modules[$tag] = [];
+        if (false === array_key_exists($tag, self::$modules)) {
+            self::$modules[$tag] = [];
         }
 
-        static::$modules[$tag] = array_merge(static::$modules[$tag], $path);
+        self::$modules[$tag] = array_merge(self::$modules[$tag], $path);
     }
 
     /**
@@ -204,7 +206,7 @@ class VendorImportCommand extends Command
      */
     public static function getModules(): array
     {
-        return static::$modules;
+        return self::$modules;
     }
 
     /**
@@ -212,6 +214,6 @@ class VendorImportCommand extends Command
      */
     public static function flushModule(): void
     {
-        static::$modules = [];
+        self::$modules = [];
     }
 }
