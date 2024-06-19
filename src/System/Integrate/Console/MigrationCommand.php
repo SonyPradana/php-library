@@ -36,7 +36,7 @@ class MigrationCommand extends Command
      *
      * @var string[]
      */
-    private static array $vendor_paths = [];
+    public static array $vendor_paths = [];
 
     /**
      * Register command.
