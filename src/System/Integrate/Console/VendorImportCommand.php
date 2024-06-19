@@ -7,6 +7,7 @@ namespace System\Integrate\Console;
 use System\Console\Command;
 use System\Console\Style\ProgressBar;
 use System\Console\Traits\PrintHelpTrait;
+use System\Integrate\ServiceProvider;
 
 use function System\Console\ok;
 
@@ -19,13 +20,6 @@ use function System\Console\ok;
 class VendorImportCommand extends Command
 {
     use PrintHelpTrait;
-
-    /**
-     * Shared modules to import from vendor package.
-     *
-     * @var array<string, array<string, string>>
-     */
-    private static array $modules = [];
 
     /**
      * Progress bar for tracking import status.
@@ -74,39 +68,43 @@ class VendorImportCommand extends Command
     public function main(): int
     {
         $this->status = new ProgressBar();
-        $this->importItem(self::$modules);
+        $this->importItem(ServiceProvider::getModules());
 
         return 0;
     }
 
     /**
      * Import specified modules (files or directories).
+     *
+     * @param array<string, array<string, string>> $modules
      */
     protected function importItem(array $modules): void
     {
         $this->status->maks = count($modules);
         $current            = 0;
+        $added              = 0;
 
         foreach ($modules as $tag => $module) {
             $current++;
 
             if ($tag === $this->tag || $this->tag === '*') {
                 foreach ($module as $from => $to) {
+                    $added++;
                     if (is_dir($from)) {
-                        $status = $this->importDir($from, $to, $this->force);
+                        $status = ServiceProvider::importDir($from, $to, $this->force);
                         $this->status($current, $status, $from, $to);
 
                         continue 2;
                     }
 
-                    $status = $this->importFile($from, $to, $this->force);
+                    $status = ServiceProvider::importFile($from, $to, $this->force);
                     $this->status($current, $status, $from, $to);
                 }
             }
         }
 
         if ($current > 0) {
-            ok('Done ')->push($current)->textYellow()->push(' file/folder has been added.')->out(false);
+            ok('Done ')->push($added)->textYellow()->push(' file/folder has been added.')->out(false);
         }
     }
 
@@ -123,97 +121,5 @@ class VendorImportCommand extends Command
         $this->status->tickWith(':progress :percent :status', [
             'status' => fn (int $current, int $max): string => "Copying file/directory from '{$from}' to '{$to}'.",
         ]);
-    }
-
-    /**
-     * Import a specific file to the application.
-     */
-    public static function importFile(string $from, string $to, bool $overwrite = false): bool
-    {
-        $exists = file_exists($to);
-        if (false === $exists || ($exists && $overwrite)) {
-            $path = pathinfo($to, PATHINFO_DIRNAME);
-            if (false === file_exists($path)) {
-                mkdir($path, 0755, true);
-            }
-
-            return copy($from, $to);
-        }
-
-        return false;
-    }
-
-    /**
-     * Import a directory to the application.
-     */
-    public static function importDir(string $from, string $to, bool $overwrite = false): bool
-    {
-        $dir = opendir($from);
-        if (false === $dir) {
-            return false;
-        }
-
-        if (false === file_exists($to)) {
-            mkdir($to, 0755, true);
-        }
-
-        while (($file = readdir($dir)) !== false) {
-            if ($file === '.' || $file === '..') {
-                continue;
-            }
-
-            $src = $from . '/' . $file;
-            $dst = $to . '/' . $file;
-
-            if (is_dir($src)) {
-                if (false === self::importDir($src, $dst, $overwrite)) {
-                    closedir($dir);
-
-                    return false;
-                }
-            } else {
-                if (false === self::importFile($src, $dst, $overwrite)) {
-                    closedir($dir);
-
-                    return false;
-                }
-            }
-        }
-
-        closedir($dir);
-
-        return true;
-    }
-
-    /**
-     * Register a package to the module.
-     *
-     * @param array<string, string> $name
-     */
-    public static function export(array $path, string $tag = ''): void
-    {
-        if (false === array_key_exists($tag, self::$modules)) {
-            self::$modules[$tag] = [];
-        }
-
-        self::$modules[$tag] = array_merge(self::$modules[$tag], $path);
-    }
-
-    /**
-     * Get registers modules.
-     *
-     * @return array<string, array<string, string>>
-     */
-    public static function getModules(): array
-    {
-        return self::$modules;
-    }
-
-    /**
-     * Flush shared modules.
-     */
-    public static function flushModule(): void
-    {
-        self::$modules = [];
     }
 }

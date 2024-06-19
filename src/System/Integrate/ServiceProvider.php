@@ -15,6 +15,13 @@ abstract class ServiceProvider
     ];
 
     /**
+     * Shared modules to import from vendor package.
+     *
+     * @var array<string, array<string, string>>
+     */
+    protected static array $modules = [];
+
+    /**
      * Create a new service provider instance.
      *
      * @return void
@@ -42,5 +49,97 @@ abstract class ServiceProvider
     public function register()
     {
         // register application container
+    }
+
+    /**
+     * Import a specific file to the application.
+     */
+    public static function importFile(string $from, string $to, bool $overwrite = false): bool
+    {
+        $exists = file_exists($to);
+        if (($exists && $overwrite) || false === $exists) {
+            $path = pathinfo($to, PATHINFO_DIRNAME);
+            if (false === file_exists($path)) {
+                mkdir($path, 0755, true);
+            }
+
+            return copy($from, $to);
+        }
+
+        return false;
+    }
+
+    /**
+     * Import a directory to the application.
+     */
+    public static function importDir(string $from, string $to, bool $overwrite = false): bool
+    {
+        $dir = opendir($from);
+        if (false === $dir) {
+            return false;
+        }
+
+        if (false === file_exists($to)) {
+            mkdir($to, 0755, true);
+        }
+
+        while (($file = readdir($dir)) !== false) {
+            if ($file === '.' || $file === '..') {
+                continue;
+            }
+
+            $src = $from . '/' . $file;
+            $dst = $to . '/' . $file;
+
+            if (is_dir($src)) {
+                if (false === self::importDir($src, $dst, $overwrite)) {
+                    closedir($dir);
+
+                    return false;
+                }
+            } else {
+                if (false === self::importFile($src, $dst, $overwrite)) {
+                    closedir($dir);
+
+                    return false;
+                }
+            }
+        }
+
+        closedir($dir);
+
+        return true;
+    }
+
+    /**
+     * Register a package to the module.
+     *
+     * @param array<string, string> $path
+     */
+    public static function export(array $path, string $tag = ''): void
+    {
+        if (false === array_key_exists($tag, self::$modules)) {
+            self::$modules[$tag] = [];
+        }
+
+        self::$modules[$tag] = array_merge(self::$modules[$tag], $path);
+    }
+
+    /**
+     * Get registers modules.
+     *
+     * @return array<string, array<string, string>>
+     */
+    public static function getModules(): array
+    {
+        return self::$modules;
+    }
+
+    /**
+     * Flush shared modules.
+     */
+    public static function flushModule(): void
+    {
+        self::$modules = [];
     }
 }
