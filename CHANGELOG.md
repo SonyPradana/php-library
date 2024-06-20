@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 0.34.0 - 2024-05-21
+### Added
+- Added `ServiceProvider::exports()` to register files/folders needed in package.
+- Added `PackagaDiscoveryCommand::class` to find supported package has register by composer vendor.
+- Added `PackageManifest::class` to collect information what needed by `ServiceProvider`.
+- Added `ConfigRepository::class` to load all Application configure.
+- Added `Migration::VendorPaths()` to manually add costume path from vendor path (package manifest).
+- Added `Karnel::handle()` and `Karnel::register` to run command directly.
+- Added `BootProviders::class`, `ConfigProviders::class` and `RegisterProviders::class`.
+
+### Changed
+- Changed how Application load bootstrapper. Application now handle bootstrap manually.
+- Changed `Karnel::call()` call command using `Application::call()`.
+- Changed `Karnel::__constructor()` parameter to `Application::class` instead of `Container::class`.
+- Changed load configure using `Util::loadCommandFromConfig()`, this propose to costume command register.
+
 ## [0.33.0] - 2024-05-17
 ### Removed
 - Removed support for php 7.4 due the new feature `Container::alias()` make modify another Container method.
