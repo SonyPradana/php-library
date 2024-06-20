@@ -139,7 +139,7 @@ class Templator
             ContinueTemplator::class,
             BreakTemplator::class,
             UseTemplator::class,
-        ], function ($template, $templator) {
+        ], function (string $template, string $templator): string {
             $templator = new $templator($this->finder, $this->cacheDir);
             if ($templator instanceof IncludeTemplator) {
                 $templator->maksDept($this->max_depth);
