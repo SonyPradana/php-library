@@ -92,13 +92,13 @@ abstract class ServiceProvider
             $dst = $to . '/' . $file;
 
             if (is_dir($src)) {
-                if (false === self::importDir($src, $dst, $overwrite)) {
+                if (false === static::importDir($src, $dst, $overwrite)) {
                     closedir($dir);
 
                     return false;
                 }
             } else {
-                if (false === self::importFile($src, $dst, $overwrite)) {
+                if (false === static::importFile($src, $dst, $overwrite)) {
                     closedir($dir);
 
                     return false;
@@ -118,11 +118,11 @@ abstract class ServiceProvider
      */
     public static function export(array $path, string $tag = ''): void
     {
-        if (false === array_key_exists($tag, self::$modules)) {
-            self::$modules[$tag] = [];
+        if (false === array_key_exists($tag, static::$modules)) {
+            static::$modules[$tag] = [];
         }
 
-        self::$modules[$tag] = array_merge(self::$modules[$tag], $path);
+        static::$modules[$tag] = array_merge(static::$modules[$tag], $path);
     }
 
     /**
@@ -132,7 +132,7 @@ abstract class ServiceProvider
      */
     public static function getModules(): array
     {
-        return self::$modules;
+        return static::$modules;
     }
 
     /**
@@ -140,6 +140,6 @@ abstract class ServiceProvider
      */
     public static function flushModule(): void
     {
-        self::$modules = [];
+        static::$modules = [];
     }
 }
