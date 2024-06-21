@@ -203,7 +203,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     /**
      * @return $this
      */
-    public function dumb(): self
+    public function dump(): self
     {
         var_dump($this->collection);
 
