@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## 0.34.0 - 2024-05-21
+### Changed
+- Changed how call static use `static` instead of `self`, purpose to make property can call only in parent class `ServiceProvider::modules().
+- Changed typo method name from `Collection::dumb()` to `Collection::dump()`.
+
+## 0.34.0 - 2024-05-20
 ### Added
 - Added `ServiceProvider::exports()` to register files/folders needed in package.
 - Added `PackagaDiscoveryCommand::class` to find supported package has register by composer vendor.
