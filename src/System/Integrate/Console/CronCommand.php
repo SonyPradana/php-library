@@ -8,6 +8,7 @@ use System\Console\Command;
 use System\Console\Style\Style;
 use System\Cron\InterpolateInterface;
 use System\Cron\Schedule;
+use System\Support\Facades\Schedule as Scheduler;
 use System\Time\Now;
 
 use function System\Console\info;
@@ -55,7 +56,7 @@ class CronCommand extends Command
         $watch_start = microtime(true);
 
         $this->scheduler($schedule = new Schedule(now()->timestamp, $this->log));
-        $schedule->execute();
+        Scheduler::add($schedule)->execute();
 
         $watch_end = round(microtime(true) - $watch_start, 3) * 1000;
         info('done in')
@@ -73,7 +74,7 @@ class CronCommand extends Command
         $this->scheduler($schedule = new Schedule(now()->timestamp, $this->log));
         $info = [];
         $max  = 0;
-        foreach ($schedule->getPools() as $cron) {
+        foreach (Scheduler::add($schedule)->getPools() as $cron) {
             $time   = $cron->getTimeName();
             $name   = $cron->getEventname();
             $info[] = [
@@ -123,7 +124,7 @@ class CronCommand extends Command
             $watch_start = microtime(true);
 
             $this->scheduler($schedule = new Schedule(now()->timestamp, $this->log));
-            $schedule->execute();
+            Scheduler::add($schedule)->execute();
 
             $watch_end = round(microtime(true) - $watch_start, 3) * 1000;
             $print

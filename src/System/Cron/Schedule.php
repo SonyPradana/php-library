@@ -56,4 +56,18 @@ class Schedule
     {
         $this->logger = $logger;
     }
+
+    public function add(schedule $schedule): self
+    {
+        foreach ($schedule->getPools() as $time) {
+            $this->pools[] = $time;
+        }
+
+        return $this;
+    }
+
+    public function flush(): void
+    {
+        $this->pools = [];
+    }
 }
