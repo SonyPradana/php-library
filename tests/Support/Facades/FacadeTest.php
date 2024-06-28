@@ -1,7 +1,9 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use System\Collection\Collection;
 use System\Integrate\Application;
+use System\Support\Facades\Facade;
 
 final class FacadeTest extends TestCase
 {
@@ -9,14 +11,11 @@ final class FacadeTest extends TestCase
     final public function itCanCallstatic()
     {
         $app = new Application(__DIR__);
-        $app->set(System\Time\Now::class, fn () => new System\Time\Now());
+        $app->set(Collection::class, fn () => new Collection(['php' => 'greate']));
 
         require_once __DIR__ . DIRECTORY_SEPARATOR . 'Sample' . DIRECTORY_SEPARATOR . 'FacadesTestClass.php';
-        new FacadesTestClass($app);
+        Facade::setFacadeBase($app);
 
-        FacadesTestClass::year(2025);
-        $year = FacadesTestClass::isNextYear();
-
-        $this->assertTrue($year);
+        $this->assertTrue(FacadesTestClass::has('php'));
     }
 }

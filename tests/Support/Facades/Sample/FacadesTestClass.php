@@ -1,15 +1,15 @@
 <?php
 
+use System\Collection\Collection;
 use System\Support\Facades\Facade;
 
 /**
- * @method static \System\Time\Now year(int $year)
- * @method static bool             isNextYear()
+ * @method static bool has(string $key)
  */
 final class FacadesTestClass extends Facade
 {
     protected static function getAccessor()
     {
-        return System\Time\Now::class;
+        return Collection::class;
     }
 }
