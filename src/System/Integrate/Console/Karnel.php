@@ -8,6 +8,7 @@ use System\Console\Style\Style;
 use System\Integrate\Application;
 use System\Integrate\Bootstrap\BootProviders;
 use System\Integrate\Bootstrap\ConfigProviders;
+use System\Integrate\Bootstrap\RegisterFacades;
 use System\Integrate\Bootstrap\RegisterProviders;
 use System\Integrate\ValueObjects\CommandMap;
 
@@ -24,6 +25,7 @@ class Karnel
     /** @var array<int, class-string> Apllication bootstrap register. */
     protected array $bootstrappers = [
         ConfigProviders::class,
+        RegisterFacades::class,
         RegisterProviders::class,
         BootProviders::class,
     ];
