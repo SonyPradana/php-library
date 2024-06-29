@@ -10,17 +10,15 @@ abstract class Facade
 {
     /**
      * Application accessor.
-     *
-     * @var Application
      */
-    protected static $app;
+    protected static ?Application $app = null;
 
     /**
      * Instance accessor.
      *
-     * @var mixed
+     * @var array<string, mixed>
      */
-    protected static $instance;
+    protected static $instance = [];
 
     /**
      * Set Accessor.
@@ -35,7 +33,7 @@ abstract class Facade
     /**
      * Set facade intance.
      */
-    public static function setFacadeBase(Application $app): void
+    public static function setFacadeBase(?Application $app = null): void
     {
         static::$app = $app;
     }
@@ -71,11 +69,19 @@ abstract class Facade
      */
     protected static function getFacadeBase(string $name)
     {
-        if (isset(static::$instance[$name])) {
+        if (array_key_exists($name, static::$instance)) {
             return static::$instance[$name];
         }
 
-        return static::$instance[$name] = static::$app->get($name);
+        return static::$instance[$name] = static::$app->make($name);
+    }
+
+    /**
+     * Clear all of the instances.
+     */
+    public static function flushInstance(): void
+    {
+        static::$instance = [];
     }
 
     /**
