@@ -69,7 +69,7 @@ class Karnel
         // did you mean
         $count   = 0;
         $similar = (new Style('Did you mean?'))->textLightYellow()->newLines();
-        foreach ($this->similar($baseArgs, $commands, 0.8) as $term => $score) {
+        foreach ($this->getSimilarity($baseArgs, $commands, 0.8) as $term => $score) {
             $similar->push('    > ')->push($term)->textYellow()->newLines();
             $count++;
         }
@@ -139,14 +139,14 @@ class Karnel
      *
      * @return array<string, float> Sorted from simalar
      */
-    private function similar(string $find, array $commands, float $threshold = 0.8): array
+    private function getSimilarity(string $find, array $commands, float $threshold = 0.8): array
     {
         $closest   = [];
         $findLower = strtolower($find);
 
         foreach ($commands as $command) {
             $commandLower = strtolower($command);
-            $similarity   = $this->similarity($findLower, $commandLower);
+            $similarity   = $this->jaroWinkler($findLower, $commandLower);
 
             if ($similarity >= $threshold) {
                 $closest[$command] = $similarity;
@@ -163,19 +163,18 @@ class Karnel
      *
      * @return float Similarity score (between 0 and 1)
      */
-    private function similarity(string $find, string $command): float
+    private function jaroWinkler(string $find, string $command): float
     {
         $jaro = $this->jaro($find, $command);
 
         // Calculate the prefix length (maximum of 4 characters)
-        $prefixLength = 0;
-        for ($i = 0; $i < min(strlen($find), strlen($command), 4); $i++) {
-            if ($find[$i] === $command[$i]) {
-                $prefixLength++;
-                continue;
+        $prefixLength    = 0;
+        $maxPrefixLength = min(strlen($find), strlen($command), 4);
+        for ($i = 0; $i < $maxPrefixLength; $i++) {
+            if ($find[$i] !== $command[$i]) {
+                break;
             }
-
-            break;
+            $prefixLength++;
         }
 
         return $jaro + ($prefixLength * 0.1 * (1 - $jaro));
@@ -203,15 +202,13 @@ class Karnel
         $matches        = 0;
         $transpositions = 0;
 
+        // Find matching characters
         for ($i = 0; $i < $len1; $i++) {
             $start = max(0, $i - $matchDistance);
             $end   = min($i + $matchDistance + 1, $len2);
 
             for ($j = $start; $j < $end; $j++) {
-                if ($str2Matches[$j]) {
-                    continue;
-                }
-                if ($find[$i] !== $command[$j]) {
+                if ($str2Matches[$j] || $find[$i] !== $command[$j]) {
                     continue;
                 }
                 $str1Matches[$i] = true;
@@ -225,6 +222,7 @@ class Karnel
             return 0.0;
         }
 
+        // Count transpositions
         $k = 0;
         for ($i = 0; $i < $len1; $i++) {
             if (false === $str1Matches[$i]) {

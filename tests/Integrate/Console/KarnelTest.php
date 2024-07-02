@@ -239,7 +239,7 @@ final class KarnelTest extends TestCase
     public function itCanGetSimilarCommand()
     {
         $karnel = new Karnel($this->app);
-        $result = (fn () => $this->{'similar'}('make:view', ['view:clear', 'make:view', 'make:controller']))->call($karnel);
+        $result = (fn () => $this->{'getSimilarity'}('make:view', ['view:clear', 'make:view', 'make:controller']))->call($karnel);
         $this->assertArrayHasKey('make:view', $result);
         $this->assertArrayHasKey('make:controller', $result);
     }
