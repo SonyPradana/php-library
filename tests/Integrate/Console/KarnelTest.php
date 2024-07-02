@@ -191,11 +191,13 @@ final class KarnelTest extends TestCase
     {
         $karnel = new NormalCommand($this->app);
         ob_start();
-        $exit    = $karnel->handle(['cli', 'test']);
+        $exit    = $karnel->handle(['cli', 'use:patern']);
         $out     = ob_get_clean();
 
         $this->assertEquals(1, $exit);
         $condition =  Str::contains($out, 'Did you mean?');
+        $this->assertTrue($condition);
+        $condition =  Str::contains($out, 'use:pattern');
         $this->assertTrue($condition);
     }
 
@@ -229,6 +231,17 @@ final class KarnelTest extends TestCase
         ob_get_clean();
 
         $this->assertEquals(0, $exit);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanGetSimilarCommand()
+    {
+        $karnel = new Karnel($this->app);
+        $result = (fn () => $this->{'similar'}('make:view', ['view:clear', 'make:view', 'make:controller']))->call($karnel);
+        $this->assertArrayHasKey('make:view', $result);
+        $this->assertArrayHasKey('make:controller', $result);
     }
 }
 
