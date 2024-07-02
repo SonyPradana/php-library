@@ -69,7 +69,7 @@ class Karnel
         // did you mean
         $count   = 0;
         $similar = (new Style('Did you mean?'))->textLightYellow()->newLines();
-        foreach ($this->similar($baseArgs, $commands, 4) as $term => $level) {
+        foreach ($this->getSimilarity($baseArgs, $commands, 0.8) as $term => $score) {
             $similar->push('    > ')->push($term)->textYellow()->newLines();
             $count++;
         }
@@ -135,24 +135,111 @@ class Karnel
     /**
      * Return similar from given array, compare with key.
      *
-     * @param string[] $matchs
+     * @param string[] $commands
      *
-     * @return array<string, int> Sorted from simalar
+     * @return array<string, float> Sorted from simalar
      */
-    private function similar(string $find, $matchs, int $threshold = -1)
+    private function getSimilarity(string $find, array $commands, float $threshold = 0.8): array
     {
-        $closest = [];
-        $find    = strtolower($find);
+        $closest   = [];
+        $findLower = strtolower($find);
 
-        foreach ($matchs as $match) {
-            $level = levenshtein($find, strtolower($match));
-            if ($level <= $threshold) {
-                $closest[$match] = $level;
+        foreach ($commands as $command) {
+            $commandLower = strtolower($command);
+            $similarity   = $this->jaroWinkler($findLower, $commandLower);
+
+            if ($similarity >= $threshold) {
+                $closest[$command] = $similarity;
             }
         }
-        asort($closest);
+
+        arsort($closest);
 
         return $closest;
+    }
+
+    /**
+     * Calculate the similarity between two strings.
+     *
+     * @return float Similarity score (between 0 and 1)
+     */
+    private function jaroWinkler(string $find, string $command): float
+    {
+        $jaro = $this->jaro($find, $command);
+
+        // Calculate the prefix length (maximum of 4 characters)
+        $prefixLength    = 0;
+        $maxPrefixLength = min(strlen($find), strlen($command), 4);
+        for ($i = 0; $i < $maxPrefixLength; $i++) {
+            if ($find[$i] !== $command[$i]) {
+                break;
+            }
+            $prefixLength++;
+        }
+
+        return $jaro + ($prefixLength * 0.1 * (1 - $jaro));
+    }
+
+    /**
+     * Calculate the Jaro similarity between two strings.
+     *
+     * @return float the Jaro similarity score (between 0 and 1)
+     */
+    private function jaro(string $find, string $command): float
+    {
+        $len1 = strlen($find);
+        $len2 = strlen($command);
+
+        if ($len1 === 0) {
+            return $len2 === 0 ? 1.0 : 0.0;
+        }
+
+        $matchDistance = (int) floor(max($len1, $len2) / 2) - 1;
+
+        $str1Matches = array_fill(0, $len1, false);
+        $str2Matches = array_fill(0, $len2, false);
+
+        $matches        = 0;
+        $transpositions = 0;
+
+        // Find matching characters
+        for ($i = 0; $i < $len1; $i++) {
+            $start = max(0, $i - $matchDistance);
+            $end   = min($i + $matchDistance + 1, $len2);
+
+            for ($j = $start; $j < $end; $j++) {
+                if ($str2Matches[$j] || $find[$i] !== $command[$j]) {
+                    continue;
+                }
+                $str1Matches[$i] = true;
+                $str2Matches[$j] = true;
+                $matches++;
+                break;
+            }
+        }
+
+        if ($matches === 0) {
+            return 0.0;
+        }
+
+        // Count transpositions
+        $k = 0;
+        for ($i = 0; $i < $len1; $i++) {
+            if (false === $str1Matches[$i]) {
+                continue;
+            }
+            while (false === $str2Matches[$k]) {
+                $k++;
+            }
+            if ($find[$i] !== $command[$k]) {
+                $transpositions++;
+            }
+            $k++;
+        }
+
+        $transpositions /= 2;
+
+        return (($matches / $len1) + ($matches / $len2) + (($matches - $transpositions) / $matches)) / 3.0;
     }
 
     /**
