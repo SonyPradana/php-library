@@ -8,7 +8,7 @@ use System\Integrate\ConfigRepository;
 
 /**
  * @method static bool                 has(string $key)
- * @method static mixed                has(string $key, mixed $default = null)
+ * @method static mixed                get(string $key, mixed $default = null)
  * @method static void                 set(string $key, mixed $value)
  * @method static void                 push(string $key, mixed $value)
  * @method static array<string, mixed> toArray()
