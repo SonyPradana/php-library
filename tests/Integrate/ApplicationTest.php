@@ -52,6 +52,46 @@ class ApplicationTest extends TestCase
         $app->flush();
     }
 
+    /**
+     * @test
+     */
+    public function itCanLoadEnvironment()
+    {
+        $app = new Application('/');
+
+        $env = $app->defaultConfigs();
+        $app->loadConfig(new ConfigRepository($env));
+        $this->assertTrue($app->isDev());
+        $this->assertFalse($app->isProduction());
+
+        $env['ENVIRONMENT'] = 'test';
+
+        $app->loadConfig(new ConfigRepository($env));
+        $this->assertEquals('test', $app->environment());
+
+        // APP_ENV
+        $env['APP_ENV'] = 'dev';
+
+        $app->loadConfig(new ConfigRepository($env));
+        $this->assertEquals('dev', $app->environment());
+
+        $app->flush();
+    }
+
+    /**
+     * @test
+     */
+    public function itCanDetectDebugMode()
+    {
+        $app = new Application('/');
+
+        $env = $app->defaultConfigs();
+        $app->loadConfig(new ConfigRepository($env));
+        $this->assertFalse($app->isDebugMode());
+
+        $app->flush();
+    }
+
     /** @test */
     public function itCanNotDuplicateRegister()
     {
@@ -247,6 +287,7 @@ class ApplicationTest extends TestCase
             'time_zone'             => 'Asia/Jakarta',
             'APP_KEY'               => '',
             'ENVIRONMENT'           => 'dev',
+            'APP_DEBUG'             => false,
 
             'COMMAND_PATH'          => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Commands' . DIRECTORY_SEPARATOR,
             'CONTROLLER_PATH'       => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR,
