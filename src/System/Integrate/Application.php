@@ -251,7 +251,8 @@ final class Application extends Container
         $this->set('config', fn (): ConfigRepository => $configs);
 
         // base env
-        $this->set('environment', $configs['ENVIRONMENT']);
+        $this->set('environment', $configs['APP_ENV'] ?? $configs['ENVIRONMENT']);
+        $this->set('app.debug', $configs['APP_DEBUG']);
         // application path
         $this->setAppPath($this->basePath());
         $this->setModelPath($configs['MODEL_PATH']);
@@ -293,6 +294,7 @@ final class Application extends Container
             'time_zone'             => 'Asia/Jakarta',
             'APP_KEY'               => '',
             'ENVIRONMENT'           => 'dev',
+            'APP_DEBUG'             => false,
 
             'COMMAND_PATH'          => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Commands' . DIRECTORY_SEPARATOR,
             'CONTROLLER_PATH'       => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR,
@@ -816,6 +818,16 @@ final class Application extends Container
     public function environment()
     {
         return $this->get('environment');
+    }
+
+    /**
+     * Detect application debug enable.
+     *
+     * @return bool
+     */
+    public function isDebugMode()
+    {
+        return $this->get('app.debug');
     }
 
     /**
