@@ -1,5 +1,5 @@
 {
-    "name": "savanna-php/database",
+    "name": "sonypradana/database",
     "description": "part of php-library, dependency injection container",
     "authors": [
         {
@@ -9,7 +9,7 @@
     ],
     "require": {
         "php": "^8.0",
-        "savanna-php/collection": "^0.31"
+        "sonypradana/collection": "^0.35"
     },
     "autoload": {
         "psr-4": {

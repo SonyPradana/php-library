@@ -1,5 +1,5 @@
 {
-    "name": "savanna-php/http",
+    "name": "sonypradana/http",
     "description": "part of php-library, http",
     "authors": [
         {
@@ -10,9 +10,9 @@
     "require": {
         "php": "^8.0",
         "sonypradana/validator": "^0.8",
-        "savanna-php/collection": "^0.31",
-        "savanna-php/macroable": "^0.31",
-        "savanna-php/text": "^0.31"
+        "sonypradana/collection": "^0.35",
+        "sonypradana/macroable": "^0.35",
+        "sonypradana/text": "^0.35"
     },
     "autoload": {
         "psr-4": {

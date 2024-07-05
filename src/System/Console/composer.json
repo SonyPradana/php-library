@@ -1,5 +1,5 @@
 {
-    "name": "savanna-php/console",
+    "name": "sonypradana/console",
     "description": "part of php-library, console",
     "authors": [
         {
@@ -10,7 +10,7 @@
     "require": {
         "php": "^8.0",
         "sonypradana/validator": "^0.8",
-        "savanna-php/text": "^0.31"
+        "sonypradana/text": "^0.35"
     },
     "autoload": {
         "psr-4": {

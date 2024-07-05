@@ -1,5 +1,5 @@
 {
-    "name": "savanna-php/time",
+    "name": "sonypradana/time",
     "description": "part of php-library, time",
     "authors": [
         {
@@ -9,9 +9,9 @@
     ],
     "require": {
         "php": "^8.0",
-        "savanna-php/collection": "^0.31",
-        "savanna-php/support": "^0.31",
-        "savanna-php/text": "^0.31"
+        "sonypradana/collection": "^0.35",
+        "sonypradana/support": "^0.35",
+        "sonypradana/text": "^0.35"
     },
     "autoload": {
         "psr-4": {
