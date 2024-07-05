@@ -7,7 +7,7 @@ Php mvc with minum mvc framework. is simple and easy to use
 > **Note:** This repository high inspire with `laravel\framework` and `symfony\symfony`.
 
 ## Feature
-- MVC base 
+- MVC base
 - Container (dependency injection)
 - Route
 - Model (database class relation)
@@ -24,7 +24,7 @@ Php mvc with minum mvc framework. is simple and easy to use
 ## **Built in Query Builder**
 of cource we are support CRUD data base, this a sample
 
-### Select data 
+### Select data
 ```php
 DB::table('table_name')
   ->select(['column_1'])
@@ -32,7 +32,7 @@ DB::table('table_name')
   ->order("column_1", MyQuery::ORDER_ASC)
   ->limit(1, 10)
   ->all()
-;  
+;
 ```
 the result will show data from query,
 its same with SQL query
@@ -41,7 +41,7 @@ SELECT `column_1` FROM `table_name` WHERE (`column_2` = 'fast_mvc') ORDER BY `ta
 ```
 [🔝 Back to contents](#Feature)
 
-### Update data 
+### Update data
 ```php
 DB::table('table_name')
   ->update()
@@ -83,7 +83,7 @@ DB::table('table_name')
 ```
 its supported cancel transation if you needed
 ```php
-use System\Support\Facedes;
+use System\Support\Facades;
 
 PDO::transaction(function() {
     DB::table('table_name')
@@ -114,7 +114,7 @@ create database table
 
 [🔝 Back to contents](#Feature)
 
-## Collection 
+## Collection
 Array collection, handel functional array as chain method
 
 ### Create New Collection
@@ -189,7 +189,7 @@ class GreatConsole extends Console
 ```php
 #!usr/bin/env php
 
-// $argv come with default global php 
+// $argv come with default global php
 return (new greatConsole($argv))->main();
 
 ```

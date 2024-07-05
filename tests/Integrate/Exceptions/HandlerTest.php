@@ -11,6 +11,7 @@ use System\Integrate\Application;
 use System\Integrate\Exceptions\Handler;
 use System\Integrate\Http\Exception\HttpException;
 use System\Integrate\Http\Karnel;
+use System\Integrate\PackageManifest;
 use System\Text\Str;
 use System\View\Templator;
 use System\View\TemplatorFinder;
@@ -20,6 +21,7 @@ final class HandlerTest extends TestCase
     private Application $app;
     private Karnel $karnel;
     private Handler $handler;
+
     /**
      * Mock Logger.
      *
@@ -30,6 +32,13 @@ final class HandlerTest extends TestCase
     protected function setUp(): void
     {
         $this->app = new Application(__DIR__);
+
+        // overwrite PackageManifest has been set in Application before.
+        $this->app->set(PackageManifest::class, fn () => new PackageManifest(
+            base_path: dirname(__DIR__) . '/assets/app2/',
+            application_cache_path: dirname(__DIR__) . '/assets/app2/bootstrap/cache/',
+            vendor_path: '/app2/package/'
+        ));
 
         $this->app->set(
             Karnel::class,
@@ -104,7 +113,10 @@ final class HandlerTest extends TestCase
     /** @test */
     public function itCanRenderJson()
     {
-        $this->app->set('environment', 'prod');
+        $this->app->bootedCallback(function () {
+            $this->app->set('environment', 'prod');
+        });
+
         $karnel      = $this->app->make(Karnel::class);
         $response    = $karnel->handle(new Request('/test', [], [], [], [], [], [
             'content-type' => 'application/json',
@@ -132,7 +144,7 @@ final class HandlerTest extends TestCase
         $this->assertEquals('Too Many Request', $content['messages']['message']);
         $this->assertEquals('System\Integrate\Http\Exception\HttpException', $content['messages']['exception']);
         // skip meggase.file issue test with diferent platform
-        $this->assertEquals(47, $content['messages']['line']);
+        $this->assertEquals(56, $content['messages']['line']);
         $this->assertEquals(429, $response->getStatusCode());
     }
 
@@ -140,12 +152,13 @@ final class HandlerTest extends TestCase
     public function itCanRenderHttpException()
     {
         $this->app->setViewPath('/assets/');
+        $this->app->setViewPaths([
+            '/assets/',
+            '/assets/pages/',
+        ]);
         $this->app->set(
             TemplatorFinder::class,
-            fn () => new TemplatorFinder([
-                __DIR__ . '/assets',
-                __DIR__ . '/assets/pages',
-            ], ['.php', '.template.php'])
+            fn () => new TemplatorFinder(view_paths(), ['.php', '.template.php'])
         );
 
         $this->app->set(

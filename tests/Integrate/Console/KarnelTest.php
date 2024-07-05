@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use System\Console\Command;
 use System\Integrate\Application;
 use System\Integrate\Console\Karnel;
+use System\Integrate\PackageManifest;
 use System\Integrate\ValueObjects\CommandMap;
 use System\Text\Str;
 
@@ -20,6 +21,13 @@ final class KarnelTest extends TestCase
     protected function setUp(): void
     {
         $this->app = new Application('/');
+
+        // overwrite PackageManifest has been set in Application before.
+        $this->app->set(PackageManifest::class, fn () => new PackageManifest(
+            base_path: dirname(__DIR__) . '/assets/app2/',
+            application_cache_path: dirname(__DIR__) . '/assets/app2/bootstrap/cache/',
+            vendor_path: '/app2/package/'
+        ));
     }
 
     protected function tearDown(): void
@@ -183,11 +191,13 @@ final class KarnelTest extends TestCase
     {
         $karnel = new NormalCommand($this->app);
         ob_start();
-        $exit    = $karnel->handle(['cli', 'test']);
+        $exit    = $karnel->handle(['cli', 'use:patern']);
         $out     = ob_get_clean();
 
         $this->assertEquals(1, $exit);
         $condition =  Str::contains($out, 'Did you mean?');
+        $this->assertTrue($condition);
+        $condition =  Str::contains($out, 'use:pattern');
         $this->assertTrue($condition);
     }
 
@@ -203,11 +213,41 @@ final class KarnelTest extends TestCase
         $condition =  Str::contains($out, 'use:full');
         $this->assertTrue($condition);
     }
+
+    /** @test */
+    public function itCanBootstrap()
+    {
+        $this->assertFalse($this->app->isBootstrapped());
+        $this->app->make(Karnel::class)->bootstrap();
+        $this->assertTrue($this->app->isBootstrapped());
+    }
+
+    /** @test */
+    public function itCanCallCommand()
+    {
+        $karnel = new NormalCommand($this->app);
+        ob_start();
+        $exit = $karnel->call('cli use:no-int-return');
+        ob_get_clean();
+
+        $this->assertEquals(0, $exit);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanGetSimilarCommand()
+    {
+        $karnel = new Karnel($this->app);
+        $result = (fn () => $this->{'getSimilarity'}('make:view', ['view:clear', 'make:view', 'make:controller']))->call($karnel);
+        $this->assertArrayHasKey('make:view', $result);
+        $this->assertArrayHasKey('make:controller', $result);
+    }
 }
 
 class NormalCommand extends Karnel
 {
-    protected function commands()
+    protected function commands(): array
     {
         return [
             // olr style
@@ -256,6 +296,10 @@ class NormalCommand extends Karnel
                     'default' => 'test',
                 ],
             ]),
+            new CommandMap([
+                'pattern' => 'use:no-int-return',
+                'fn'      => [FoundedCommand::class, 'returnVoid'],
+            ]),
         ];
     }
 }
@@ -274,5 +318,9 @@ class FoundedCommand extends Command
         style($this->default)->out(false);
 
         return 0;
+    }
+
+    public function returnVoid(Application $app): void
+    {
     }
 }

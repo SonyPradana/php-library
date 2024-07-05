@@ -56,4 +56,24 @@ class Schedule
     {
         $this->logger = $logger;
     }
+
+    /**
+     * Add Schedule pool to the collection pool.
+     */
+    public function add(Schedule $schedule): self
+    {
+        foreach ($schedule->getPools() as $time) {
+            $this->pools[] = $time;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Clear schedule pool.
+     */
+    public function flush(): void
+    {
+        $this->pools = [];
+    }
 }

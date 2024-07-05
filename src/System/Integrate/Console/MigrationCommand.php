@@ -32,6 +32,13 @@ class MigrationCommand extends Command
     use PrintHelpTrait;
 
     /**
+     * Register vendor migration path.
+     *
+     * @var string[]
+     */
+    public static array $vendor_paths = [];
+
+    /**
      * Register command.
      *
      * @var array<int, array<string, mixed>>
@@ -104,8 +111,7 @@ class MigrationCommand extends Command
                 'migrate:refresh'           => ['--seed', '--dry-run', '--force'],
                 'migrate:rollback'          => ['--batch', '--take', '--dry-run', '--force'],
                 'database:create'           => ['--force'],
-                'database:drop'             => ['--force'],
-            ],
+                'database:drop'             => ['--force'], ],
         ];
     }
 
@@ -168,44 +174,46 @@ class MigrationCommand extends Command
             : 0;
         $batch = false === $batch ? $hights : $batch;
 
-        $dir     = migration_path();
+        $paths   = [migration_path(), ...static::$vendor_paths];
         $migrate = new Collection([]);
-        foreach (new \DirectoryIterator($dir) as $file) {
-            if ($file->isDot() | $file->isDir()) {
-                continue;
-            }
+        foreach ($paths as $dir) {
+            foreach (new \DirectoryIterator($dir) as $file) {
+                if ($file->isDot() | $file->isDir()) {
+                    continue;
+                }
 
-            $migration_name = pathinfo($file->getBasename(), PATHINFO_FILENAME);
-            $hasMigration   = $migartion_batch->has($migration_name);
+                $migration_name = pathinfo($file->getBasename(), PATHINFO_FILENAME);
+                $hasMigration   = $migartion_batch->has($migration_name);
 
-            if (false == $batch && $hasMigration) {
-                if ($migartion_batch->get($migration_name) <= $hights - 1) {
+                if (false == $batch && $hasMigration) {
+                    if ($migartion_batch->get($migration_name) <= $hights - 1) {
+                        $migrate->set($migration_name, [
+                            'file_name' => $dir . $file->getFilename(),
+                            'batch'     => $migartion_batch->get($migration_name),
+                        ]);
+                        continue;
+                    }
+                }
+
+                if (false === $hasMigration) {
+                    $migrate->set($migration_name, [
+                        'file_name' => $dir . $file->getFilename(),
+                        'batch'     => $hights,
+                    ]);
+                    $this->insertMigrationTable([
+                        'migration' => $migration_name,
+                        'batch'     => $hights,
+                    ]);
+                    continue;
+                }
+
+                if ($migartion_batch->get($migration_name) <= $batch) {
                     $migrate->set($migration_name, [
                         'file_name' => $dir . $file->getFilename(),
                         'batch'     => $migartion_batch->get($migration_name),
                     ]);
                     continue;
                 }
-            }
-
-            if (false === $hasMigration) {
-                $migrate->set($migration_name, [
-                    'file_name' => $dir . $file->getFilename(),
-                    'batch'     => $hights,
-                ]);
-                $this->insertMigrationTable([
-                    'migration' => $migration_name,
-                    'batch'     => $hights,
-                ]);
-                continue;
-            }
-
-            if ($migartion_batch->get($migration_name) <= $batch) {
-                $migrate->set($migration_name, [
-                    'file_name' => $dir . $file->getFilename(),
-                    'batch'     => $migartion_batch->get($migration_name),
-                ]);
-                continue;
             }
         }
 
@@ -669,5 +677,21 @@ class MigrationCommand extends Command
         fail('Migration table cant be create.')->out(false);
 
         return 1;
+    }
+
+    /**
+     * Add migration from vendor path.
+     */
+    public static function addVendorMigrationPath(string $path): void
+    {
+        static::$vendor_paths[] = $path;
+    }
+
+    /**
+     * Flush migration vendor ptahs.
+     */
+    public static function flushVendorMigrationPaths(): void
+    {
+        static::$vendor_paths = [];
     }
 }

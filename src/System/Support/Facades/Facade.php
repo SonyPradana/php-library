@@ -10,17 +10,15 @@ abstract class Facade
 {
     /**
      * Application accessor.
-     *
-     * @var Application
      */
-    protected static $app;
+    protected static ?Application $app = null;
 
     /**
      * Instance accessor.
      *
-     * @var mixed
+     * @var array<string, mixed>
      */
-    protected static $instance;
+    protected static $instance = [];
 
     /**
      * Set Accessor.
@@ -28,6 +26,14 @@ abstract class Facade
      * @return void
      */
     public function __construct(Application $app)
+    {
+        static::$app = $app;
+    }
+
+    /**
+     * Set facade intance.
+     */
+    public static function setFacadeBase(?Application $app = null): void
     {
         static::$app = $app;
     }
@@ -45,29 +51,37 @@ abstract class Facade
     }
 
     /**
-     * Faced.
+     * Facade.
      *
      * @return mixed
      */
-    protected static function getFacede()
+    protected static function getFacade()
     {
-        return static::getFacedeBase(static::getAccessor());
+        return static::getFacadeBase(static::getAccessor());
     }
 
     /**
-     * Faced.
+     * Facade.
      *
      * @param string|class-string $name Entry name or a class name
      *
      * @return mixed
      */
-    protected static function getFacedeBase(string $name)
+    protected static function getFacadeBase(string $name)
     {
-        if (isset(static::$instance[$name])) {
+        if (array_key_exists($name, static::$instance)) {
             return static::$instance[$name];
         }
 
-        return static::$instance[$name] = static::$app->get($name);
+        return static::$instance[$name] = static::$app->make($name);
+    }
+
+    /**
+     * Clear all of the instances.
+     */
+    public static function flushInstance(): void
+    {
+        static::$instance = [];
     }
 
     /**
@@ -82,7 +96,7 @@ abstract class Facade
      */
     public static function __callStatic($name, $arguments)
     {
-        $instance = static::getFacede();
+        $instance = static::getFacade();
 
         if (!$instance) {
             throw new \RuntimeException('A facade root has not been set.');

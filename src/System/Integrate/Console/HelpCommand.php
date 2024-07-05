@@ -7,6 +7,7 @@ namespace System\Integrate\Console;
 use System\Console\Command;
 use System\Console\Style\Style;
 use System\Console\Traits\PrintHelpTrait;
+use System\Integrate\Application;
 use System\Integrate\ValueObjects\CommandMap;
 use System\Text\Str;
 
@@ -17,11 +18,6 @@ use function System\Console\warn;
 class HelpCommand extends Command
 {
     use PrintHelpTrait;
-
-    /**
-     * @var array<int, array<string, mixed>>
-     */
-    protected array $commands;
 
     /**
      * @var string[]
@@ -158,9 +154,10 @@ class HelpCommand extends Command
     {
         style('List of all command registered:')->out();
 
-        $maks1 = 0;
-        $maks2 = 0;
-        foreach ($this->commandMaps() as $command) {
+        $maks1    = 0;
+        $maks2    = 0;
+        $commands = $this->commandMaps();
+        foreach ($commands as $command) {
             $option = array_merge($command->cmd(), $command->patterns());
             $lenght = Str::length(implode(', ', $option));
 
@@ -174,7 +171,7 @@ class HelpCommand extends Command
             }
         }
 
-        foreach ($this->commandMaps() as $command) {
+        foreach ($commands as $command) {
             $option = array_merge($command->cmd(), $command->patterns());
             style(implode(', ', $option))->textLightYellow()->out(false);
 
@@ -263,11 +260,6 @@ class HelpCommand extends Command
      */
     private function commandMaps()
     {
-        $commandmap =  [];
-        foreach ($this->commands as $command) {
-            $commandmap[] = new CommandMap($command);
-        }
-
-        return $commandmap;
+        return Util::loadCommandFromConfig(Application::getIntance());
     }
 }

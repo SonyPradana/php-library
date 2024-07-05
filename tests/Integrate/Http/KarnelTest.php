@@ -7,16 +7,23 @@ use System\Http\Request;
 use System\Http\Response;
 use System\Integrate\Application;
 use System\Integrate\Http\Karnel;
+use System\Integrate\PackageManifest;
 
 final class KarnelTest extends TestCase
 {
-    private $app;
+    private Application $app;
     private $karnel;
-    private $middleware;
 
     protected function setUp(): void
     {
         $this->app = new Application('/');
+
+        // overwrite PackageManifest has been set in Application before.
+        $this->app->set(PackageManifest::class, fn () => new PackageManifest(
+            base_path: dirname(__DIR__) . '/assets/app2/',
+            application_cache_path: dirname(__DIR__) . '/assets/app2/bootstrap/cache/',
+            vendor_path: '/app2/package/'
+        ));
 
         $this->app->set(
             Karnel::class,
@@ -79,5 +86,13 @@ final class KarnelTest extends TestCase
             'redirect',
             $test->__toString()
         );
+    }
+
+    /** @test */
+    public function itCanBootstrap()
+    {
+        $this->assertFalse($this->app->isBootstrapped());
+        $this->app->make(Karnel::class)->bootstrap();
+        $this->assertTrue($this->app->isBootstrapped());
     }
 }

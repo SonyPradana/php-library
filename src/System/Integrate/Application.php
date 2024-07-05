@@ -171,11 +171,30 @@ final class Application extends Container
     private $isBooted = false;
 
     /**
+     * Detect application has been bootstrapped.
+     */
+    private bool $isBootstrapped = false;
+
+    /**
      * Terminate callback register.
      *
      * @var callable[]
      */
     private $terminateCallback = [];
+
+    /**
+     * Registered booting callback.
+     *
+     * @var callable[]
+     */
+    protected array $booting_callbacks = [];
+
+    /**
+     * Registered booted callback.
+     *
+     * @var callable[]
+     */
+    protected array $booted_callbacks = [];
 
     /**
      * Contructor.
@@ -186,21 +205,15 @@ final class Application extends Container
     {
         parent::__construct();
 
-        // base binding
-        static::$app = $this;
-        $this->set('app', $this);
-        $this->set(Application::class, $this);
-        $this->set(Container::class, $this);
+        // set base path
+        $this->setBasePath($base_path);
+        $this->setConfigPath($_ENV['CONFIG_PATH'] ?? DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR);
 
-        // load config and load provider
-        $this->loadConfig($base_path);
+        // base binding
+        $this->setBaseBinding();
 
         // register base provider
         $this->register(IntegrateServiceProvider::class);
-
-        // boot provider
-        $this->registerProvider();
-        $this->bootProvider();
 
         // register container alias
         $this->registerAlias();
@@ -217,42 +230,31 @@ final class Application extends Container
     }
 
     /**
-     * Load and set Configuration to application.
-     *
-     * @param string $base_path Base path
-     *
-     * @return void
+     * Register base binding container.
      */
-    public function loadConfig(string $base_path)
+    protected function setBaseBinding(): void
     {
-        // set base path
-        $this->setBasePath($base_path);
-        $this->setAppPath($base_path);
-        $config_path = $base_path . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR;
+        static::$app = $this;
+        $this->set('app', $this);
+        $this->set(Application::class, $this);
+        $this->set(Container::class, $this);
 
-        // check file exis
-        $configs = $this->defaultConfigs();
-        $paths   = [
-            'app.config.php',
-            'database.config.php',
-            'pusher.config.php',
-            'cachedriver.config.php',
-            'view.config.php',
-        ];
-        foreach ($paths as $path) {
-            $file_path = $config_path . $path;
+        $this->set(PackageManifest::class, fn () => new PackageManifest($this->base_path, $this->getApplicationCachePath()));
+    }
 
-            if (file_exists($file_path)) {
-                $config     = include $file_path;
-                foreach ($config as $key => $value) {
-                    $configs[$key] = $value;
-                }
-            }
-        }
+    /**
+     * Load and set Configuration to application.
+     */
+    public function loadConfig(ConfigRepository $configs): void
+    {
+        // give access to get config directly
+        $this->set('config', fn (): ConfigRepository => $configs);
 
         // base env
-        $this->set('environment', $configs['ENVIRONMENT']);
+        $this->set('environment', $configs['APP_ENV'] ?? $configs['ENVIRONMENT']);
+        $this->set('app.debug', $configs['APP_DEBUG']);
         // application path
+        $this->setAppPath($this->basePath());
         $this->setModelPath($configs['MODEL_PATH']);
         $this->setViewPath($configs['VIEW_PATH']);
         $this->setViewPaths($configs['VIEW_PATHS']);
@@ -262,7 +264,6 @@ final class Application extends Container
         $this->setCommandPath($configs['COMMAND_PATH']);
         $this->setCachePath($configs['CACHE_PATH']);
         $this->setCompiledViewPath($configs['COMPILED_VIEW_PATH']);
-        $this->setConfigPath($configs['CONFIG']);
         $this->setMiddlewarePath($configs['MIDDLEWARE']);
         $this->setProviderPath($configs['SERVICE_PROVIDER']);
         $this->setMigrationPath($configs['MIGRATION_PATH']);
@@ -277,9 +278,7 @@ final class Application extends Container
         $this->set('config.view.extensions', $configs['VIEW_EXTENSIONS']);
         // load provider
         $this->providers = $configs['PROVIDERS'];
-        $this->defineder($configs);
-        // give access to get config directly
-        $this->set('config', $configs);
+        $this->defineder($configs->toArray());
     }
 
     /**
@@ -287,7 +286,7 @@ final class Application extends Container
      *
      * @return array<string, mixed> Configs
      */
-    private function defaultConfigs()
+    public function defaultConfigs()
     {
         return [
             // app config
@@ -295,6 +294,7 @@ final class Application extends Container
             'time_zone'             => 'Asia/Jakarta',
             'APP_KEY'               => '',
             'ENVIRONMENT'           => 'dev',
+            'APP_DEBUG'             => false,
 
             'COMMAND_PATH'          => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Commands' . DIRECTORY_SEPARATOR,
             'CONTROLLER_PATH'       => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR,
@@ -381,7 +381,7 @@ final class Application extends Container
     public function setBasePath(string $path)
     {
         $this->base_path = $path;
-        $this->set('path.bash', $path);
+        $this->set('path.base', $path);
 
         return $this;
     }
@@ -632,7 +632,7 @@ final class Application extends Container
      */
     public function basePath()
     {
-        return $this->get('path.bash');
+        return $this->get('path.base');
     }
 
     /**
@@ -643,6 +643,17 @@ final class Application extends Container
     public function appPath()
     {
         return $this->get('path.app');
+    }
+
+    /**
+     * Get application (bootstrapper) cach path.
+     * default './boostrap/cache/'.
+     *
+     * @return string
+     */
+    public function getApplicationCachePath()
+    {
+        return rtrim($this->basePath(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -810,6 +821,16 @@ final class Application extends Container
     }
 
     /**
+     * Detect application debug enable.
+     *
+     * @return bool
+     */
+    public function isDebugMode()
+    {
+        return $this->get('app.debug');
+    }
+
+    /**
      * Detect application prodaction mode.
      *
      * @return bool
@@ -829,7 +850,37 @@ final class Application extends Container
         return $this->environment() === 'dev';
     }
 
+    /**
+     * Detect appliaction has been booted.
+     */
+    public function isBooted(): bool
+    {
+        return $this->isBooted;
+    }
+
+    /**
+     * Detect application has been bootstrapped.
+     */
+    public function isBootstrapped(): bool
+    {
+        return $this->isBootstrapped;
+    }
+
     // core region
+
+    /**
+     * Bootstrapper.
+     *
+     * @param array<int, class-string> $bootstrappers
+     */
+    public function bootstrapWith($bootstrappers): void
+    {
+        $this->isBootstrapped = true;
+
+        foreach ($bootstrappers as $bootstrapper) {
+            $this->make($bootstrapper)->bootstrap($this);
+        }
+    }
 
     /**
      * Boot service provider.
@@ -842,7 +893,9 @@ final class Application extends Container
             return;
         }
 
-        foreach ($this->providers as $provider) {
+        $this->callBootCallbacks($this->booting_callbacks);
+
+        foreach ($this->getMergeProviders() as $provider) {
             if (in_array($provider, $this->booted_providers)) {
                 continue;
             }
@@ -850,6 +903,8 @@ final class Application extends Container
             $this->call([$provider, 'boot']);
             $this->booted_providers[] = $provider;
         }
+
+        $this->callBootCallbacks($this->booted_callbacks);
 
         $this->isBooted = true;
     }
@@ -861,11 +916,7 @@ final class Application extends Container
      */
     public function registerProvider()
     {
-        if (!$this->isBooted) {
-            return;
-        }
-
-        foreach ($this->providers as $provider) {
+        foreach ($this->getMergeProviders() as $provider) {
             if (in_array($provider, $this->looded_providers)) {
                 continue;
             }
@@ -873,6 +924,46 @@ final class Application extends Container
             $this->call([$provider, 'register']);
 
             $this->looded_providers[] = $provider;
+        }
+    }
+
+    /**
+     * Call the registered booting callbacks.
+     *
+     * @param callable[] $bootCallBacks
+     */
+    public function callBootCallbacks($bootCallBacks): void
+    {
+        $index = 0;
+
+        while ($index < count($bootCallBacks)) {
+            $this->call($bootCallBacks[$index]);
+
+            $index++;
+        }
+    }
+
+    /**
+     * Add booting call back, call before boot is calling.
+     *
+     * @param callable $callback
+     */
+    public function bootingCallback($callback): void
+    {
+        $this->booting_callbacks[] = $callback;
+    }
+
+    /**
+     * Add booted call back, call after boot is called.
+     *
+     * @param callable $callback
+     */
+    public function bootedCallback($callback): void
+    {
+        $this->booted_callbacks[] = $callback;
+
+        if ($this->isBooted()) {
+            $this->call($callback);
         }
     }
 
@@ -887,6 +978,8 @@ final class Application extends Container
         $this->looded_providers  = [];
         $this->booted_providers  = [];
         $this->terminateCallback = [];
+        $this->booting_callbacks = [];
+        $this->booted_callbacks  = [];
 
         parent::flush();
     }
@@ -999,10 +1092,21 @@ final class Application extends Container
             'request'       => [Request::class],
             'view.instance' => [Templator::class],
             'vite.gets'     => [Vite::class],
+            'config'        => [ConfigRepository::class],
         ] as $abstrack => $aliases) {
             foreach ($aliases as $alias) {
                 $this->alias($abstrack, $alias);
             }
         }
+    }
+
+    /**
+     * Merge applicationproveder and vendor package provider.
+     *
+     * @return ServiceProvider[]
+     */
+    protected function getMergeProviders(): array
+    {
+        return [...$this->providers, ...$this->make(PackageManifest::class)->providers()];
     }
 }

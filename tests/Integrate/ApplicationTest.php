@@ -3,6 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use System\Http\Request;
 use System\Integrate\Application;
+use System\Integrate\ConfigRepository;
 use System\Integrate\Exceptions\ApplicationNotAvailable;
 use System\Integrate\Http\Exception\HttpException;
 
@@ -38,13 +39,55 @@ class ApplicationTest extends TestCase
     }
 
     /** @test */
-    public function itCanLoadDefaultConfig()
+    public function itCanLoadConfigFromDefault()
     {
         $app = new Application('/');
 
+        $app->loadConfig(new ConfigRepository($app->defaultConfigs()));
+        /** @var Config */
         $config = $app->get('config');
 
-        $this->assertEquals($this->defaultConfigs(), $config);
+        $this->assertEquals($this->defaultConfigs(), $config->toArray());
+
+        $app->flush();
+    }
+
+    /**
+     * @test
+     */
+    public function itCanLoadEnvironment()
+    {
+        $app = new Application('/');
+
+        $env = $app->defaultConfigs();
+        $app->loadConfig(new ConfigRepository($env));
+        $this->assertTrue($app->isDev());
+        $this->assertFalse($app->isProduction());
+
+        $env['ENVIRONMENT'] = 'test';
+
+        $app->loadConfig(new ConfigRepository($env));
+        $this->assertEquals('test', $app->environment());
+
+        // APP_ENV
+        $env['APP_ENV'] = 'dev';
+
+        $app->loadConfig(new ConfigRepository($env));
+        $this->assertEquals('dev', $app->environment());
+
+        $app->flush();
+    }
+
+    /**
+     * @test
+     */
+    public function itCanDetectDebugMode()
+    {
+        $app = new Application('/');
+
+        $env = $app->defaultConfigs();
+        $app->loadConfig(new ConfigRepository($env));
+        $this->assertFalse($app->isDebugMode());
 
         $app->flush();
     }
@@ -106,6 +149,7 @@ class ApplicationTest extends TestCase
     public function itCanDetectMaintenenceMode()
     {
         $app = new Application(__DIR__);
+        $app->loadConfig(new ConfigRepository($app->defaultConfigs()));
 
         $this->assertFalse($app->isDownMaintenanceMode());
 
@@ -138,6 +182,7 @@ class ApplicationTest extends TestCase
     {
         $app = new Application('/');
 
+        $app->loadConfig(new ConfigRepository($app->defaultConfigs()));
         $this->assertEquals([
             'redirect' => null,
             'retry'    => null,
@@ -154,9 +199,67 @@ class ApplicationTest extends TestCase
     }
 
     /** @test */
+    public function itCanBootstrapWith()
+    {
+        $app = new Application(__DIR__);
+
+        ob_start();
+        $app->bootstrapWith([
+            TestBootstrapProvider::class,
+        ]);
+        $out = ob_get_clean();
+
+        $this->assertEquals($out, 'TestBootstrapProvider::bootstrap');
+        $this->assertTrue($app->isBootstrapped());
+    }
+
+    /** @test */
+    public function itCanAddCallBacksBeforeAndAfterBoot()
+    {
+        $app = new Application(__DIR__ . '/assets/app2/');
+
+        $app->bootedCallback(static function () {
+            echo 'booted01';
+        });
+        $app->bootedCallback(static function () {
+            echo 'booted02';
+        });
+        $app->bootingCallback(static function () {
+            echo 'booting01';
+        });
+        $app->bootingCallback(static function () {
+            echo 'booting02';
+        });
+
+        ob_start();
+        $app->bootProvider();
+        $out = ob_get_clean();
+
+        $this->assertEquals($out, 'booting01booting02booted01booted02');
+        $this->assertTrue($app->isBooted());
+    }
+
+    public function itCanAddCallImediatllyIfApplicationAlredyBooted()
+    {
+        $app = new Application(__DIR__);
+
+        $app->bootProvider();
+
+        ob_start();
+        $app->bootedCallback(static function () {
+            echo 'imediatly call';
+        });
+        $out = ob_get_clean();
+
+        $this->assertTrue($app->isBooted());
+        $this->assertEquals($out, 'imediatly call');
+    }
+
+    /** @test */
     public function itCanCallDeprecatedMethod()
     {
         $app = new Application(__DIR__);
+        $app->loadConfig(new ConfigRepository($app->defaultConfigs()));
 
         $this->assertEquals($app->basePath(), $app->base_path());
         $this->assertEquals($app->appPath(), $app->app_path());
@@ -184,6 +287,7 @@ class ApplicationTest extends TestCase
             'time_zone'             => 'Asia/Jakarta',
             'APP_KEY'               => '',
             'ENVIRONMENT'           => 'dev',
+            'APP_DEBUG'             => false,
 
             'COMMAND_PATH'          => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Commands' . DIRECTORY_SEPARATOR,
             'CONTROLLER_PATH'       => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR,
@@ -236,5 +340,13 @@ class ApplicationTest extends TestCase
             ],
             'COMPILED_VIEW_PATH' => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR,
         ];
+    }
+}
+
+class TestBootstrapProvider
+{
+    public function bootstrap(Application $app): void
+    {
+        echo __CLASS__ . '::' . __FUNCTION__;
     }
 }

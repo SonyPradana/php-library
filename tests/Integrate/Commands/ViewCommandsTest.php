@@ -6,6 +6,7 @@ namespace System\Test\Integrate\Commands;
 
 use PHPUnit\Framework\TestCase;
 use System\Integrate\Application;
+use System\Integrate\ConfigRepository;
 use System\Integrate\Console\ViewCommand;
 use System\View\Templator;
 use System\View\TemplatorFinder;
@@ -49,7 +50,9 @@ final class ViewCommandsTest extends TestCase
     public function itCanClearCompiledViewFile(): void
     {
         // tests\Integrate\Commands\assets\view_cache
-        (new Application(''))->setCachePath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'view_cache' . DIRECTORY_SEPARATOR);
+        $app = new Application('');
+        $app->loadConfig(new ConfigRepository($app->defaultConfigs()));
+        $app->setCachePath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'view_cache' . DIRECTORY_SEPARATOR);
 
         file_put_contents(cache_path() . 'test01.php', '');
         file_put_contents(cache_path() . 'test02.php', '');
