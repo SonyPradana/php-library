@@ -1,0 +1,23 @@
+{
+    "name": "sonypradana/console",
+    "description": "part of php-library, console",
+    "authors": [
+        {
+            "name": "Angger Pradana",
+            "email": "sonypradana@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "sonypradana/validator": "^0.8",
+        "sonypradana/text": "^0.35"
+    },
+    "autoload": {
+        "psr-4": {
+            "System\\Console\\": ""
+        },
+        "files": [
+            "helper.php"
+        ]
+    }
+}

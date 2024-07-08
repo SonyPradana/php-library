@@ -1,0 +1,22 @@
+{
+    "name": "sonypradana/http",
+    "description": "part of php-library, http",
+    "authors": [
+        {
+            "name": "Angger Pradana",
+            "email": "sonypradana@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "sonypradana/validator": "^0.8",
+        "sonypradana/collection": "^0.35",
+        "sonypradana/macroable": "^0.35",
+        "sonypradana/text": "^0.35"
+    },
+    "autoload": {
+        "psr-4": {
+            "System\\Http\\": ""
+        }
+    }
+}

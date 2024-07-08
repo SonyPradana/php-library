@@ -1,0 +1,19 @@
+{
+    "name": "sonypradana/database",
+    "description": "part of php-library, dependency injection container",
+    "authors": [
+        {
+            "name": "Angger Pradana",
+            "email": "sonypradana@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "sonypradana/collection": "^0.35"
+    },
+    "autoload": {
+        "psr-4": {
+            "System\\Database\\": ""
+        }
+    }
+}

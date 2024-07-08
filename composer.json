@@ -1,7 +1,11 @@
 {
     "name": "sonypradana/php-library",
     "description": "library to build php mvc",
-    "keywords": ["framework", "php-mvc", "php-library"],
+    "keywords": [
+        "framework",
+        "php-mvc",
+        "php-library"
+    ],
     "license": "MIT",
     "authors": [
         {
@@ -20,6 +24,7 @@
         "mockery/mockery": "^1.6",
         "friendsofphp/php-cs-fixer": "^3.52",
         "phpstan/phpstan": "^1.10",
+        "symplify/monorepo-builder": "^11.2",
         "rector/rector": "^1.0"
     },
     "autoload": {
@@ -28,11 +33,11 @@
             "System\\Support\\": "src/System/Macroable"
         },
         "files": [
-          "src/System/Collection/helper.php",
-          "src/System/Integrate/helper.php",
-          "src/System/Console/helper.php",
-          "src/System/Text/helper.php",
-          "src/System/Time/helper.php"
+            "src/System/Collection/helper.php",
+            "src/System/Integrate/helper.php",
+            "src/System/Console/helper.php",
+            "src/System/Text/helper.php",
+            "src/System/Time/helper.php"
         ]
     },
     "autoload-dev": {
@@ -43,18 +48,28 @@
             "tests/Integrate/Commands/CommandTest.php"
         ]
     },
+    "replace": {
+        "sonypradana/collection": "0.35.0",
+        "sonypradana/console": "0.35.0",
+        "sonypradana/container": "0.35.0",
+        "sonypradana/cron": "0.35.0",
+        "sonypradana/database": "0.35.0",
+        "sonypradana/file": "0.35.0",
+        "sonypradana/http": "0.35.0",
+        "sonypradana/integrate": "0.35.0",
+        "sonypradana/router": "0.35.0",
+        "sonypradana/security": "0.35.0",
+        "sonypradana/support": "0.35.0",
+        "sonypradana/template": "0.35.0",
+        "sonypradana/text": "0.35.0",
+        "sonypradana/time": "0.35.0",
+        "sonypradana/view": "0.35.0"
+    },
     "extra": {
-        "laravel": {
-            "dont-discover": [
-                "*"
-            ]
-        },
         "branch-alias": {
             "dev-master": "0.x-dev"
         }
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "scripts": {
         "refacto": "rector",
         "lint": "php-cs-fixer fix -v",
@@ -74,5 +89,7 @@
             "phpstan analyse --ansi --memory-limit=-1",
             "phpunit --exclude-group database"
         ]
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

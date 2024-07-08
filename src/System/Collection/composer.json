@@ -1,0 +1,21 @@
+{
+    "name": "sonypradana/collection",
+    "description": "part of php-library, manage array using collection",
+    "authors": [
+        {
+            "name": "Angger Pradana",
+            "email": "sonypradana@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "System\\Collection\\": ""
+        },
+        "files": [
+            "helper.php"
+        ]
+    }
+}

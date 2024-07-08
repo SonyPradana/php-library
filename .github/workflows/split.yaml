@@ -1,0 +1,82 @@
+name: Split Test
+
+on:
+    push:
+        branches:
+            - master
+        tags:
+            - '*'
+
+env:
+    GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+
+jobs:
+    packages_split:
+        runs-on: ubuntu-latest
+
+        strategy:
+            fail-fast: false
+            matrix:
+                package:
+                    -
+                        local_path: 'Collection'
+                        split_repository: 'collection'
+                    -
+                        local_path: 'Console'
+                        split_repository: 'console'
+                    -
+                        local_path: 'Container'
+                        split_repository: 'container'
+                    -
+                        local_path: 'Cron'
+                        split_repository: 'cron'
+                    -
+                        local_path: 'Database'
+                        split_repository: 'database'
+                    -
+                        local_path: 'File'
+                        split_repository: 'file'
+                    -
+                        local_path: 'Http'
+                        split_repository: 'http'
+                    -
+                        local_path: 'Macroable'
+                        split_repository: 'macroable'
+                    -
+                        local_path: 'Router'
+                        split_repository: 'router'
+                    -
+                        local_path: 'Security'
+                        split_repository: 'security'
+                    -
+                        local_path: 'Support'
+                        split_repository: 'support'
+                    -
+                        local_path: 'Template'
+                        split_repository: 'template'
+                    -
+                        local_path: 'Text'
+                        split_repository: 'text'
+                    -
+                        local_path: 'Time'
+                        split_repository: 'time'
+                    -
+                        local_path: 'View'
+                        split_repository: 'view'
+
+        steps:
+            -   uses: actions/checkout@v3
+
+            -
+                if: startsWith(github.ref, 'refs/tags/')
+                uses: "symplify/monorepo-split-github-action@v2.3.0"
+                with:
+                    tag: ${GITHUB_REF#refs/tags/}
+
+                    package_directory: 'src/System/${{ matrix.package.local_path }}'
+
+                    repository_organization: 'SonyPradana'
+                    repository_name: '${{ matrix.package.split_repository }}'
+
+                    user_name: "SonyPradana"
+                    user_email: "sonypradana@gmail.com"
