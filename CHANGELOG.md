@@ -6,12 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## 0.34.0 - 2024-05-21
+## [0.35.0] - 2024-07-08
+### Added
+- Added `Schedule::add($schedule)` and `Schedule::flush()` to add schedule time pools and flush the pool (shedule time).
+- Added `Schedule::class` facades.
+- Added `System\Integrate\Bootstrap\Register::class` to register facade base application.
+- Added `ConfigRepository::class` facades.
+- Added `Facade::flushInstance()` to flush/clear registerd instance.
+- Added `Application::isDebugMode()` and allowed detect application environment using `APP_ENV` (equal with `ENVIRONMENT`).
+- Split package using github workflows. New 13 package will split Collection, Console, Container, Cron, Database, File, Http, Macroable, Router, Security, Support, Template, Text, Time, View.
+
+### Changed
+- Allowed set `Facade::$app` without initially construction, using `Facade::setFacadeBase($app)` and set `Facade::$app` to null.
+- Improved similarity in `Console\Karnel::class` using `jaroWinkler` algoritma.
+
+
+
+## [0.34.1] - 2024-06-21
 ### Changed
 - Changed how call static use `static` instead of `self`, purpose to make property can call only in parent class `ServiceProvider::modules().
 - Changed typo method name from `Collection::dumb()` to `Collection::dump()`.
 
-## 0.34.0 - 2024-05-20
+## [0.34.0] - 2024-06-20
 ### Added
 - Added `ServiceProvider::exports()` to register files/folders needed in package.
 - Added `PackagaDiscoveryCommand::class` to find supported package has register by composer vendor.
