@@ -72,11 +72,9 @@ jobs:
                 uses: "symplify/monorepo-split-github-action@v2.3.0"
                 with:
                     tag: ${GITHUB_REF#refs/tags/}
-
                     package_directory: 'src/System/${{ matrix.package.local_path }}'
-
                     repository_organization: 'SonyPradana'
                     repository_name: '${{ matrix.package.split_repository }}'
-
+                    branch: "master"
                     user_name: "SonyPradana"
                     user_email: "sonypradana@gmail.com"
