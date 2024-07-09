@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.35.1] - 2024-07-09
+### Changed
+- Changed ci work flows branch to master.
+
 ## [0.35.0] - 2024-07-08
 ### Added
 - Added `Schedule::add($schedule)` and `Schedule::flush()` to add schedule time pools and flush the pool (shedule time).
