@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Changed monorepo worker added `AddTagToChangelogReleaseWorker::class`, and removed `TagVersionReleaseWorker::class` and `PushTagReleaseWorker::class` to prevent insidental run tag and push to remote.
+
+### Added
+- Added monorepo-builder validate in composer test.
 
 ## [0.35.1] - 2024-07-09
 ### Changed

@@ -76,17 +76,20 @@
         "test:lint": "php-cs-fixer fix -v --dry-run --diff",
         "test:types": "phpstan analyse --ansi --memory-limit=-1 --debug",
         "test:unit": "phpunit --testdox --exclude-group database",
+        "test:release": "monorepo-builder validate --ansi -v",
         "test:dev": [
             "@test:refacto",
             "@test:lint",
             "@test:types",
-            "@test:unit"
+            "@test:unit",
+            "@test:release"
         ],
         "test": [
             "rector --dry-run",
             "php-cs-fixer fix -v --dry-run",
             "phpstan analyse --ansi --memory-limit=-1",
-            "phpunit --exclude-group database"
+            "phpunit --exclude-group database",
+            "monorepo-builder validate --ansi -vvv"
         ]
     },
     "minimum-stability": "dev",
