@@ -141,7 +141,6 @@ class CronCommand extends Command
     protected function getSchedule(): Schedule
     {
         $schedule = Scheduler::add(new Schedule());
-        $schedule->setTime(now()->timestamp); // refresh time every schedule excute
         $this->scheduler($schedule);
 
         return $schedule;
