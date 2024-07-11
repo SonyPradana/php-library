@@ -109,7 +109,7 @@ final class CronCommandsTest extends CommandTest
 
         $cronCommand = $this->maker('cli cron');
 
-        $schedule = (fn () => $this->{'getShedule'}())->call($cronCommand);
+        $schedule = (fn () => $this->{'getSchedule'}())->call($cronCommand);
         $time     = (fn () => $this->{'time'})->call($schedule);
 
         $this->assertNotEquals($this->time, $time);

@@ -55,7 +55,7 @@ class CronCommand extends Command
     {
         $watch_start = microtime(true);
 
-        $this->getShedule()->execute();
+        $this->getSchedule()->execute();
 
         $watch_end = round(microtime(true) - $watch_start, 3) * 1000;
         info('done in')
@@ -72,7 +72,7 @@ class CronCommand extends Command
 
         $info = [];
         $max  = 0;
-        foreach ($this->getShedule()->getPools() as $cron) {
+        foreach ($this->getSchedule()->getPools() as $cron) {
             $time   = $cron->getTimeName();
             $name   = $cron->getEventname();
             $info[] = [
@@ -123,7 +123,7 @@ class CronCommand extends Command
 
             $watch_start = microtime(true);
 
-            $this->getShedule()->execute();
+            $this->getSchedule()->execute();
 
             $watch_end = round(microtime(true) - $watch_start, 3) * 1000;
             $print
@@ -138,7 +138,7 @@ class CronCommand extends Command
         }
     }
 
-    protected function getShedule(): Schedule
+    protected function getSchedule(): Schedule
     {
         $schedule = Scheduler::add(new Schedule());
         $schedule->setTime(now()->timestamp); // refresh time every schedule excute
