@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.35.3] - 2024-07-11
+### Fixed
+- Fiexed typo method name `CronCommand::getSchedule()`.
+
 ## [0.35.2] - 2024-07-11
 ### Changed
 - Changed monorepo worker added `AddTagToChangelogReleaseWorker::class`, and removed `TagVersionReleaseWorker::class` and `PushTagReleaseWorker::class` to prevent insidental run tag and push to remote.

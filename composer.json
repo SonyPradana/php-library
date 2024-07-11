@@ -49,20 +49,20 @@
         ]
     },
     "replace": {
-        "sonypradana/collection": "0.35.2",
-        "sonypradana/console": "0.35.2",
-        "sonypradana/container": "0.35.2",
-        "sonypradana/cron": "0.35.2",
-        "sonypradana/database": "0.35.2",
-        "sonypradana/file": "0.35.2",
-        "sonypradana/http": "0.35.2",
-        "sonypradana/router": "0.35.2",
-        "sonypradana/security": "0.35.2",
-        "sonypradana/support": "0.35.2",
-        "sonypradana/template": "0.35.2",
-        "sonypradana/text": "0.35.2",
-        "sonypradana/time": "0.35.2",
-        "sonypradana/view": "0.35.2"
+        "sonypradana/collection": "0.35.3",
+        "sonypradana/console": "0.35.3",
+        "sonypradana/container": "0.35.3",
+        "sonypradana/cron": "0.35.3",
+        "sonypradana/database": "0.35.3",
+        "sonypradana/file": "0.35.3",
+        "sonypradana/http": "0.35.3",
+        "sonypradana/router": "0.35.3",
+        "sonypradana/security": "0.35.3",
+        "sonypradana/support": "0.35.3",
+        "sonypradana/template": "0.35.3",
+        "sonypradana/text": "0.35.3",
+        "sonypradana/time": "0.35.3",
+        "sonypradana/view": "0.35.3"
     },
     "extra": {
         "branch-alias": {
