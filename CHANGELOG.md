@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.35.2] - 2024-07-11
 ### Changed
 - Changed monorepo worker added `AddTagToChangelogReleaseWorker::class`, and removed `TagVersionReleaseWorker::class` and `PushTagReleaseWorker::class` to prevent insidental run tag and push to remote.
 
@@ -30,8 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Allowed set `Facade::$app` without initially construction, using `Facade::setFacadeBase($app)` and set `Facade::$app` to null.
 - Improved similarity in `Console\Karnel::class` using `jaroWinkler` algoritma.
-
-
 
 ## [0.34.1] - 2024-06-21
 ### Changed
