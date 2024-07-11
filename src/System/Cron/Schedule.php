@@ -6,18 +6,13 @@ namespace System\Cron;
 
 class Schedule
 {
-    /** @var int|null */
-    protected $time;
-
     /** @var ScheduleTime[] */
     protected array $pools = [];
 
-    private ?InterpolateInterface $logger;
-
-    public function __construct(int $time, InterpolateInterface $logger)
+    public function __construct(
+        protected ?int $time = null,
+        private ?InterpolateInterface $logger = null)
     {
-        $this->time   = $time;
-        $this->logger = $logger;
     }
 
     /**
@@ -55,6 +50,11 @@ class Schedule
     public function setLogger(InterpolateInterface $logger): void
     {
         $this->logger = $logger;
+    }
+
+    public function setTime(int $time): void
+    {
+        $this->time = $time;
     }
 
     /**

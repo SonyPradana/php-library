@@ -55,8 +55,7 @@ class CronCommand extends Command
     {
         $watch_start = microtime(true);
 
-        $this->scheduler($schedule = new Schedule(now()->timestamp, $this->log));
-        Scheduler::add($schedule)->execute();
+        $this->getShedule()->execute();
 
         $watch_end = round(microtime(true) - $watch_start, 3) * 1000;
         info('done in')
@@ -71,10 +70,9 @@ class CronCommand extends Command
         $watch_start = microtime(true);
         $print       = new Style("\n");
 
-        $this->scheduler($schedule = new Schedule(now()->timestamp, $this->log));
         $info = [];
         $max  = 0;
-        foreach (Scheduler::add($schedule)->getPools() as $cron) {
+        foreach ($this->getShedule()->getPools() as $cron) {
             $time   = $cron->getTimeName();
             $name   = $cron->getEventname();
             $info[] = [
@@ -111,6 +109,8 @@ class CronCommand extends Command
             ->push('type ctrl+c to stop')->textGreen()->underline()
             ->out();
 
+        $terminal_width = $this->getWidth(34, 50);
+
         /* @phpstan-ignore-next-line */
         while (true) {
             $clock = new Now();
@@ -123,12 +123,11 @@ class CronCommand extends Command
 
             $watch_start = microtime(true);
 
-            $this->scheduler($schedule = new Schedule(now()->timestamp, $this->log));
-            Scheduler::add($schedule)->execute();
+            $this->getShedule()->execute();
 
             $watch_end = round(microtime(true) - $watch_start, 3) * 1000;
             $print
-                ->repeat(' ', 34 - $print->length())
+                ->repeat(' ', $terminal_width - $print->length())
                 ->push('-> ')->textDim()
                 ->push($watch_end . 'ms')->textYellow()
                 ->out()
@@ -137,6 +136,15 @@ class CronCommand extends Command
             // reset every 60 seconds
             sleep(60);
         }
+    }
+
+    protected function getShedule(): Schedule
+    {
+        $schedule = Scheduler::add(new Schedule());
+        $schedule->setTime(now()->timestamp); // refresh time every schedule excute
+        $this->scheduler($schedule);
+
+        return $schedule;
     }
 
     public function scheduler(Schedule $schedule): void

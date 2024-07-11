@@ -11,6 +11,8 @@ use System\Support\Facades\Schedule as FacadesSchedule;
 
 final class CronCommandsTest extends CommandTest
 {
+    private int $time;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -22,7 +24,8 @@ final class CronCommandsTest extends CommandTest
             {
             }
         };
-        $this->app->set('schedule', fn () => new Schedule(time(), $log));
+        $this->time = 10;
+        $this->app->set('schedule', fn () => new Schedule($this->time, $log));
         new FacadesSchedule($this->app);
     }
 
@@ -93,5 +96,23 @@ final class CronCommandsTest extends CommandTest
         $this->assertContain('from-static', $out);
         $this->assertContain('cli-schedule', $out);
         $this->assertSuccess($exit);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanRefreshTime()
+    {
+        FacadesSchedule::call(static fn (): int => 0)
+            ->eventName('from-static')
+            ->justInTime();
+
+        $cronCommand = $this->maker('cli cron');
+
+        $schedule = (fn () => $this->{'getShedule'}())->call($cronCommand);
+        $time     = (fn () => $this->{'time'})->call($schedule);
+
+        $this->assertNotEquals($this->time, $time);
+        $this->assertLessThanOrEqual(time(), $time, 'refresh time must >= now');
     }
 }

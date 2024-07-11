@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Added monorepo-builder validate in composer test.
+- Added `Schedule::setTime(int $time)` to reset time.
+- Added `CronCommand::getShedule()` to merge shcedule in class with Shedule facade with reset time.
 
 ## [0.35.1] - 2024-07-09
 ### Changed
