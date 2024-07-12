@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.35.4] - 2024-07-12
+### Fixed
+- Fixed Schdeule time in class `Schedule::schduler()` must equal with `Facades\Schedule::class` time.
+
 ## [0.35.3] - 2024-07-11
 ### Fixed
 - Fiexed typo method name `CronCommand::getSchedule()`.
