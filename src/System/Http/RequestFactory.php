@@ -11,13 +11,13 @@ class RequestFactory
      */
     public static function capture(): Request
     {
-        return (new static())->getFromGlobal();
+        return (new self())->getFromGlobal();
     }
 
     /**
      * Derecated couse typo.
      *
-     * @deprecated v0.35.5 Use getFromGlobal instead
+     * @deprecated v0.35.5 Use `getFromGlobal()` instead
      */
     public function getFromGloball(): Request
     {
