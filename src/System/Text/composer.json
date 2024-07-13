@@ -10,7 +10,7 @@
     "require": {
         "php": "^8.0",
         "ext-mbstring": "*",
-        "sonypradana/macroable": "^0.35.4"
+        "sonypradana/macroable": "^0.35.5"
     },
     "autoload": {
         "psr-4": {

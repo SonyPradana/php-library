@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.35.5] - 2024-07-13
+### Added
+- Added support `HTTP_AUTHORIZATION` header to `RequestFactory::class` is available in `$_SERVER`.
+
 ## [0.35.4] - 2024-07-12
 ### Fixed
 - Fixed Schdeule time in class `Schedule::schduler()` must equal with `Facades\Schedule::class` time.
