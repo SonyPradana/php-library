@@ -9,6 +9,8 @@ use System\Http\Request;
 use System\Http\Response;
 use System\Integrate\Application;
 use System\Integrate\Http\Karnel;
+use System\Integrate\ServiceProvider;
+use System\Support\Facades\Facade;
 
 class TestCase extends BaseTestCase
 {
@@ -19,12 +21,14 @@ class TestCase extends BaseTestCase
     protected function setUp(): void
     {
         // create app
-        $this->karnel = $this->app->make(Karnel::class);
+        $this->karnel = $this->app->make(Karnel::class)->bootstrap();
     }
 
     protected function tearDown(): void
     {
         $this->app->flush();
+        Facade::flushInstance();
+        ServiceProvider::flushModule();
         unset($this->app);
         unset($this->karnel);
     }
