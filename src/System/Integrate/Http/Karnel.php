@@ -55,7 +55,7 @@ class Karnel
      */
     public function handle(Request $request)
     {
-        $this->app->set(Request::class, $request);
+        $this->app->set('request', $request);
 
         try {
             $this->bootstrap();
