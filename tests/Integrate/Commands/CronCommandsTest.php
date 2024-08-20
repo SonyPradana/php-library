@@ -16,7 +16,7 @@ final class CronCommandsTest extends CommandTest
     protected function setUp(): void
     {
         parent::setUp();
-        $log = new class() implements InterpolateInterface {
+        $log = new class implements InterpolateInterface {
             /**
              * @param array<string, mixed> $context
              */
@@ -41,7 +41,7 @@ final class CronCommandsTest extends CommandTest
             public function __construct($argv)
             {
                 parent::__construct($argv);
-                $this->log = new class() implements InterpolateInterface {
+                $this->log = new class implements InterpolateInterface {
                     /**
                      * @param array<string, mixed> $context
                      */

@@ -13,7 +13,7 @@ final class ScheduleTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->logger = new class() implements InterpolateInterface {
+        $this->logger = new class implements InterpolateInterface {
             public function interpolate(string $message, array $context = []): void
             {
                 echo 'works';

@@ -37,19 +37,19 @@ final class KarnelTest extends TestCase
                     'callable'   => fn () => new Response('ok', 200),
                     'parameters' => [],
                     'middleware' => [
-                        new class() {
+                        new class {
                             public function handle(Request $request, Closure $next): Response
                             {
                                 return $next($request);
                             }
                         },
-                        new class() {
+                        new class {
                             public function handle(Request $request, Closure $next): Response
                             {
                                 return new Response('redirect', 303);
                             }
                         },
-                        new class() {
+                        new class {
                             public function handle(Request $request, Closure $next): Response
                             {
                                 if ($respone = $next($request)) {
