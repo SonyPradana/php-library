@@ -156,7 +156,7 @@ if (!function_exists('width')) {
      */
     function width(int $min, int $max): int
     {
-        $terminal = new class() {
+        $terminal = new class {
             use TerminalTrait;
 
             public function width(int $min, int $max): int

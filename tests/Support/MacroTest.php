@@ -10,7 +10,7 @@ final class MacroTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->mock_class = new class() {
+        $this->mock_class = new class {
             use Marco;
         };
     }

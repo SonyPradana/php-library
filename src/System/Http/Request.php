@@ -119,7 +119,6 @@ class Request implements \ArrayAccess, \IteratorAggregate
      * @param array<string, string> $cookies
      * @param array<string, string> $files
      * @param array<string, string> $headers
-     * @param ?string               $rawBody
      */
     public function __construct(
         string $url,
@@ -145,7 +144,6 @@ class Request implements \ArrayAccess, \IteratorAggregate
      * @param array<string, string> $cookies
      * @param array<string, string> $files
      * @param array<string, string> $headers
-     * @param ?string               $rawBody
      *
      * @return self
      */
