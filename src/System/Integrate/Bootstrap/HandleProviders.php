@@ -10,7 +10,7 @@ use System\Integrate\Exceptions\Handler;
 class HandleProviders
 {
     private Application $app;
-    public static ?string $reserveMemory;
+    public static ?string $reserveMemory = null;
 
     public function bootstrap(Application $app): void
     {
@@ -20,6 +20,7 @@ class HandleProviders
 
         error_reporting(E_ALL);
 
+        /** @phpstan-ignore-next-line */
         set_error_handler([$this, 'handleError']);
 
         set_exception_handler([$this, 'handleException']);
@@ -51,13 +52,9 @@ class HandleProviders
     {
         self::$reserveMemory = null;
 
-        $this->getHandler()->report($th);
-
-        if (php_sapi_name() !== 'cli') {
-            $this->getHandler()->render($this->app['request'], $th)->send();
-        }
-
-        exit(1);
+        $handler = $this->getHandler();
+        $handler->report($th);
+        $handler->render($this->app['request'], $th)->send();
     }
 
     public function handleShutdown(): void
