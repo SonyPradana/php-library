@@ -6,6 +6,7 @@ namespace System\Integrate\Bootstrap;
 
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
+use System\Http\Request;
 use System\Integrate\Application;
 use System\Integrate\Exceptions\Handler;
 
@@ -56,6 +57,7 @@ class HandleProvidersTest extends TestCase
     public function itCanHandleException()
     {
         $app = new Application(dirname(__DIR__) . '/assets/app2');
+        $app->set('request', fn (): Request => new Request('/'));
         $app->set('environment', 'testing');
         $app->set(Handler::class, fn () => new TestHandleProviders($app));
 
