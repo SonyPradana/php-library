@@ -54,7 +54,9 @@ class HandleProviders
 
         $handler = $this->getHandler();
         $handler->report($th);
-        $handler->render($this->app->make('request'), $th)->send();
+        if (php_sapi_name() !== 'cli') {
+            $handler->render($this->app['request'], $th)->send();
+        }
     }
 
     public function handleShutdown(): void
