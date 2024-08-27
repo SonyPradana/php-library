@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
+use System\Console\IO\ResourceOutputStream;
 use System\Console\Style\Colors;
 use System\Console\Style\Style;
 
@@ -357,5 +358,22 @@ final class StyleTest extends TestCase
         $text = ob_get_clean();
 
         $this->assertEquals('', $text);
+    }
+
+    /**
+     * Test writing to a valid stream.
+     */
+    public function testWriteToStream(): void
+    {
+        $stream       = fopen('php://memory', 'w+');
+        $outputStream = new ResourceOutputStream($stream);
+        $style        = new Style('');
+
+        $style->setOutputStream($outputStream);
+        $style->write(false);
+
+        rewind($stream);
+        $this->assertEquals('', stream_get_contents($stream));
+        fclose($stream);
     }
 }
