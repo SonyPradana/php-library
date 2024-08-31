@@ -21,10 +21,6 @@ class BcryptHasher extends DefaultHasher implements HashInterface
             'cost' => $options['rounds'] ?? $this->rounds,
         ]);
 
-        if (false === $hash) {
-            throw new \RuntimeException('Bcrypt hashing not supported.');
-        }
-
         return $hash;
     }
 

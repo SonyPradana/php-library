@@ -8,9 +8,11 @@ class HashManager implements HashInterface
 {
     private ?HashInterface $driver = null;
 
-    public function setDriver(HashInterface $driver)
+    public function setDriver(HashInterface $driver): self
     {
         $this->driver = $driver;
+
+        return $this;
     }
 
     private function driver(?string $driver = null): HashInterface
