@@ -45,10 +45,6 @@ class Handler
      */
     public function render(Request $request, \Throwable $th): Response
     {
-        if ($request->isJson()) {
-            return $this->handleJsonResponse($th);
-        }
-
         if ($th instanceof Exceptions\HttpResponse) {
             return $th->getResponse();
         }
@@ -57,7 +53,9 @@ class Handler
             return $this->handleHttpException($th);
         }
 
-        throw $th;
+        return $request->isJson()
+            ? $this->handleJsonResponse($th)
+            : $this->handleResponse($th);
     }
 
     /**
@@ -110,6 +108,11 @@ class Handler
         }
 
         return $respone->json();
+    }
+
+    protected function handleResponse(\Throwable $th): Response
+    {
+        return new Response($th->getMessage(), 500);
     }
 
     protected function handleHttpException(HttpException $e): Response
