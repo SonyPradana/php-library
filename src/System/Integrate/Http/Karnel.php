@@ -9,7 +9,7 @@ use System\Http\Response;
 use System\Integrate\Application;
 use System\Integrate\Bootstrap\BootProviders;
 use System\Integrate\Bootstrap\ConfigProviders;
-use System\Integrate\Bootstrap\HandleProviders;
+use System\Integrate\Bootstrap\HandleExceptions;
 use System\Integrate\Bootstrap\RegisterFacades;
 use System\Integrate\Bootstrap\RegisterProviders;
 use System\Integrate\Exceptions\Handler;
@@ -34,7 +34,7 @@ class Karnel
     /** @var array<int, class-string> Apllication bootstrap register. */
     protected array $bootstrappers = [
         ConfigProviders::class,
-        HandleProviders::class,
+        HandleExceptions::class,
         RegisterFacades::class,
         RegisterProviders::class,
         BootProviders::class,

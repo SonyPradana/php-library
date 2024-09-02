@@ -10,7 +10,7 @@ use System\Http\Request;
 use System\Integrate\Application;
 use System\Integrate\Exceptions\Handler;
 
-class HandleProvidersTest extends TestCase
+class HandleExceptionsTest extends TestCase
 {
     /**
      * @test
@@ -20,7 +20,7 @@ class HandleProvidersTest extends TestCase
         $app = new Application(dirname(__DIR__) . '/assets/app2');
         $app->set('environment', 'testing');
 
-        $handle = new HandleProviders();
+        $handle = new HandleExceptions();
         $handle->bootstrap($app);
 
         $this->expectException(\ErrorException::class);
@@ -37,10 +37,10 @@ class HandleProvidersTest extends TestCase
     {
         $app = new Application(dirname(__DIR__) . '/assets/app2');
         $app->set('environment', 'testing');
-        $app->set(Handler::class, fn () => new TestHandleProviders($app));
+        $app->set(Handler::class, fn () => new TestHandleExceptions($app));
         $app->set('log', fn () => new TestLog());
 
-        $handle = new HandleProviders();
+        $handle = new HandleExceptions();
         $handle->bootstrap($app);
 
         $app[Handler::class]->deprecated();
@@ -59,9 +59,9 @@ class HandleProvidersTest extends TestCase
         $app = new Application(dirname(__DIR__) . '/assets/app2');
         $app->set('request', fn (): Request => new Request('/'));
         $app->set('environment', 'testing');
-        $app->set(Handler::class, fn () => new TestHandleProviders($app));
+        $app->set(Handler::class, fn () => new TestHandleExceptions($app));
 
-        $handle = new HandleProviders();
+        $handle = new HandleExceptions();
         $handle->bootstrap($app);
 
         try {
@@ -81,9 +81,9 @@ class HandleProvidersTest extends TestCase
 
         $app = new Application(dirname(__DIR__) . '/assets/app2');
         $app->set('environment', 'testing');
-        $app->set(Handler::class, fn () => new TestHandleProviders($app));
+        $app->set(Handler::class, fn () => new TestHandleExceptions($app));
 
-        $handle = new HandleProviders();
+        $handle = new HandleExceptions();
         $handle->bootstrap($app);
         $handle->handleShutdown();
 
@@ -91,7 +91,7 @@ class HandleProvidersTest extends TestCase
     }
 }
 
-class TestHandleProviders extends Handler
+class TestHandleExceptions extends Handler
 {
     public function report(\Throwable $th): void
     {

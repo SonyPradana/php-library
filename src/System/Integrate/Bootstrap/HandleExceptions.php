@@ -7,7 +7,7 @@ namespace System\Integrate\Bootstrap;
 use System\Integrate\Application;
 use System\Integrate\Exceptions\Handler;
 
-class HandleProviders
+class HandleExceptions
 {
     private Application $app;
     public static ?string $reserveMemory = null;
