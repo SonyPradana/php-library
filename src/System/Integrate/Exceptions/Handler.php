@@ -45,6 +45,10 @@ class Handler
      */
     public function render(Request $request, \Throwable $th): Response
     {
+        if ($request->isJson()) {
+            return $this->handleJsonResponse($th);
+        }
+
         if ($th instanceof Exceptions\HttpResponse) {
             return $th->getResponse();
         }
@@ -53,9 +57,11 @@ class Handler
             return $this->handleHttpException($th);
         }
 
-        return $request->isJson()
-            ? $this->handleJsonResponse($th)
-            : $this->handleResponse($th);
+        if (false === $this->isDebug()) {
+            return $this->handleResponse($th);
+        }
+
+        throw $th;
     }
 
     /**
@@ -95,7 +101,7 @@ class Handler
             $respone->headers->add($th->getHeaders());
         }
 
-        if ($this->isDev()) {
+        if ($this->isDebug()) {
             return $respone->json([
                 'code'     => $respone->getStatusCode(),
                 'messages' => [
@@ -149,8 +155,8 @@ class Handler
         return $view;
     }
 
-    private function isDev(): bool
+    private function isDebug(): bool
     {
-        return 'dev' === $this->app->get('environment');
+        return $this->app->get('app.debug') ?? false;
     }
 }
