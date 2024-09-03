@@ -1,0 +1,11 @@
+name: Bug Report
+description: What steps will reproduce the problem?
+labels: Bug
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Description of the problem found
+    validations:
+      required: true
