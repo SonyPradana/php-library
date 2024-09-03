@@ -57,6 +57,10 @@ class Handler
             return $this->handleHttpException($th);
         }
 
+        if (false === $this->isDebug()) {
+            return $this->handleResponse($th);
+        }
+
         throw $th;
     }
 
@@ -97,7 +101,7 @@ class Handler
             $respone->headers->add($th->getHeaders());
         }
 
-        if ($this->isDev()) {
+        if ($this->isDebug()) {
             return $respone->json([
                 'code'     => $respone->getStatusCode(),
                 'messages' => [
@@ -110,6 +114,11 @@ class Handler
         }
 
         return $respone->json();
+    }
+
+    protected function handleResponse(\Throwable $th): Response
+    {
+        return new Response($th->getMessage(), 500);
     }
 
     protected function handleHttpException(HttpException $e): Response
@@ -146,8 +155,8 @@ class Handler
         return $view;
     }
 
-    private function isDev(): bool
+    private function isDebug(): bool
     {
-        return 'dev' === $this->app->get('environment');
+        return $this->app->get('app.debug') ?? false;
     }
 }
