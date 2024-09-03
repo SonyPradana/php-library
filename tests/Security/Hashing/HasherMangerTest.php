@@ -14,10 +14,20 @@ class HasherMangerTest extends TestCase
     public function itCanHashDefaultHasher()
     {
         $hasher = new HashManager();
-        $hasher->setDriver(new BcryptHasher());
         $hash   = $hasher->make('password');
         $this->assertNotSame('password', $hash);
         $this->assertTrue($hasher->verify('password', $hash));
         $this->assertTrue($hasher->isValidAlgorithm($hash));
+    }
+
+    /** @test */
+    public function itCanUsingDriver()
+    {
+        $hasher = new HashManager();
+        $hasher->setDriver('bcrypt', new BcryptHasher());
+        $hash   = $hasher->driver('bcrypt')->make('password');
+        $this->assertNotSame('password', $hash);
+        $this->assertTrue($hasher->driver('bcrypt')->verify('password', $hash));
+        $this->assertTrue($hasher->driver('bcrypt')->isValidAlgorithm($hash));
     }
 }

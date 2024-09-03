@@ -6,18 +6,37 @@ namespace System\Security\Hashing;
 
 class HashManager implements HashInterface
 {
-    private ?HashInterface $driver = null;
+    /** @var array<string, HashInterface> */
+    private $driver = [];
 
-    public function setDriver(HashInterface $driver): self
+    private HashInterface $default_driver;
+
+    public function __construct()
     {
-        $this->driver = $driver;
+        $this->setDefaultDriver(new DefaultHasher());
+    }
+
+    public function setDefaultDriver(HashInterface $driver): self
+    {
+        $this->default_driver = $driver;
 
         return $this;
     }
 
-    private function driver(?string $driver = null): HashInterface
+    public function setDriver(string $driver_name, HashInterface $driver): self
     {
-        return $driver ?? $this->driver ?? new DefaultHasher();
+        $this->driver[$driver_name] = $driver;
+
+        return $this;
+    }
+
+    public function driver(?string $driver = null): HashInterface
+    {
+        if (array_key_exists($driver, $this->driver)) {
+            return $this->driver[$driver];
+        }
+
+        return $this->default_driver;
     }
 
     public function info(string $hashed_value): array
