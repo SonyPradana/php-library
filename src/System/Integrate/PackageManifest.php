@@ -16,7 +16,7 @@ final class PackageManifest
     public function __construct(
         private string $base_path,
         private string $application_cache_path,
-        private ?string $vendor_path = null
+        private ?string $vendor_path = null,
     ) {
         $this->vendor_path ??= DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'composer' . DIRECTORY_SEPARATOR;
     }
