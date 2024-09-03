@@ -60,7 +60,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      */
     public function __construct(
         MyPDO $pdo,
-        array $column
+        array $column,
     ) {
         $this->pdo        = $pdo;
         $this->columns    = $this->fresh = $column;
@@ -91,7 +91,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
         Where $where,
         string $primery_key,
         array $stash,
-        array $resistant
+        array $resistant,
     ): self {
         $this->table_name  = $table;
         $this->columns     = $this->fresh = $column;

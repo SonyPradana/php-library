@@ -26,7 +26,7 @@ class HttpException extends \RuntimeException
         string $message,
         ?\Throwable $previous = null,
         array $headers = [],
-        int $code = 0
+        int $code = 0,
     ) {
         $this->status_code = $status_code;
         $this->headers     = $headers;
