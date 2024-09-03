@@ -15,7 +15,7 @@ body:
     id: php-version
     attributes:
       label: PHP Version
-      placeholder: 8.1
+      placeholder: "8.1"
     validations:
       required: true
 
