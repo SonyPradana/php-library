@@ -16,7 +16,7 @@ final class CronCommandsTest extends CommandTest
     protected function setUp(): void
     {
         parent::setUp();
-        $log = new class() implements InterpolateInterface {
+        $log = new class implements InterpolateInterface {
             /**
              * @param array<string, mixed> $context
              */
@@ -41,7 +41,7 @@ final class CronCommandsTest extends CommandTest
             public function __construct($argv)
             {
                 parent::__construct($argv);
-                $this->log = new class() implements InterpolateInterface {
+                $this->log = new class implements InterpolateInterface {
                     /**
                      * @param array<string, mixed> $context
                      */
@@ -101,7 +101,7 @@ final class CronCommandsTest extends CommandTest
     /**
      * @test
      */
-    public function itCanRefreshTime()
+    public function scheduleTimeMustEqual()
     {
         FacadesSchedule::call(static fn (): int => 0)
             ->eventName('from-static')
@@ -112,7 +112,6 @@ final class CronCommandsTest extends CommandTest
         $schedule = (fn () => $this->{'getSchedule'}())->call($cronCommand);
         $time     = (fn () => $this->{'time'})->call($schedule);
 
-        $this->assertNotEquals($this->time, $time);
-        $this->assertLessThanOrEqual(time(), $time, 'refresh time must >= now');
+        $this->assertEquals($this->time, $time);
     }
 }

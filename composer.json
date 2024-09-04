@@ -22,9 +22,9 @@
     "require-dev": {
         "phpunit/phpunit": "^9.6",
         "mockery/mockery": "^1.6",
-        "friendsofphp/php-cs-fixer": "^3.52",
-        "phpstan/phpstan": "^1.10",
-        "rector/rector": "^1.0"
+        "friendsofphp/php-cs-fixer": "^3.64",
+        "phpstan/phpstan": "^1.12",
+        "rector/rector": "^1.2"
     },
     "autoload": {
         "psr-4": {
@@ -48,20 +48,20 @@
         ]
     },
     "replace": {
-        "sonypradana/collection": "0.35.3",
-        "sonypradana/console": "0.35.3",
-        "sonypradana/container": "0.35.3",
-        "sonypradana/cron": "0.35.3",
-        "sonypradana/database": "0.35.3",
-        "sonypradana/file": "0.35.3",
-        "sonypradana/http": "0.35.3",
-        "sonypradana/router": "0.35.3",
-        "sonypradana/security": "0.35.3",
-        "sonypradana/support": "0.35.3",
-        "sonypradana/template": "0.35.3",
-        "sonypradana/text": "0.35.3",
-        "sonypradana/time": "0.35.3",
-        "sonypradana/view": "0.35.3"
+        "sonypradana/collection": "0.35.6",
+        "sonypradana/console": "0.35.6",
+        "sonypradana/container": "0.35.6",
+        "sonypradana/cron": "0.35.6",
+        "sonypradana/database": "0.35.6",
+        "sonypradana/file": "0.35.6",
+        "sonypradana/http": "0.35.6",
+        "sonypradana/router": "0.35.6",
+        "sonypradana/security": "0.35.6",
+        "sonypradana/support": "0.35.6",
+        "sonypradana/template": "0.35.6",
+        "sonypradana/text": "0.35.6",
+        "sonypradana/time": "0.35.6",
+        "sonypradana/view": "0.35.6"
     },
     "extra": {
         "branch-alias": {

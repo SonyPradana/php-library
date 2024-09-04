@@ -9,6 +9,7 @@ use System\Http\Response;
 use System\Integrate\Application;
 use System\Integrate\Bootstrap\BootProviders;
 use System\Integrate\Bootstrap\ConfigProviders;
+use System\Integrate\Bootstrap\HandleExceptions;
 use System\Integrate\Bootstrap\RegisterFacades;
 use System\Integrate\Bootstrap\RegisterProviders;
 use System\Integrate\Exceptions\Handler;
@@ -33,6 +34,7 @@ class Karnel
     /** @var array<int, class-string> Apllication bootstrap register. */
     protected array $bootstrappers = [
         ConfigProviders::class,
+        HandleExceptions::class,
         RegisterFacades::class,
         RegisterProviders::class,
         BootProviders::class,
@@ -55,7 +57,7 @@ class Karnel
      */
     public function handle(Request $request)
     {
-        $this->app->set(Request::class, $request);
+        $this->app->set('request', $request);
 
         try {
             $this->bootstrap();

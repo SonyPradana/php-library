@@ -23,7 +23,7 @@ class StreamedResponse extends Response
     public function __construct(
         $callable_stream,
         int $respone_code = Response::HTTP_OK,
-        array $headers = []
+        array $headers = [],
     ) {
         $this->setStream($callable_stream);
         $this->setResponeCode($respone_code);

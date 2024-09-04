@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.35.6] - 2024-07-25
+### Fixed
+- Fixed container alias no load (#365).
+- Fixed Kernel test not load `bootstrap`, manualy call `bootsrap` (#366).
+
+## [0.35.5] - 2024-07-13
+### Added
+- Added support `HTTP_AUTHORIZATION` header to `RequestFactory::class` is available in `$_SERVER`.
+
+## [0.35.4] - 2024-07-12
+### Fixed
+- Fixed Schdeule time in class `Schedule::schduler()` must equal with `Facades\Schedule::class` time.
+
 ## [0.35.3] - 2024-07-11
 ### Fixed
 - Fiexed typo method name `CronCommand::getSchedule()`.

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Console\Style;
 
+use System\Console\Interfaces\OutputStream;
 use System\Console\Interfaces\RuleInterface;
 use System\Console\Style\Color\BackgroundColor;
 use System\Console\Style\Color\ForegroundColor;
@@ -109,6 +110,8 @@ class Style
      * @var string
      */
     private $ref = '';
+
+    private ?OutputStream $output_stream = null;
 
     /**
      * @param string|int $text set text to decorate
@@ -355,6 +358,22 @@ class Style
     }
 
     /**
+     * Write stream out.
+     *
+     * @param bool $new_line True if print with new line in end line
+     *
+     * @return void
+     */
+    public function write($new_line = true)
+    {
+        $out = $this . ($new_line ? PHP_EOL : null);
+
+        if ($this->output_stream) {
+            $this->output_stream->write($out);
+        }
+    }
+
+    /**
      * Clear curent line (original text is keep).
      */
     public function clear(int $line = -1): void
@@ -368,6 +387,13 @@ class Style
     public function replace(string $text, int $line = -1): void
     {
         $this->replaceLine($text, $line);
+    }
+
+    public function setOutputStream(OutputStream $resourceOutputStream): self
+    {
+        $this->output_stream = $resourceOutputStream;
+
+        return $this;
     }
 
     // style ------------------------------------------

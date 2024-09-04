@@ -6,7 +6,25 @@ namespace System\Http;
 
 class RequestFactory
 {
+    /**
+     * Helper to create request from global.
+     */
+    public static function capture(): Request
+    {
+        return (new self())->getFromGlobal();
+    }
+
+    /**
+     * Derecated couse typo.
+     *
+     * @deprecated v0.35.5 Use `getFromGlobal()` instead
+     */
     public function getFromGloball(): Request
+    {
+        return $this->getFromGlobal();
+    }
+
+    public function getFromGlobal(): Request
     {
         return new Request(
             $_SERVER['REQUEST_URI'] ?? '',
@@ -44,7 +62,9 @@ class RequestFactory
         }
 
         if (!isset($headers['Authorization'])) {
-            if (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+            if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+                $headers['Authorization'] = $_SERVER['HTTP_AUTHORIZATION'];
+            } elseif (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
                 $headers['Authorization'] = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
             } elseif (isset($_SERVER['PHP_AUTH_USER'])) {
                 $basic_pass               = $_SERVER['PHP_AUTH_PW'] ?? '';

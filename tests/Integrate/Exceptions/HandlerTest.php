@@ -114,7 +114,7 @@ final class HandlerTest extends TestCase
     public function itCanRenderJson()
     {
         $this->app->bootedCallback(function () {
-            $this->app->set('environment', 'prod');
+            $this->app->set('app.debug', false);
         });
 
         $karnel      = $this->app->make(Karnel::class);
@@ -132,9 +132,12 @@ final class HandlerTest extends TestCase
     }
 
     /** @test */
-    public function itCanRenderJsonForDev()
+    public function itCanRenderJsonForDebug()
     {
-        $this->app->set('environment', 'dev');
+        $this->app->bootedCallback(function () {
+            $this->app->set('app.debug', true);
+        });
+
         $karnel      = $this->app->make(Karnel::class);
         $response    = $karnel->handle(new Request('/test', [], [], [], [], [], [
             'content-type' => 'application/json',

@@ -1,0 +1,8 @@
+name: Feature Request
+description: Describe the feature briefly
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What do we aim to achieve?
