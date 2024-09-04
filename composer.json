@@ -24,7 +24,6 @@
         "mockery/mockery": "^1.6",
         "friendsofphp/php-cs-fixer": "^3.64",
         "phpstan/phpstan": "^1.12",
-        "symplify/monorepo-builder": "^11.2",
         "rector/rector": "^1.2"
     },
     "autoload": {
@@ -76,20 +75,17 @@
         "test:lint": "php-cs-fixer fix -v --dry-run --diff",
         "test:types": "phpstan analyse --ansi --memory-limit=-1 --debug",
         "test:unit": "phpunit --testdox --exclude-group database",
-        "test:release": "monorepo-builder validate --ansi -v",
         "test:dev": [
             "@test:refacto",
             "@test:lint",
             "@test:types",
-            "@test:unit",
-            "@test:release"
+            "@test:unit"
         ],
         "test": [
             "rector --dry-run",
             "php-cs-fixer fix -v --dry-run",
             "phpstan analyse --ansi --memory-limit=-1",
-            "phpunit --exclude-group database",
-            "monorepo-builder validate --ansi -vvv"
+            "phpunit --exclude-group database"
         ]
     },
     "minimum-stability": "dev",
