@@ -97,4 +97,4 @@ jobs:
       run: composer update --no-interaction --no-progress --ansi
 
     - name: Validate split repo
-      run: php ./bin/split-repo.php
+      run: composer test:release
