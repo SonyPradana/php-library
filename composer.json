@@ -75,7 +75,7 @@
         "test:lint": "php-cs-fixer fix -v --dry-run --diff",
         "test:types": "phpstan analyse --ansi --memory-limit=-1 --debug",
         "test:unit": "phpunit --testdox --exclude-group database",
-        "test:release": "php .\\bin\\split-repo.php validate",
+        "test:release": "php ./bin/split-repo.php validate",
         "test:dev": [
             "@test:refacto",
             "@test:lint",
@@ -88,7 +88,7 @@
             "php-cs-fixer fix -v --dry-run",
             "phpstan analyse --ansi --memory-limit=-1",
             "phpunit --exclude-group database",
-            "php .\\bin\\split-repo.php validate"
+            "php ./bin/split-repo.php validate"
         ]
     },
     "minimum-stability": "dev",

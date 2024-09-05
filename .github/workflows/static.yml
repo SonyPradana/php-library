@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -39,7 +39,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -64,7 +64,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -78,3 +78,23 @@ jobs:
 
     - name: Run Rector
       run: vendor/bin/rector --dry-run
+      
+  split-repo:
+    runs-on: ubuntu-latest
+    name: Split repo validation Check
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 8.0
+        tools: composer:v2
+
+    - name: Install Dependencies
+      run: composer update --no-interaction --no-progress --ansi
+
+    - name: Validate split repo
+      run: composer test:release
