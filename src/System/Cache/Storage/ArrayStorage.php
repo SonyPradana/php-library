@@ -113,6 +113,24 @@ class ArrayStorage implements CacheInterface
         return array_key_exists($key, $this->storage);
     }
 
+    public function increment(string $key, int $value): int
+    {
+        if (false === $this->has($key)) {
+            $this->set($key, $value, 0);
+
+            return $this->storage[$key]['value'];
+        }
+
+        $this->storage[$key]['value'] = ((int) $this->storage[$key]['value']) + $value;
+
+        return $this->storage[$key]['value'];
+    }
+
+    public function decrement(string $key, int $value): int
+    {
+        return $this->decrement($key, $value * -1);
+    }
+
     private function calculateExpirationTimestamp(int|\DateInterval|\DateTimeInterface|null $ttl): int
     {
         if ($ttl instanceof \DateInterval) {

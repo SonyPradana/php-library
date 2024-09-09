@@ -90,4 +90,14 @@ class CacheManager implements CacheInterface
     {
         return $this->driver()->has($key);
     }
+
+    public function increment(string $key, int $value): int
+    {
+        return $this->driver()->increment($key, $value);
+    }
+
+    public function decrement(string $key, int $value): int
+    {
+        return $this->driver()->decrement($key, $value);
+    }
 }

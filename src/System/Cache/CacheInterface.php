@@ -59,4 +59,8 @@ interface CacheInterface
      * Determines whether an item is present in the cache.
      */
     public function has(string $key): bool;
+
+    public function increment(string $key, int $value): int;
+
+    public function decrement(string $key, int $value): int;
 }
