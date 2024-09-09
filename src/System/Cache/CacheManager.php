@@ -42,11 +42,11 @@ class CacheManager implements CacheInterface
     }
 
     /**
-     * @param array<int, mixed> $parameters
+     * @param mixed[] $parameters
      */
     public function __call(string $method, array $parameters): mixed
     {
-        return $this->driver()->{$method}($parameters);
+        return $this->driver()->{$method}(...$parameters);
     }
 
     // ---

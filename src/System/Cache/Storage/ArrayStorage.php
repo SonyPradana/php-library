@@ -9,7 +9,7 @@ use System\Cache\CacheInterface;
 class ArrayStorage implements CacheInterface
 {
     /**
-     * @var array<string, array{value: mixed, timestamp: int}>
+     * @var array<string, array{value: mixed, timestamp?: int}>
      */
     protected array $storage = [];
 

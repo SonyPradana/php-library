@@ -43,8 +43,10 @@ interface CacheInterface
 
     /**
      * Persists a set of key => value pairs in the cache, with an optional TTL.
+     *
+     * @param iterable<string, mixed> $values
      */
-    public function setMultiple(iterable $values, int|\DateInterval|null $ttl = null);
+    public function setMultiple(iterable $values, int|\DateInterval|null $ttl = null): bool;
 
     /**
      * Deletes multiple cache items in a single operation.
