@@ -9,12 +9,22 @@ use System\Cache\CacheInterface;
 class ArrayStorage implements CacheInterface
 {
     /**
-     * @var array<string, array{value: mixed, timestamp?: int}>
+     * @var array<string, array{value: mixed, timestamp?: int, mtime?: float}>
      */
     protected array $storage = [];
 
     public function __construct(private int $defaultTTL = 3_600)
     {
+    }
+
+    /**
+     * Get info of storage.
+     *
+     * @return array<string, array{value: mixed, timestamp?: int, mtime?: float}>
+     */
+    public function getInfo(string $key): array
+    {
+        return $this->storage[$key] ?? [];
     }
 
     public function get(string $key, mixed $default = null): mixed
@@ -41,6 +51,7 @@ class ArrayStorage implements CacheInterface
         $this->storage[$key] = [
             'value'     => $value,
             'timestamp' => $this->calculateExpirationTimestamp($ttl),
+            'mtime'     => $this->createMtime(),
         ];
 
         return true;
@@ -120,5 +131,25 @@ class ArrayStorage implements CacheInterface
     private function isExpired(int $timestamp): bool
     {
         return $timestamp !== 0 && time() >= $timestamp;
+    }
+
+    /**
+     * Calculate the microtime based on the current time and microtime.
+     */
+    private function createMtime(): float
+    {
+        $currentTime = time();
+        $microtime   = microtime(true);
+
+        $fractionalPart = $microtime - $currentTime;
+
+        if ($fractionalPart >= 1) {
+            $currentTime += (int) $fractionalPart;
+            $fractionalPart -= (int) $fractionalPart;
+        }
+
+        $mtime = $currentTime + $fractionalPart;
+
+        return round($mtime, 3);
     }
 }
