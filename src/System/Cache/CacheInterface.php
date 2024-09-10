@@ -63,4 +63,6 @@ interface CacheInterface
     public function increment(string $key, int $value): int;
 
     public function decrement(string $key, int $value): int;
+
+    public function remember(string $key, int|\DateInterval|null $ttl = null, \Closure $callback): mixed;
 }

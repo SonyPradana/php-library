@@ -100,4 +100,9 @@ class CacheManager implements CacheInterface
     {
         return $this->driver()->decrement($key, $value);
     }
+
+    public function remember(string $key, int|\DateInterval|null $ttl = null, \Closure $callback): mixed
+    {
+        return $this->driver()->remember($key, $ttl, $callback);
+    }
 }

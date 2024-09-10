@@ -131,6 +131,19 @@ class ArrayStorage implements CacheInterface
         return $this->decrement($key, $value * -1);
     }
 
+    public function remember(string $key, int|\DateInterval|null $ttl = null, \Closure $callback): mixed
+    {
+        $value = $this->get($key);
+
+        if (null !== $value) {
+            return $value;
+        }
+
+        $this->set($key, $value = $callback(), $ttl);
+
+        return $value;
+    }
+
     private function calculateExpirationTimestamp(int|\DateInterval|\DateTimeInterface|null $ttl): int
     {
         if ($ttl instanceof \DateInterval) {
