@@ -128,7 +128,7 @@ class ArrayStorage implements CacheInterface
 
     public function decrement(string $key, int $value): int
     {
-        return $this->decrement($key, $value * -1);
+        return $this->increment($key, $value * -1);
     }
 
     public function remember(string $key, int|\DateInterval|null $ttl = null, \Closure $callback): mixed
