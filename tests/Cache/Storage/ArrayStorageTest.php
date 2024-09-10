@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace System\Text\Cache\Storage;
+
 use PHPUnit\Framework\TestCase;
 use System\Cache\Storage\ArrayStorage;
 
@@ -113,10 +115,10 @@ class ArrayStorageTest extends TestCase
         $expired = (fn () => $this->{'calculateExpirationTimestamp'}(time()))->call($this->storage);
         $this->assertGreaterThanOrEqual($time, $expired);
         // date interval
-        $expired = (fn () => $this->{'calculateExpirationTimestamp'}(DateInterval::createFromDateString('1 day')))->call($this->storage);
+        $expired = (fn () => $this->{'calculateExpirationTimestamp'}(\DateInterval::createFromDateString('1 day')))->call($this->storage);
         $this->assertGreaterThanOrEqual($time, $expired);
         // date time
-        $expired = (fn () => $this->{'calculateExpirationTimestamp'}(new DateTime()))->call($this->storage);
+        $expired = (fn () => $this->{'calculateExpirationTimestamp'}(new \DateTime()))->call($this->storage);
         $this->assertGreaterThanOrEqual($time, $expired);
     }
 
