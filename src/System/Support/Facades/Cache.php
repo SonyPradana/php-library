@@ -18,6 +18,9 @@ use System\Cache\CacheManager;
  * @method static bool                         setMultiple(iterable $values, int|\DateInterval|null $ttl = null)
  * @method static bool                         deleteMultiple(iterable $keys)
  * @method static bool                         has(string $key)
+ * @method static int                          increment(string $key, int $value)
+ * @method static int                          decrement(string $key, int $value)
+ * @method static mixed                        remember(string $key, int|\DateInterval|null $ttl = null, \Closure $callback)
  */
 final class Cache extends Facade
 {
