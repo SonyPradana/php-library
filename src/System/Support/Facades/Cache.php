@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace System\Support\Facades;
 
-use System\Cache\CacheManager;
-
 /**
  * @method static self                         setDefaultDriver(\System\Cache\CacheInterface $driver)
  * @method static self                         setDriver(string $driver_name, \System\Cache\CacheInterface $driver)
@@ -26,6 +24,6 @@ final class Cache extends Facade
 {
     protected static function getAccessor()
     {
-        return CacheManager::class;
+        return 'cache';
     }
 }
