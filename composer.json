@@ -48,6 +48,7 @@
         ]
     },
     "replace": {
+        "sonypradana/cache": "self.version",
         "sonypradana/collection": "self.version",
         "sonypradana/console": "self.version",
         "sonypradana/container": "self.version",

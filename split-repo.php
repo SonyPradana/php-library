@@ -5,6 +5,7 @@ declare(strict_types=1);
 return [
     'tag_version' => "0.35.6",
     'split_repositorys' => [
+        'sonypradana/cache' => '/src/System/Cache/',
         'sonypradana/collection' => '/src/System/Collection/',
         'sonypradana/console' => '/src/System/Console/',
         'sonypradana/container' => '/src/System/Container/',

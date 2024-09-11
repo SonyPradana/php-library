@@ -1,0 +1,18 @@
+{
+    "name": "sonypradana/cache",
+    "description": "Part of php-library, cache manger",
+    "authors": [
+        {
+            "name": "Angger Pradana",
+            "email": "sonypradana@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "System\\Cache\\": ""
+        }
+    }
+}
