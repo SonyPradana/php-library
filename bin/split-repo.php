@@ -33,6 +33,17 @@ $command = new class($argv) extends Command {
         $progressbar->maks     = count($paths);
 
         foreach ($paths as $path) {
+            $validate_assets = $this->validateAssetsFile(dirname(__DIR__), $path);
+            if (false === empty($validate_assets)) {
+                foreach ($validate_assets as $error) {
+                    $progressbar->complete = static fn (): string => (string) fail($error);
+                    $progressbar->current  = $progressbar->maks + 1;
+                    $progressbar->tick();
+
+                    return 1;
+                }
+            }
+
             if (false === $this->validateComposerVersion($composer_path = dirname(__DIR__) . $path . 'composer.json', $packages, $version)) {
                 $progressbar->complete = static fn (): string => (string) fail('failed!');
                 $progressbar->current  = $progressbar->maks + 1;
@@ -87,6 +98,25 @@ $command = new class($argv) extends Command {
         }
 
         return true;
+    }
+
+    /**
+     * Validate static asset file must include in split repo.
+     *
+     * @return string[]
+     */
+    private function validateAssetsFile(string $base, string $path): array
+    {
+        $errors = [];
+        if (false === file_exists("{$base}{$path}LICENSE")) {
+            $errors[] = "license not found in {$path}.";
+        }
+
+        if (false === file_exists("{$base}{$path}.github/workflows/close-pull-request.yml")) {
+            $errors[] = "close pr github workflow not found in {$path}.";
+        }
+
+        return $errors;
     }
 
     /**
