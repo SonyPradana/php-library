@@ -6,14 +6,26 @@ namespace System\View\Templator;
 
 use System\Text\Str;
 use System\View\AbstractTemplatorParse;
+use System\View\InteractWithCacheTrait;
 
 class SectionTemplator extends AbstractTemplatorParse
 {
+    use InteractWithCacheTrait;
+
     /** @var array<string, mixed> */
     private $sections     = [];
 
+    /**
+     * File get content cached.
+     *
+     * @var array<string, string>
+     */
+    private static array $cache = [];
+
     public function parse(string $template): string
     {
+        self::$cache = [];
+
         preg_match('/{%\s*extend\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/', $template, $matches_layout);
         if (!array_key_exists(1, $matches_layout)) {
             return $template;
@@ -24,7 +36,7 @@ class SectionTemplator extends AbstractTemplatorParse
         }
 
         $templatePath = $this->finder->find($matches_layout[1]);
-        $layout       = file_get_contents($templatePath);
+        $layout       = $this->getContents($templatePath);
 
         $template = preg_replace_callback(
             '/{%\s*section\s*\(\s*[\'"]([^\'"]+)[\'"]\s*,\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/s',
