@@ -610,7 +610,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
      */
     public function __get($key)
     {
-        return $this->source()->get($key);
+        return $this->all()[$key] ?? null;
     }
 
     /**
