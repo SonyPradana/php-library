@@ -5,10 +5,20 @@ declare(strict_types=1);
 namespace System\View\Templator;
 
 use System\View\AbstractTemplatorParse;
+use System\View\InteractWithCacheTrait;
 
 class IncludeTemplator extends AbstractTemplatorParse
 {
+    use InteractWithCacheTrait;
+
     private int $maks_dept = 5;
+
+    /**
+     * File get content cached.
+     *
+     * @var array<string, string>
+     */
+    private static array $cache = [];
 
     public function maksDept(int $maks_dept): self
     {
@@ -19,6 +29,8 @@ class IncludeTemplator extends AbstractTemplatorParse
 
     public function parse(string $template): string
     {
+        self::$cache = [];
+
         return preg_replace_callback(
             '/{%\s*include\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/',
             function ($matches) {
@@ -27,7 +39,7 @@ class IncludeTemplator extends AbstractTemplatorParse
                 }
 
                 $templatePath     = $this->finder->find($matches[1]);
-                $includedTemplate = file_get_contents($templatePath);
+                $includedTemplate = $this->getContents($templatePath);
 
                 if ($this->maks_dept === 0) {
                     return $includedTemplate;
