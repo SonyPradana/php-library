@@ -32,13 +32,11 @@ class FileStorage implements CacheInterface
 
         $data = file_get_contents($filePath);
 
-        if ($data === false) {
+        if (false === $data) {
             return [];
         }
 
-        $cacheData = unserialize($data);
-
-        return $cacheData;
+        return unserialize($data);
     }
 
     public function get(string $key, mixed $default = null): mixed
@@ -71,7 +69,7 @@ class FileStorage implements CacheInterface
         $filePath  = $this->makePath($key);
         $directory = dirname($filePath);
 
-        if (!is_dir($directory)) {
+        if (false === is_dir($directory)) {
             mkdir($directory, 0777, true);
         }
 
