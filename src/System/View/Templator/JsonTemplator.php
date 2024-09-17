@@ -10,8 +10,6 @@ class JsonTemplator extends AbstractTemplatorParse
 {
     public function parse(string $template): string
     {
-        DirectiveTemplator::$excludeList['json'] = JsonTemplator::class;
-
         return preg_replace_callback(
             '/{%\s*json\(\s*(.+?)\s*(?:,\s*(\d+)\s*)?(?:,\s*(\d+)\s*)?\)\s*%}/',
             static function ($matches): string {
