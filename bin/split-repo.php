@@ -17,8 +17,32 @@ $command = new class($argv) extends Command {
     {
         return match (true) {
             'validate' === $this->CMD => $this->validate(),
+            'realize' === $this->CMD  => $this->realise(),
             default                   => 0,
         };
+    }
+
+    public function realise(): int
+    {
+        $config                = $this->loadConfig();
+        $version               = $config['tag_version'];
+        $split_repositorys     = $config['split_repositorys'];
+        $paths                 = array_values($split_repositorys);
+        $packages              = array_keys($split_repositorys);
+        $progressbar           = new ProgressBar();
+        $progressbar->complete = static fn (): string => (string) ok('Done, success update composer version.');
+        $progressbar->maks     = count($paths);
+
+        foreach ($paths as $path) {
+            $composer = $this->updateComposerVersion(dirname(__DIR__) . $path . 'composer.json', $packages, $version);
+
+            $progressbar->current++;
+            $progressbar->tickWith(':progress :percent :name', [
+                ':name' => fn ($current, $maks) => $composer['name'],
+            ]);
+        }
+
+        return 0;
     }
 
     public function validate(): int
@@ -72,6 +96,39 @@ $command = new class($argv) extends Command {
     }
 
     /**
+     * Update Composer pacakge version by compire with current verstion.
+     *
+     * @param string[] $packages
+     */
+    public function updateComposerVersion(string $path, array $packages, string $version): array
+    {
+        if (false === file_exists($path)) {
+            throw new Exception('composer file not founded.');
+        }
+
+        $composer = $this->loadComposer($path);
+
+        if (false === array_key_exists('require', $composer)) {
+            return $composer;
+        }
+
+        $required = [];
+        foreach ($composer['require'] as $package => $package_version) {
+            if (in_array($package, $packages)) {
+                $required[$package] = $version;
+                unset($packages[$package]);
+                continue;
+            }
+
+            $required[$package] = $package_version;
+        }
+        $composer['require'] = $required;
+        $this->writeComposer($path, $composer);
+
+        return $composer;
+    }
+
+    /**
      * Validate Composer pacakge version by compire with current verstion.
      *
      * @param string[] $packages
@@ -89,7 +146,6 @@ $command = new class($argv) extends Command {
         }
 
         foreach ($composer['require'] as $package => $package_version) {
-            $package_version = preg_replace('/[^\d\.]/', '', $package_version);
             if (in_array($package, $packages)) {
                 if ($package_version !== $version) {
                     return false;
@@ -139,6 +195,18 @@ $command = new class($argv) extends Command {
         $composer_file = file_get_contents($path);
 
         return json_decode($composer_file, true);
+    }
+
+    /**
+     * Wrtire composer.json by given array of update composer.
+     *
+     * @param array<string, mixed> $composer
+     */
+    private function writeComposer(string $path, array $composer): bool
+    {
+        $json = \json_encode($composer, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES);
+
+        return false === file_put_contents($path, "{$json}\n") ? false : true;
     }
 };
 
