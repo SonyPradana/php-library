@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.36.0] - 2024-09-18
+### Added
+- Added `HandleExceptions::class` for handle php error (#368), prevent production report.
+- Added console write stream using `fwrite` (#369).
+- Added Password hash (3 method) (#370) and hash facade (#377).
+- Added Cache (`ArrayStorage`, `FileStorage`) and `CacheManager` use (like) psr cache (#378).
+- Added `TemplatorDirective::class` to allow costume directive by user (#384).
+- Added `JsonTemplator::class` to convert php array to json data (#386).
+
+### Changed
+- Changed `handler::class` using debug mode status, and added http response exception (#371).
+- Changed http request global `__get()` (use `all()` instead of `source()`) (#382).
+- Allowed Templator cache when geting content from file (#383).
+
 ## [0.35.6] - 2024-07-25
 ### Fixed
 - Fixed container alias no load (#365).
