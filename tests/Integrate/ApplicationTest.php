@@ -287,7 +287,7 @@ class ApplicationTest extends TestCase
             'time_zone'             => 'Asia/Jakarta',
             'APP_KEY'               => '',
             'ENVIRONMENT'           => 'dev',
-            'APP_DEBUG'             => false,
+            'APP_DEBUG'             => 'false',
 
             'COMMAND_PATH'          => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Commands' . DIRECTORY_SEPARATOR,
             'CONTROLLER_PATH'       => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR,

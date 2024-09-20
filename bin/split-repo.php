@@ -16,9 +16,9 @@ $command = new class($argv) extends Command {
     public function entry(): int
     {
         return match (true) {
-            'validate' === $this->CMD => $this->validate(),
-            'realize' === $this->CMD  => $this->realise(),
-            default                   => 0,
+            'validate' === $this->CMD   => $this->validate(),
+            'realise' === $this->CMD    => $this->realise(),
+            default                     => 0,
         };
     }
 
@@ -99,6 +99,8 @@ $command = new class($argv) extends Command {
      * Update Composer pacakge version by compire with current verstion.
      *
      * @param string[] $packages
+     *
+     * @return array<string, mixed>
      */
     public function updateComposerVersion(string $path, array $packages, string $version): array
     {
