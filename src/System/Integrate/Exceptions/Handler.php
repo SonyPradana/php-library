@@ -118,7 +118,9 @@ class Handler
 
     protected function handleResponse(\Throwable $th): Response
     {
-        return new Response($th->getMessage(), 500);
+        return $this->isProduction()
+            ? $this->handleHttpException(new HttpException(500, 'Internal Server Error'))
+            : new Response($th->getMessage(), 500);
     }
 
     protected function handleHttpException(HttpException $e): Response
@@ -157,6 +159,11 @@ class Handler
 
     private function isDebug(): bool
     {
-        return $this->app->get('app.debug') ?? false;
+        return $this->app->get('app.debug');
+    }
+
+    private function isProduction(): bool
+    {
+        return $this->app->get('environment') === 'prod';
     }
 }

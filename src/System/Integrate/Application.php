@@ -252,7 +252,7 @@ final class Application extends Container
 
         // base env
         $this->set('environment', $configs['APP_ENV'] ?? $configs['ENVIRONMENT']);
-        $this->set('app.debug', $configs['APP_DEBUG']);
+        $this->set('app.debug', $configs['APP_DEBUG'] === 'true');
         // application path
         $this->setAppPath($this->basePath());
         $this->setModelPath($configs['MODEL_PATH']);
@@ -294,7 +294,7 @@ final class Application extends Container
             'time_zone'             => 'Asia/Jakarta',
             'APP_KEY'               => '',
             'ENVIRONMENT'           => 'dev',
-            'APP_DEBUG'             => false,
+            'APP_DEBUG'             => 'false',
 
             'COMMAND_PATH'          => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Commands' . DIRECTORY_SEPARATOR,
             'CONTROLLER_PATH'       => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR,
