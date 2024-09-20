@@ -103,8 +103,14 @@ class FileStorage implements CacheInterface
         );
 
         foreach ($files as $fileinfo) {
+            $filePath = $fileinfo->getRealPath();
+
+            if (basename($filePath) === '.gitignore') {
+                continue;
+            }
+
             $action = $fileinfo->isDir() ? 'rmdir' : 'unlink';
-            $action($fileinfo->getRealPath());
+            $action($filePath);
         }
 
         return true;
