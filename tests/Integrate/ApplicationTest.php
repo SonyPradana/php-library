@@ -44,7 +44,7 @@ class ApplicationTest extends TestCase
         $app = new Application('/');
 
         $app->loadConfig(new ConfigRepository($app->defaultConfigs()));
-        /** @var Config */
+        /** @var System\Integrate\ConfigRepository */
         $config = $app->get('config');
 
         $this->assertEquals($this->defaultConfigs(), $config->toArray());
@@ -288,6 +288,8 @@ class ApplicationTest extends TestCase
             'APP_KEY'               => '',
             'ENVIRONMENT'           => 'dev',
             'APP_DEBUG'             => 'false',
+            'BCRYPT_ROUNDS'         => 12,
+            'CACHE_STORE'           => 'file',
 
             'COMMAND_PATH'          => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Commands' . DIRECTORY_SEPARATOR,
             'CONTROLLER_PATH'       => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR,

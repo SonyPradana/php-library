@@ -295,6 +295,8 @@ final class Application extends Container
             'APP_KEY'               => '',
             'ENVIRONMENT'           => 'dev',
             'APP_DEBUG'             => 'false',
+            'BCRYPT_ROUNDS'         => 12,
+            'CACHE_STORE'           => 'file',
 
             'COMMAND_PATH'          => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Commands' . DIRECTORY_SEPARATOR,
             'CONTROLLER_PATH'       => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR,
