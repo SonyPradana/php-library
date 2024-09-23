@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.36.1] - 2024-09-23
+### Fixed
+- Fixed deleting gitignore when run `Cache::clear()` using file storage (#391).
+- Fixed prevent rendering error in production (#389).
+
+### Changed
+- Change or added default configuration for `CACHE_STORAGE` use by `cache` facade and `BCRYPT_ROUNDS` use by `hash` facade (bcrypt hasher) (#392).
+
 ## [0.36.0] - 2024-09-18
 ### Added
 - Added `HandleExceptions::class` for handle php error (#368), prevent production report.
