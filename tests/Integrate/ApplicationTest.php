@@ -44,7 +44,7 @@ class ApplicationTest extends TestCase
         $app = new Application('/');
 
         $app->loadConfig(new ConfigRepository($app->defaultConfigs()));
-        /** @var System\Integrate\ConfigRepository */
+        /** @var ConfigRepository */
         $config = $app->get('config');
 
         $this->assertEquals($this->defaultConfigs(), $config->toArray());
