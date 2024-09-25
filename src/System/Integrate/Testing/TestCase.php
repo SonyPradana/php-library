@@ -14,8 +14,8 @@ use System\Support\Facades\Facade;
 
 class TestCase extends BaseTestCase
 {
-    protected Application $app;
-    protected Karnel $karnel;
+    protected ?Application $app = null;
+    protected ?Karnel $karnel   = null;
     protected string $class;
 
     protected function setUp(): void
