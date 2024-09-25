@@ -12,7 +12,7 @@ final class TestCaseTest extends TestCase
 {
     protected function setUp(): void
     {
-        require_once dirname(__DIR__) . '\Bootstrap\RegisterProvidersTest.php';
+        require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Bootstrap' . DIRECTORY_SEPARATOR . 'RegisterProvidersTest.php';
         $this->app = new Application(dirname(__DIR__) . '/assets/app2');
         $this->app->set(Karnel::class, fn () => new Karnel($this->app));
 
