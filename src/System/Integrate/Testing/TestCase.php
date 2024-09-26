@@ -14,15 +14,9 @@ use System\Support\Facades\Facade;
 
 class TestCase extends BaseTestCase
 {
-    protected ?Application $app = null;
-    protected ?Karnel $karnel   = null;
+    protected Application $app;
+    protected Karnel $kernel;
     protected string $class;
-
-    protected function setUp(): void
-    {
-        // create app
-        $this->karnel = $this->app->make(Karnel::class)->bootstrap();
-    }
 
     protected function tearDown(): void
     {
@@ -30,7 +24,7 @@ class TestCase extends BaseTestCase
         Facade::flushInstance();
         ServiceProvider::flushModule();
         unset($this->app);
-        unset($this->karnel);
+        unset($this->kernel);
     }
 
     /**
@@ -52,13 +46,41 @@ class TestCase extends BaseTestCase
     }
 
     /**
+     * @param array<string, string> $query
+     * @param array<string, string> $post
+     * @param array<string, string> $attributes
+     * @param array<string, string> $cookies
+     * @param array<string, string> $files
+     * @param array<string, string> $headers
+     */
+    protected function call(
+        string $url,
+        array $query = [],
+        array $post = [],
+        array $attributes = [],
+        array $cookies = [],
+        array $files = [],
+        array $headers = [],
+        string $method = 'GET',
+        string $remoteAddress = '::1',
+        ?string $rawBody = null,
+    ): TestResponse {
+        /** @var Karnel */
+        $kernel   = $this->app->make(Karnel::class);
+        $request  = new Request($url, $query, $post, $attributes, $cookies, $files, $headers, $method, $remoteAddress, $rawBody);
+        $response = $kernel->handle($request);
+
+        $kernel->terminate($request, $response);
+
+        return new TestResponse($response);
+    }
+
+    /**
      * @param array<string, string> $parameter
      */
     protected function get(string $url, array $parameter = []): TestResponse
     {
-        return new TestResponse(
-            $this->karnel->handle(new Request($url, $parameter, [], [], [], [], [], 'GET'))
-        );
+        return $this->call(url: $url, query: $parameter, method: 'GET');
     }
 
     /**
@@ -67,9 +89,7 @@ class TestCase extends BaseTestCase
      */
     protected function post(string $url, array $post, array $files =[]): TestResponse
     {
-        return new TestResponse(
-            $this->karnel->handle(new Request($url, [], $post, [], [], $files, [], 'POST'))
-        );
+        return $this->call(url: $url, post: $post, files: $files, method: 'POST');
     }
 
     /**
@@ -78,9 +98,7 @@ class TestCase extends BaseTestCase
      */
     protected function put(string $url, array $put, array $files = []): TestResponse
     {
-        return new TestResponse(
-            $this->karnel->handle(new Request($url, [], $put, [], [], $files, [], 'PUT'))
-        );
+        return $this->call(url: $url, attributes: $put, files: $files, method: 'PUT');
     }
 
     /**
@@ -88,8 +106,6 @@ class TestCase extends BaseTestCase
      */
     protected function delete(string $url, array $delete): TestResponse
     {
-        return new TestResponse(
-            $this->karnel->handle(new Request($url, [], $delete, [], [], [], [], 'DELETE'))
-        );
+        return $this->call(url: $url, post: $_POST, method: 'DELETE');
     }
 }
