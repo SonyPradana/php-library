@@ -6,7 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.36.1] - 2024-09-23
+## [0.36.3] - 2024-09-24
+### Fixed
+- Fixed lifecyle of `TestCase::class`, by adding method `call` to prevent null property (`kernel` or `application`) (#394).
+
+## [0.36.2] - 2024-09-23
 ### Fixed
 - Fixed `TestCase::class` allowed null property, fixed test assign null (kernel) (#393).
 

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 return [
-    'tag_version'       => '^0.36.2',
+    'tag_version'       => '^0.36.3',
     'split_repositorys' => [
         'sonypradana/cache'      => '/src/System/Cache/',
         'sonypradana/collection' => '/src/System/Collection/',
