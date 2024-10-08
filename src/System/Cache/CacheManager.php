@@ -8,7 +8,7 @@ use System\Cache\Storage\ArrayStorage;
 
 class CacheManager implements CacheInterface
 {
-    /** @var array<string, CacheInterface> */
+    /** @var array<string, CacheInterface|\Closure(): CacheInterface> */
     private $driver = [];
 
     private CacheInterface $default_driver;
@@ -25,17 +25,35 @@ class CacheManager implements CacheInterface
         return $this;
     }
 
-    public function setDriver(string $driver_name, CacheInterface $driver): self
+    /**
+     * @param CacheInterface|\Closure(): CacheInterface $driver
+     */
+    public function setDriver(string $driver_name, $driver): self
     {
         $this->driver[$driver_name] = $driver;
 
         return $this;
     }
 
-    public function driver(?string $driver = null): CacheInterface
+    private function resolve(string $driver_name): CacheInterface
     {
-        if (array_key_exists($driver, $this->driver)) {
-            return $this->driver[$driver];
+        $driver = $this->driver[$driver_name];
+
+        if (\is_callable($driver)) {
+            $driver = $driver();
+        }
+
+        if (null === $driver) {
+            throw new \Exception("Can use driver {$driver_name}.");
+        }
+
+        return $this->driver[$driver_name] = $driver;
+    }
+
+    public function driver(?string $driver_name = null): CacheInterface
+    {
+        if (isset($this->driver[$driver_name])) {
+            return $this->resolve($driver_name);
         }
 
         return $this->default_driver;
