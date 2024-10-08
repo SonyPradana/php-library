@@ -25,9 +25,9 @@ class CacheManagerTest extends TestCase
     {
         $cache = new CacheManager();
         $cache->setDriver('array2', fn (): CacheInterface => new ArrayStorage());
-        $this->assertInstanceOf(CacheInterface::class, $cache->driver('array'));
+        $this->assertInstanceOf(CacheInterface::class, $cache->driver('array2'));
 
-        $this->assertTrue($cache->set('key1', 'value1'));
-        $this->assertEquals('value1', $cache->get('key1'));
+        $this->assertTrue($cache->driver('array2')->set('key1', 'value1'));
+        $this->assertEquals('value1', $cache->driver('array2')->get('key1'));
     }
 }

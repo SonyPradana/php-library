@@ -47,12 +47,12 @@ class CacheManager implements CacheInterface
             throw new \Exception("Can use driver {$driver_name}.");
         }
 
-        return $driver;
+        return $this->driver[$driver_name] = $driver;
     }
 
     public function driver(?string $driver_name = null): CacheInterface
     {
-        if (array_key_exists($driver_name, $this->driver)) {
+        if (isset($this->driver[$driver_name])) {
             return $this->getDriver($driver_name);
         }
 
