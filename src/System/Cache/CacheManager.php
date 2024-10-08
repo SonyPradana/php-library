@@ -35,7 +35,7 @@ class CacheManager implements CacheInterface
         return $this;
     }
 
-    public function getDriver(string $driver_name): CacheInterface
+    private function resolve(string $driver_name): CacheInterface
     {
         $driver = $this->driver[$driver_name];
 
@@ -53,7 +53,7 @@ class CacheManager implements CacheInterface
     public function driver(?string $driver_name = null): CacheInterface
     {
         if (isset($this->driver[$driver_name])) {
-            return $this->getDriver($driver_name);
+            return $this->resolve($driver_name);
         }
 
         return $this->default_driver;
