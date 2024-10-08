@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.36.4] - 2024-10-08
+### Fixed
+- Fixed allowed `CacheManager::setDriver()` using closure (lazy load), register driver without initial driver (#395).
+
 ## [0.36.3] - 2024-09-24
 ### Fixed
 - Fixed lifecyle of `TestCase::class`, by adding method `call` to prevent null property (`kernel` or `application`) (#394).
