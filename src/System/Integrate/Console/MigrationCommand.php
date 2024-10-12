@@ -235,9 +235,9 @@ class MigrationCommand extends Command
         $width   = $this->getWidth(40, 60);
         $batch   = false;
         $migrate = $this->baseMigrate($batch);
-        $take    = $this->option('take', $batch);
+        $take    = (int) $this->option('take', $batch);
         $migrate
-            ->filter(static fn ($value): bool => $value['batch'] >= $batch - $take)
+            ->filter(static fn ($value): bool => $value['batch'] > $batch - $take)
             ->sort();
 
         $print->tap(info('Running migration'));
