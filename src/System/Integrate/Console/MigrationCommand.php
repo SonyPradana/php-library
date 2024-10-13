@@ -96,7 +96,7 @@ class MigrationCommand extends Command
                 'database:show'            => 'Show database table',
             ],
             'options'   => [
-                '--take'              => 'Number of migrations to be run.',
+                '--take'              => 'Limit of migrations to be run.',
                 '--batch'             => 'Batch migration excution.',
                 '--dry-run'           => 'Excute migration but olny get query output.',
                 '--force'             => 'Force runing migration/database query in production.',
@@ -105,7 +105,7 @@ class MigrationCommand extends Command
                 '--yes'               => 'Accept it without having it ask any questions',
             ],
             'relation'  => [
-                'migrate'                   => ['--take', '--seed', '--dry-run', '--force'],
+                'migrate'                   => ['--seed', '--dry-run', '--force'],
                 'migrate:fresh'             => ['--seed', '--dry-run', '--force'],
                 'migrate:reset'             => ['--dry-run', '--force'],
                 'migrate:refresh'           => ['--seed', '--dry-run', '--force'],
@@ -235,9 +235,8 @@ class MigrationCommand extends Command
         $width   = $this->getWidth(40, 60);
         $batch   = false;
         $migrate = $this->baseMigrate($batch);
-        $take    = $this->option('take', $batch);
         $migrate
-            ->filter(static fn ($value): bool => $value['batch'] >= $batch - $take)
+            ->filter(static fn ($value): bool => $value['batch'] == $batch)
             ->sort();
 
         $print->tap(info('Running migration'));
