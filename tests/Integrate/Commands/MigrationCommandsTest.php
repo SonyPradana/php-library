@@ -4,28 +4,31 @@ declare(strict_types=1);
 
 namespace System\Test\Integrate\Commands;
 
+use System\Database\MyPDO;
 use System\Database\MySchema\Table\Create;
 use System\Integrate\Application;
 use System\Integrate\Console\MigrationCommand;
-use System\Support\Facades\PDO as FacadesPDO;
+use System\Support\Facades\Facade;
 use System\Support\Facades\Schema;
+use System\Test\Database\BaseConnection;
 use System\Text\Str;
 
-final class MigrationCommandsTest extends \RealDatabaseConnectionTest
+final class MigrationCommandsTest extends BaseConnection
 {
     private Application $app;
 
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->createConnection();
+
         $this->app = new Application(__DIR__);
         $this->app->setMigrationPath('/database/migration/');
         $this->app->set('environment', 'dev');
-        new Schema($this->app);
-        new FacadesPDO($this->app);
-        $this->app->set(\System\Database\MyPDO::class, $this->pdo);
-        $this->app->set('MySchema', $this->schema);
-        $this->app->set('dsn.sql', $this->env);
+        $this->app->set(MyPDO::class, fn () => $this->pdo);
+        $this->app->set('MySchema', fn () => $this->schema);
+        $this->app->set('dsn.sql', fn () => $this->env);
+
+        Facade::setFacadeBase($this->app);
         Schema::table('migration', function (Create $column) {
             $column('migration')->varchar(100)->notNull();
             $column('batch')->int(4)->notNull();
@@ -36,7 +39,7 @@ final class MigrationCommandsTest extends \RealDatabaseConnectionTest
 
     protected function tearDown(): void
     {
-        parent::tearDown();
+        $this->dropConnection();
         Schema::drop()->table('migartion')->ifExists()->execute();
         MigrationCommand::flushVendorMigrationPaths();
         $this->app->flush();
@@ -158,7 +161,7 @@ final class MigrationCommandsTest extends \RealDatabaseConnectionTest
         $out  = ob_get_clean();
 
         $this->assertEquals(0, $exit);
-        $this->assertTrue(Str::contains($out, 'users'));
+        $this->assertTrue(Str::contains($out, 'migration'));
     }
 
     /**

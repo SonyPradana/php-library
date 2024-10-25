@@ -502,6 +502,7 @@ class MigrationCommand extends Command
         }
 
         foreach ($tables as $table) {
+            $table  = array_change_key_case($table);
             $name   = $table['table_name'];
             $time   = $table['create_time'];
             $size   = $table['size'];

@@ -1,6 +1,6 @@
 name: Database
 
-on: 
+on:
   push:
     paths:
       - ".github/workflows/database.yml"
