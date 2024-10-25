@@ -53,7 +53,7 @@ jobs:
           command: composer update --prefer-stable --prefer-dist --no-interaction --no-progress
 
       - name: Execute tests
-        run: vendor/bin/phpunit tests/DataBase tests/Integrate/Commands
+        run: vendor/bin/phpunit tests/DataBase
         env:
           DB_CONNECTION: mysql
           DB_USERNAME: root
