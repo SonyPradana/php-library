@@ -81,6 +81,7 @@ final class AlterTest extends \RealDatabaseConnectionTest
      * @test
      *
      * @group database
+     * @group not-for-mysql5.7
      */
     public function itCanExcuteQueryUsingRenameColumn()
     {
@@ -98,6 +99,7 @@ final class AlterTest extends \RealDatabaseConnectionTest
      * @test
      *
      * @group database
+     * @group not-for-mysql5.7
      */
     public function itCanExcuteQueryUsingRenamesColumn()
     {
@@ -116,6 +118,7 @@ final class AlterTest extends \RealDatabaseConnectionTest
      * @test
      *
      * @group database
+     * @group not-for-mysql5.7
      */
     public function itCanExcuteQueryUsingAlterColumn()
     {
