@@ -63,22 +63,11 @@ class Alter extends Query
     {
         $query = [];
 
-        // alter
-        $query = array_merge($query, $this->getModify());
+        // merge alter, add, drop, rename
+        $query = array_merge($query, $this->getModify(), $this->getColumns(), $this->getDrops(), $this->getRename());
+        $query = implode(', ', $query);
 
-        // add
-        $query = array_merge($query, $this->getColumns());
-
-        // drop
-        $drops = array_map(fn ($column) => "DROP COLUMN `{$column}`;", $this->drop_columns);
-        $query = array_merge($query, $drops);
-
-        // rename
-        $query = array_merge($query, $this->getRename());
-
-        $query = implode(' ', $query);
-
-        return "ALTER TABLE {$this->table_name} {$query}";
+        return "ALTER TABLE {$this->table_name} {$query};";
     }
 
     /** @return string[] */
@@ -87,7 +76,7 @@ class Alter extends Query
         $res = [];
 
         foreach ($this->alter_columns as $attribute) {
-            $res[] = "MODIFY COLUMN {$attribute->__toString()};";
+            $res[] = "MODIFY COLUMN {$attribute->__toString()}";
         }
 
         return $res;
@@ -99,7 +88,7 @@ class Alter extends Query
         $res = [];
 
         foreach ($this->rename_columns as $old => $new) {
-            $res[] = "; RENAME COLUMN `{$old}` TO `{$new}`;";
+            $res[] = "RENAME COLUMN `{$old}` TO `{$new}`";
         }
 
         return $res;
@@ -111,7 +100,19 @@ class Alter extends Query
         $res = [];
 
         foreach ($this->add_columns as $attribute) {
-            $res[] = "ADD {$attribute->__toString()};";
+            $res[] = "ADD {$attribute->__toString()}";
+        }
+
+        return $res;
+    }
+
+    /** @return string[] */
+    private function getDrops(): array
+    {
+        $res = [];
+
+        foreach ($this->drop_columns as $drop) {
+            $res[] = "DROP COLUMN `{$drop}`";
         }
 
         return $res;
