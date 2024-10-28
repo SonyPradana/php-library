@@ -9,7 +9,7 @@
     ],
     "require": {
         "php": "^8.0",
-        "sonypradana/http": "^0.36.5"
+        "sonypradana/http": "^0.36.6"
     },
     "autoload": {
         "psr-4": {

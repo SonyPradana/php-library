@@ -9,9 +9,9 @@
     ],
     "require": {
         "php": "^8.0",
-        "sonypradana/collection": "^0.36.5",
-        "sonypradana/support": "^0.36.5",
-        "sonypradana/text": "^0.36.5"
+        "sonypradana/collection": "^0.36.6",
+        "sonypradana/support": "^0.36.6",
+        "sonypradana/text": "^0.36.6"
     },
     "autoload": {
         "psr-4": {

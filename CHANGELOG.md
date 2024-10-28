@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.36.6] - 2024-10-28
+### Fixed
+- Fixed dilimater of sql builder alter raname (#398).
+
 ## [0.36.5] - 2024-10-13
 ### Fixed
 - Fixed migration always run latest `batch` instead using `take` option (#397).
