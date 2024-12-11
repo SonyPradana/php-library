@@ -2,7 +2,7 @@
 
 return [
     'BASEURL'            => '/',
-    'time_zone'          => 'Asia/Jakarta',
+    'time_zone'          => 'UTC',
     'APP_KEY'            => '',
     'ENVIRONMENT'        => 'prod',
     'COMMAND_PATH'       => '\\app\\Commands\\',
