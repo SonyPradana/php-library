@@ -291,7 +291,7 @@ final class Application extends Container
         return [
             // app config
             'BASEURL'               => '/',
-            'time_zone'             => 'Asia/Jakarta',
+            'time_zone'             => 'UTC',
             'APP_KEY'               => '',
             'ENVIRONMENT'           => 'dev',
             'APP_DEBUG'             => 'false',

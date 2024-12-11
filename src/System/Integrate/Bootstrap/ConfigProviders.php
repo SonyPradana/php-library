@@ -28,5 +28,7 @@ class ConfigProviders
         }
 
         $app->loadConfig(new ConfigRepository($config));
+
+        date_default_timezone_set($config['time_zone'] ?? 'UTC');
     }
 }
