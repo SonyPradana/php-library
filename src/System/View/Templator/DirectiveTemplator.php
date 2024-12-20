@@ -33,7 +33,9 @@ class DirectiveTemplator extends AbstractTemplatorParse
         'raw'      => NameTemplator::class,
         'section'  => SectionTemplator::class,
         'set'      => SetTemplator::class,
+        'slot'     => SlotTemplator::class,
         'use'      => UseTemplator::class,
+        'yield'    => SectionTemplator::class,
     ];
 
     public static function register(string $name, \Closure $callable): void

@@ -1,0 +1,1 @@
+<html><head></head><body>{% yield('slot2.template') %}</body></html>

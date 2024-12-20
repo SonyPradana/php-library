@@ -13,11 +13,21 @@ final class SlotTest extends TestCase
     /**
      * @test
      */
-    public function itCanRenderSectionScope()
+    public function itCanRenderSlotScope()
     {
         $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
-        $out       = $templator->templates('{% extend(\'section.template\') %} {% section(\'title\') %}<strong>taylor</strong>{% endsection %}');
-        $this->assertEquals('<p><strong>taylor</strong></p>', trim($out));
+        $out       = $templator->templates('{% slot(\'slot.template\') %}<main>core component</main>{% endslot %}');
+        $this->assertEquals('<html><head></head><body><main>core component</main></body></html>', trim($out));
+    }
+
+    /**
+     * @test
+     */
+    public function itCanRenderSlotScopeMultyple()
+    {
+        $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
+        $out       = $templator->templates('{% slot(\'slotcard.template\') %}oke{% endslot %} {% slot(\'slotcard.template\') %}oke 2 {% endslot %}');
+        $this->assertEquals("<div>oke</div>\n <div>oke 2 </div>", trim($out));
     }
 
     /**
@@ -27,45 +37,22 @@ final class SlotTest extends TestCase
     {
         $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
         try {
-            $templator->templates('{% extend(\'section.html\') %} {% section(\'title\') %}<strong>taylor</strong>{% endsection %}');
+            $templator->templates('{% slot(\'notexits.template\') %}<main>core component</main>{% endslot %}');
         } catch (\Throwable $th) {
-            $this->assertEquals('Template file not found: section.html', $th->getMessage());
+            $this->assertEquals('View path not exists `Template file not found: notexits.template`', $th->getMessage());
         }
     }
 
     /**
      * @test
      */
-    public function itCanRenderSectionInline()
+    public function itThrowWhenExtendNotFoundyield()
     {
         $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
-        $out       = $templator->templates('{% extend(\'section.template\') %} {% section(\'title\', \'taylor\') %}');
-        $this->assertEquals('<p>taylor</p>', trim($out));
-    }
-
-    /**
-     * @test
-     */
-    public function itCanRenderSectionInlineEscape()
-    {
-        $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
-        $out       = $templator->templates('{% extend(\'section.template\') %} {% section(\'title\', \'<script>alert(1)</script>\') %}');
-        $this->assertEquals('<p>&lt;script&gt;alert(1)&lt;/script&gt;</p>', trim($out));
-    }
-
-    /**
-     * @test
-     */
-    public function itCanRenderMultySection()
-    {
-        $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
-        $out       = $templator->templates('
-            {% extend(\'section.template\') %}
-
-            {% sections %}
-            title : <strong>taylor</strong>
-            {% endsections %}
-        ');
-        $this->assertEquals('<p><strong>taylor</strong></p>', trim($out));
+        try {
+            $templator->templates('{% slot(\'slotyield.template\') %}<main>core component</main>{% endslot %}');
+        } catch (\Throwable $th) {
+            $this->assertEquals('yield section not found: slot2.template', $th->getMessage());
+        }
     }
 }
