@@ -8,7 +8,7 @@ use System\View\AbstractTemplatorParse;
 use System\View\Exceptions\ViewFileNotFound;
 use System\View\InteractWithCacheTrait;
 
-class SlotTemplator extends AbstractTemplatorParse
+class ComponentTemplator extends AbstractTemplatorParse
 {
     use InteractWithCacheTrait;
 
@@ -24,7 +24,7 @@ class SlotTemplator extends AbstractTemplatorParse
         self::$cache = [];
 
         return preg_replace_callback(
-            '/{%\s*slot\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}(.*?){%\s*endslot\s*%}/s',
+            '/{%\s*component\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}(.*?){%\s*endcomponent\s*%}/s',
             function ($matches) use ($template) {
                 if (!array_key_exists(1, $matches)) {
                     return $template;

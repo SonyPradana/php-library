@@ -6,6 +6,7 @@ namespace System\View;
 
 use System\View\Templator\BreakTemplator;
 use System\View\Templator\CommentTemplator;
+use System\View\Templator\ComponentTemplator;
 use System\View\Templator\ContinueTemplator;
 use System\View\Templator\DirectiveTemplator;
 use System\View\Templator\EachTemplator;
@@ -16,7 +17,6 @@ use System\View\Templator\NameTemplator;
 use System\View\Templator\PHPTemplator;
 use System\View\Templator\SectionTemplator;
 use System\View\Templator\SetTemplator;
-use System\View\Templator\SlotTemplator;
 use System\View\Templator\UseTemplator;
 
 class Templator
@@ -136,7 +136,7 @@ class Templator
             IncludeTemplator::class,
             PHPTemplator::class,
             DirectiveTemplator::class,
-            SlotTemplator::class,
+            ComponentTemplator::class,
             NameTemplator::class,
             IfTemplator::class,
             EachTemplator::class,

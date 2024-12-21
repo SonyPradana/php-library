@@ -1,1 +1,0 @@
-<div>{% yield('slotcard.template') %}</div>
