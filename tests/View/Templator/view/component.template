@@ -1,0 +1,1 @@
+<html><head></head><body>{% yield('component.template') %}</body></html>

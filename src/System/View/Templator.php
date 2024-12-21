@@ -6,6 +6,7 @@ namespace System\View;
 
 use System\View\Templator\BreakTemplator;
 use System\View\Templator\CommentTemplator;
+use System\View\Templator\ComponentTemplator;
 use System\View\Templator\ContinueTemplator;
 use System\View\Templator\DirectiveTemplator;
 use System\View\Templator\EachTemplator;
@@ -135,6 +136,7 @@ class Templator
             IncludeTemplator::class,
             PHPTemplator::class,
             DirectiveTemplator::class,
+            ComponentTemplator::class,
             NameTemplator::class,
             IfTemplator::class,
             EachTemplator::class,

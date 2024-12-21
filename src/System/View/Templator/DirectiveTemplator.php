@@ -22,6 +22,7 @@ class DirectiveTemplator extends AbstractTemplatorParse
      */
     public static array $excludeList = [
         'break'    => BreakTemplator::class,
+        'component'=> ComponentTemplator::class,
         'continue' => ContinueTemplator::class,
         'else'     => IfTemplator::class,
         'extend'   => SectionTemplator::class,
@@ -34,6 +35,7 @@ class DirectiveTemplator extends AbstractTemplatorParse
         'section'  => SectionTemplator::class,
         'set'      => SetTemplator::class,
         'use'      => UseTemplator::class,
+        'yield'    => SectionTemplator::class,
     ];
 
     public static function register(string $name, \Closure $callable): void
