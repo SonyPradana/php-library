@@ -65,4 +65,32 @@ final class ComponentTest extends TestCase
             $this->assertEquals('yield section not found: component2.template', $th->getMessage());
         }
     }
+
+    /**
+     * @test
+     */
+    public function itCanRenderComponentOppAprocess()
+    {
+        $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
+        $templator->setComponentNamespace('System\\Test\\View\\Templator\\');
+        $out = $templator->templates('{% component(\'TestClassComponent\', \'bg-red\', \'md\') %}inner text{% endcomponent %}');
+        $this->assertEquals('<p class="bg-red md">inner text</p>', trim($out));
+    }
+}
+
+class TestClassComponent
+{
+    private string $bg;
+    private string $size;
+
+    public function __construct(string $bg, string $size)
+    {
+        $this->bg   = $bg;
+        $this->size = $size;
+    }
+
+    public function render(string $inner): string
+    {
+        return "<p class=\"{$this->bg} {$this->size}\">{$inner}</p>";
+    }
 }
