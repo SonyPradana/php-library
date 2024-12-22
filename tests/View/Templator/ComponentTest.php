@@ -23,11 +23,21 @@ final class ComponentTest extends TestCase
     /**
      * @test
      */
+    public function itCanRenderNestedComponentScope()
+    {
+        $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
+        $out       = $templator->templates('{% component(\'componentnested.template\') %}card with nest{% endcomponent %}');
+        $this->assertEquals("<html><head></head><body><div class=\"card\">card with nest</div>\n</body></html>", trim($out));
+    }
+
+    /**
+     * @test
+     */
     public function itCanRenderComponentScopeMultyple()
     {
         $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
         $out       = $templator->templates('{% component(\'componentcard.template\') %}oke{% endcomponent %} {% component(\'componentcard.template\') %}oke 2 {% endcomponent %}');
-        $this->assertEquals("<div>oke</div>\n <div>oke 2 </div>", trim($out));
+        $this->assertEquals("<div class=\"card\">oke</div>\n <div class=\"card\">oke 2 </div>", trim($out));
     }
 
     /**

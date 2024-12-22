@@ -1,1 +1,1 @@
-<div>{% yield('componentcard.template') %}</div>
+<div class="card">{% yield('componentcard.template') %}</div>

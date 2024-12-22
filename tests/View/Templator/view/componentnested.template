@@ -1,0 +1,1 @@
+<html><head></head><body>{% component('componentcard.template') %}{% yield('componentnested.template') %}{% endcomponent %}</body></html>

@@ -23,6 +23,11 @@ class ComponentTemplator extends AbstractTemplatorParse
     {
         self::$cache = [];
 
+        return $this->parseComponent($template);
+    }
+
+    private function parseComponent(string $template): string
+    {
         return preg_replace_callback(
             '/{%\s*component\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}(.*?){%\s*endcomponent\s*%}/s',
             function ($matches) use ($template) {
@@ -39,6 +44,7 @@ class ComponentTemplator extends AbstractTemplatorParse
 
                 $templatePath = $this->finder->find($matches[1]);
                 $layout       = $this->getContents($templatePath);
+                $content      = $this->parseComponent($layout);
 
                 return preg_replace_callback(
                     "/{%\s*yield\(\'([^\']+)\'\)\s*%}/",
@@ -49,7 +55,7 @@ class ComponentTemplator extends AbstractTemplatorParse
 
                         throw new \Exception('yield section not found: ' . $yield_matches[1]);
                     },
-                    $layout
+                    $content
                 );
             },
             $template
