@@ -69,11 +69,21 @@ final class ComponentTest extends TestCase
     /**
      * @test
      */
+    public function itCanRenderComponentUsingNamedParameter()
+    {
+        $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
+        $out       = $templator->templates('{% component(\'componentnamed.template\', bg:\'bg-red\', size:"md") %}inner text{% endcomponent %}');
+        $this->assertEquals('<p class="bg-red md">inner text</p>', trim($out));
+    }
+
+    /**
+     * @test
+     */
     public function itCanRenderComponentOppAprocess()
     {
         $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
         $templator->setComponentNamespace('System\\Test\\View\\Templator\\');
-        $out = $templator->templates('{% component(\'TestClassComponent\', \'bg-red\', \'md\') %}inner text{% endcomponent %}');
+        $out = $templator->templates('{% component(\'TestClassComponent\', bg:\'bg-red\', size:"md") %}inner text{% endcomponent %}');
         $this->assertEquals('<p class="bg-red md">inner text</p>', trim($out));
     }
 }

@@ -47,10 +47,9 @@ class ComponentTemplator extends AbstractTemplatorParse
                     return $template;
                 }
 
-                $params        = array_map('trim', explode(',', $matches[1]));
-                $params        = array_map(fn ($param) => trim($param, "'"), $params);
-                $componentName = array_shift($params);
-                $innerContent  = $matches[2];
+                $rawParams                = trim($matches[1]);
+                [$componentName, $params] = $this->extractComponentAndParams($rawParams);
+                $innerContent             = $matches[2];
 
                 if (class_exists($class = $this->namespace . $componentName)) {
                     $component = new $class(...$params);
@@ -68,9 +67,13 @@ class ComponentTemplator extends AbstractTemplatorParse
 
                 return preg_replace_callback(
                     "/{%\s*yield\(\'([^\']+)\'\)\s*%}/",
-                    function ($yield_matches) use ($componentName, $innerContent) {
+                    function ($yield_matches) use ($componentName, $innerContent, $params) {
                         if ($componentName === $yield_matches[1]) {
                             return $innerContent;
+                        }
+
+                        if (array_key_exists($yield_matches[1], $params)) {
+                            return $params[$yield_matches[1]];
                         }
 
                         throw new \Exception('yield section not found: ' . $yield_matches[1]);
@@ -80,5 +83,32 @@ class ComponentTemplator extends AbstractTemplatorParse
             },
             $template
         );
+    }
+
+    /**
+     * Extract component name and parameters from raw params.
+     *
+     * @return array{0: string, 1: array<string, string>}
+     */
+    private function extractComponentAndParams(string $rawParams): array
+    {
+        $parts         = explode(',', $rawParams, 2);
+        $componentName = trim($parts[0], "'\"");
+
+        $paramsString = $parts[1] ?? '';
+        $params       = [];
+        foreach (explode(',', $paramsString) as $param) {
+            $param = trim($param);
+            if (str_contains($param, ':')) {
+                [$key, $value] = explode(':', $param, 2);
+                $key           = trim($key);
+                $value         = trim($value, "'\" ");
+                $params[$key]  = $value;
+            } elseif (!empty($param)) {
+                $params[] = trim($param, "'\" ");
+            }
+        }
+
+        return [$componentName, $params];
     }
 }
