@@ -6,10 +6,12 @@ namespace System\Database\MyQuery;
 
 use System\Database\MyPDO;
 use System\Database\MyQuery\Traits\ConditionTrait;
+use System\Database\MyQuery\Traits\SubQueryTrait;
 
 class Delete extends Execute
 {
     use ConditionTrait;
+    use SubQueryTrait;
 
     public function __construct(string $table_name, MyPDO $PDO)
     {

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace System\Database\MyQuery;
 
 use System\Database\MyQuery\Traits\ConditionTrait;
+use System\Database\MyQuery\Traits\SubQueryTrait;
 
 class Where
 {
     use ConditionTrait;
+    use SubQueryTrait;
 
     /** @var string Table Name */
     private $_table;

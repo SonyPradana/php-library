@@ -8,10 +8,12 @@ use System\Database\MyPDO;
 use System\Database\MyQuery;
 use System\Database\MyQuery\Join\AbstractJoin;
 use System\Database\MyQuery\Traits\ConditionTrait;
+use System\Database\MyQuery\Traits\SubQueryTrait;
 
 final class Select extends Fetch
 {
     use ConditionTrait;
+    use SubQueryTrait;
 
     /**
      * @param string   $table_name   Table name

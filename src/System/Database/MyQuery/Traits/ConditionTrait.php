@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace System\Database\MyQuery\Traits;
 
 use System\Database\MyQuery\Bind;
-use System\Database\MyQuery\Select;
 
 /**
  * Trait to provide conditon under class extend with Query::class.
@@ -112,42 +111,6 @@ trait ConditionTrait
             "(`$this->_table`.`$column_name` IN ($bindString))",
             $binder
         );
-
-        return $this;
-    }
-
-    /**
-     * Insert 'where exists' condition (query bulider).
-     *
-     * @param Select $select Select class
-     *
-     * @return self
-     */
-    public function whereExist(Select $select)
-    {
-        $binds          = (fn () => $this->{'_binds'})->call($select);
-        $this->_where[] = 'EXISTS (' . $select->__toString() . ')';
-        foreach ($binds as $binds) {
-            $this->_binds[] = $binds;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Insert 'where not exists' condition (query bulider).
-     *
-     * @param Select $select Select class
-     *
-     * @return self
-     */
-    public function whereNotExist(Select $select)
-    {
-        $binds          = (fn () => $this->{'_binds'})->call($select);
-        $this->_where[] = 'NOT EXISTS (' . $select->__toString() . ')';
-        foreach ($binds as $binds) {
-            $this->_binds[] = $binds;
-        }
 
         return $this;
     }
