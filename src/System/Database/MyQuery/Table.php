@@ -18,11 +18,14 @@ class Table
     /**
      * Table name.
      *
-     * @var string
+     * @var string|InnerQuery
      */
     protected $table_name;
 
-    public function __construct(string $table_name, MyPDO $PDO)
+    /**
+     * @param string|InnerQuery $table_name Table name
+     */
+    public function __construct($table_name, MyPDO $PDO)
     {
         $this->table_name = $table_name;
         $this->PDO        = $PDO;

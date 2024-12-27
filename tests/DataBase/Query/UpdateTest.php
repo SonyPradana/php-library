@@ -38,12 +38,12 @@ final class UpdateTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'UPDATE `test` SET `a` = :bind_a WHERE ( (test.column_1 = :column_1) )',
+            'UPDATE `test` SET `a` = :bind_a WHERE ( (`test`.column_1 = :column_1) )',
             $update->__toString()
         );
 
         $this->assertEquals(
-            "UPDATE `test` SET `a` = 'b' WHERE ( (test.column_1 = 100) )",
+            "UPDATE `test` SET `a` = 'b' WHERE ( (`test`.column_1 = 100) )",
             $update->queryBind()
         );
     }
@@ -58,12 +58,12 @@ final class UpdateTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'UPDATE `test` SET `a` = :bind_a WHERE ( (test.column_1 = :column_1) )',
+            'UPDATE `test` SET `a` = :bind_a WHERE ( (`test`.column_1 = :column_1) )',
             $update->__toString()
         );
 
         $this->assertEquals(
-            "UPDATE `test` SET `a` = 'b' WHERE ( (test.column_1 = 100) )",
+            "UPDATE `test` SET `a` = 'b' WHERE ( (`test`.column_1 = 100) )",
             $update->queryBind()
         );
     }
@@ -98,12 +98,12 @@ final class UpdateTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'UPDATE `test` SET `a` = :bind_a WHERE ( (test.column_1 LIKE :column_1) )',
+            'UPDATE `test` SET `a` = :bind_a WHERE ( (`test`.column_1 LIKE :column_1) )',
             $update->__toString()
         );
 
         $this->assertEquals(
-            "UPDATE `test` SET `a` = 'b' WHERE ( (test.column_1 LIKE 'test') )",
+            "UPDATE `test` SET `a` = 'b' WHERE ( (`test`.column_1 LIKE 'test') )",
             $update->queryBind()
         );
     }
@@ -141,12 +141,12 @@ final class UpdateTest extends \QueryStringTest
             ->strictMode(false);
 
         $this->assertEquals(
-            'UPDATE `test` SET `a` = :bind_a WHERE ( (test.column_1 = :column_1) OR (test.column_2 = :column_2) )',
+            'UPDATE `test` SET `a` = :bind_a WHERE ( (`test`.column_1 = :column_1) OR (`test`.column_2 = :column_2) )',
             $update->__toString()
         );
 
         $this->assertEquals(
-            "UPDATE `test` SET `a` = 'b' WHERE ( (test.column_1 = 123) OR (test.column_2 = 'abc') )",
+            "UPDATE `test` SET `a` = 'b' WHERE ( (`test`.column_1 = 123) OR (`test`.column_2 = 'abc') )",
             $update->queryBind()
         );
     }

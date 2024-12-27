@@ -41,11 +41,11 @@ class MyQuery
     /**
      * Create builder and set table name.
      *
-     * @param string $table_name Table name
+     * @param string|InnerQuery $table_name Table name
      *
      * @return Table
      */
-    public function table(string $table_name)
+    public function table($table_name)
     {
         return new Table($table_name, $this->PDO);
     }
@@ -53,12 +53,12 @@ class MyQuery
     /**
      * Create Builder using static function.
      *
-     * @param string $table_name Table name
-     * @param MyPDO  $PDO        The PDO connection, null give global instance
+     * @param string|InnerQuery $table_name Table name
+     * @param MyPDO             $PDO        The PDO connection, null give global instance
      *
      * @return Table
      */
-    public static function from(string $table_name, MyPDO $PDO)
+    public static function from($table_name, MyPDO $PDO)
     {
         $conn = new MyQuery($PDO);
 

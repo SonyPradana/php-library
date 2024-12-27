@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Test\Database\Query;
 
 use System\Database\MyQuery;
+use System\Database\MyQuery\InnerQuery;
 use System\Database\MyQuery\Select;
 
 final class SelectTest extends \QueryStringTest
@@ -37,12 +38,12 @@ final class SelectTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'SELECT * FROM `test` WHERE ( (test.column_1 = :column_1) )',
+            'SELECT * FROM `test` WHERE ( (`test`.column_1 = :column_1) )',
             $select->__toString()
         );
 
         $this->assertEquals(
-            'SELECT * FROM `test` WHERE ( (test.column_1 = 100) )',
+            'SELECT * FROM `test` WHERE ( (`test`.column_1 = 100) )',
             $select->queryBind()
         );
     }
@@ -56,12 +57,12 @@ final class SelectTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'SELECT * FROM `test` WHERE ( (test.column_1 = :column_1) )',
+            'SELECT * FROM `test` WHERE ( (`test`.column_1 = :column_1) )',
             $select->__toString()
         );
 
         $this->assertEquals(
-            'SELECT * FROM `test` WHERE ( (test.column_1 = 100) )',
+            'SELECT * FROM `test` WHERE ( (`test`.column_1 = 100) )',
             $select->queryBind()
         );
     }
@@ -94,12 +95,12 @@ final class SelectTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'SELECT * FROM `test` WHERE ( (test.column_1 LIKE :column_1) )',
+            'SELECT * FROM `test` WHERE ( (`test`.column_1 LIKE :column_1) )',
             $select->__toString()
         );
 
         $this->assertEquals(
-            "SELECT * FROM `test` WHERE ( (test.column_1 LIKE 'test') )",
+            "SELECT * FROM `test` WHERE ( (`test`.column_1 LIKE 'test') )",
             $select->queryBind()
         );
     }
@@ -135,13 +136,13 @@ final class SelectTest extends \QueryStringTest
             ->equal('column_3', true);
 
         $this->assertEquals(
-            'SELECT `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (test.column_1 = :column_1) AND (test.column_2 = :column_2) AND (test.column_3 = :column_3) )',
+            'SELECT `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (`test`.column_1 = :column_1) AND (`test`.column_2 = :column_2) AND (`test`.column_3 = :column_3) )',
             $select->__toString(),
             'select statment must have 3 selected query'
         );
 
         $this->assertEquals(
-            "SELECT `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (test.column_1 = 123) AND (test.column_2 = 'abc') AND (test.column_3 = true) )",
+            "SELECT `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (`test`.column_1 = 123) AND (`test`.column_2 = 'abc') AND (`test`.column_3 = true) )",
             $select->queryBind(),
             'select statment must have 3 selected query'
         );
@@ -157,13 +158,13 @@ final class SelectTest extends \QueryStringTest
             ->strictMode(false);
 
         $this->assertEquals(
-            'SELECT `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (test.column_1 = :column_1) OR (test.column_2 = :column_2) )',
+            'SELECT `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (`test`.column_1 = :column_1) OR (`test`.column_2 = :column_2) )',
             $select,
             'select statment must have using or statment'
         );
 
         $this->assertEquals(
-            "SELECT `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (test.column_1 = 123) OR (test.column_2 = 'abc') )",
+            "SELECT `column_1`, `column_2`, `column_3` FROM `test` WHERE ( (`test`.column_1 = 123) OR (`test`.column_2 = 'abc') )",
             $select->queryBind(),
             'select statment must have using or statment'
         );
@@ -184,13 +185,13 @@ final class SelectTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'SELECT * FROM `base_1` WHERE EXISTS ( SELECT * FROM `base_2` WHERE ( (base_2.test = :test) ) AND base_1.id = base_2.id ) ORDER BY `base_1`.`id` ASC LIMIT 1, 10',
+            'SELECT * FROM `base_1` WHERE EXISTS ( SELECT * FROM `base_2` WHERE ( (`base_2`.test = :test) ) AND base_1.id = base_2.id ) ORDER BY `base_1`.`id` ASC LIMIT 1, 10',
             $select->__toString(),
             'where exist query'
         );
 
         $this->assertEquals(
-            "SELECT * FROM `base_1` WHERE EXISTS ( SELECT * FROM `base_2` WHERE ( (base_2.test = 'success') ) AND base_1.id = base_2.id ) ORDER BY `base_1`.`id` ASC LIMIT 1, 10",
+            "SELECT * FROM `base_1` WHERE EXISTS ( SELECT * FROM `base_2` WHERE ( (`base_2`.test = 'success') ) AND base_1.id = base_2.id ) ORDER BY `base_1`.`id` ASC LIMIT 1, 10",
             $select->queryBind(),
             'where exist query'
         );
@@ -211,20 +212,20 @@ final class SelectTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'SELECT * FROM `base_1` WHERE NOT EXISTS ( SELECT * FROM `base_2` WHERE ( (base_2.test = :test) ) AND base_1.id = base_2.id ) ORDER BY `base_1`.`id` ASC LIMIT 1, 10',
+            'SELECT * FROM `base_1` WHERE NOT EXISTS ( SELECT * FROM `base_2` WHERE ( (`base_2`.test = :test) ) AND base_1.id = base_2.id ) ORDER BY `base_1`.`id` ASC LIMIT 1, 10',
             $select->__toString(),
             'where exist query'
         );
 
         $this->assertEquals(
-            "SELECT * FROM `base_1` WHERE NOT EXISTS ( SELECT * FROM `base_2` WHERE ( (base_2.test = 'success') ) AND base_1.id = base_2.id ) ORDER BY `base_1`.`id` ASC LIMIT 1, 10",
+            "SELECT * FROM `base_1` WHERE NOT EXISTS ( SELECT * FROM `base_2` WHERE ( (`base_2`.test = 'success') ) AND base_1.id = base_2.id ) ORDER BY `base_1`.`id` ASC LIMIT 1, 10",
             $select->queryBind(),
             'where exist query'
         );
     }
 
     /** @test */
-    public function itCanGenerateSelectWithSubQuery(): void
+    public function itCanGenerateSelectWithWhereQuery(): void
     {
         $select = MyQuery::from('base_1', $this->PDO)
             ->select()
@@ -239,13 +240,41 @@ final class SelectTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'SELECT * FROM `base_1` WHERE `user` = ( SELECT * FROM `base_2` WHERE ( (base_2.test = :test) ) AND base_1.id = base_2.id ) ORDER BY `base_1`.`id` ASC LIMIT 1, 10',
+            'SELECT * FROM `base_1` WHERE `user` = ( SELECT * FROM `base_2` WHERE ( (`base_2`.test = :test) ) AND base_1.id = base_2.id ) ORDER BY `base_1`.`id` ASC LIMIT 1, 10',
             $select->__toString(),
             'where exist query'
         );
 
         $this->assertEquals(
-            "SELECT * FROM `base_1` WHERE `user` = ( SELECT * FROM `base_2` WHERE ( (base_2.test = 'success') ) AND base_1.id = base_2.id ) ORDER BY `base_1`.`id` ASC LIMIT 1, 10",
+            "SELECT * FROM `base_1` WHERE `user` = ( SELECT * FROM `base_2` WHERE ( (`base_2`.test = 'success') ) AND base_1.id = base_2.id ) ORDER BY `base_1`.`id` ASC LIMIT 1, 10",
+            $select->queryBind(),
+            'where exist query'
+        );
+    }
+
+    /** @test */
+    public function itCanGenerateSelectWithSubQuery(): void
+    {
+        $select = MyQuery::from(
+            new InnerQuery(
+                (new Select('base_2', ['id'], $this->PDO))
+                    ->in('test', ['success']), 'user'
+            ),
+            $this->PDO
+        )
+            ->select(['user.id as id'])
+            ->limit(1, 10)
+            ->order('id', MyQuery::ORDER_ASC)
+        ;
+
+        $this->assertEquals(
+            'SELECT user.id as id FROM (SELECT id FROM `base_2` WHERE (`base_2`.`test` IN (:in_0))) AS `user` ORDER BY `user`.`id` ASC LIMIT 1, 10',
+            $select->__toString(),
+            'where exist query'
+        );
+
+        $this->assertEquals(
+            "SELECT user.id as id FROM (SELECT id FROM `base_2` WHERE (`base_2`.`test` IN ('success'))) AS `user` ORDER BY `user`.`id` ASC LIMIT 1, 10",
             $select->queryBind(),
             'where exist query'
         );
