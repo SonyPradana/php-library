@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Database;
 
+use System\Database\MyQuery\InnerQuery;
 use System\Database\MyQuery\Table;
 
 /**

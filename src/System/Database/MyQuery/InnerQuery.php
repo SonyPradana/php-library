@@ -20,6 +20,7 @@ final class InnerQuery implements \Stringable
         return "`{$this->table}`";
     }
 
+    /** @return Bind[]  */
     public function getBind(): array
     {
         return $this->select->getBinds();
