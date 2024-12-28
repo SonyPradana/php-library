@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace System\Test\Database\Query;
 
 use System\Database\MyQuery;
+use System\Database\MyQuery\InnerQuery;
 use System\Database\MyQuery\Join\CrossJoin;
 use System\Database\MyQuery\Join\FullJoin;
 use System\Database\MyQuery\Join\InnerJoin;
 use System\Database\MyQuery\Join\LeftJoin;
 use System\Database\MyQuery\Join\RightJoin;
+use System\Database\MyQuery\Select;
 
 final class JoinTest extends \QueryStringTest
 {
@@ -144,6 +146,33 @@ final class JoinTest extends \QueryStringTest
 
         $this->assertEquals(
             'SELECT * FROM `base_table` INNER JOIN join_table_1 ON `base_table`.base_id = join_table_1.join_id WHERE ( (`base_table`.a = 1) )',
+            $join->queryBind()
+        );
+    }
+
+    /** @test */
+    public function itCanGenerateInnerJoinWithSubQuery()
+    {
+        $join = MyQuery::from('base_table', $this->PDO)
+            ->select()
+            ->join(InnerJoin::ref(
+                new InnerQuery(
+                    (new Select('join_table', ['join_id'], $this->PDO))->in('join_id', [1, 2]),
+                    'join_table'
+                ),
+                'base_id',
+                'join_id'
+            ))
+            ->order('base_id')
+        ;
+
+        $this->assertEquals(
+            'SELECT * FROM `base_table` INNER JOIN (SELECT join_id FROM `join_table` WHERE (`join_table`.`join_id` IN (:in_0, :in_1))) AS `join_table` ON `base_table`.base_id = `join_table`.join_id ORDER BY `base_table`.`base_id` ASC',
+            $join->__toString()
+        );
+
+        $this->assertEquals(
+            'SELECT * FROM `base_table` INNER JOIN (SELECT join_id FROM `join_table` WHERE (`join_table`.`join_id` IN (1, 2))) AS `join_table` ON `base_table`.base_id = `join_table`.join_id ORDER BY `base_table`.`base_id` ASC',
             $join->queryBind()
         );
     }

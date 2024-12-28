@@ -75,6 +75,11 @@ final class Select extends Fetch
         $ref_table->table($this->_sub_query->getAlias());
 
         $this->_join[] = $ref_table->stringJoin();
+        $binds         = (fn () => $this->{'sub_query'})->call($ref_table);
+
+        if (null !== $binds) {
+            $this->_binds = array_merge($this->_binds, $binds->getBind());
+        }
 
         return $this;
     }
