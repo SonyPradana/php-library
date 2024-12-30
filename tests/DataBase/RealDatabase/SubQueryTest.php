@@ -207,8 +207,6 @@ final class SubQueryTest extends BaseConnection
      */
     public function itCanSelectSubQueryUsingFrom()
     {
-        $this->markTestSkipped('this test requere select with group by statment');
-
         $this->createUserSchema();
         $this->createOrderSchema();
         $this->createProductSchema();
