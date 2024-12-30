@@ -54,9 +54,9 @@ abstract class Query
     /**
      * Grouping.
      *
-     * @var string|null
+     * @var string[]
      */
-    protected $_group_by;
+    protected $_group_by = [];
 
     /**
      * Multy filter with strict mode.

@@ -178,6 +178,17 @@ final class Select extends Fetch
     }
 
     /**
+     * Adds one or more columns to the
+     * GROUP BY clause of the SQL query.
+     */
+    public function groupBy(string ...$groups): self
+    {
+        $this->_group_by = $groups;
+
+        return $this;
+    }
+
+    /**
      * Build SQL query syntac for bind in next step.
      */
     protected function builder(): string
@@ -188,6 +199,7 @@ final class Select extends Fetch
 
         $build['join']       = $this->joinBuilder();
         $build['where']      = $this->getWhere();
+        $build['group_by']   = $this->getGroupBy();
         $build['sort_order'] = $this->_sort_order;
         $build['limit']      = $this->getLimit();
 
@@ -212,6 +224,17 @@ final class Select extends Fetch
         }
 
         return "LIMIT $this->_limit_start, $this->_limit_end";
+    }
+
+    private function getGroupBy(): string
+    {
+        if ([] === $this->_group_by) {
+            return '';
+        }
+
+        $group_by = implode(', ', $this->_group_by);
+
+        return "GROUP BY {$group_by}";
     }
 
     public function sortOrderRef(int $limit_start, int $limit_end, int $offset, string $sort_ordder): void
