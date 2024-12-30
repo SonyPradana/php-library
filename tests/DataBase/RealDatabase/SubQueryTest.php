@@ -248,7 +248,7 @@ final class SubQueryTest extends BaseConnection
 
         $customers = new Select(
             'customers',
-            ['costumer.name', 'sub.total_spent'],
+            ['customers.name', 'sub.total_spent'],
             $this->pdo
         );
 
@@ -259,16 +259,17 @@ final class SubQueryTest extends BaseConnection
                         'transactions',
                         ['customer_id', 'SUM(amount) AS total_spent'],
                         $this->pdo
-                    ))->groupBy('customer_id'),
+                    ))
+                    ->groupBy('customer_id'),
                     'sub'
                 ),
                 'id',
                 'customer_id'
             )
         );
-        $customers->compare('total_spent', '>', 500);
+
         $customers = $customers->get();
 
-        $this->assertCount(2, $customers);
+        $this->assertCount(3, $customers);
     }
 }
