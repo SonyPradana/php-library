@@ -10,6 +10,6 @@ class InnerJoin extends AbstractJoin
     {
         $on = $this->splitJoin();
 
-        return "INNER JOIN $this->_tableName ON $on";
+        return "INNER JOIN {$this->getAlias()} ON {$on}";
     }
 }

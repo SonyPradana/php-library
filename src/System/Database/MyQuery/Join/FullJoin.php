@@ -10,6 +10,6 @@ class FullJoin extends AbstractJoin
     {
         $on = $this->splitJoin();
 
-        return "FULL OUTER JOIN $this->_tableName ON $on";
+        return "FULL OUTER JOIN {$this->getAlias()} ON {$on}";
     }
 }

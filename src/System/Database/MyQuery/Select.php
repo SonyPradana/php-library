@@ -16,18 +16,23 @@ final class Select extends Fetch
     use SubQueryTrait;
 
     /**
-     * @param string   $table_name   Table name
-     * @param string[] $columns_name Selected cloumn
-     * @param MyPDO    $PDO          MyPDO class
-     * @param string[] $options      Add costume option (eg: query)
+     * @param string|InnerQuery $table_name   Table name
+     * @param string[]          $columns_name Selected cloumn
+     * @param MyPDO             $PDO          MyPDO class
+     * @param string[]          $options      Add costume option (eg: query)
      *
      * @return void
      */
-    public function __construct(string $table_name, array $columns_name, MyPDO $PDO, ?array $options = null)
+    public function __construct($table_name, array $columns_name, MyPDO $PDO, ?array $options = null)
     {
-        $this->_table  = $table_name;
-        $this->_column = $columns_name;
-        $this->PDO     = $PDO;
+        $this->_sub_query = $table_name instanceof InnerQuery ? $table_name : new InnerQuery(table: $table_name);
+        $this->_column    = $columns_name;
+        $this->PDO        = $PDO;
+
+        // inherit bind from sub query
+        if ($table_name instanceof InnerQuery) {
+            $this->_binds = $table_name->getBind();
+        }
 
         // defaul query
         if (count($this->_column) > 1) {
@@ -35,7 +40,7 @@ final class Select extends Fetch
         }
 
         $column       = implode(', ', $columns_name);
-        $this->_query = $options['query'] ?? "SELECT $column FROM `$this->_table`";
+        $this->_query = $options['query'] ?? "SELECT {$column} FROM `{ $this->_sub_query}`";
     }
 
     public function __toString()
@@ -67,9 +72,14 @@ final class Select extends Fetch
     public function join(AbstractJoin $ref_table): self
     {
         // overide master table
-        $ref_table->table($this->_table);
+        $ref_table->table($this->_sub_query->getAlias());
 
         $this->_join[] = $ref_table->stringJoin();
+        $binds         = (fn () => $this->{'sub_query'})->call($ref_table);
+
+        if (null !== $binds) {
+            $this->_binds = array_merge($this->_binds, $binds->getBind());
+        }
 
         return $this;
     }
@@ -161,8 +171,8 @@ final class Select extends Fetch
     public function order(string $column_name, int $order_using = MyQuery::ORDER_ASC, ?string $belong_to = null)
     {
         $order = 0 === $order_using ? 'ASC' : 'DESC';
-        $belong_to ??= $this->_table;
-        $this->_sort_order = "ORDER BY `$belong_to`.`$column_name` $order";
+        $belong_to ??= null === $this->_sub_query ? "`{$this->_table}`" : $this->_sub_query->getAlias();
+        $this->_sort_order = "ORDER BY $belong_to.`$column_name` $order";
 
         return $this;
     }
@@ -183,7 +193,7 @@ final class Select extends Fetch
 
         $condition = implode(' ', array_filter($build, fn ($item) => $item !== ''));
 
-        return $this->_query = "SELECT $column FROM `$this->_table` $condition";
+        return $this->_query = "SELECT {$column} FROM {$this->_sub_query} {$condition}";
     }
 
     /**

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace System\Database\MyQuery\Join;
 
+use System\Database\MyQuery\InnerQuery;
+
 abstract class AbstractJoin
 {
     /**
@@ -31,6 +33,12 @@ abstract class AbstractJoin
      */
     protected $_stringJoin    = '';
 
+    protected ?InnerQuery $sub_query = null;
+
+    final public function __construct()
+    {
+    }
+
     /**
      * @return self
      */
@@ -49,16 +57,21 @@ abstract class AbstractJoin
     /**
      * Instance of class.
      *
-     * @param string      $ref_table Name of the table want to join
-     * @param string      $id        Main id of the table
-     * @param string|null $ref_id    Id of the table want to join, null mean same with main id
-     *
-     * @return AbstractJoin
+     * @param string|InnerQuery $ref_table Name of the table want to join or sub query
+     * @param string            $id        Main id of the table
+     * @param string|null       $ref_id    Id of the table want to join, null means same as main id
      */
-    public static function ref(string $ref_table, string $id, ?string $ref_id = null)
+    public static function ref($ref_table, string $id, ?string $ref_id = null): AbstractJoin
     {
-        /* @phpstan-ignore-next-line */
-        return (new static())
+        $instance = new static();
+
+        if ($ref_table instanceof InnerQuery) {
+            return $instance
+                ->clausa($ref_table)
+                ->compare($id, $ref_id);
+        }
+
+        return $instance
             ->tableRef($ref_table)
             ->compare($id, $ref_id);
     }
@@ -75,6 +88,14 @@ abstract class AbstractJoin
     public function table(string $main_table)
     {
         $this->_mainTable = $main_table;
+
+        return $this;
+    }
+
+    public function clausa(InnerQuery $select): self
+    {
+        $this->sub_query  = $select;
+        $this->_tableName = $select->getAlias();
 
         return $this;
     }
@@ -166,5 +187,10 @@ abstract class AbstractJoin
         }
 
         return implode(' AND ', $on);
+    }
+
+    protected function getAlias(): string
+    {
+        return null === $this->sub_query ? $this->_tableName : (string) $this->sub_query;
     }
 }

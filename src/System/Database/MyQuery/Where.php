@@ -15,6 +15,9 @@ class Where
     /** @var string Table Name */
     private $_table;
 
+    /** This property use for helper phpstan (auto skip) */
+    private ?InnerQuery $_sub_query = null;
+
     /**
      * Binder array(['key', 'val']).
      *

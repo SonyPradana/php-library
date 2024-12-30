@@ -10,6 +10,6 @@ class LeftJoin extends AbstractJoin
     {
         $on = $this->splitJoin();
 
-        return "LEFT JOIN $this->_tableName ON $on";
+        return "LEFT JOIN {$this->getAlias()} ON {$on}";
     }
 }

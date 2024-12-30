@@ -10,6 +10,6 @@ class RightJoin extends AbstractJoin
     {
         $on = $this->splitJoin();
 
-        return "RIGHT JOIN $this->_tableName ON $on";
+        return "RIGHT JOIN {$this->getAlias()} ON {$on}";
     }
 }
