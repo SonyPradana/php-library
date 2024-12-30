@@ -22,11 +22,9 @@ use System\Time\Traits\DateTimeFormatTrait;
  * @property string    $timeZone
  * @property int|float $age
  */
-class Now
+class Now extends \DateTime
 {
     use DateTimeFormatTrait;
-
-    private \DateTime $date;
 
     /** @var int|false */
     private $timestamp;
@@ -62,7 +60,7 @@ class Now
         if (null !== $time_zone) {
             $time_zone = new \DateTimeZone($time_zone);
         }
-        $this->date = new \DateTime($date_format, $time_zone);
+        parent::__construct($date_format, $time_zone);
 
         $this->refresh();
     }
@@ -70,8 +68,8 @@ class Now
     public function __toString()
     {
         return implode('T', [
-            $this->date->format('Y-m-d'),
-            $this->date->format('H:i:s'),
+            $this->format('Y-m-d'),
+            $this->format('H:i:s'),
         ]);
     }
 
@@ -113,39 +111,30 @@ class Now
      */
     private function refresh(): void
     {
-        $this->timestamp = $this->date->getTimestamp();
-        $this->year      = (int) $this->date->format('Y');
-        $this->month     = (int) $this->date->format('n');
-        $this->day       = (int) $this->date->format('d');
-        $this->hour      = (int) $this->date->format('H');
-        $this->minute    = (int) $this->date->format('i');
-        $this->second    = (int) $this->date->format('s');
+        $this->timestamp = $this->getTimestamp();
+        $this->year      = (int) $this->format('Y');
+        $this->month     = (int) $this->format('n');
+        $this->day       = (int) $this->format('d');
+        $this->hour      = (int) $this->format('H');
+        $this->minute    = (int) $this->format('i');
+        $this->second    = (int) $this->format('s');
 
-        $this->monthName = $this->date->format('F');
-        $this->dayName   = $this->date->format('l');
-        $this->timeZone  = $this->date->format('e');
-        $this->shortDay  = $this->date->format('D');
+        $this->monthName = $this->format('F');
+        $this->dayName   = $this->format('l');
+        $this->timeZone  = $this->format('e');
+        $this->shortDay  = $this->format('D');
 
-        $age       = time() - $this->date->getTimestamp();
-        $this->age = abs(floor($age / (365 * 60 * 60 * 24)));
+        $now       = new \DateTime('now', new \DateTimeZone($this->timeZone));
+        $interval  = $now->diff($this);
+        $this->age = $interval->y;
     }
 
     private function current(string $format, int $timestamp): string
     {
-        $date = $this->date;
-
+        $date = clone $this;
         return $date
             ->setTimestamp($timestamp)
-            ->format($format)
-        ;
-    }
-
-    /**
-     * Get formated date time.
-     */
-    public function format(string $format): string
-    {
-        return $this->date->format($format);
+            ->format($format);
     }
 
     /**
@@ -155,13 +144,11 @@ class Now
      */
     public function year(int $year)
     {
-        $this->date
-        ->setDate(
+        $this->setDate(
             $year,
             $this->month,
             $this->day
-        )
-        ->setTime(
+        )->setTime(
             $this->hour,
             $this->minute,
             $this->second
@@ -178,13 +165,11 @@ class Now
      */
     public function month(int $month)
     {
-        $this->date
-        ->setDate(
+        $this->setDate(
             $this->year,
             $month,
             $this->day
-        )
-        ->setTime(
+        )->setTime(
             $this->hour,
             $this->minute,
             $this->second
@@ -201,13 +186,11 @@ class Now
      */
     public function day(int $day)
     {
-        $this->date
-        ->setDate(
+        $this->setDate(
             $this->year,
             $this->month,
             $day
-        )
-        ->setTime(
+        )->setTime(
             $this->hour,
             $this->minute,
             $this->second
@@ -224,13 +207,11 @@ class Now
      */
     public function hour(int $hour)
     {
-        $this->date
-        ->setDate(
+        $this->setDate(
             $this->year,
             $this->month,
             $this->day
-        )
-        ->setTime(
+        )->setTime(
             $hour,
             $this->minute,
             $this->second
@@ -247,13 +228,11 @@ class Now
      */
     public function minute(int $minute)
     {
-        $this->date
-        ->setDate(
+        $this->setDate(
             $this->year,
             $this->month,
             $this->day
-        )
-        ->setTime(
+        )->setTime(
             $this->hour,
             $minute,
             $this->second
@@ -270,13 +249,11 @@ class Now
      */
     public function second(int $second)
     {
-        $this->date
-        ->setDate(
+        $this->setDate(
             $this->year,
             $this->month,
             $this->day
-        )
-        ->setTime(
+        )->setTime(
             $this->hour,
             $this->minute,
             $second
@@ -290,99 +267,99 @@ class Now
 
     public function isJan(): bool
     {
-        return $this->date->format('M') === 'Jan';
+        return $this->format('M') === 'Jan';
     }
 
     public function isFeb(): bool
     {
-        return $this->date->format('M') === 'Feb';
+        return $this->format('M') === 'Feb';
     }
 
     public function isMar(): bool
     {
-        return $this->date->format('M') === 'Mar';
+        return $this->format('M') === 'Mar';
     }
 
     public function isApr(): bool
     {
-        return $this->date->format('M') === 'Apr';
+        return $this->format('M') === 'Apr';
     }
 
     public function isMay(): bool
     {
-        return $this->date->format('M') === 'May';
+        return $this->format('M') === 'May';
     }
 
     public function isJun(): bool
     {
-        return $this->date->format('M') === 'Jun';
+        return $this->format('M') === 'Jun';
     }
 
     public function isJul(): bool
     {
-        return $this->date->format('M') === 'Jul';
+        return $this->format('M') === 'Jul';
     }
 
     public function isAug(): bool
     {
-        return $this->date->format('M') === 'Aug';
+        return $this->format('M') === 'Aug';
     }
 
     public function isSep(): bool
     {
-        return $this->date->format('M') === 'Sep';
+        return $this->format('M') === 'Sep';
     }
 
     public function isOct(): bool
     {
-        return $this->date->format('M') === 'Oct';
+        return $this->format('M') === 'Oct';
     }
 
     public function isNov(): bool
     {
-        return $this->date->format('M') === 'Nov';
+        return $this->format('M') === 'Nov';
     }
 
     //  day
 
     public function isDec(): bool
     {
-        return $this->date->format('M') === 'Dec';
+        return $this->format('M') === 'Dec';
     }
 
     public function isMonday(): bool
     {
-        return $this->date->format('D') === 'Mon';
+        return $this->format('D') === 'Mon';
     }
 
     public function isTuesday(): bool
     {
-        return $this->date->format('D') === 'Tue';
+        return $this->format('D') === 'Tue';
     }
 
     public function isWednesday(): bool
     {
-        return $this->date->format('D') === 'Wed';
+        return $this->format('D') === 'Wed';
     }
 
     public function isThursday(): bool
     {
-        return $this->date->format('D') == 'Thu';
+        return $this->format('D') == 'Thu';
     }
 
     public function isFriday(): bool
     {
-        return $this->date->format('D') == 'Fri';
+        return $this->format('D') == 'Fri';
     }
 
     public function isSaturday(): bool
     {
-        return $this->date->format('D') == 'Sat';
+        return $this->format('D') == 'Sat';
     }
 
     public function isSunday(): bool
     {
-        return $this->date->format('D') == 'Sun';
+        return $this->format('D') == 'Sun';
     }
 
     // next time
