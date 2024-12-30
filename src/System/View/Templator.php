@@ -6,6 +6,7 @@ namespace System\View;
 
 use System\View\Templator\BreakTemplator;
 use System\View\Templator\CommentTemplator;
+use System\View\Templator\ComponentTemplator;
 use System\View\Templator\ContinueTemplator;
 use System\View\Templator\DirectiveTemplator;
 use System\View\Templator\EachTemplator;
@@ -22,8 +23,9 @@ class Templator
 {
     protected TemplatorFinder $finder;
     private string $cacheDir;
-    public string $suffix = '';
-    public int $max_depth = 5;
+    public string $suffix               = '';
+    public int $max_depth               = 5;
+    private string $component_namespace = '';
 
     /**
      * Create new intance.
@@ -43,6 +45,16 @@ class Templator
     public function setFinder(TemplatorFinder $finder): self
     {
         $this->finder = $finder;
+
+        return $this;
+    }
+
+    /**
+     * Set Component Namespace.
+     */
+    public function setComponentNamespace(string $namespace): self
+    {
+        $this->component_namespace = $namespace;
 
         return $this;
     }
@@ -135,6 +147,7 @@ class Templator
             IncludeTemplator::class,
             PHPTemplator::class,
             DirectiveTemplator::class,
+            ComponentTemplator::class,
             NameTemplator::class,
             IfTemplator::class,
             EachTemplator::class,
@@ -147,6 +160,10 @@ class Templator
             $templator = new $templator($this->finder, $this->cacheDir);
             if ($templator instanceof IncludeTemplator) {
                 $templator->maksDept($this->max_depth);
+            }
+
+            if ($templator instanceof ComponentTemplator) {
+                $templator->setNamespace($this->component_namespace);
             }
 
             return $templator->parse($template);

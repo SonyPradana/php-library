@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use System\View\Templator;
 use System\View\TemplatorFinder;
 
-final class SlotTest extends TestCase
+final class SectionTest extends TestCase
 {
     /**
      * @test
