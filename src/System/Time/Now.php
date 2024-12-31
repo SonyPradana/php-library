@@ -132,6 +132,7 @@ class Now extends \DateTime
     private function current(string $format, int $timestamp): string
     {
         $date = clone $this;
+
         return $date
             ->setTimestamp($timestamp)
             ->format($format);
