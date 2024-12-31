@@ -75,10 +75,10 @@ trait ConditionTrait
      */
     public function between(string $column_name, $value_1, $value_2)
     {
-        $table_name = null === $this->_sub_query ? "`{$this->_table}`" : $this->_sub_query->getAlias();
+        $table_name = null === $this->_sub_query ? "{$this->_table}" : $this->_sub_query->getAlias();
 
         $this->where(
-            "({$table_name}.`{$column_name}` BETWEEN :b_start AND :b_end)",
+            "({$table_name}.{$column_name} BETWEEN :b_start AND :b_end)",
             []
         );
 
@@ -105,10 +105,10 @@ trait ConditionTrait
             $binder[] = [":in_$key", $bind];
         }
         $bindString = implode(', ', $binds);
-        $table_name = null === $this->_sub_query ? "`{$this->_table}`" : $this->_sub_query->getAlias();
+        $table_name = null === $this->_sub_query ? "{$this->_table}" : $this->_sub_query->getAlias();
 
         $this->where(
-            "({$table_name}.`{$column_name}` IN ({$bindString}))",
+            "({$table_name}.{$column_name} IN ({$bindString}))",
             $binder
         );
 

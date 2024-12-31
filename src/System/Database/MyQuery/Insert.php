@@ -77,7 +77,7 @@ class Insert extends Execute
         $stringBinds  = implode(', ', $strings_binds);
         $stringColumn = implode(', ', $columns);
 
-        $this->_query = "INSERT INTO `$this->_table` ($stringColumn) VALUES $stringBinds";
+        $this->_query = "INSERT INTO $this->_table ($stringColumn) VALUES $stringBinds";
 
         return $this->_query;
     }

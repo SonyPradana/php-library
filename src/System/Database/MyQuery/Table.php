@@ -82,13 +82,13 @@ class Table
     {
         $this->PDO->query(
             'SELECT
-                `COLUMN_NAME`,
-                `COLUMN_TYPE`,
-                `CHARACTER_SET_NAME`,
-                `COLLATION_NAME`,
-                `IS_NULLABLE`,
-                `ORDINAL_POSITION`,
-                `COLUMN_KEY`
+                COLUMN_NAME,
+                COLUMN_TYPE,
+                CHARACTER_SET_NAME,
+                COLLATION_NAME,
+                IS_NULLABLE,
+                ORDINAL_POSITION,
+                COLUMN_KEY
             FROM
                 INFORMATION_SCHEMA.COLUMNS
             WHERE

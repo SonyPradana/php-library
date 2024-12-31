@@ -126,7 +126,7 @@ class Create extends Query
             return [''];
         }
 
-        $primaryKeys = array_map(fn ($primaryKey) => "`{$primaryKey}`", $this->primaryKeys);
+        $primaryKeys = array_map(fn ($primaryKey) => "{$primaryKey}", $this->primaryKeys);
         $primaryKeys = implode(', ', $primaryKeys);
 
         return ["PRIMARY KEY ({$primaryKeys})"];
@@ -139,7 +139,7 @@ class Create extends Query
             return [''];
         }
 
-        $uniques = array_map(fn ($uniques) => "`{$uniques}`", $this->uniques);
+        $uniques = array_map(fn ($uniques) => "{$uniques}", $this->uniques);
         $uniques = implode(', ', $uniques);
 
         return ["UNIQUE ({$uniques})"];

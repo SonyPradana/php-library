@@ -24,7 +24,7 @@ class DataType
 
     private function query(): string
     {
-        return '`' . $this->name . '` ' . $this->datatype;
+        return $this->name . ' ' . $this->datatype;
     }
 
     // number
@@ -141,7 +141,7 @@ class DataType
 
     public function after(string $column): void
     {
-        $this->datatype = "AFTER `{$column}`";
+        $this->datatype = "AFTER {$column}";
     }
 
     public function first(): void

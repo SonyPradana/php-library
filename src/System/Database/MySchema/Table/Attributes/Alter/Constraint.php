@@ -10,7 +10,7 @@ class Constraint extends AttributesConstraint
 {
     public function after(string $column): self
     {
-        $this->order = "AFTER `{$column}`";
+        $this->order = "AFTER {$column}";
 
         return $this;
     }

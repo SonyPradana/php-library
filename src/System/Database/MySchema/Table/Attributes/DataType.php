@@ -24,7 +24,7 @@ class DataType
 
     private function query(): string
     {
-        return '`' . $this->name . '` ' . $this->datatype;
+        return $this->name . ' ' . $this->datatype;
     }
 
     // number
