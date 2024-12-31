@@ -16,7 +16,7 @@ final class AlterTest extends \QueryStringTest
         $schema('update_add')->int(17);
 
         $this->assertEquals(
-            'ALTER TABLE testing_db.test MODIFY COLUMN `create_add` int(17), MODIFY COLUMN `update_add` int(17);',
+            'ALTER TABLE testing_db.test MODIFY COLUMN create_add int(17), MODIFY COLUMN update_add int(17);',
             $schema->__toString()
         );
     }
@@ -29,7 +29,7 @@ final class AlterTest extends \QueryStringTest
         $schema->add('LastName')->varchar(255);
 
         $this->assertEquals(
-            'ALTER TABLE testing_db.test ADD `PersonID` int, ADD `LastName` varchar(255);',
+            'ALTER TABLE testing_db.test ADD PersonID int, ADD LastName varchar(255);',
             $schema->__toString()
         );
     }
@@ -42,7 +42,7 @@ final class AlterTest extends \QueryStringTest
         $schema->drop('LastName');
 
         $this->assertEquals(
-            'ALTER TABLE testing_db.test DROP COLUMN `PersonID`, DROP COLUMN `LastName`;',
+            'ALTER TABLE testing_db.test DROP COLUMN PersonID, DROP COLUMN LastName;',
             $schema->__toString()
         );
     }
@@ -54,7 +54,7 @@ final class AlterTest extends \QueryStringTest
         $schema->rename('PersonID', 'person_id');
 
         $this->assertEquals(
-            'ALTER TABLE testing_db.test RENAME COLUMN `PersonID` TO `person_id`;',
+            'ALTER TABLE testing_db.test RENAME COLUMN PersonID TO person_id;',
             $schema->__toString()
         );
     }
@@ -67,7 +67,7 @@ final class AlterTest extends \QueryStringTest
         $schema->rename('PersonID', 'person_id');
 
         $this->assertEquals(
-            'ALTER TABLE testing_db.test RENAME COLUMN `PersonID` TO `person_id`;',
+            'ALTER TABLE testing_db.test RENAME COLUMN PersonID TO person_id;',
             $schema->__toString(),
             'multy rename column will use last rename'
         );
@@ -82,7 +82,7 @@ final class AlterTest extends \QueryStringTest
         $schema->column('create_add')->int(17);
 
         $this->assertEquals(
-            'ALTER TABLE testing_db.test MODIFY COLUMN `create_add` int(17), ADD `PersonID` int(4), DROP COLUMN `LastName`;',
+            'ALTER TABLE testing_db.test MODIFY COLUMN create_add int(17), ADD PersonID int(4), DROP COLUMN LastName;',
             $schema->__toString()
         );
     }
@@ -95,7 +95,7 @@ final class AlterTest extends \QueryStringTest
         $schema->column('create_add')->after('id');
 
         $this->assertEquals(
-            'ALTER TABLE testing_db.test MODIFY COLUMN `uuid` int(17) FIRST, MODIFY COLUMN `create_add` AFTER `id`;',
+            'ALTER TABLE testing_db.test MODIFY COLUMN uuid int(17) FIRST, MODIFY COLUMN create_add AFTER id;',
             $schema->__toString()
         );
     }
@@ -108,7 +108,7 @@ final class AlterTest extends \QueryStringTest
         $schema->add('create_add')->int(17)->after('id');
 
         $this->assertEquals(
-            'ALTER TABLE testing_db.test ADD `uuid` int(17) FIRST, ADD `create_add` int(17) AFTER `id`;',
+            'ALTER TABLE testing_db.test ADD uuid int(17) FIRST, ADD create_add int(17) AFTER id;',
             $schema->__toString()
         );
     }

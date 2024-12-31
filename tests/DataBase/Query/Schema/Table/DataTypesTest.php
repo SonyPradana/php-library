@@ -16,7 +16,7 @@ final class DataTypesTest extends \QueryStringTest
         $schema('size')->enum(['x-small', 'small', 'medium', 'large', 'x-large']);
 
         $this->assertEquals(
-            "CREATE TABLE testing_db.test ( `name` varchar(40), `size` ENUM ('x-small', 'small', 'medium', 'large', 'x-large') )",
+            "CREATE TABLE testing_db.test ( name varchar(40), size ENUM ('x-small', 'small', 'medium', 'large', 'x-large') )",
             $schema->__toString()
         );
     }

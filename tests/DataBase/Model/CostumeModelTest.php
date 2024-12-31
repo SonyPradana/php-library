@@ -54,12 +54,12 @@ final class CostumeModelTest extends BaseConnection
     {
         return $this
            ->pdo
-           ->query('CREATE TABLE `profiles` (
-                `user`      varchar(32)  NOT NULL,
-                `name`      varchar(100) NOT NULL,
-                `gender`    varchar(10) NOT NULL,
-                `age`       int(3) NOT NULL,
-                PRIMARY KEY (`user`)
+           ->query('CREATE TABLE profiles (
+                user      varchar(32)  NOT NULL,
+                name      varchar(100) NOT NULL,
+                gender    varchar(10) NOT NULL,
+                age       int(3) NOT NULL,
+                PRIMARY KEY (user)
             )')
            ->execute();
     }

@@ -55,11 +55,11 @@ final class BaseMultyModelTest extends BaseConnection
     {
         return $this
            ->pdo
-           ->query('CREATE TABLE `profiles` (
-                `user`      varchar(32)  NOT NULL,
-                `name`      varchar(100) NOT NULL,
-                `gender`    varchar(10) NOT NULL,
-                PRIMARY KEY (`user`)
+           ->query('CREATE TABLE profiles (
+                user      varchar(32)  NOT NULL,
+                name      varchar(100) NOT NULL,
+                gender    varchar(10) NOT NULL,
+                PRIMARY KEY (user)
             )')
            ->execute();
     }
@@ -75,12 +75,12 @@ final class BaseMultyModelTest extends BaseConnection
     {
         return $this
            ->pdo
-           ->query('CREATE TABLE `orders` (
-                `id`   varchar(3)  NOT NULL,
-                `user` varchar(32)  NOT NULL,
-                `name` varchar(100) NOT NULL,
-                `type` varchar(30) NOT NULL,
-                PRIMARY KEY (`id`)
+           ->query('CREATE TABLE orders (
+                id   varchar(3)  NOT NULL,
+                user varchar(32)  NOT NULL,
+                name varchar(100) NOT NULL,
+                type varchar(30) NOT NULL,
+                PRIMARY KEY (id)
             )')
            ->execute();
     }

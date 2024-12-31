@@ -15,7 +15,7 @@ final class RawTest extends \RealDatabaseConnectionTest
      */
     public function itCanGenerateCreateDatabase()
     {
-        $schema = new Raw('CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), PRIMARY KEY (`PersonID`) )', $this->pdo_schema);
+        $schema = new Raw('CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), PRIMARY KEY (PersonID) )', $this->pdo_schema);
 
         $this->assertTrue($schema->execute());
     }
