@@ -18,13 +18,13 @@ final class LimitTest extends \QueryStringTest
             ->order('column_1', MyQuery::ORDER_ASC);
 
         $this->assertEquals(
-            'SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN :b_start AND :b_end) ORDER BY `test`.`column_1` ASC LIMIT 1, 10',
+            'SELECT * FROM test WHERE (test.column_1 BETWEEN :b_start AND :b_end) ORDER BY test.column_1 ASC LIMIT 1, 10',
             $select->__toString(),
             'select with where statment is between'
         );
 
         $this->assertEquals(
-            'SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN 1 AND 100) ORDER BY `test`.`column_1` ASC LIMIT 1, 10',
+            'SELECT * FROM test WHERE (test.column_1 BETWEEN 1 AND 100) ORDER BY test.column_1 ASC LIMIT 1, 10',
             $select->queryBind(),
             'select with where statment is between'
         );
@@ -40,13 +40,13 @@ final class LimitTest extends \QueryStringTest
             ->order('column_1', MyQuery::ORDER_ASC);
 
         $this->assertEquals(
-            'SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN :b_start AND :b_end) ORDER BY `test`.`column_1` ASC LIMIT 2, 0',
+            'SELECT * FROM test WHERE (test.column_1 BETWEEN :b_start AND :b_end) ORDER BY test.column_1 ASC LIMIT 2, 0',
             $select->__toString(),
             'select with where statment is between'
         );
 
         $this->assertEquals(
-            'SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN 1 AND 100) ORDER BY `test`.`column_1` ASC LIMIT 2, 0',
+            'SELECT * FROM test WHERE (test.column_1 BETWEEN 1 AND 100) ORDER BY test.column_1 ASC LIMIT 2, 0',
             $select->queryBind(),
             'select with where statment is between'
         );
@@ -62,12 +62,12 @@ final class LimitTest extends \QueryStringTest
             ->order('column_1', MyQuery::ORDER_ASC);
 
         $this->assertEquals(
-            'SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN :b_start AND :b_end) ORDER BY `test`.`column_1` ASC LIMIT 2',
+            'SELECT * FROM test WHERE (test.column_1 BETWEEN :b_start AND :b_end) ORDER BY test.column_1 ASC LIMIT 2',
             $select->__toString()
         );
 
         $this->assertEquals(
-            'SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN 1 AND 100) ORDER BY `test`.`column_1` ASC LIMIT 2',
+            'SELECT * FROM test WHERE (test.column_1 BETWEEN 1 AND 100) ORDER BY test.column_1 ASC LIMIT 2',
             $select->queryBind()
         );
     }
@@ -83,12 +83,12 @@ final class LimitTest extends \QueryStringTest
             ->order('column_1', MyQuery::ORDER_ASC);
 
         $this->assertEquals(
-            'SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN :b_start AND :b_end) ORDER BY `test`.`column_1` ASC LIMIT 1 OFFSET 10',
+            'SELECT * FROM test WHERE (test.column_1 BETWEEN :b_start AND :b_end) ORDER BY test.column_1 ASC LIMIT 1 OFFSET 10',
             $select->__toString()
         );
 
         $this->assertEquals(
-            'SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN 1 AND 100) ORDER BY `test`.`column_1` ASC LIMIT 1 OFFSET 10',
+            'SELECT * FROM test WHERE (test.column_1 BETWEEN 1 AND 100) ORDER BY test.column_1 ASC LIMIT 1 OFFSET 10',
             $select->queryBind()
         );
     }
@@ -103,11 +103,11 @@ final class LimitTest extends \QueryStringTest
             ->order('column_1', MyQuery::ORDER_ASC);
 
         $this->assertEquals(
-            'SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN :b_start AND :b_end) ORDER BY `test`.`column_1` ASC',
+            'SELECT * FROM test WHERE (test.column_1 BETWEEN :b_start AND :b_end) ORDER BY test.column_1 ASC',
             $select->__toString()
         );
         $this->assertEquals(
-            'SELECT * FROM `test` WHERE (`test`.`column_1` BETWEEN :b_start AND :b_end) ORDER BY `test`.`column_1` ASC',
+            'SELECT * FROM test WHERE (test.column_1 BETWEEN :b_start AND :b_end) ORDER BY test.column_1 ASC',
             $select->__toString()
         );
     }

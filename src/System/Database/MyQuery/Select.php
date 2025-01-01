@@ -34,13 +34,8 @@ final class Select extends Fetch
             $this->_binds = $table_name->getBind();
         }
 
-        // defaul query
-        if (count($this->_column) > 1) {
-            $this->_column = array_map(fn ($e) => "`$e`", $this->_column);
-        }
-
         $column       = implode(', ', $columns_name);
-        $this->_query = $options['query'] ?? "SELECT {$column} FROM `{ $this->_sub_query}`";
+        $this->_query = $options['query'] ?? "SELECT {$column} FROM { $this->_sub_query}";
     }
 
     public function __toString()
@@ -171,8 +166,8 @@ final class Select extends Fetch
     public function order(string $column_name, int $order_using = MyQuery::ORDER_ASC, ?string $belong_to = null)
     {
         $order = 0 === $order_using ? 'ASC' : 'DESC';
-        $belong_to ??= null === $this->_sub_query ? "`{$this->_table}`" : $this->_sub_query->getAlias();
-        $this->_sort_order = "ORDER BY $belong_to.`$column_name` $order";
+        $belong_to ??= null === $this->_sub_query ? "{$this->_table}" : $this->_sub_query->getAlias();
+        $this->_sort_order = "ORDER BY $belong_to.$column_name $order";
 
         return $this;
     }

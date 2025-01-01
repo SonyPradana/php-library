@@ -88,7 +88,7 @@ class Alter extends Query
         $res = [];
 
         foreach ($this->rename_columns as $old => $new) {
-            $res[] = "RENAME COLUMN `{$old}` TO `{$new}`";
+            $res[] = "RENAME COLUMN {$old} TO {$new}";
         }
 
         return $res;
@@ -112,7 +112,7 @@ class Alter extends Query
         $res = [];
 
         foreach ($this->drop_columns as $drop) {
-            $res[] = "DROP COLUMN `{$drop}`";
+            $res[] = "DROP COLUMN {$drop}";
         }
 
         return $res;
