@@ -62,7 +62,7 @@ class Update extends Execute
         $setter = [];
         foreach ($this->_binds as $bind) {
             if ($bind->hasColumName()) {
-                $setter[] = '' . $bind->getColumnName() . ' = ' . $bind->getBind();
+                $setter[] = $bind->getColumnName() . ' = ' . $bind->getBind();
             }
         }
 

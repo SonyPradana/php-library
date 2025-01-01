@@ -180,7 +180,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     public function getter(string $key, $default = null)
     {
         if (array_key_exists($key, $this->stash)) {
-            throw new \Exception("Cant read this colum {$key}");
+            throw new \Exception("Cant read this column `{$key}`.");
         }
 
         return $this->first()[$key] ?? $default;
@@ -413,7 +413,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
         foreach (array_keys($this->columns) as $key) {
             if (!array_key_exists($column, $this->columns[$key])
             || !array_key_exists($column, $this->fresh[$key])) {
-                throw new \Exception("Column {$column} is not in table {$this->table_name}");
+                throw new \Exception("Column {$column} is not in table `{$this->table_name}`.");
             }
 
             if (false === ($this->columns[$key][$column] === $this->fresh[$key][$column])) {
@@ -550,7 +550,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     {
         $order = 0 === $order_using ? 'ASC' : 'DESC';
         $belong_to ??= $this->table_name;
-        $this->sort_order = "ORDER BY $belong_to.$column_name $order";
+        $this->sort_order = "ORDER BY {$belong_to}.{$column_name} {$order}";
 
         return $this;
     }

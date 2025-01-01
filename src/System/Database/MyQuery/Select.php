@@ -34,11 +34,6 @@ final class Select extends Fetch
             $this->_binds = $table_name->getBind();
         }
 
-        // defaul query
-        if (count($this->_column) > 1) {
-            $this->_column = array_map(fn ($e) => "$e", $this->_column);
-        }
-
         $column       = implode(', ', $columns_name);
         $this->_query = $options['query'] ?? "SELECT {$column} FROM { $this->_sub_query}";
     }
@@ -49,7 +44,7 @@ final class Select extends Fetch
     }
 
     /**
-     * Instance of Select::class.
+     * Instance of `Select::class`.
      *
      * @param string   $table_name  Table name
      * @param string[] $column_name Selected column
