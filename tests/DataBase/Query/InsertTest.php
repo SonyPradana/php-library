@@ -17,12 +17,12 @@ final class InsertTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'INSERT INTO `test` (a) VALUES (:bind_a)',
+            'INSERT INTO test (a) VALUES (:bind_a)',
             $insert->__toString()
         );
 
         $this->assertEquals(
-            'INSERT INTO `test` (a) VALUES (1)',
+            'INSERT INTO test (a) VALUES (1)',
             $insert->queryBind()
         );
     }
@@ -40,12 +40,12 @@ final class InsertTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'INSERT INTO `test` (a, c, e) VALUES (:bind_a, :bind_c, :bind_e)',
+            'INSERT INTO test (a, c, e) VALUES (:bind_a, :bind_c, :bind_e)',
             $insert->__toString()
         );
 
         $this->assertEquals(
-            "INSERT INTO `test` (a, c, e) VALUES ('b', 'd', 'f')",
+            "INSERT INTO test (a, c, e) VALUES ('b', 'd', 'f')",
             $insert->queryBind()
         );
     }
@@ -64,12 +64,12 @@ final class InsertTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'INSERT INTO `test` (a, c, e, g) VALUES (:bind_a, :bind_c, :bind_e, :bind_g)',
+            'INSERT INTO test (a, c, e, g) VALUES (:bind_a, :bind_c, :bind_e, :bind_g)',
             $insert->__toString()
         );
 
         $this->assertEquals(
-            "INSERT INTO `test` (a, c, e, g) VALUES ('b', 'd', 'f', 'h')",
+            "INSERT INTO test (a, c, e, g) VALUES ('b', 'd', 'f', 'h')",
             $insert->queryBind()
         );
     }
@@ -92,12 +92,12 @@ final class InsertTest extends \QueryStringTest
             ]);
 
         $this->assertEquals(
-            'INSERT INTO `test` (a, c, e) VALUES (:bind_0_a, :bind_0_c, :bind_0_e), (:bind_1_a, :bind_1_c, :bind_1_e)',
+            'INSERT INTO test (a, c, e) VALUES (:bind_0_a, :bind_0_c, :bind_0_e), (:bind_1_a, :bind_1_c, :bind_1_e)',
             $insert->__toString()
         );
 
         $this->assertEquals(
-            "INSERT INTO `test` (a, c, e) VALUES ('b', 'd', 'f'), ('b', 'd', 'f')",
+            "INSERT INTO test (a, c, e) VALUES ('b', 'd', 'f'), ('b', 'd', 'f')",
             $insert->queryBind()
         );
     }

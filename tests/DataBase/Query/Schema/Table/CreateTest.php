@@ -18,7 +18,7 @@ final class CreateTest extends \QueryStringTest
         $schema->primaryKey('PersonID');
 
         $this->assertEquals(
-            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), PRIMARY KEY (`PersonID`) )',
+            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), PRIMARY KEY (PersonID) )',
             $schema->__toString()
         );
     }
@@ -33,7 +33,7 @@ final class CreateTest extends \QueryStringTest
         $schema->primaryKey('LastName');
 
         $this->assertEquals(
-            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), PRIMARY KEY (`PersonID`, `LastName`) )',
+            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), PRIMARY KEY (PersonID, LastName) )',
             $schema->__toString()
         );
     }
@@ -60,7 +60,7 @@ final class CreateTest extends \QueryStringTest
         $schema->unique('PersonID');
 
         $this->assertEquals(
-            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), UNIQUE (`PersonID`) )',
+            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), UNIQUE (PersonID) )',
             $schema->__toString()
         );
     }
@@ -75,7 +75,7 @@ final class CreateTest extends \QueryStringTest
         $schema->unique('LastName');
 
         $this->assertEquals(
-            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), UNIQUE (`PersonID`, `LastName`) )',
+            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), UNIQUE (PersonID, LastName) )',
             $schema->__toString()
         );
     }
@@ -91,7 +91,7 @@ final class CreateTest extends \QueryStringTest
         $schema->primaryKey('PersonID');
 
         $this->assertEquals(
-            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), PRIMARY KEY (`PersonID`) )',
+            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), PRIMARY KEY (PersonID) )',
             $schema->__toString()
         );
     }
@@ -105,7 +105,7 @@ final class CreateTest extends \QueryStringTest
         $schema->primaryKey('PersonID');
 
         $this->assertEquals(
-            'CREATE TABLE testing_db.test ( `PersonID` int, `LastName` varchar(255), PRIMARY KEY (`PersonID`) )',
+            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), PRIMARY KEY (PersonID) )',
             $schema->__toString()
         );
     }
@@ -120,7 +120,7 @@ final class CreateTest extends \QueryStringTest
         $schema->primaryKey('PersonID');
 
         $this->assertEquals(
-            "CREATE TABLE testing_db.test ( `PersonID` int UNSIGNED DEFAULT 1, `LastName` varchar(255) DEFAULT '-', `sufix` varchar(15) DEFAULT NULL, PRIMARY KEY (`PersonID`) )",
+            "CREATE TABLE testing_db.test ( PersonID int UNSIGNED DEFAULT 1, LastName varchar(255) DEFAULT '-', sufix varchar(15) DEFAULT NULL, PRIMARY KEY (PersonID) )",
             $schema->__toString()
         );
     }
@@ -134,7 +134,7 @@ final class CreateTest extends \QueryStringTest
         $schema->primaryKey('PersonID');
 
         $this->assertEquals(
-            'CREATE TABLE testing_db.test ( `PersonID` int NOT NULL, `LastName` varchar(255) NULL, PRIMARY KEY (`PersonID`) )',
+            'CREATE TABLE testing_db.test ( PersonID int NOT NULL, LastName varchar(255) NULL, PRIMARY KEY (PersonID) )',
             $schema->__toString()
         );
     }
@@ -149,7 +149,7 @@ final class CreateTest extends \QueryStringTest
         $schema->engine(Create::INNODB);
 
         $this->assertEquals(
-            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), PRIMARY KEY (`PersonID`) ) ENGINE=INNODB',
+            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), PRIMARY KEY (PersonID) ) ENGINE=INNODB',
             $schema->__toString()
         );
     }
@@ -164,7 +164,7 @@ final class CreateTest extends \QueryStringTest
         $schema->character('utf8mb4');
 
         $this->assertEquals(
-            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), PRIMARY KEY (`PersonID`) ) CHARACTER SET utf8mb4',
+            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), PRIMARY KEY (PersonID) ) CHARACTER SET utf8mb4',
             $schema->__toString()
         );
     }
@@ -180,7 +180,7 @@ final class CreateTest extends \QueryStringTest
         $schema->character('utf8mb4');
 
         $this->assertEquals(
-            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), PRIMARY KEY (`PersonID`) ) ENGINE=INNODB CHARACTER SET utf8mb4',
+            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255), PRIMARY KEY (PersonID) ) ENGINE=INNODB CHARACTER SET utf8mb4',
             $schema->__toString()
         );
     }

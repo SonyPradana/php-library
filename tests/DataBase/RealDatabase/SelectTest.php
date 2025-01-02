@@ -13,17 +13,17 @@ final class SelectTest extends \RealDatabaseConnectionTest
     {
         // factory
         $this->pdo
-            ->query('CREATE TABLE `profiles` (
-                `user` varchar(32) NOT NULL,
-                `real_name` varchar(500) NOT NULL,
-                PRIMARY KEY (`user`)
+            ->query('CREATE TABLE profiles (
+                user varchar(32) NOT NULL,
+                real_name varchar(500) NOT NULL,
+                PRIMARY KEY (user)
               )')
             ->execute();
 
         $this->pdo
-            ->query('INSERT INTO `profiles` (
-                `user`,
-                `real_name`
+            ->query('INSERT INTO profiles (
+                user,
+                real_name
               ) VALUES (
                 :user,
                 :real_name
@@ -156,7 +156,7 @@ final class SelectTest extends \RealDatabaseConnectionTest
     {
         $users = MyQuery::from('users', $this->pdo)
             ->select()
-            ->where('`user` = :user', [
+            ->where('user = :user', [
                 [':user', 'taylor'],
             ])
             ->all()
@@ -175,7 +175,7 @@ final class SelectTest extends \RealDatabaseConnectionTest
         $users = MyQuery::from('users', $this->pdo)
             ->select()
             ->compare('stat', '>', 1)
-            ->where('`user` = :user', [
+            ->where('user = :user', [
                 [':user', 'taylor'],
             ])
             ->all()

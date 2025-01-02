@@ -177,7 +177,7 @@ abstract class Query
     protected function splitFilters(array $filters): string
     {
         $query      = [];
-        $table_name = null === $this->_sub_query ? "`{$this->_table}`" : $this->_sub_query->getAlias();
+        $table_name = null === $this->_sub_query ? $this->_table : $this->_sub_query->getAlias();
         foreach ($filters['filters'] as $fieldName => $fieldValue) {
             $value        = $fieldValue['value'];
             $comparation  = $fieldValue['comparation'];

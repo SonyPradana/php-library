@@ -43,11 +43,11 @@ abstract class BaseConnection extends TestCase
     {
         return $this
            ->pdo
-           ->query('CREATE TABLE `users` (
-                `user`      varchar(32)  NOT NULL,
-                `password`  varchar(500) NOT NULL,
-                `stat`      int(2)       NOT NULL,
-                PRIMARY KEY (`user`)
+           ->query('CREATE TABLE users (
+                user      varchar(32)  NOT NULL,
+                password  varchar(500) NOT NULL,
+                stat      int(2)       NOT NULL,
+                PRIMARY KEY (user)
             )')
            ->execute();
     }

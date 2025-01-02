@@ -17,12 +17,12 @@ final class DeleteTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'DELETE FROM `test` WHERE (`test`.`column_1` BETWEEN :b_start AND :b_end)',
+            'DELETE FROM test WHERE (test.column_1 BETWEEN :b_start AND :b_end)',
             $delete->__toString()
         );
 
         $this->assertEquals(
-            'DELETE FROM `test` WHERE (`test`.`column_1` BETWEEN 1 AND 100)',
+            'DELETE FROM test WHERE (test.column_1 BETWEEN 1 AND 100)',
             $delete->queryBind()
         );
     }
@@ -36,12 +36,12 @@ final class DeleteTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'DELETE FROM `test` WHERE ( (`test`.column_1 = :column_1) )',
+            'DELETE FROM test WHERE ( (test.column_1 = :column_1) )',
             $delete->__toString()
         );
 
         $this->assertEquals(
-            'DELETE FROM `test` WHERE ( (`test`.column_1 = 100) )',
+            'DELETE FROM test WHERE ( (test.column_1 = 100) )',
             $delete->queryBind()
         );
     }
@@ -55,12 +55,12 @@ final class DeleteTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'DELETE FROM `test` WHERE ( (`test`.column_1 = :column_1) )',
+            'DELETE FROM test WHERE ( (test.column_1 = :column_1) )',
             $delete->__toString()
         );
 
         $this->assertEquals(
-            'DELETE FROM `test` WHERE ( (`test`.column_1 = 100) )',
+            'DELETE FROM test WHERE ( (test.column_1 = 100) )',
             $delete->queryBind()
         );
     }
@@ -74,12 +74,12 @@ final class DeleteTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'DELETE FROM `test` WHERE (`test`.`column_1` IN (:in_0, :in_1))',
+            'DELETE FROM test WHERE (test.column_1 IN (:in_0, :in_1))',
             $delete->__toString()
         );
 
         $this->assertEquals(
-            'DELETE FROM `test` WHERE (`test`.`column_1` IN (1, 2))',
+            'DELETE FROM test WHERE (test.column_1 IN (1, 2))',
             $delete->queryBind()
         );
     }
@@ -93,12 +93,12 @@ final class DeleteTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'DELETE FROM `test` WHERE ( (`test`.column_1 LIKE :column_1) )',
+            'DELETE FROM test WHERE ( (test.column_1 LIKE :column_1) )',
             $delete->__toString()
         );
 
         $this->assertEquals(
-            "DELETE FROM `test` WHERE ( (`test`.column_1 LIKE 'test') )",
+            "DELETE FROM test WHERE ( (test.column_1 LIKE 'test') )",
             $delete->queryBind()
         );
     }
@@ -112,13 +112,13 @@ final class DeleteTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'DELETE FROM `test` WHERE a < :a OR b > :b',
+            'DELETE FROM test WHERE a < :a OR b > :b',
             $delete->__toString(),
             'update with where statment is like'
         );
 
         $this->assertEquals(
-            'DELETE FROM `test` WHERE a < 1 OR b > 2',
+            'DELETE FROM test WHERE a < 1 OR b > 2',
             $delete->queryBind(),
             'update with where statment is like'
         );
@@ -134,13 +134,13 @@ final class DeleteTest extends \QueryStringTest
             ->strictMode(false);
 
         $this->assertEquals(
-            'DELETE FROM `test` WHERE ( (`test`.column_1 = :column_1) OR (`test`.column_2 = :column_2) )',
+            'DELETE FROM test WHERE ( (test.column_1 = :column_1) OR (test.column_2 = :column_2) )',
             $delete->__toString(),
             'update statment must have using or statment'
         );
 
         $this->assertEquals(
-            "DELETE FROM `test` WHERE ( (`test`.column_1 = 123) OR (`test`.column_2 = 'abc') )",
+            "DELETE FROM test WHERE ( (test.column_1 = 123) OR (test.column_2 = 'abc') )",
             $delete->queryBind(),
             'update statment must have using or statment'
         );

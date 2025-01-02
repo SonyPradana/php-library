@@ -155,9 +155,11 @@ final class TimeTravelTest extends TestCase
      */
     public function itCorrectAge(): void
     {
-        $now = new Now('01/01/2000');
+        $now         = new Now('01/01/2000');
+        $currentYear = (int) date('Y');
+        $expectedAge = $currentYear - 2000;
         $this->assertSame(
-            24.0,
+            $expectedAge,
             $now->age,
             'the age must equal'
         );

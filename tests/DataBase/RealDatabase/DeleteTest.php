@@ -112,7 +112,7 @@ final class DeleteTest extends \RealDatabaseConnectionTest
     {
         MyQuery::from('users', $this->pdo)
             ->delete()
-            ->where('`user` = :user', [
+            ->where('user = :user', [
                 [':user', 'taylor'],
             ])
             ->execute()
@@ -131,7 +131,7 @@ final class DeleteTest extends \RealDatabaseConnectionTest
         MyQuery::from('users', $this->pdo)
             ->delete()
             ->compare('stat', '>', 1)
-            ->where('`user` = :user', [
+            ->where('user = :user', [
                 [':user', 'taylor'],
             ])
             ->execute()

@@ -36,19 +36,19 @@ abstract class RealDatabaseConnectionTest extends TestCase
 
         // factory
         $this->pdo
-            ->query('CREATE TABLE `users` (
-                `user` varchar(32) NOT NULL,
-                `pwd` varchar(500) NOT NULL,
-                `stat` int(2) NOT NULL,
-                PRIMARY KEY (`user`)
+            ->query('CREATE TABLE users (
+                user varchar(32) NOT NULL,
+                pwd varchar(500) NOT NULL,
+                stat int(2) NOT NULL,
+                PRIMARY KEY (user)
               )')
             ->execute();
 
         $this->pdo
-            ->query('INSERT INTO `users` (
-                `user`,
-                `pwd`,
-                `stat`
+            ->query('INSERT INTO users (
+                user,
+                pwd,
+                stat
               ) VALUES (
                 :user,
                 :pwd,

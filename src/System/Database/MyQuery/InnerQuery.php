@@ -17,7 +17,7 @@ final class InnerQuery implements \Stringable
 
     public function getAlias(): string
     {
-        return "`{$this->table}`";
+        return $this->table;
     }
 
     /** @return Bind[]  */

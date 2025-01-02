@@ -119,7 +119,7 @@ final class UpdateTest extends \RealDatabaseConnectionTest
         MyQuery::from('users', $this->pdo)
             ->update()
             ->value('stat', 0)
-            ->where('`user` = :user', [
+            ->where('user = :user', [
                 [':user', 'taylor'],
             ])
             ->execute()
@@ -139,7 +139,7 @@ final class UpdateTest extends \RealDatabaseConnectionTest
             ->update()
             ->value('stat', 0)
             ->compare('stat', '>', 1)
-            ->where('`user` = :user', [
+            ->where('user = :user', [
                 [':user', 'taylor'],
             ])
             ->execute()

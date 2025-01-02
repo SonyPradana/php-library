@@ -62,7 +62,7 @@ class Now
         if (null !== $time_zone) {
             $time_zone = new \DateTimeZone($time_zone);
         }
-        $this->date = new \DateTime($date_format, $time_zone);
+        $this->date     = new \DateTime($date_format, $time_zone);
 
         $this->refresh();
     }
@@ -126,8 +126,9 @@ class Now
         $this->timeZone  = $this->date->format('e');
         $this->shortDay  = $this->date->format('D');
 
-        $age       = time() - $this->date->getTimestamp();
-        $this->age = abs(floor($age / (365 * 60 * 60 * 24)));
+        $now       = new \DateTime('now', new \DateTimeZone($this->timeZone));
+        $interval  = $now->diff($this->date);
+        $this->age = $interval->y;
     }
 
     private function current(string $format, int $timestamp): string

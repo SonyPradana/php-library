@@ -13,13 +13,13 @@ final class AlterTest extends \RealDatabaseConnectionTest
         parent::setUp();
 
         $this->pdo
-            ->query('CREATE TABLE `profiles` (
-                `user` varchar(10) NOT NULL,
-                `name` varchar(500) NOT NULL,
-                `stat` int(2) NOT NULL,
-                `create_at` int(12) NOT NULL,
-                `update_at` int(12) NOT NULL,
-                PRIMARY KEY (`user`)
+            ->query('CREATE TABLE profiles (
+                user varchar(10) NOT NULL,
+                name varchar(500) NOT NULL,
+                stat int(2) NOT NULL,
+                create_at int(12) NOT NULL,
+                update_at int(12) NOT NULL,
+                PRIMARY KEY (user)
               )')
             ->execute();
     }

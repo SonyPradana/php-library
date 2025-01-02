@@ -62,14 +62,14 @@ class Update extends Execute
         $setter = [];
         foreach ($this->_binds as $bind) {
             if ($bind->hasColumName()) {
-                $setter[] = '`' . $bind->getColumnName() . '` = ' . $bind->getBind();
+                $setter[] = $bind->getColumnName() . ' = ' . $bind->getBind();
             }
         }
 
         // $binds       = array_filter($setter);
         $set_string  = implode(', ', $setter);
 
-        $this->_query = "UPDATE `$this->_table` SET $set_string $where";
+        $this->_query = "UPDATE $this->_table SET $set_string $where";
 
         return $this->_query;
     }

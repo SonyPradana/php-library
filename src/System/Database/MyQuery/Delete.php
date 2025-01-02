@@ -28,7 +28,7 @@ class Delete extends Execute
     {
         $where = $this->getWhere();
 
-        $this->_query = "DELETE FROM `$this->_table` $where";
+        $this->_query = "DELETE FROM {$this->_table} {$where}";
 
         return $this->_query;
     }
