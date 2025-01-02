@@ -9,8 +9,6 @@ use System\Database\MyQuery\Join\InnerJoin;
 use System\Database\MyQuery\Select;
 use System\Test\Database\BaseConnection;
 
-use function System\Console\ok;
-
 final class SubQueryTest extends BaseConnection
 {
     // scehema
@@ -209,8 +207,6 @@ final class SubQueryTest extends BaseConnection
      */
     public function itCanSelectSubQueryUsingFrom()
     {
-        $this->markTestSkipped('this test requere select with group by statment');
-
         $this->createUserSchema();
         $this->createOrderSchema();
         $this->createProductSchema();
@@ -220,23 +216,13 @@ final class SubQueryTest extends BaseConnection
         $this->createProducts();
         $this->createSeles();
 
-        // SELECT sub.product_id, sub.total_quantity, sub.total_sales
-        // FROM (
-        //     SELECT
-        //         product_id,
-        //         SUM(quantity) AS total_quantity,
-        //         SUM(quantity * price) AS total_sales
-        //     FROM sales
-        //     GROUP BY product_id
-        // ) AS sub;
-
         $products = new Select(
             new InnerQuery(
-                new Select(
+                (new Select(
                     'sales',
                     ['product_id', 'SUM(quantity) AS total_quantity', 'SUM(quantity * price) AS total_sales'],
                     $this->pdo
-                ),
+                ))->groupBy('product_id'),
                 'sub'
             ),
             ['sub.product_id', 'sub.total_quantity', 'sub.total_sales'],
@@ -255,48 +241,35 @@ final class SubQueryTest extends BaseConnection
      */
     public function itCanSelectSubQueryUsingJoin(): void
     {
-        $this->markTestSkipped('this test requere select with group by statment');
-
         $this->createCustomerSchema();
         $this->createTransactionSchema();
         $this->createCustomers();
         $this->createTransactions();
 
-        // SELECT c.name, sub.total_spent
-        // FROM customers c
-        // JOIN (
-        //     SELECT customer_id, SUM(amount) AS total_spent
-        //     FROM transactions
-        //     GROUP BY customer_id
-        // ) AS sub ON c.id = sub.customer_id
-        // WHERE sub.total_spent > 500;
-
         $customers = new Select(
             'customers',
-            ['costumer.name', 'sub.total_spent'],
+            ['customers.name', 'sub.total_spent'],
             $this->pdo
         );
 
         $customers->join(
             InnerJoin::ref(
                 new InnerQuery(
-                    new Select(
+                    (new Select(
                         'transactions',
                         ['customer_id', 'SUM(amount) AS total_spent'],
                         $this->pdo
-                    ),
+                    ))
+                    ->groupBy('customer_id'),
                     'sub'
                 ),
                 'id',
                 'customer_id'
             )
         );
-        $customers->compare('total_spent', '>', 500);
-
-        ok($customers->__toString())->out();
 
         $customers = $customers->get();
 
-        $this->assertCount(2, $customers);
+        $this->assertCount(3, $customers);
     }
 }

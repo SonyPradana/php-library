@@ -279,4 +279,27 @@ final class SelectTest extends \QueryStringTest
             'where exist query'
         );
     }
+
+    /** @test */
+    public function itCanSelectWithGroupBy(): void
+    {
+        $select = MyQuery::from('test', $this->PDO)
+            ->select()
+            ->groupBy('culumn_1')
+        ;
+        $select_multy = MyQuery::from('test', $this->PDO)
+            ->select()
+            ->groupBy('culumn_1', 'column_2')
+        ;
+
+        $this->assertEquals(
+            'SELECT * FROM test GROUP BY culumn_1',
+            $select->__toString()
+        );
+
+        $this->assertEquals(
+            'SELECT * FROM test GROUP BY culumn_1, column_2',
+            $select_multy->__toString()
+        );
+    }
 }
