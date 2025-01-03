@@ -166,10 +166,30 @@ final class Select extends Fetch
     public function order(string $column_name, int $order_using = MyQuery::ORDER_ASC, ?string $belong_to = null)
     {
         $order = 0 === $order_using ? 'ASC' : 'DESC';
-        $belong_to ??= null === $this->_sub_query ? "{$this->_table}" : $this->_sub_query->getAlias();
-        $this->_sort_order = "ORDER BY $belong_to.$column_name $order";
+        $belong_to ??= null === $this->_sub_query ? $this->_table : $this->_sub_query->getAlias();
+        $res = "{$belong_to}.{$column_name}";
+
+        $this->_sort_order[$res] = $order;
 
         return $this;
+    }
+
+    /**
+     * Set sort column and order
+     * with Column if not null.
+     */
+    public function orderIfNotNull(string $column_name, int $order_using = MyQuery::ORDER_ASC, ?string $belong_to = null): self
+    {
+        return $this->order("{$column_name} IS NOT NULL", $order_using, $belong_to);
+    }
+
+    /**
+     * Set sort column and order
+     * with Column if null.
+     */
+    public function orderIfNull(string $column_name, int $order_using = MyQuery::ORDER_ASC, ?string $belong_to = null): self
+    {
+        return $this->order("{$column_name} IS NULL", $order_using, $belong_to);
     }
 
     /**
@@ -195,7 +215,7 @@ final class Select extends Fetch
         $build['join']       = $this->joinBuilder();
         $build['where']      = $this->getWhere();
         $build['group_by']   = $this->getGroupBy();
-        $build['sort_order'] = $this->_sort_order;
+        $build['sort_order'] = $this->getOrderBy();
         $build['limit']      = $this->getLimit();
 
         $condition = implode(' ', array_filter($build, fn ($item) => $item !== ''));
@@ -232,7 +252,26 @@ final class Select extends Fetch
         return "GROUP BY {$group_by}";
     }
 
-    public function sortOrderRef(int $limit_start, int $limit_end, int $offset, string $sort_ordder): void
+    private function getOrderBy(): string
+    {
+        if ([] === $this->_sort_order) {
+            return '';
+        }
+
+        $orders = [];
+        foreach ($this->_sort_order as $column => $order) {
+            $orders[] = "{$column} {$order}";
+        }
+
+        $orders = implode(', ', $orders);
+
+        return "ORDER BY {$orders}";
+    }
+
+    /**
+     * @param array<string, string> $sort_ordder
+     */
+    public function sortOrderRef(int $limit_start, int $limit_end, int $offset, $sort_ordder): void
     {
         $this->_limit_start = $limit_start;
         $this->_limit_end   = $limit_end;

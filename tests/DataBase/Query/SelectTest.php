@@ -302,4 +302,46 @@ final class SelectTest extends \QueryStringTest
             $select_multy->__toString()
         );
     }
+
+    /** @test */
+    public function itCanGenerateMultyOrder(): void
+    {
+        $select = MyQuery::from('base_1', $this->PDO)
+            ->select()
+            ->order('id', MyQuery::ORDER_ASC)
+            ->order('name', MyQuery::ORDER_DESC)
+        ;
+
+        $this->assertEquals(
+            'SELECT * FROM base_1 ORDER BY base_1.id ASC, base_1.name DESC',
+            $select->__toString(),
+            'order by query'
+        );
+    }
+
+    /** @test */
+    public function itCanSelectWithOrderIfNotNull()
+    {
+        $select = MyQuery::from('test', $this->PDO)
+            ->select()
+            ->orderIfNotNull('column_1');
+
+        $this->assertEquals(
+            'SELECT * FROM test ORDER BY test.column_1 IS NOT NULL ASC',
+            $select->__toString()
+        );
+    }
+
+    /** @test */
+    public function itCanSelectWithOrderIfNull()
+    {
+        $select = MyQuery::from('test', $this->PDO)
+            ->select()
+            ->orderIfNull('column_1');
+
+        $this->assertEquals(
+            'SELECT * FROM test ORDER BY test.column_1 IS NULL ASC',
+            $select->__toString()
+        );
+    }
 }

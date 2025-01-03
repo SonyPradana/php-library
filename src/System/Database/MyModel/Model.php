@@ -49,7 +49,9 @@ class Model implements \ArrayAccess, \IteratorAggregate
     protected int $limit_start    = 0;
     protected int $limit_end      = 0;
     protected int $offset         = 0;
-    protected string $sort_order  = '';
+
+    /** @var array<string, string> */
+    protected $sort_order  = [];
 
     // magic ----------------------
 
@@ -543,14 +545,14 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /**
      * Set sort column and order
      * column name must register.
-     *
-     * @return static
      */
-    public function order(string $column_name, int $order_using = MyQuery::ORDER_ASC, ?string $belong_to = null)
+    public function order(string $column_name, int $order_using = MyQuery::ORDER_ASC, ?string $belong_to = null): self
     {
         $order = 0 === $order_using ? 'ASC' : 'DESC';
         $belong_to ??= $this->table_name;
-        $this->sort_order = "ORDER BY {$belong_to}.{$column_name} {$order}";
+        $res = "{$belong_to}.{$column_name}";
+
+        $this->sort_order[$res] = $order;
 
         return $this;
     }

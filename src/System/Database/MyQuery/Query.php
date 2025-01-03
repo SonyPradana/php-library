@@ -38,8 +38,8 @@ abstract class Query
     /** @var int offest */
     protected $_offset = 0;
 
-    /** @var string Sort result ASC|DESC */
-    protected $_sort_order  = '';
+    /** @var array<string, string> Sort result ASC|DESC */
+    protected array $_sort_order  = [];
 
     public const ORDER_ASC  = 0;
     public const ORDER_DESC = 1;
