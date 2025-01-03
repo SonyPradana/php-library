@@ -5,6 +5,7 @@ declare(strict_types=1);
 // path aplication
 
 use System\Http\RedirectResponse;
+use System\Integrate\Application;
 use System\Integrate\Exceptions\ApplicationNotAvailable;
 use System\Router\Router;
 
@@ -299,9 +300,9 @@ if (!function_exists('app')) {
     /**
      * Get Application container.
      */
-    function app(): System\Integrate\Application
+    function app(): Application
     {
-        $app = System\Integrate\Application::getIntance();
+        $app = Application::getIntance();
         if (null === $app) {
             throw new ApplicationNotAvailable();
         }
@@ -413,5 +414,24 @@ if (!function_exists('abort')) {
     function abort(int $code, string $message = '', array $headers = []): void
     {
         app()->abort($code, $message, $headers);
+    }
+}
+
+if (false === function_exists('defer')) {
+    /**
+     * Terminate application after response send.
+     */
+    function defer(callable $callback): bool
+    {
+        if (function_exists('fastcgi_finish_request')
+        || function_exists('litespeed_finish_request')
+        || false === in_array(\PHP_SAPI, ['cli', 'phpdbg'], true)
+        ) {
+            Application::getIntance()->registerTerminate($callback);
+
+            return true;
+        }
+
+        return false;
     }
 }

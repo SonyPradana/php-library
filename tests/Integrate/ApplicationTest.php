@@ -256,6 +256,25 @@ class ApplicationTest extends TestCase
     }
 
     /** @test */
+    public function itCanDeferFunctionExecution()
+    {
+        $app  = new Application('/');
+        $skip = defer(function () {
+            echo 'deferred.';
+        });
+
+        if (false === $skip) {
+            $this->markTestSkipped('skiped if not support defer.');
+        }
+
+        ob_start();
+        $app->terminate();
+        $out = ob_get_clean();
+
+        $this->assertEquals('deferred.', $out);
+    }
+
+    /** @test */
     public function itCanCallDeprecatedMethod()
     {
         $app = new Application(__DIR__);
