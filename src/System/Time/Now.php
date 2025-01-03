@@ -9,18 +9,18 @@ use System\Time\Exceptions\PropertyNotSetAble;
 use System\Time\Traits\DateTimeFormatTrait;
 
 /**
- * @property int       $timestamp
- * @property int       $year
- * @property int       $month
- * @property int       $day
- * @property int       $hour
- * @property int       $minute
- * @property int       $second
- * @property string    $monthName
- * @property string    $dayName
- * @property string    $shortDay
- * @property string    $timeZone
- * @property int|float $age
+ * @property int    $timestamp
+ * @property int    $year
+ * @property int    $month
+ * @property int    $day
+ * @property int    $hour
+ * @property int    $minute
+ * @property int    $second
+ * @property string $monthName
+ * @property string $dayName
+ * @property string $shortDay
+ * @property string $timeZone
+ * @property int    $age
  */
 class Now
 {
@@ -54,8 +54,7 @@ class Now
     private $timeZone;
 
     // other property
-    /** @var int|float */
-    private $age;
+    private int $age;
 
     public function __construct(string $date_format = 'now', ?string $time_zone = null)
     {
@@ -126,9 +125,7 @@ class Now
         $this->timeZone  = $this->date->format('e');
         $this->shortDay  = $this->date->format('D');
 
-        $now       = new \DateTime('now', new \DateTimeZone($this->timeZone));
-        $interval  = $now->diff($this->date);
-        $this->age = $interval->y;
+        $this->age = max(0, (int) floor((time() - $this->timestamp) / (365.25 * 24 * 60 * 60)));
     }
 
     private function current(string $format, int $timestamp): string

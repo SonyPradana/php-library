@@ -150,18 +150,94 @@ final class TimeTravelTest extends TestCase
         $this->assertTrue($now->isSaturday(), 'day must same');
     }
 
-    /**
-     * @test
-     */
-    public function itCorrectAge(): void
+    /** @test */
+    public function itCalculatesAgeCorrectlyForTypicalBirthday(): void
     {
-        $now         = new Now('01/01/2000');
+        $now         = new Now('01/01/1990');
         $currentYear = (int) date('Y');
-        $expectedAge = $currentYear - 2000;
+        $expectedAge = $currentYear - 1990;
         $this->assertSame(
             $expectedAge,
             $now->age,
             'the age must equal'
+        );
+    }
+
+    /** @test */
+    public function itHandlesLeapYearBirthdayCorrectly(): void
+    {
+        $now             = new Now('02/29/2000');
+        $birthDateBefore = new DateTime(date('02/29/2000'));
+        $expectedAge     = $birthDateBefore->diff(new DateTime())->y;
+        $this->assertSame(
+            $expectedAge,
+            $now->age,
+            'the age must equal'
+        );
+    }
+
+    /** @test */
+    public function itHandlesFutureBirthdateCorrectly(): void
+    {
+        $now = new Now('next day');
+        $this->assertSame(
+            0,
+            $now->age,
+            'the age must be 0 for a future birthdate'
+        );
+    }
+
+    /** @test */
+    public function itCalculatesAgeAsZeroForTodayBirthdate(): void
+    {
+        $now = new Now('now', 'utc');
+        $this->assertSame(
+            0,
+            $now->age,
+            'the age must be 0 for today\'s birthdate'
+        );
+    }
+
+    /** @test */
+    public function itHandlesEdgeCasesAroundBirthdayCorrectly(): void
+    {
+        $nowBeforeBirthday = new Now(date('m/d/Y', strtotime('-1 day')));
+        $birthDateBefore   = new DateTime(date('m/d/Y', strtotime('-1 day')));
+        $expectedAgeBefore = $birthDateBefore->diff(new DateTime())->y;
+        $this->assertSame(
+            $expectedAgeBefore,
+            $nowBeforeBirthday->age,
+            'the age must be correct just before the birthday'
+        );
+
+        $nowAfterBirthday = new Now(date('m/d/Y', strtotime('+1 day')));
+        $birthDateAfter   = new DateTime(date('m/d/Y', strtotime('+1 day')));
+        $expectedAgeAfter = $birthDateAfter->diff(new DateTime())->y;
+        $this->assertSame(
+            $expectedAgeAfter,
+            $nowAfterBirthday->age,
+            'the age must be correct just after the birthday'
+        );
+    }
+
+    /** @test */
+    public function itHandlesDifferentTimeZonesCorrectly(): void
+    {
+        $nowUTC      = new Now('01/01/2000', 'UTC');
+        $nowJKT      = new Now('01/01/2000', 'Asia/Jakarta');
+        $birthDate   = new DateTime('01/01/2000');
+        $expectedAge = $birthDate->diff(new DateTime())->y;
+
+        $this->assertSame(
+            $expectedAge,
+            $nowUTC->age,
+            'the age must be correct in UTC'
+        );
+
+        $this->assertSame(
+            $expectedAge,
+            $nowJKT->age,
+            'the age must be correct in Asia/Jakarta'
         );
     }
 
