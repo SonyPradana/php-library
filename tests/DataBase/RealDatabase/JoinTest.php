@@ -22,26 +22,6 @@ final class JoinTest extends BaseConnection
 
     // schema
 
-    // CREATE TABLE roles (
-    //     id INT AUTO_INCREMENT PRIMARY KEY,
-    //     role_name VARCHAR(100) NOT NULL UNIQUE
-    // );
-
-    // CREATE TABLE users (
-    //     id INT AUTO_INCREMENT PRIMARY KEY,
-    //     name VARCHAR(100) NOT NULL,
-    //     email VARCHAR(100) UNIQUE NOT NULL,
-    //     role_id INT NOT NULL
-    // );
-
-    // CREATE TABLE logs (
-    //     id INT AUTO_INCREMENT PRIMARY KEY,
-    //     user_id INT NOT NULL,
-    //     action VARCHAR(255) NOT NULL,
-    //     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    //     FOREIGN KEY (user_id) REFERENCES users(id)
-    // );
-
     private function createUsersSchema(): bool
     {
         return $this
@@ -81,23 +61,6 @@ final class JoinTest extends BaseConnection
     }
 
     // factory
-    // INSERT INTO roles (role_name) VALUES
-    // ('Admin'),
-    // ('Editor'),
-    // ('Subscriber');
-
-    // -- Data untuk users
-    // INSERT INTO users (name, email, role_id) VALUES
-    // ('Alice', 'alice@example.com', 1),
-    // ('Bob', 'bob@example.com', 2),
-    // ('Charlie', 'charlie@example.com', 3);
-
-    // -- Data untuk logs
-    // INSERT INTO logs (user_id, action) VALUES
-    // (1, 'Logged In'),
-    // (2, 'Logged In'),
-    // (1, 'Deactivated'),
-    // (3, 'Logged Out');
 
     private function factory()
     {
