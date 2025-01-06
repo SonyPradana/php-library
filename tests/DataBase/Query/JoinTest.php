@@ -176,4 +176,46 @@ final class JoinTest extends \QueryStringTest
             $join->queryBind()
         );
     }
+
+    /** @test */
+    public function itCanGenerateInnerJoinInDeleteClausa()
+    {
+        $join = MyQuery::from('base_table', $this->PDO)
+            ->delete()
+            ->alias('bt')
+            ->join(InnerJoin::ref('join_table', 'base_id', 'join_id'))
+            ->equal('join_table.a', 1)
+        ;
+
+        $this->assertEquals(
+            'DELETE bt FROM base_table AS bt INNER JOIN join_table ON bt.base_id = join_table.join_id WHERE ( (join_table.a = :join_table__a) )',
+            $join->__toString()
+        );
+
+        $this->assertEquals(
+            'DELETE bt FROM base_table AS bt INNER JOIN join_table ON bt.base_id = join_table.join_id WHERE ( (join_table.a = 1) )',
+            $join->queryBind()
+        );
+    }
+
+    /** @test */
+    public function itCanGenerateInnerJoinInUpdateClausa()
+    {
+        $update = MyQuery::from('test', $this->PDO)
+            ->update()
+            ->value('a', 'b')
+            ->join(InnerJoin::ref('join_table', 'base_id', 'join_id'))
+            ->equal('test.column_1', 100)
+        ;
+
+        $this->assertEquals(
+            'UPDATE test INNER JOIN join_table ON test.base_id = join_table.join_id SET a = :bind_a WHERE ( (test.column_1 = :test__column_1) )',
+            $update->__toString()
+        );
+
+        $this->assertEquals(
+            'UPDATE test INNER JOIN join_table ON test.base_id = join_table.join_id SET a = \'b\' WHERE ( (test.column_1 = 100) )',
+            $update->queryBind()
+        );
+    }
 }
