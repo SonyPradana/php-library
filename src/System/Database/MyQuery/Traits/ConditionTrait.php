@@ -127,10 +127,12 @@ trait ConditionTrait
      */
     public function compare(string $bind, string $comparation, $value, bool $bindValue = false)
     {
-        $this->_binds[]        = Bind::set($bind, $value);
+        $escape_bind           = str_replace('.', '__', $bind);
+        $this->_binds[]        = Bind::set($escape_bind, $value);
         $this->_filters[$bind] = [
             'value'       => $value,
             'comparation' => $comparation,
+            'bind'        => $escape_bind,
             $bindValue,
         ];
 

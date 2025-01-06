@@ -181,8 +181,11 @@ abstract class Query
         foreach ($filters['filters'] as $fieldName => $fieldValue) {
             $value        = $fieldValue['value'];
             $comparation  = $fieldValue['comparation'];
+            $column       = str_contains($fieldName, '.') ? $fieldName : "{$table_name}.{$fieldName}";
+            $bind         = $fieldValue['bind'];
+
             if ($value !== '') {
-                $query[] = "({$table_name}.{$fieldName} {$comparation} :{$fieldName})";
+                $query[] = "({$column} {$comparation} :{$bind})";
             }
         }
 
