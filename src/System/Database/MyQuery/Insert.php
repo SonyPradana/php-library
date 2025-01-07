@@ -103,8 +103,15 @@ class Insert extends Execute
 
     private function getDuplicateKeyUpdate(): string
     {
-        return null === $this->duplicate_key
-            ? ''
-            : 'ON DUPLICATE KEY UPDATE ' . implode(', ', $this->duplicate_key);
+        if (null === $this->duplicate_key) {
+            return '';
+        }
+
+        $keys = [];
+        foreach ($this->duplicate_key as $key => $value) {
+            $keys[] = "{$key} = {$value}";
+        }
+
+        return 'ON DUPLICATE KEY UPDATE ' . implode(', ', $keys);
     }
 }
