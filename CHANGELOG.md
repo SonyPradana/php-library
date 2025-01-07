@@ -6,6 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.37.0] - 2025-01-07
+### Added
+- Added support for `ON DUPLICATE KEY UPDATE` in `Insert` class (#414).
+- Implemented `Replace` query functionality (#413).
+- Added join support for delete and update queries with alias handling (#411).
+- Enhanced sorting functionality with multi-order support and null checks (#410).
+- Implemented `groupBy` method for SQL queries and updated tests (#404).
+- Added support for sub query builder (#403).
+- Added `ComponentTemplator` (#402).
+- Added set date default timezone configuration (#400).
+
+### Changed
+- Refactored to remove backtick query builder (#407).
+- Changed `Now::$age` manual age calculation (#408).
+
+### Fixed
+- Corrected age calculation and improved code formatting (#405).
+
 ## [0.36.6] - 2024-10-28
 ### Fixed
 - Fixed dilimater of sql builder alter raname (#398).
