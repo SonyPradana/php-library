@@ -32,13 +32,23 @@ class Table
     }
 
     /**
-     * Perform select query.
+     * Perform insert query.
      *
      * @return Insert
      */
     public function insert()
     {
         return new Insert($this->table_name, $this->PDO);
+    }
+
+    /**
+     * Perform replace query.
+     *
+     * @return Replace
+     */
+    public function replace()
+    {
+        return new Replace($this->table_name, $this->PDO);
     }
 
     /**
