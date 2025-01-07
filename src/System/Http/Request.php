@@ -517,8 +517,12 @@ class Request implements \ArrayAccess, \IteratorAggregate
      */
     public function json(): Collection
     {
-        if (!isset($this->json)) {
-            $this->json = new Collection($this->getJsonBody());
+        if (false === isset($this->json)) {
+            $jsonBody = [];
+            foreach ($$this->getJsonBody() as $key => $value) {
+                $jsonBody[$key] = (string) $value;
+            }
+            $this->json = new Collection($jsonBody);
         }
 
         return $this->json;
