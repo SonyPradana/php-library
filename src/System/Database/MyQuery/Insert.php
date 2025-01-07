@@ -8,6 +8,11 @@ use System\Database\MyPDO;
 
 class Insert extends Execute
 {
+    /**
+     * @var array<string, string>
+     */
+    private ?array $duplicate_key = null;
+
     public function __construct(string $table_name, MyPDO $PDO)
     {
         $this->_table = $table_name;
@@ -63,6 +68,16 @@ class Insert extends Execute
         return $this;
     }
 
+    /**
+     * On duplicate key update.
+     */
+    public function on(string $column, ?string $value = null): self
+    {
+        $this->duplicate_key[$column] = $value ?? "VALUES({$column})";
+
+        return $this;
+    }
+
     protected function builder(): string
     {
         [$binds, ,$columns] = $this->bindsDestructur();
@@ -74,11 +89,29 @@ class Insert extends Execute
             $strings_binds[] = '(' . implode(', ', $group) . ')';
         }
 
-        $stringBinds  = implode(', ', $strings_binds);
-        $stringColumn = implode(', ', $columns);
+        $builds              = [];
+        $builds['column']    = '(' . implode(', ', $columns) . ')';
+        $builds['values']    = 'VALUES';
+        $builds['binds']     = implode(', ', $strings_binds);
+        $builds['keyUpdate'] = $this->getDuplicateKeyUpdate();
+        $string_build        = implode(' ', array_filter($builds, fn ($item) => $item !== ''));
 
-        $this->_query = "INSERT INTO {$this->_table} ({$stringColumn}) VALUES {$stringBinds}";
+        $this->_query = "INSERT INTO {$this->_table} {$string_build}";
 
         return $this->_query;
+    }
+
+    private function getDuplicateKeyUpdate(): string
+    {
+        if (null === $this->duplicate_key) {
+            return '';
+        }
+
+        $keys = [];
+        foreach ($this->duplicate_key as $key => $value) {
+            $keys[] = "{$key} = {$value}";
+        }
+
+        return 'ON DUPLICATE KEY UPDATE ' . implode(', ', $keys);
     }
 }

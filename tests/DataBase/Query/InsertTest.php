@@ -101,4 +101,24 @@ final class InsertTest extends \QueryStringTest
             $insert->queryBind()
         );
     }
+
+    /** @test */
+    public function itCorrectInsertOnDuplicateKeyUpdate(): void
+    {
+        $insert = MyQuery::from('test', $this->PDO)
+            ->insert()
+            ->value('a', 1)
+            ->on('a')
+        ;
+
+        $this->assertEquals(
+            'INSERT INTO test (a) VALUES (:bind_a) ON DUPLICATE KEY UPDATE a = VALUES(a)',
+            $insert->__toString()
+        );
+
+        $this->assertEquals(
+            'INSERT INTO test (a) VALUES (1) ON DUPLICATE KEY UPDATE a = VALUES(a)',
+            $insert->queryBind()
+        );
+    }
 }

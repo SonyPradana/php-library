@@ -52,4 +52,71 @@ final class InsertTest extends \RealDatabaseConnectionTest
         $this->assertUserExist('sony');
         $this->assertUserExist('pradana');
     }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanReplaceOnExistData()
+    {
+        MyQuery::from('users', $this->pdo)
+            ->insert()
+            ->values([
+                'user' => 'sony',
+                'pwd'  => 'secret',
+                'stat' => 99,
+            ])
+            ->execute();
+
+        MyQuery::from('users', $this->pdo)
+            ->insert()
+            ->values([
+                'user' => 'sony',
+                'pwd'  => 'secret',
+                'stat' => 66,
+            ])
+            ->on('stat')
+            ->execute();
+
+        $this->assertUserStat('sony', 66);
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanUpdateInsertusingOneQuery()
+    {
+        MyQuery::from('users', $this->pdo)
+            ->insert()
+            ->values([
+                'user' => 'sony',
+                'pwd'  => 'secret',
+                'stat' => 99,
+            ])
+            ->execute();
+
+        MyQuery::from('users', $this->pdo)
+            ->insert()
+            ->rows([
+                [
+                    'user' => 'sony',
+                    'pwd'  => 'secret',
+                    'stat' => 66,
+                ],
+                [
+                    'user' => 'sony2',
+                    'pwd'  => 'secret',
+                    'stat' => 66,
+                ],
+            ])
+            ->on('user')
+            ->on('stat')
+            ->execute();
+
+        $this->assertUserStat('sony', 66);
+        $this->assertUserExist('sony2');
+    }
 }
