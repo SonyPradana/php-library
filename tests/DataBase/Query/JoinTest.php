@@ -24,12 +24,12 @@ final class JoinTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'SELECT * FROM base_table INNER JOIN join_table ON base_table.base_id = join_table.join_id',
+            'SELECT * FROM `base_table` INNER JOIN `join_table` ON `base_table`.`base_id` = `join_table`.`join_id`',
             $join->__toString()
         );
 
         $this->assertEquals(
-            'SELECT * FROM base_table INNER JOIN join_table ON base_table.base_id = join_table.join_id',
+            'SELECT * FROM `base_table` INNER JOIN `join_table` ON `base_table`.`base_id` = `join_table`.`join_id`',
             $join->queryBind()
         );
     }
@@ -43,12 +43,12 @@ final class JoinTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'SELECT * FROM base_table LEFT JOIN join_table ON base_table.base_id = join_table.join_id',
+            'SELECT * FROM `base_table` LEFT JOIN `join_table` ON `base_table`.`base_id` = `join_table`.`join_id`',
             $join->__toString()
         );
 
         $this->assertEquals(
-            'SELECT * FROM base_table LEFT JOIN join_table ON base_table.base_id = join_table.join_id',
+            'SELECT * FROM `base_table` LEFT JOIN `join_table` ON `base_table`.`base_id` = `join_table`.`join_id`',
             $join->queryBind()
         );
     }
@@ -62,12 +62,12 @@ final class JoinTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'SELECT * FROM base_table RIGHT JOIN join_table ON base_table.base_id = join_table.join_id',
+            'SELECT * FROM `base_table` RIGHT JOIN `join_table` ON `base_table`.`base_id` = `join_table`.`join_id`',
             $join->__toString()
         );
 
         $this->assertEquals(
-            'SELECT * FROM base_table RIGHT JOIN join_table ON base_table.base_id = join_table.join_id',
+            'SELECT * FROM `base_table` RIGHT JOIN `join_table` ON `base_table`.`base_id` = `join_table`.`join_id`',
             $join->queryBind()
         );
     }
@@ -81,12 +81,12 @@ final class JoinTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'SELECT * FROM base_table FULL OUTER JOIN join_table ON base_table.base_id = join_table.join_id',
+            'SELECT * FROM `base_table` FULL OUTER JOIN `join_table` ON `base_table`.`base_id` = `join_table`.`join_id`',
             $join->__toString()
         );
 
         $this->assertEquals(
-            'SELECT * FROM base_table FULL OUTER JOIN join_table ON base_table.base_id = join_table.join_id',
+            'SELECT * FROM `base_table` FULL OUTER JOIN `join_table` ON `base_table`.`base_id` = `join_table`.`join_id`',
             $join->queryBind()
         );
     }
@@ -100,12 +100,12 @@ final class JoinTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'SELECT * FROM base_table CROSS JOIN join_table',
+            'SELECT * FROM `base_table` CROSS JOIN `join_table`',
             $join->__toString()
         );
 
         $this->assertEquals(
-            'SELECT * FROM base_table CROSS JOIN join_table',
+            'SELECT * FROM `base_table` CROSS JOIN `join_table`',
             $join->queryBind()
         );
     }
@@ -120,12 +120,12 @@ final class JoinTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'SELECT * FROM base_table INNER JOIN join_table_1 ON base_table.base_id = join_table_1.join_id INNER JOIN join_table_2 ON base_table.base_id = join_table_2.join_id',
+            'SELECT * FROM `base_table` INNER JOIN `join_table_1` ON `base_table`.`base_id` = `join_table_1`.`join_id` INNER JOIN `join_table_2` ON `base_table`.`base_id` = `join_table_2`.`join_id`',
             $join->__toString()
         );
 
         $this->assertEquals(
-            'SELECT * FROM base_table INNER JOIN join_table_1 ON base_table.base_id = join_table_1.join_id INNER JOIN join_table_2 ON base_table.base_id = join_table_2.join_id',
+            'SELECT * FROM `base_table` INNER JOIN `join_table_1` ON `base_table`.`base_id` = `join_table_1`.`join_id` INNER JOIN `join_table_2` ON `base_table`.`base_id` = `join_table_2`.`join_id`',
             $join->queryBind()
         );
     }
@@ -140,12 +140,12 @@ final class JoinTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'SELECT * FROM base_table INNER JOIN join_table_1 ON base_table.base_id = join_table_1.join_id WHERE ( (base_table.a = :a) )',
+            'SELECT * FROM `base_table` INNER JOIN `join_table_1` ON `base_table`.`base_id` = `join_table_1`.`join_id` WHERE ( (`base_table`.`a` = :a) )',
             $join->__toString()
         );
 
         $this->assertEquals(
-            'SELECT * FROM base_table INNER JOIN join_table_1 ON base_table.base_id = join_table_1.join_id WHERE ( (base_table.a = 1) )',
+            'SELECT * FROM `base_table` INNER JOIN `join_table_1` ON `base_table`.`base_id` = `join_table_1`.`join_id` WHERE ( (`base_table`.`a` = 1) )',
             $join->queryBind()
         );
     }
@@ -167,12 +167,12 @@ final class JoinTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'SELECT * FROM base_table INNER JOIN (SELECT join_id FROM join_table WHERE (join_table.join_id IN (:in_0, :in_1))) AS join_table ON base_table.base_id = join_table.join_id ORDER BY base_table.base_id ASC',
+            'SELECT * FROM `base_table` INNER JOIN (SELECT `join_id` FROM `join_table` WHERE (`join_table`.`join_id` IN (:in_0, :in_1))) AS `join_table` ON `base_table`.`base_id` = `join_table`.`join_id` ORDER BY `base_table`.`base_id` ASC',
             $join->__toString()
         );
 
         $this->assertEquals(
-            'SELECT * FROM base_table INNER JOIN (SELECT join_id FROM join_table WHERE (join_table.join_id IN (1, 2))) AS join_table ON base_table.base_id = join_table.join_id ORDER BY base_table.base_id ASC',
+            'SELECT * FROM `base_table` INNER JOIN (SELECT `join_id` FROM `join_table` WHERE (`join_table`.`join_id` IN (1, 2))) AS `join_table` ON `base_table`.`base_id` = `join_table`.`join_id` ORDER BY `base_table`.`base_id` ASC',
             $join->queryBind()
         );
     }
@@ -188,12 +188,12 @@ final class JoinTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'DELETE bt FROM base_table AS bt INNER JOIN join_table ON bt.base_id = join_table.join_id WHERE ( (join_table.a = :join_table__a) )',
+            'DELETE `bt` FROM `base_table` AS `bt` INNER JOIN `join_table` ON `bt`.`base_id` = `join_table`.`join_id` WHERE ( (`join_table`.`a` = :join_table__a) )',
             $join->__toString()
         );
 
         $this->assertEquals(
-            'DELETE bt FROM base_table AS bt INNER JOIN join_table ON bt.base_id = join_table.join_id WHERE ( (join_table.a = 1) )',
+            'DELETE `bt` FROM `base_table` AS `bt` INNER JOIN `join_table` ON `bt`.`base_id` = `join_table`.`join_id` WHERE ( (`join_table`.`a` = 1) )',
             $join->queryBind()
         );
     }
@@ -209,12 +209,12 @@ final class JoinTest extends \QueryStringTest
         ;
 
         $this->assertEquals(
-            'UPDATE test INNER JOIN join_table ON test.base_id = join_table.join_id SET a = :bind_a WHERE ( (test.column_1 = :test__column_1) )',
+            'UPDATE `test` INNER JOIN `join_table` ON `test`.`base_id` = `join_table`.`join_id` SET `a` = :bind_a WHERE ( (`test`.`column_1` = :test__column_1) )',
             $update->__toString()
         );
 
         $this->assertEquals(
-            'UPDATE test INNER JOIN join_table ON test.base_id = join_table.join_id SET a = \'b\' WHERE ( (test.column_1 = 100) )',
+            'UPDATE `test` INNER JOIN `join_table` ON `test`.`base_id` = `join_table`.`join_id` SET `a` = \'b\' WHERE ( (`test`.`column_1` = 100) )',
             $update->queryBind()
         );
     }
