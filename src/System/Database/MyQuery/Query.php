@@ -228,16 +228,17 @@ abstract class Query
 
     public static function esc(?string $identifier): ?string
     {
-        return null === $identifier
-            ? null
-            : implode('.',
-                array_map(
-                    static fn (string $item): string => "`{$item}`",
-                    explode('.',
-                        str_replace('`', '', $identifier)
-                    )
-                )
-            );
+        if (null === $identifier) {
+            return null;
+        }
+
+        $parts = explode('.', str_replace('`', '', $identifier));
+
+        if (1 === count($parts)) {
+            return '`' . $parts[0] . '`';
+        }
+
+        return '`' . implode('`.`', $parts) . '`';
     }
 
     /**
