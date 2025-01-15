@@ -90,15 +90,18 @@ class Insert extends Execute
         }
 
         $builds              = [];
+
         $builds['column']    = '(' . implode(', ', $columns) . ')';
         $builds['values']    = 'VALUES';
         $builds['binds']     = implode(', ', $strings_binds);
         $builds['keyUpdate'] = $this->getDuplicateKeyUpdate();
+
         $string_build        = implode(' ', array_filter($builds, fn ($item) => $item !== ''));
 
-        $this->_query = "INSERT INTO {$this->_table} {$string_build}";
+        // escape
+        $table = $this->esc($this->_table);
 
-        return $this->_query;
+        return $this->_query = "INSERT INTO {$table} {$string_build}";
     }
 
     private function getDuplicateKeyUpdate(): string

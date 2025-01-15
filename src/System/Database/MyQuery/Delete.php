@@ -71,6 +71,7 @@ class Delete extends Execute
 
     protected function builder(): string
     {
+        // build
         $build = [];
 
         $build['join']  = $this->getJoin();
@@ -78,8 +79,12 @@ class Delete extends Execute
 
         $query_parts = implode(' ', array_filter($build, fn ($item) => $item !== ''));
 
-        return $this->_query =  null === $this->alias
-            ? "DELETE FROM {$this->_table} {$query_parts}"
-            : "DELETE {$this->alias} FROM {$this->_table} AS {$this->alias} {$query_parts}";
+        // escape
+        $table = $this->esc($this->_table);
+        $alias = $this->esc($this->alias);
+
+        return $this->_query = null === $this->alias
+            ? "DELETE FROM {$table} {$query_parts}"
+            : "DELETE {$alias} FROM {$table} AS {$alias} {$query_parts}";
     }
 }

@@ -185,7 +185,7 @@ abstract class Query
             $bind         = $fieldValue['bind'];
 
             if ($value !== '') {
-                $query[] = "({$column} {$comparation} :{$bind})";
+                $query[] = "({$this->esc($column)} {$comparation} :{$bind})";
             }
         }
 
@@ -226,8 +226,22 @@ abstract class Query
         return '';
     }
 
+    public static function esc(?string $identifier): ?string
+    {
+        return null === $identifier
+            ? null
+            : implode('.',
+                array_map(
+                    static fn (string $item): string => "`{$item}`",
+                    explode('.',
+                        str_replace('`', '', $identifier)
+                    )
+                )
+            );
+    }
+
     /**
-     * @return array<int, string[]|bool[]>>
+     * @return array{0: string[], 1: mixed[], 2:mixed[]|null[]}
      */
     public function bindsDestructur(): array
     {
@@ -236,13 +250,11 @@ abstract class Query
         $columns   = [];
 
         foreach ($this->_binds as $bind) {
-            // if (!$bind->hasColumName()) {
-            //     continue;
-            // }
             $bind_name[] = $bind->getBind();
             $value[]     = $bind->getValue();
-            if (!in_array($bind->getColumnName(), $columns)) {
-                $columns[] = $bind->getColumnName();
+            $column      = $this->esc($bind->getColumnName());
+            if ($column !== null && !in_array($column, $columns, true)) {
+                $columns[] = $column;
             }
         }
 

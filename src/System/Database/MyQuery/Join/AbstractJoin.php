@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Database\MyQuery\Join;
 
 use System\Database\MyQuery\InnerQuery;
+use System\Database\MyQuery\Query;
 
 abstract class AbstractJoin
 {
@@ -183,7 +184,9 @@ abstract class AbstractJoin
             $masterColumn  = $column[0];
             $compireColumn = $column[1];
 
-            $on[] = "$this->_mainTable.$masterColumn = $this->_tableName.$compireColumn";
+            $table_main    = Query::esc("{$this->_mainTable}.{$masterColumn}");
+            $table_compire = Query::esc("$this->_tableName.$compireColumn");
+            $on[]          = "{$table_main} = {$table_compire}";
         }
 
         return implode(' AND ', $on);
@@ -191,6 +194,6 @@ abstract class AbstractJoin
 
     protected function getAlias(): string
     {
-        return null === $this->sub_query ? $this->_tableName : (string) $this->sub_query;
+        return null === $this->sub_query ? Query::esc($this->_tableName) : (string) $this->sub_query;
     }
 }

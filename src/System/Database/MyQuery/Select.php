@@ -166,8 +166,7 @@ final class Select extends Fetch
     public function order(string $column_name, int $order_using = MyQuery::ORDER_ASC, ?string $belong_to = null)
     {
         $order = 0 === $order_using ? 'ASC' : 'DESC';
-        $belong_to ??= null === $this->_sub_query ? $this->_table : $this->_sub_query->getAlias();
-        $res = "{$belong_to}.{$column_name}";
+        $res   = $this->orderEsc($column_name, '', $belong_to);
 
         $this->_sort_order[$res] = $order;
 
@@ -180,7 +179,12 @@ final class Select extends Fetch
      */
     public function orderIfNotNull(string $column_name, int $order_using = MyQuery::ORDER_ASC, ?string $belong_to = null): self
     {
-        return $this->order("{$column_name} IS NOT NULL", $order_using, $belong_to);
+        $order = 0 === $order_using ? 'ASC' : 'DESC';
+        $res   = $this->orderEsc($column_name, 'IS NOT NULL', $belong_to);
+
+        $this->_sort_order[$res] = $order;
+
+        return $this;
     }
 
     /**
@@ -189,7 +193,12 @@ final class Select extends Fetch
      */
     public function orderIfNull(string $column_name, int $order_using = MyQuery::ORDER_ASC, ?string $belong_to = null): self
     {
-        return $this->order("{$column_name} IS NULL", $order_using, $belong_to);
+        $order = 0 === $order_using ? 'ASC' : 'DESC';
+        $res   = $this->orderEsc($column_name, 'IS NULL', $belong_to);
+
+        $this->_sort_order[$res] = $order;
+
+        return $this;
     }
 
     /**
@@ -208,7 +217,7 @@ final class Select extends Fetch
      */
     protected function builder(): string
     {
-        $column = implode(', ', $this->_column);
+        $column = $this->getColumn($this->_column);
 
         $build = [];
 
@@ -221,6 +230,30 @@ final class Select extends Fetch
         $condition = implode(' ', array_filter($build, fn ($item) => $item !== ''));
 
         return $this->_query = "SELECT {$column} FROM {$this->_sub_query} {$condition}";
+    }
+
+    private function getColumn(array $columns): string
+    {
+        return implode(', ', array_map(
+            function (string $item): string {
+                if ('*' === $item) {
+                    return $item;
+                }
+
+                $item   = trim($item);
+                $pos_as = stripos($item, ' as ');
+
+                if (false === $pos_as) {
+                    return $this->esc($item);
+                }
+
+                $field = trim(substr($item, 0, $pos_as));
+                $alias = trim(substr($item, $pos_as + 4));
+
+                return "{$field} AS {$this->esc($alias)}";
+            },
+            $columns
+        ));
     }
 
     /**
@@ -266,6 +299,16 @@ final class Select extends Fetch
         $orders = implode(', ', $orders);
 
         return "ORDER BY {$orders}";
+    }
+
+    private function orderEsc(string $column_name, string $column_prefix, ?string $belong_to = null): string
+    {
+        $belong_to ??= null === $this->_sub_query ? $this->_table : $this->_sub_query->getAlias();
+        $bind                 = [];
+        $bind['table_column'] = $this->esc("{$belong_to}.{$column_name}");
+        $bind['prefix']       = $column_prefix;
+
+        return implode(' ', array_filter($bind, static fn (string $item): bool => '' !== $item));
     }
 
     /**

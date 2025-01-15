@@ -91,7 +91,7 @@ class Update extends Execute
         $setter = [];
         foreach ($this->_binds as $bind) {
             if ($bind->hasColumName()) {
-                $setter[] = $bind->getColumnName() . ' = ' . $bind->getBind();
+                $setter[] = $this->esc($bind->getColumnName()) . ' = ' . $bind->getBind();
             }
         }
 
@@ -102,6 +102,9 @@ class Update extends Execute
 
         $query_parts = implode(' ', array_filter($build, fn ($item) => $item !== ''));
 
-        return $this->_query = "UPDATE {$this->_table} {$query_parts}";
+        // escape
+        $table = $this->esc($this->_table);
+
+        return $this->_query = "UPDATE {$table} {$query_parts}";
     }
 }
