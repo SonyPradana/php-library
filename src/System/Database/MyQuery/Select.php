@@ -227,7 +227,7 @@ final class Select extends Fetch
         $build['sort_order'] = $this->getOrderBy();
         $build['limit']      = $this->getLimit();
 
-        $condition = implode(' ', array_filter($build, fn ($item) => $item !== ''));
+        $condition = implode(' ', array_filter($build, 'strlen'));
 
         return $this->_query = "SELECT {$column} FROM {$this->_sub_query} {$condition}";
     }
@@ -261,17 +261,17 @@ final class Select extends Fetch
      */
     private function getLimit(): string
     {
-        $limit = $this->_limit_end > 0 ? "LIMIT $this->_limit_end" : '';
+        $limit = $this->_limit_end > 0 ? "LIMIT {$this->_limit_end}" : '';
 
         if ($this->_limit_start === 0) {
             return $limit;
         }
 
         if ($this->_limit_end === 0 && $this->_offset > 0) {
-            return "LIMIT $this->_limit_start OFFSET $this->_offset";
+            return "LIMIT {$this->_limit_start} OFFSET {$this->_offset}";
         }
 
-        return "LIMIT $this->_limit_start, $this->_limit_end";
+        return "LIMIT {$this->_limit_start}, {$this->_limit_end}";
     }
 
     private function getGroupBy(): string
@@ -308,7 +308,7 @@ final class Select extends Fetch
         $bind['table_column'] = $this->esc("{$belong_to}.{$column_name}");
         $bind['prefix']       = $column_prefix;
 
-        return implode(' ', array_filter($bind, static fn (string $item): bool => '' !== $item));
+        return implode(' ', array_filter($bind, 'strlen'));
     }
 
     /**

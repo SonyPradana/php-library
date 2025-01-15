@@ -100,7 +100,7 @@ class Update extends Execute
         $build[]        = 'SET ' . implode(', ', $setter);
         $build['where'] = $this->getWhere();
 
-        $query_parts = implode(' ', array_filter($build, fn ($item) => $item !== ''));
+        $query_parts = implode(' ', array_filter($build, 'strlen'));
 
         // escape
         $table = $this->esc($this->_table);

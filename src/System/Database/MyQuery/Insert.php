@@ -96,7 +96,7 @@ class Insert extends Execute
         $builds['binds']     = implode(', ', $strings_binds);
         $builds['keyUpdate'] = $this->getDuplicateKeyUpdate();
 
-        $string_build        = implode(' ', array_filter($builds, fn ($item) => $item !== ''));
+        $string_build        = implode(' ', array_filter($builds, 'strlen'));
 
         // escape
         $table = $this->esc($this->_table);

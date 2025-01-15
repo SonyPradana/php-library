@@ -77,7 +77,7 @@ class Delete extends Execute
         $build['join']  = $this->getJoin();
         $build['where'] = $this->getWhere();
 
-        $query_parts = implode(' ', array_filter($build, fn ($item) => $item !== ''));
+        $query_parts = implode(' ', array_filter($build, 'strlen'));
 
         // escape
         $table = $this->esc($this->_table);
