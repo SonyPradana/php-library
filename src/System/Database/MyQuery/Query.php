@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace System\Database\MyQuery;
 
+use System\Database\Interfaces\EscapeQuery;
 use System\Database\MyPDO;
+use System\Database\MyQuery\Identifiers\MySQLIdentifier;
 
-abstract class Query
+abstract class Query implements EscapeQuery
 {
     /** @var MyPDO PDO property */
     protected $PDO;
@@ -84,6 +86,8 @@ abstract class Query
      */
     protected $_join = [];
 
+    protected ?EscapeQuery $_escape = null;
+
     /**
      * reset all property.
      *
@@ -101,6 +105,7 @@ abstract class Query
         $this->_group_filters = [];
         $this->_filters       = [];
         $this->_strict_mode   = true;
+        $this->_escape        = null;
 
         return $this;
     }
@@ -185,7 +190,7 @@ abstract class Query
             $bind         = $fieldValue['bind'];
 
             if ($value !== '') {
-                $query[] = "({$this->esc($column)} {$comparation} :{$bind})";
+                $query[] = "({$this->escape($column)} {$comparation} :{$bind})";
             }
         }
 
@@ -226,19 +231,16 @@ abstract class Query
         return '';
     }
 
-    public static function esc(?string $identifier): ?string
+    public function escape(?string $identifier): ?string
     {
-        if (null === $identifier) {
-            return null;
-        }
+        return $this->_escape?->escape($identifier) ?? (new MySQLIdentifier())->escape($identifier);
+    }
 
-        $parts = explode('.', str_replace('`', '', $identifier));
+    public function setEscape(?EscapeQuery $escapeQuery): static
+    {
+        $this->_escape = $escapeQuery;
 
-        if (1 === count($parts)) {
-            return '`' . $parts[0] . '`';
-        }
-
-        return '`' . implode('`.`', $parts) . '`';
+        return $this;
     }
 
     /**
@@ -253,7 +255,7 @@ abstract class Query
         foreach ($this->_binds as $bind) {
             $bind_name[] = $bind->getBind();
             $value[]     = $bind->getValue();
-            $column      = $this->esc($bind->getColumnName());
+            $column      = $this->escape($bind->getColumnName());
             if ($column !== null && !in_array($column, $columns, true)) {
                 $columns[] = $column;
             }

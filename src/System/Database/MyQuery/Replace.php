@@ -21,7 +21,7 @@ class Replace extends Insert
         $stringColumn = implode(', ', $columns);
 
         // escape
-        $table = $this->esc($this->_table);
+        $table = $this->escape($this->_table);
 
         return $this->_query = "REPLACE INTO {$table} ({$stringColumn}) VALUES {$stringBinds}";
     }

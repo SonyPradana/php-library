@@ -4,10 +4,24 @@ declare(strict_types=1);
 
 namespace System\Database\MyQuery;
 
+use System\Database\Interfaces\EscapeQuery;
+use System\Database\MyQuery\Identifiers\MySQLIdentifier;
+
 final class InnerQuery implements \Stringable
 {
-    public function __construct(private ?Select $select = null, private string $table = '')
+    public function __construct(
+        private ?Select $select = null,
+        private string $table = '',
+        private ?EscapeQuery $escapeQuery = null,
+    ) {
+        $this->escapeQuery ??= new MySQLIdentifier();
+    }
+
+    public function setEscape(?EscapeQuery $escapeQuery): self
     {
+        $this->escapeQuery = $escapeQuery;
+
+        return $this;
     }
 
     public function isSubQuery(): bool
@@ -17,7 +31,7 @@ final class InnerQuery implements \Stringable
 
     public function getAlias(): string
     {
-        return Query::esc($this->table);
+        return $this->escapeQuery->escape($this->table);
     }
 
     /** @return Bind[]  */

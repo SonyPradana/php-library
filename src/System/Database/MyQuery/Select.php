@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Database\MyQuery;
 
+use System\Database\Interfaces\EscapeQuery;
 use System\Database\MyPDO;
 use System\Database\MyQuery;
 use System\Database\MyQuery\Join\AbstractJoin;
@@ -35,7 +36,7 @@ final class Select extends Fetch
         }
 
         $column       = implode(', ', $columns_name);
-        $this->_query = $options['query'] ?? "SELECT {$column} FROM { $this->_sub_query}";
+        $this->_query = $options['query'] ?? "SELECT {$column} FROM {$this->_sub_query}";
     }
 
     public function __toString()
@@ -66,6 +67,7 @@ final class Select extends Fetch
      */
     public function join(AbstractJoin $ref_table): self
     {
+        $ref_table->setEscape($this->_escape);
         // overide master table
         $ref_table->table($this->_sub_query->getAlias());
 
@@ -244,13 +246,13 @@ final class Select extends Fetch
                 $pos_as = stripos($item, ' as ');
 
                 if (false === $pos_as) {
-                    return $this->esc($item);
+                    return $this->escape($item);
                 }
 
                 $field = trim(substr($item, 0, $pos_as));
                 $alias = trim(substr($item, $pos_as + 4));
 
-                return "{$field} AS {$this->esc($alias)}";
+                return "{$field} AS {$this->escape($alias)}";
             },
             $columns
         ));
@@ -305,7 +307,7 @@ final class Select extends Fetch
     {
         $belong_to ??= null === $this->_sub_query ? $this->_table : $this->_sub_query->getAlias();
         $bind                 = [];
-        $bind['table_column'] = $this->esc("{$belong_to}.{$column_name}");
+        $bind['table_column'] = $this->escape("{$belong_to}.{$column_name}");
         $bind['prefix']       = $column_prefix;
 
         return implode(' ', array_filter($bind, 'strlen'));

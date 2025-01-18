@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace System\Database\MyQuery\Join;
 
+use System\Database\Interfaces\EscapeQuery;
+use System\Database\MyQuery\Identifiers\MySQLIdentifier;
 use System\Database\MyQuery\InnerQuery;
-use System\Database\MyQuery\Query;
 
 abstract class AbstractJoin
 {
@@ -35,6 +36,8 @@ abstract class AbstractJoin
     protected $_stringJoin    = '';
 
     protected ?InnerQuery $sub_query = null;
+
+    protected ?EscapeQuery $escape = null;
 
     final public function __construct()
     {
@@ -150,7 +153,20 @@ abstract class AbstractJoin
         return $this;
     }
 
+    public function escape(?string $identifier): ?string
+    {
+        return $this->escape?->escape($identifier) ?? (new MySQLIdentifier())->escape($identifier);
+    }
+
+    public function setEscape(?EscapeQuery $escapeQuery): static
+    {
+        $this->escape = $escapeQuery;
+
+        return $this;
+    }
+
     // getter
+
     /**
      * Get string of raw join builder.
      *
@@ -184,8 +200,8 @@ abstract class AbstractJoin
             $masterColumn  = $column[0];
             $compireColumn = $column[1];
 
-            $table_main    = Query::esc("{$this->_mainTable}.{$masterColumn}");
-            $table_compire = Query::esc("$this->_tableName.$compireColumn");
+            $table_main    = $this->escape("{$this->_mainTable}.{$masterColumn}");
+            $table_compire = $this->escape("$this->_tableName.$compireColumn");
             $on[]          = "{$table_main} = {$table_compire}";
         }
 
@@ -194,6 +210,6 @@ abstract class AbstractJoin
 
     protected function getAlias(): string
     {
-        return null === $this->sub_query ? Query::esc($this->_tableName) : (string) $this->sub_query;
+        return null === $this->sub_query ? $this->escape($this->_tableName) : (string) $this->sub_query;
     }
 }

@@ -99,7 +99,7 @@ class Insert extends Execute
         $string_build        = implode(' ', array_filter($builds, 'strlen'));
 
         // escape
-        $table = $this->esc($this->_table);
+        $table = $this->escape($this->_table);
 
         return $this->_query = "INSERT INTO {$table} {$string_build}";
     }

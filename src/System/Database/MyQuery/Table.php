@@ -4,31 +4,24 @@ declare(strict_types=1);
 
 namespace System\Database\MyQuery;
 
+use System\Database\Interfaces\EscapeQuery;
 use System\Database\MyPDO;
 
 class Table
 {
-    /**
-     * MyPDO instance.
-     *
-     * @var MyPDO
-     */
-    protected $PDO;
+    protected ?EscapeQuery $escape_query = null;
 
-    /**
-     * Table name.
-     *
-     * @var string|InnerQuery
-     */
-    protected $table_name;
+    public function __construct(
+        protected string|InnerQuery $table_name,
+        protected MyPDO $PDO,
+    ) {
+    }
 
-    /**
-     * @param string|InnerQuery $table_name Table name
-     */
-    public function __construct($table_name, MyPDO $PDO)
+    public function setEscape(?EscapeQuery $escape_query): self
     {
-        $this->table_name = $table_name;
-        $this->PDO        = $PDO;
+        $this->escape_query = $escape_query;
+
+        return $this;
     }
 
     /**
@@ -38,7 +31,10 @@ class Table
      */
     public function insert()
     {
-        return new Insert($this->table_name, $this->PDO);
+        $insert = new Insert($this->table_name, $this->PDO);
+        $insert->setEscape($this->escape_query);
+
+        return $insert;
     }
 
     /**
@@ -48,7 +44,10 @@ class Table
      */
     public function replace()
     {
-        return new Replace($this->table_name, $this->PDO);
+        $replace = new Replace($this->table_name, $this->PDO);
+        $replace->setEscape($this->escape_query);
+
+        return $replace;
     }
 
     /**
@@ -60,7 +59,14 @@ class Table
      */
     public function select(array $select_columns = ['*'])
     {
-        return new Select($this->table_name, $select_columns, $this->PDO);
+        if ($this->table_name instanceof InnerQuery) {
+            $this->table_name->setEscape($this->escape_query);
+        }
+
+        $select = new Select($this->table_name, $select_columns, $this->PDO);
+        $select->setEscape($this->escape_query);
+
+        return $select;
     }
 
     /**
@@ -70,7 +76,10 @@ class Table
      */
     public function update()
     {
-        return new Update($this->table_name, $this->PDO);
+        $update = new Update($this->table_name, $this->PDO);
+        $update->setEscape($this->escape_query);
+
+        return $update;
     }
 
     /**
@@ -80,7 +89,10 @@ class Table
      */
     public function delete()
     {
-        return new Delete($this->table_name, $this->PDO);
+        $delete = new Delete($this->table_name, $this->PDO);
+        $delete->setEscape($this->escape_query);
+
+        return $delete;
     }
 
     /**

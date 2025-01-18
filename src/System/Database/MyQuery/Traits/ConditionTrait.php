@@ -76,7 +76,7 @@ trait ConditionTrait
     public function between(string $column_name, $value_1, $value_2)
     {
         $table_name = null === $this->_sub_query ? $this->_table : $this->_sub_query->getAlias();
-        $column     = $this->esc("{$table_name}.{$column_name}");
+        $column     = $this->escape("{$table_name}.{$column_name}");
 
         $this->where(
             "({$column} BETWEEN :b_start AND :b_end)",
@@ -107,7 +107,7 @@ trait ConditionTrait
         }
         $bindString = implode(', ', $binds);
         $table_name = null === $this->_sub_query ? "{$this->_table}" : $this->_sub_query->getAlias();
-        $column     = $this->esc("{$table_name}.{$column_name}");
+        $column     = $this->escape("{$table_name}.{$column_name}");
 
         $this->where(
             "({$column} IN ({$bindString}))",

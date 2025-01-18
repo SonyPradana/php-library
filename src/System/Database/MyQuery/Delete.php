@@ -48,6 +48,7 @@ class Delete extends Execute
      */
     public function join(AbstractJoin $ref_table): self
     {
+        $ref_table->setEscape($this->_escape);
         $table = $this->alias ?? $this->_table;
         $ref_table->table($table);
 
@@ -80,8 +81,8 @@ class Delete extends Execute
         $query_parts = implode(' ', array_filter($build, 'strlen'));
 
         // escape
-        $table = $this->esc($this->_table);
-        $alias = $this->esc($this->alias);
+        $table = $this->escape($this->_table);
+        $alias = $this->escape($this->alias);
 
         return $this->_query = null === $this->alias
             ? "DELETE FROM {$table} {$query_parts}"

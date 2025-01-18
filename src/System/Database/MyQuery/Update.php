@@ -65,6 +65,7 @@ class Update extends Execute
      */
     public function join(AbstractJoin $ref_table): self
     {
+        $ref_table->setEscape($this->_escape);
         // overide master table
         $ref_table->table($this->_table);
 
@@ -91,7 +92,7 @@ class Update extends Execute
         $setter = [];
         foreach ($this->_binds as $bind) {
             if ($bind->hasColumName()) {
-                $setter[] = $this->esc($bind->getColumnName()) . ' = ' . $bind->getBind();
+                $setter[] = $this->escape($bind->getColumnName()) . ' = ' . $bind->getBind();
             }
         }
 
@@ -103,7 +104,7 @@ class Update extends Execute
         $query_parts = implode(' ', array_filter($build, 'strlen'));
 
         // escape
-        $table = $this->esc($this->_table);
+        $table = $this->escape($this->_table);
 
         return $this->_query = "UPDATE {$table} {$query_parts}";
     }
