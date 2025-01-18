@@ -155,7 +155,11 @@ abstract class AbstractJoin
 
     public function escape(?string $identifier): ?string
     {
-        return $this->escape?->escape($identifier) ?? (new MySQLIdentifier())->escape($identifier);
+        if ($this->escape === null) {
+            $this->escape = new MySQLIdentifier();
+        }
+
+        return $this->escape->escape($identifier);
     }
 
     public function setEscape(?EscapeQuery $escapeQuery): static

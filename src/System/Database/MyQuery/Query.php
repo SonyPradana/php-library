@@ -233,7 +233,11 @@ abstract class Query implements EscapeQuery
 
     public function escape(?string $identifier): ?string
     {
-        return $this->_escape?->escape($identifier) ?? (new MySQLIdentifier())->escape($identifier);
+        if ($this->_escape === null) {
+            $this->_escape = new MySQLIdentifier();
+        }
+
+        return $this->_escape->escape($identifier);
     }
 
     public function setEscape(?EscapeQuery $escapeQuery): static

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace System\Database\MyQuery;
 
-use System\Database\Interfaces\EscapeQuery;
 use System\Database\MyPDO;
 use System\Database\MyQuery;
 use System\Database\MyQuery\Join\AbstractJoin;
