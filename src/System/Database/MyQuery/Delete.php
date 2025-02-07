@@ -48,7 +48,6 @@ class Delete extends Execute
      */
     public function join(AbstractJoin $ref_table): self
     {
-        $ref_table->setEscape($this->_escape);
         $table = $this->alias ?? $this->_table;
         $ref_table->table($table);
 

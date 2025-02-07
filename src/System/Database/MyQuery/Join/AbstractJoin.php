@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace System\Database\MyQuery\Join;
 
-use System\Database\Interfaces\EscapeQuery;
-use System\Database\MyQuery\Identifiers\MySQLIdentifier;
+use System\Database\MyQuery\EscapeFactory;
 use System\Database\MyQuery\InnerQuery;
 
 abstract class AbstractJoin
@@ -36,8 +35,6 @@ abstract class AbstractJoin
     protected $_stringJoin    = '';
 
     protected ?InnerQuery $sub_query = null;
-
-    protected ?EscapeQuery $escape = null;
 
     final public function __construct()
     {
@@ -155,18 +152,7 @@ abstract class AbstractJoin
 
     public function escape(?string $identifier): ?string
     {
-        if ($this->escape === null) {
-            $this->escape = new MySQLIdentifier();
-        }
-
-        return $this->escape->escape($identifier);
-    }
-
-    public function setEscape(?EscapeQuery $escapeQuery): static
-    {
-        $this->escape = $escapeQuery;
-
-        return $this;
+        return EscapeFactory::escape($identifier);
     }
 
     // getter

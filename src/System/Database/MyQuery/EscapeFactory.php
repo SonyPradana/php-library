@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace System\Database\MyQuery\Identifiers;
+namespace System\Database\MyQuery;
 
-class MySQLIdentifier extends Identifier
+final class EscapeFactory
 {
     private static array $cache = [];
 
-    public function escape(?string $identifier): ?string
+    public static function escape(?string $identifier): ?string
     {
         if (null === $identifier) {
             return null;

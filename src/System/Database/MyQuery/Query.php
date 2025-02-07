@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace System\Database\MyQuery;
 
-use System\Database\Interfaces\EscapeQuery;
 use System\Database\MyPDO;
-use System\Database\MyQuery\Identifiers\MySQLIdentifier;
 
-abstract class Query implements EscapeQuery
+abstract class Query
 {
     /** @var MyPDO PDO property */
     protected $PDO;
@@ -86,8 +84,6 @@ abstract class Query implements EscapeQuery
      */
     protected $_join = [];
 
-    protected ?EscapeQuery $_escape = null;
-
     /**
      * reset all property.
      *
@@ -105,7 +101,6 @@ abstract class Query implements EscapeQuery
         $this->_group_filters = [];
         $this->_filters       = [];
         $this->_strict_mode   = true;
-        $this->_escape        = null;
 
         return $this;
     }
@@ -233,18 +228,7 @@ abstract class Query implements EscapeQuery
 
     public function escape(?string $identifier): ?string
     {
-        if ($this->_escape === null) {
-            $this->_escape = new MySQLIdentifier();
-        }
-
-        return $this->_escape->escape($identifier);
-    }
-
-    public function setEscape(?EscapeQuery $escapeQuery): static
-    {
-        $this->_escape = $escapeQuery;
-
-        return $this;
+        return EscapeFactory::escape($identifier);
     }
 
     /**
