@@ -304,7 +304,7 @@ final class Select extends Fetch
 
     private function orderEsc(string $column_name, string $column_prefix, ?string $belong_to = null): string
     {
-        $belong_to ??= null === $this->_sub_query ? $this->_table : $this->_sub_query->getAlias();
+        $belong_to ??= $this->_sub_query->getAlias();
         $bind                 = [];
         $bind['table_column'] = $this->escape("{$belong_to}.{$column_name}");
         $bind['prefix']       = $column_prefix;
