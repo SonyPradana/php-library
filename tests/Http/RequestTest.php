@@ -482,4 +482,24 @@ class RequestTest extends TestCase
 
         $this->assertNull($request->getRequestFormat());
     }
+
+    /**
+     * @test
+     */
+    public function itCanGetHeaderAuthorization(): void
+    {
+        $request = new Request('test.test', headers: ['Authorization' => '123']);
+
+        $this->assertEquals('123', $request->getAuthorization());
+    }
+
+    /**
+     * @test
+     */
+    public function itCanGetHeaderBearerAuthorization(): void
+    {
+        $request = new Request('test.test', headers: ['Authorization' => 'Bearer 123']);
+
+        $this->assertEquals('123', $request->getBearerToken());
+    }
 }
