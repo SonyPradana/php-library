@@ -529,6 +529,31 @@ class Request implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
+     * Get Authorization header.
+     */
+    public function getAuthorization(): ?string
+    {
+        return $this->getHeaders('Authorization');
+    }
+
+    /**
+     * Get Bearer token from Authorization header.
+     */
+    public function getBearerToken(): ?string
+    {
+        $authorization = $this->getAuthorization();
+        if (null === $authorization) {
+            return null;
+        }
+
+        if (Str::startsWith($authorization, 'Bearer ')) {
+            return substr($authorization, 7);
+        }
+
+        return null;
+    }
+
+    /**
      * Compine all request input.
      *
      * @template TGetDefault
