@@ -358,7 +358,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
         } else {
             $table_name = $model;
             $join_ref   = $ref ?? $this->primery_key;
-            $model      = new Model($this->pdo, []);
+            $model      = new static($this->pdo, []);
         }
         $result   = MyQuery::from($this->table_name, $this->pdo)
             ->select([$table_name . '.*'])
@@ -387,7 +387,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
         } else {
             $table_name = $model;
             $join_ref   = $ref ?? $this->primery_key;
-            $model      = new Model($this->pdo, []);
+            $model      = new static($this->pdo, []);
         }
         $result = MyQuery::from($this->table_name, $this->pdo)
              ->select([$table_name . '.*'])
@@ -573,7 +573,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      * @return mixed|null
      */
     #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->getter($offset, null);
     }
@@ -679,7 +679,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /**
      * Fetch all records.
      *
-     * @return ModelCollection<static<array-key, mixed>>
+     * @return ModelCollection<array-key, static>
      */
     public static function all(MyPDO $pdo): ModelCollection
     {
