@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\View;
 
+use System\View\Templator\BooleanTemplator;
 use System\View\Templator\BreakTemplator;
 use System\View\Templator\CommentTemplator;
 use System\View\Templator\ComponentTemplator;
@@ -156,6 +157,7 @@ class Templator
             BreakTemplator::class,
             UseTemplator::class,
             JsonTemplator::class,
+            BooleanTemplator::class,
         ], function (string $template, string $templator): string {
             $templator = new $templator($this->finder, $this->cacheDir);
             if ($templator instanceof IncludeTemplator) {

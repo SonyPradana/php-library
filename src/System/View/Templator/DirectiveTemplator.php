@@ -29,6 +29,7 @@ class DirectiveTemplator extends AbstractTemplatorParse
         'foreach'  => EachTemplator::class,
         'if'       => IfTemplator::class,
         'include'  => IncludeTemplator::class,
+        'bool'     => BooleanTemplator::class,
         'json'     => JsonTemplator::class,
         'php'      => PHPTemplator::class,
         'raw'      => NameTemplator::class,
