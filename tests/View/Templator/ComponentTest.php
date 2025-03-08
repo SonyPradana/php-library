@@ -27,7 +27,7 @@ final class ComponentTest extends TestCase
     {
         $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
         $out       = $templator->templates('{% component(\'componentnested.template\') %}card with nest{% endcomponent %}');
-        $this->assertEquals("<html><head></head><body><div class=\"card\">card with nest</div>\n</body></html>", trim($out));
+        $this->assertEquals('<html><head></head><body><div class="card">card with nest</div>' . PHP_EOL . '</body></html>', trim($out));
     }
 
     /**
@@ -37,7 +37,7 @@ final class ComponentTest extends TestCase
     {
         $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
         $out       = $templator->templates('{% component(\'componentcard.template\') %}oke{% endcomponent %} {% component(\'componentcard.template\') %}oke 2 {% endcomponent %}');
-        $this->assertEquals("<div class=\"card\">oke</div>\n <div class=\"card\">oke 2 </div>", trim($out));
+        $this->assertEquals('<div class="card">oke</div>' . PHP_EOL . ' <div class="card">oke 2 </div>', trim($out));
     }
 
     /**
