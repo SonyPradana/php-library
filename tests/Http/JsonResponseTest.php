@@ -89,9 +89,8 @@ class JsonResponseTest extends TestCase
      */
     public function itCanSetEncodingOptions(): void
     {
-        $this->markTestSkipped('need more inspeks');
         $response = new JsonResponse();
-        $response->setData([1, 2, 3]);
+        $response->setData([[1, 2, 3]]);
 
         $this->assertEquals('[[1,2,3]]', $response->getContent());
 
