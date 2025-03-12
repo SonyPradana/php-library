@@ -142,7 +142,7 @@ class Response
         }
 
         // remove header
-        if ($this->remove_headers === null) {
+        if ([] === $this->remove_headers) {
             header_remove();
         } else {
             foreach ($this->remove_headers as $header) {
