@@ -6,7 +6,12 @@ namespace System\Http;
 
 class JsonResponse extends Response
 {
-    protected int $encoding_option = 15;
+    protected string $data;
+
+    /**
+     * @see https://github.com/symfony/symfony/blob/6.4/src/Symfony/Component/HttpFoundation/JsonResponse.php
+     */
+    protected int $encoding_options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT;
 
     /**
      * @param array<mixed, mixed>|null $data
@@ -19,16 +24,22 @@ class JsonResponse extends Response
         $this->setData($data);
     }
 
-    public function setEncodingOption(int $encoding_option): self
+    public function setEncodingOptions(int $encoding_options): self
     {
-        $this->encoding_option = $encoding_option;
+        $this->encoding_options = $encoding_options;
+        $this->setData(json_decode($this->data));
 
         return $this;
     }
 
+    public function getEncodingOptions(): int
+    {
+        return $this->encoding_options;
+    }
+
     public function setJson(string $json): self
     {
-        $this->content = $json;
+        $this->data = $json;
         $this->prepare();
 
         return $this;
@@ -39,7 +50,7 @@ class JsonResponse extends Response
      */
     public function setData(array $data): self
     {
-        $this->content = json_encode($data, $this->encoding_option);
+        $this->data = json_encode($data, $this->encoding_options);
         $this->prepare();
 
         return $this;
@@ -50,11 +61,12 @@ class JsonResponse extends Response
      */
     public function getData(): array
     {
-        return json_decode($this->content, true);
+        return json_decode($this->data, true);
     }
 
     protected function prepare(): void
     {
-        $this->content_type = 'application/json';
+        $this->setContentType('application/json');
+        $this->setContent($this->data);
     }
 }

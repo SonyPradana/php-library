@@ -40,17 +40,18 @@ class Response
     ];
 
     // property
+
     /**
      * Http body content.
      *
      * @var string|array<mixed, mixed>
      */
-    protected string|array $content;
+    private string|array $content;
 
     /**
-     * http respone code.
+     * Http respone code.
      */
-    protected int $respone_code;
+    private int $respone_code;
 
     /**
      * Header array pools.
@@ -62,22 +63,22 @@ class Response
      *
      * @var array<int, string>
      */
-    protected array $remove_headers = [];
+    private array $remove_headers = [];
 
     /**
      * Content type.
      */
-    protected string $content_type = 'text/html';
+    private string $content_type = 'text/html';
+
+    /**
+     * Http Protocol version (1.0 or 1.1).
+     */
+    private string $protocol_version;
 
     /**
      * Set encoding option for encode json data.
      */
     protected int $encoding_option = JSON_NUMERIC_CHECK;
-
-    /**
-     * Http Protocol version (1.0 or 1.1).
-     */
-    protected string $protocol_version;
 
     /**
      * Create rosone http base on conten and header.
@@ -376,6 +377,16 @@ class Response
     }
 
     /**
+     * Set content type.
+     */
+    public function setContentType(string $content_type): self
+    {
+        $this->content_type = $content_type;
+
+        return $this;
+    }
+
+    /**
      * Remove header from origin header.
      *
      * @deprecated use headers property instead
@@ -445,6 +456,14 @@ class Response
     public function getProtocolVersion(): string
     {
         return $this->protocol_version;
+    }
+
+    /**
+     * Get Content http response content type.
+     */
+    public function getContentType(): string
+    {
+        return $this->content_type;
     }
 
     /**
