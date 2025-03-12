@@ -45,14 +45,12 @@ class Response
      *
      * @var string|array<mixed, mixed>
      */
-    private $content;
+    protected string|array $content;
 
     /**
      * http respone code.
-     *
-     * @var int
      */
-    private $respone_code;
+    protected int $respone_code;
 
     /**
      * Header array pools.
@@ -64,19 +62,22 @@ class Response
      *
      * @var array<int, string>
      */
-    private $remove_headers = [];
+    protected array $remove_headers = [];
 
     /**
      * Content type.
-     *
-     * @var string
-     * */
-    private $content_type = 'text/html';
+     */
+    protected string $content_type = 'text/html';
+
+    /**
+     * Set encoding option for encode json data.
+     */
+    protected int $encoding_option = JSON_NUMERIC_CHECK;
 
     /**
      * Http Protocol version (1.0 or 1.1).
      */
-    private string $protocol_version;
+    protected string $protocol_version;
 
     /**
      * Create rosone http base on conten and header.
@@ -106,7 +107,7 @@ class Response
 
         $header_lines = (string) $this->headers;
         $content      = is_array($this->content)
-            ? json_encode($this->content, JSON_NUMERIC_CHECK)
+            ? json_encode($this->content, $this->encoding_option)
             : $this->content;
 
         return
@@ -159,7 +160,7 @@ class Response
     protected function sendContent()
     {
         echo is_array($this->content)
-            ? json_encode($this->content, JSON_NUMERIC_CHECK)
+            ? json_encode($this->content, $this->encoding_option)
             : $this->content;
     }
 
@@ -225,6 +226,8 @@ class Response
      * @param string|array<mixed, mixed> $content Content to send data
      *
      * @return self
+     *
+     * @deprecated use `JsonRespone::class` instead
      */
     public function json($content = null)
     {
