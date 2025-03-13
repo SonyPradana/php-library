@@ -20,7 +20,7 @@ class JsonResponse extends Response
     public function __construct(?array $data = null, int $status_code = 200, array $headers = [])
     {
         parent::__construct('', $status_code, $headers);
-        $data ??= [];
+        $data ??= new \ArrayObject();
         $this->setData($data);
     }
 
@@ -46,11 +46,14 @@ class JsonResponse extends Response
     }
 
     /**
-     * @param array<mixed, mixed> $data
+     * @throws \Exception throw error when json encode is false
      */
-    public function setData(array $data): self
+    public function setData(mixed $data): self
     {
-        $this->data = json_encode($data, $this->encoding_options);
+        if (false === ($json = json_encode($data, $this->encoding_options))) {
+            throw new \InvalidArgumentException('Invalid encode data.');
+        }
+        $this->data = $json;
         $this->prepare();
 
         return $this;

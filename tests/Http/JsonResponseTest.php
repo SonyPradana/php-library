@@ -32,9 +32,17 @@ class JsonResponseTest extends TestCase
     /**
      * @test
      */
+    public function itWillThrowsInvalidExcaption(): void
+    {
+        $this->expectExceptionMessage('Invalid encode data.');
+        new JsonResponse(['say' => "Hello \x80 World"]);
+    }
+
+    /**
+     * @test
+     */
     public function itConstructorEmptyCreatesJsonObject()
     {
-        $this->markTestSkipped();
         $response = new JsonResponse();
         $this->assertSame('{}', $response->getContent());
     }
@@ -67,9 +75,8 @@ class JsonResponseTest extends TestCase
      */
     public function itJsonEncodeFlags()
     {
-        $this->markTestSkipped('work but require setData');
         $response = new JsonResponse();
-        // $response->setData('<>\'&"');
+        $response->setData('<>\'&"');
 
         $this->assertEquals('"\u003C\u003E\u0027\u0026\u0022"', $response->getContent());
     }
