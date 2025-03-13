@@ -227,8 +227,6 @@ class Response
      * @param string|array<mixed, mixed> $content Content to send data
      *
      * @return self
-     *
-     * @deprecated use `JsonRespone::class` instead
      */
     public function json($content = null)
     {
