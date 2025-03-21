@@ -72,6 +72,28 @@ class ViewCommand extends Command
         ];
     }
 
+    /**
+     * Find files recursively in a directory using a pattern.
+     *
+     * @return array<string>
+     */
+    private function findFiles(string $directory, string $pattern): array
+    {
+        $files    = [];
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($directory),
+            \RecursiveIteratorIterator::SELF_FIRST
+        );
+
+        foreach ($iterator as $file) {
+            if ($file->isFile() && fnmatch($pattern, $file->getFilename())) {
+                $files[] = $file->getPathname();
+            }
+        }
+
+        return $files;
+    }
+
     public function cache(Templator $templator): int
     {
         $files = glob(view_path() . $this->prefix);
@@ -136,9 +158,9 @@ class ViewCommand extends Command
     {
         warn('Clear cache file in ' . view_path() . $this->prefix)->out(false);
         $indexes = function (): array {
-            $files = glob(view_path() . $this->prefix);
+            $files = $this->findFiles(view_path(), $this->prefix);
 
-            if (false === $files) {
+            if (empty($files)) {
                 warn('Error finding view file(s).')->out();
 
                 return [];
@@ -147,13 +169,17 @@ class ViewCommand extends Command
             // indexing files (time modified)
             $indexes = [];
             foreach ($files as $file) {
+                if (false === is_file($file)) {
+                    continue;
+                }
+
                 $indexes[$file] = filemtime($file);
             }
 
             // sort for newest file
             arsort($indexes);
 
-            return $files;
+            return $indexes;
         };
         $signal = false;
         /** @var array<string, int> */
@@ -169,14 +195,16 @@ class ViewCommand extends Command
         ]);
 
         do {
-            $reindex =false;
+            $reindex = false;
+            $width   = $this->getWidth(40, 80);
             foreach ($get_indexes as $file => $time) {
+                clearstatcache(true, $file);
                 $now = filemtime($file);
-                if ($templator->viewExist($file) && $now > $time) {
+
+                if ($now > $time) {
                     $watch_start     = microtime(true);
                     $filename        = Str::replace($file, view_path(), '');
                     $templator->compile($filename);
-                    $width              = $this->getWidth();
                     $lenght             = strlen($filename);
                     $excutime           = round(microtime(true) - $watch_start, 3) * 1000;
                     $excutime_length    = strlen((string) $excutime);
