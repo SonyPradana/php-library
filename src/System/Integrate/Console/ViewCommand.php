@@ -135,13 +135,13 @@ class ViewCommand extends Command
     public function watch(Templator $templator): int
     {
         warn('Clear cache file in ' . view_path() . $this->prefix)->out(false);
-        $indexes = function (): array|false {
+        $indexes = function (): array {
             $files = glob(view_path() . $this->prefix);
 
             if (false === $files) {
                 warn('Error finding view file(s).')->out();
 
-                return false;
+                return [];
             }
 
             // indexing files (time modified)
@@ -150,9 +150,17 @@ class ViewCommand extends Command
                 $indexes[$file] = filemtime($file);
             }
 
+            // sort for newest file
+            arsort($indexes);
+
             return $files;
         };
         $signal = false;
+        /** @var array<string, int> */
+        $get_indexes = $indexes();
+        if ([] === $get_indexes) {
+            return 1;
+        }
 
         exit_prompt('Press any key to stop watching', [
             'yes' => static function () use (&$signal) {
@@ -161,21 +169,19 @@ class ViewCommand extends Command
         ]);
 
         do {
-            /** @var array<string, int>|false */
-            $get_indexes = $indexes();
-            if (false === $get_indexes) {
-                return 1;
-            }
-
+            $reindex =false;
             foreach ($get_indexes as $file => $time) {
-                if ($templator->viewExist($file) && filemtime($file) > $time) {
+                $now = filemtime($file);
+                if ($templator->viewExist($file) && $now > $time) {
                     $watch_start     = microtime(true);
                     $filename        = Str::replace($file, view_path(), '');
                     $templator->compile($filename);
-                    $width           = $this->getWidth();
-                    $lenght          = strlen($filename);
-                    $excutime        = round(microtime(true) - $watch_start, 3) * 1000;
-                    $excutime_length = strlen((string) $excutime);
+                    $width              = $this->getWidth();
+                    $lenght             = strlen($filename);
+                    $excutime           = round(microtime(true) - $watch_start, 3) * 1000;
+                    $excutime_length    = strlen((string) $excutime);
+                    $get_indexes[$file] = $now;
+                    $reindex            = true;
 
                     style($filename)
                         ->repeat('.', $width - $lenght - $excutime_length - 2)->textDim()
@@ -184,6 +190,16 @@ class ViewCommand extends Command
                         ->out(false);
                 }
             }
+
+            // reindexing
+            if (count($get_indexes) !== count($new_indexes = $indexes())) {
+                $get_indexes = $new_indexes;
+            }
+            if ($reindex) {
+                asort($get_indexes);
+            }
+
+            usleep(1_000); // 1ms
         } while (!$signal);
 
         return 0;
