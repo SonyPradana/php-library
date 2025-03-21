@@ -96,8 +96,8 @@ class ViewCommand extends Command
 
     public function cache(Templator $templator): int
     {
-        $files = glob(view_path() . $this->prefix);
-        if (false === $files) {
+        $files = $this->findFiles(view_path(), $this->prefix);
+        if ([] === $files) {
             return 1;
         }
         info('build compiler cache')->out(false);
@@ -126,9 +126,9 @@ class ViewCommand extends Command
     public function clear(): int
     {
         warn('Clear cache file in ' . cache_path())->out(false);
-        $files = glob(cache_path() . DIRECTORY_SEPARATOR . $this->prefix);
+        $files = $this->findFiles(cache_path() . DIRECTORY_SEPARATOR, $this->prefix);
 
-        if (false === $files || 0 === count($files)) {
+        if (0 === count($files)) {
             warn('No file cache clear.')->out();
 
             return 1;
