@@ -10,8 +10,10 @@ use System\Console\Traits\PrintHelpTrait;
 use System\Text\Str;
 use System\View\Templator;
 
+use function System\Console\exit_prompt;
 use function System\Console\info;
 use function System\Console\ok;
+use function System\Console\style;
 use function System\Console\warn;
 
 /**
@@ -39,6 +41,12 @@ class ViewCommand extends Command
             'default' => [
                 'prefix' => '*.php',
             ],
+        ], [
+            'pattern' => 'view:watch',
+            'fn'      => [ViewCommand::class, 'watch'],
+            'default' => [
+                'prefix' => '*.php',
+            ],
         ],
     ];
 
@@ -51,6 +59,7 @@ class ViewCommand extends Command
             'commands'  => [
                 'view:cache' => 'Create all templator template (optimize)',
                 'view:clear' => 'Clear all cached view file',
+                'view:watch' => 'Watch all view file',
             ],
             'options'   => [
                 '--prefix' => 'Finding file by pattern given',
@@ -58,6 +67,7 @@ class ViewCommand extends Command
             'relation'  => [
                 'view:cache' => ['--prefix'],
                 'view:clear' => ['--prefix'],
+                'view:watch' => ['--prefix'],
             ],
         ];
     }
@@ -118,6 +128,63 @@ class ViewCommand extends Command
             $proggress->complete = static fn (): string => (string) ok("Success, {$count} cache clear ({$time} ms).");
             $proggress->tick();
         }
+
+        return 0;
+    }
+
+    public function watch(Templator $templator): int
+    {
+        warn('Clear cache file in ' . view_path() . $this->prefix)->out(false);
+        $indexes = function (): array|false {
+            $files = glob(view_path() . $this->prefix);
+
+            if (false === $files) {
+                warn('Error finding view file(s).')->out();
+
+                return false;
+            }
+
+            // indexing files (time modified)
+            $indexes = [];
+            foreach ($files as $file) {
+                $indexes[$file] = filemtime($file);
+            }
+
+            return $files;
+        };
+        $signal = false;
+
+        exit_prompt('Press any key to stop watching', [
+            'yes' => static function () use (&$signal) {
+                $signal = true;
+            },
+        ]);
+
+        do {
+            /** @var array<string, int>|false */
+            $get_indexes = $indexes();
+            if (false === $get_indexes) {
+                return 1;
+            }
+
+            foreach ($get_indexes as $file => $time) {
+                if ($templator->viewExist($file) && filemtime($file) > $time) {
+                    $watch_start     = microtime(true);
+                    $filename        = Str::replace($file, view_path(), '');
+                    $templator->compile($filename);
+                    $width           = $this->getWidth();
+                    $lenght          = strlen($filename);
+                    $excutime        = round(microtime(true) - $watch_start, 3) * 1000;
+                    $excutime_length = strlen((string) $excutime);
+
+                    style($filename)
+                        ->repeat('.', $width - $lenght - $excutime_length - 2)->textDim()
+                        ->push((string) $excutime)
+                        ->push('ms')->textYellow()
+                        ->out(false);
+                }
+            }
+        } while (!$signal);
 
         return 0;
     }
