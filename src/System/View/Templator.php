@@ -27,6 +27,8 @@ class Templator
     public string $suffix               = '';
     public int $max_depth               = 5;
     private string $component_namespace = '';
+    /** @var array<string, array<string, string>> */
+    private array $dependency = [];
 
     /**
      * Create new intance.
@@ -60,6 +62,27 @@ class Templator
         return $this;
     }
 
+    public function prependDependency(string $perent, array $childs): self
+    {
+        foreach ($childs as $child) {
+            $this->addDependency($perent, $child);
+        }
+
+        return $this;
+    }
+
+    public function addDependency(string $perent, string $child): self
+    {
+        $this->dependency[$perent][$child] = $child;
+
+        return $this;
+    }
+
+    public function getDependency(string $perent): array
+    {
+        return $this->dependency[$perent] ?? [];
+    }
+
     /**
      * @param array<string, mixed> $data
      */
@@ -75,7 +98,7 @@ class Templator
         }
 
         $template = file_get_contents($templatePath);
-        $template = $this->templates($template);
+        $template = $this->templates($template, $templatePath);
 
         file_put_contents($cachePath, $template);
 
@@ -93,7 +116,7 @@ class Templator
         $cachePath = $this->cacheDir . '/' . md5($template_name) . '.php';
 
         $template = file_get_contents($template_dir);
-        $template = $this->templates($template);
+        $template = $this->templates($template, $template_dir);
 
         file_put_contents($cachePath, $template);
 
@@ -140,7 +163,7 @@ class Templator
     /**
      * Transform templator to php template.
      */
-    public function templates(string $template): string
+    public function templates(string $template, string $view_location = ''): string
     {
         return array_reduce([
             SetTemplator::class,
@@ -158,17 +181,21 @@ class Templator
             UseTemplator::class,
             JsonTemplator::class,
             BooleanTemplator::class,
-        ], function (string $template, string $templator): string {
+        ], function (string $template, string $templator) use ($view_location): string {
             $templator = new $templator($this->finder, $this->cacheDir);
             if ($templator instanceof IncludeTemplator) {
                 $templator->maksDept($this->max_depth);
+                $this->prependDependency($view_location, $templator->getDependency());
             }
 
             if ($templator instanceof ComponentTemplator) {
                 $templator->setNamespace($this->component_namespace);
+                $this->prependDependency($view_location, $templator->getDependency());
             }
 
-            return $templator->parse($template);
+            $parse = $templator->parse($template);
+
+            return $parse;
         }, $template);
     }
 }
