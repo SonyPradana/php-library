@@ -6,9 +6,10 @@ namespace System\View\Templator;
 
 use System\Text\Str;
 use System\View\AbstractTemplatorParse;
+use System\View\DependencyTemplatorInterface;
 use System\View\InteractWithCacheTrait;
 
-class SectionTemplator extends AbstractTemplatorParse
+class SectionTemplator extends AbstractTemplatorParse implements DependencyTemplatorInterface
 {
     use InteractWithCacheTrait;
 
@@ -21,6 +22,16 @@ class SectionTemplator extends AbstractTemplatorParse
      * @var array<string, string>
      */
     private static array $cache = [];
+
+    /**
+     * Dependen on.
+     */
+    private ?string $dependent_on = null;
+
+    public function dependentOn(): ?string
+    {
+        return $this->dependent_on;
+    }
 
     public function parse(string $template): string
     {
@@ -37,6 +48,9 @@ class SectionTemplator extends AbstractTemplatorParse
 
         $templatePath = $this->finder->find($matches_layout[1]);
         $layout       = $this->getContents($templatePath);
+
+        // add parent dependency
+        $this->dependent_on = $templatePath;
 
         $template = preg_replace_callback(
             '/{%\s*section\s*\(\s*[\'"]([^\'"]+)[\'"]\s*,\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/s',

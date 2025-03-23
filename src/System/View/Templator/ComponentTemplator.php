@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace System\View\Templator;
 
 use System\View\AbstractTemplatorParse;
+use System\View\DependencyTemplatorInterface;
 use System\View\Exceptions\ViewFileNotFound;
 use System\View\InteractWithCacheTrait;
 
-class ComponentTemplator extends AbstractTemplatorParse
+class ComponentTemplator extends AbstractTemplatorParse implements DependencyTemplatorInterface
 {
     use InteractWithCacheTrait;
 
@@ -20,6 +21,15 @@ class ComponentTemplator extends AbstractTemplatorParse
     private static array $cache = [];
 
     private string $namespace = '';
+    /**
+     * Dependen on.
+     */
+    private ?string $dependent_on = null;
+
+    public function dependentOn(): ?string
+    {
+        return $this->dependent_on;
+    }
 
     public function parse(string $template): string
     {
@@ -64,6 +74,8 @@ class ComponentTemplator extends AbstractTemplatorParse
                 $templatePath = $this->finder->find($componentName);
                 $layout       = $this->getContents($templatePath);
                 $content      = $this->parseComponent($layout);
+                // add perent dependency
+                $this->dependent_on = $templatePath;
 
                 return preg_replace_callback(
                     "/{%\s*yield\(\'([^\']+)\'\)\s*%}/",
