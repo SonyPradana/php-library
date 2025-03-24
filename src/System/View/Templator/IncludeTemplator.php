@@ -14,10 +14,14 @@ class IncludeTemplator extends AbstractTemplatorParse implements DependencyTempl
 
     private int $maks_dept = 5;
 
+    private int $dept = 0;
+
     /**
      * Dependen on.
+     *
+     * @var array<string, int>
      */
-    private ?string $dependent_on = null;
+    private array $dependent_on = [];
 
     /**
      * File get content cached.
@@ -33,7 +37,10 @@ class IncludeTemplator extends AbstractTemplatorParse implements DependencyTempl
         return $this;
     }
 
-    public function dependentOn(): ?string
+    /**
+     * @return array<string, int>
+     */
+    public function dependentOn(): array
     {
         return $this->dependent_on;
     }
@@ -57,7 +64,7 @@ class IncludeTemplator extends AbstractTemplatorParse implements DependencyTempl
                 }
 
                 $this->maks_dept--;
-                $this->dependent_on = $templatePath;
+                $this->dependent_on[$templatePath] = $this->dept++;
 
                 return trim($this->parse($includedTemplate));
             },

@@ -21,12 +21,18 @@ class ComponentTemplator extends AbstractTemplatorParse implements DependencyTem
     private static array $cache = [];
 
     private string $namespace = '';
+
     /**
      * Dependen on.
+     *
+     * @var array<string, int>
      */
-    private ?string $dependent_on = null;
+    private array $dependent_on = [];
 
-    public function dependentOn(): ?string
+    /**
+     * @return array<string, int>
+     */
+    public function dependentOn(): array
     {
         return $this->dependent_on;
     }
@@ -75,7 +81,7 @@ class ComponentTemplator extends AbstractTemplatorParse implements DependencyTem
                 $layout       = $this->getContents($templatePath);
                 $content      = $this->parseComponent($layout);
                 // add perent dependency
-                $this->dependent_on = $templatePath;
+                $this->dependent_on[$templatePath] = 1;
 
                 return preg_replace_callback(
                     "/{%\s*yield\(\'([^\']+)\'\)\s*%}/",

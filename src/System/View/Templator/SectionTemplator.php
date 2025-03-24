@@ -25,10 +25,15 @@ class SectionTemplator extends AbstractTemplatorParse implements DependencyTempl
 
     /**
      * Dependen on.
+     *
+     * @var array<string, int>
      */
-    private ?string $dependent_on = null;
+    private array $dependent_on = [];
 
-    public function dependentOn(): ?string
+    /**
+     * @return array<string, int>
+     */
+    public function dependentOn(): array
     {
         return $this->dependent_on;
     }
@@ -50,7 +55,7 @@ class SectionTemplator extends AbstractTemplatorParse implements DependencyTempl
         $layout       = $this->getContents($templatePath);
 
         // add parent dependency
-        $this->dependent_on = $templatePath;
+        $this->dependent_on[$templatePath] = 1;
 
         $template = preg_replace_callback(
             '/{%\s*section\s*\(\s*[\'"]([^\'"]+)[\'"]\s*,\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/s',

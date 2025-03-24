@@ -27,7 +27,7 @@ class Templator
     public string $suffix               = '';
     public int $max_depth               = 5;
     private string $component_namespace = '';
-    /** @var array<string, array<string, string>> */
+    /** @var array<string, array<string, int>> */
     private array $dependency = [];
 
     /**
@@ -62,15 +62,35 @@ class Templator
         return $this;
     }
 
-    public function addDependency(string $perent, string $child): self
+    public function addDependency(string $perent, string $child, int $depend_deep = 1): self
     {
-        $this->dependency[$perent][$child] = $child;
+        $this->dependency[$perent][$child] = $depend_deep;
 
         return $this;
     }
 
     /**
-     * @return array<string, string>
+     * Prepend Dependency.
+     *
+     * @param array<string, int> $childs
+     */
+    public function prependDependency(string $perent, array $childs): self
+    {
+        foreach ($childs as $child => $depth) {
+            if ($has_depeth = isset($this->dependency[$perent][$child]) && $depth > $this->dependency[$perent][$child]) {
+                $this->addDependency($perent, $child, $depth);
+            }
+
+            if (false === $has_depeth) {
+                $this->addDependency($perent, $child, $depth);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, int>
      */
     public function getDependency(string $perent): array
     {
@@ -189,9 +209,7 @@ class Templator
 
             // Get dependecy view file (perent) after parse template.
             if ($templator instanceof DependencyTemplatorInterface) {
-                if ($perent = $templator->dependentOn()) {
-                    $this->addDependency($perent, $view_location);
-                }
+                $this->prependDependency($view_location, $templator->dependentOn());
             }
 
             return $parse;
