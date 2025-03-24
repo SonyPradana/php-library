@@ -157,33 +157,10 @@ class ViewCommand extends Command
     public function watch(Templator $templator): int
     {
         warn('Clear cache file in ' . view_path() . $this->prefix)->out(false);
-        $indexes = function (): array {
-            $files = $this->findFiles(view_path(), $this->prefix);
 
-            if (empty($files)) {
-                warn('Error finding view file(s).')->out();
-
-                return [];
-            }
-
-            // indexing files (time modified)
-            $indexes = [];
-            foreach ($files as $file) {
-                if (false === is_file($file)) {
-                    continue;
-                }
-
-                $indexes[$file] = filemtime($file);
-            }
-
-            // sort for newest file
-            arsort($indexes);
-
-            return $indexes;
-        };
-        $signal = false;
-        /** @var array<string, int> */
-        $get_indexes = $indexes();
+        $width       = $this->getWidth(40, 80);
+        $signal      = false;
+        $get_indexes = $this->getIndexFiles();
         if ([] === $get_indexes) {
             return 1;
         }
@@ -196,31 +173,36 @@ class ViewCommand extends Command
 
         do {
             $reindex = false;
-            $width   = $this->getWidth(40, 80);
             foreach ($get_indexes as $file => $time) {
                 clearstatcache(true, $file);
                 $now = filemtime($file);
 
                 if ($now > $time) {
-                    $watch_start     = microtime(true);
-                    $filename        = Str::replace($file, view_path(), '');
-                    $templator->compile($filename);
-                    $lenght             = strlen($filename);
-                    $excutime           = round(microtime(true) - $watch_start, 3) * 1000;
-                    $excutime_length    = strlen((string) $excutime);
-                    $get_indexes[$file] = $now;
-                    $reindex            = true;
+                    $dependency_views = $templator->getDependency($file);
+                    asort($dependency_views);
+                    $templator->addDependency($file, $file); // self dependecy
 
-                    style($filename)
-                        ->repeat('.', $width - $lenght - $excutime_length - 2)->textDim()
-                        ->push((string) $excutime)
-                        ->push('ms')->textYellow()
-                        ->out(false);
+                    foreach ($dependency_views as $file_path => $depth) {
+                        $watch_start     = microtime(true);
+                        $filename        = Str::replace($file_path, view_path(), '');
+                        $templator->compile($filename);
+                        $lenght                  = strlen($filename);
+                        $excutime                = round(microtime(true) - $watch_start, 3) * 1000;
+                        $excutime_length         = strlen((string) $excutime);
+                        $get_indexes[$file_path] = $now;
+                        $reindex                 = true;
+
+                        style($filename)
+                            ->repeat('.', $width - $lenght - $excutime_length - 2)->textDim()
+                            ->push((string) $excutime)
+                            ->push('ms')->textYellow()
+                            ->out(false);
+                    }
                 }
             }
 
             // reindexing
-            if (count($get_indexes) !== count($new_indexes = $indexes())) {
+            if (count($get_indexes) !== count($new_indexes = $this->getIndexFiles())) {
                 $get_indexes = $new_indexes;
             }
             if ($reindex) {
@@ -231,5 +213,34 @@ class ViewCommand extends Command
         } while (!$signal);
 
         return 0;
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    private function getIndexFiles(): array
+    {
+        $files = $this->findFiles(view_path(), $this->prefix);
+
+        if (empty($files)) {
+            warn('Error finding view file(s).')->out();
+
+            return [];
+        }
+
+        // indexing files (time modified)
+        $indexes = [];
+        foreach ($files as $file) {
+            if (false === is_file($file)) {
+                continue;
+            }
+
+            $indexes[$file] = filemtime($file);
+        }
+
+        // sort for newest file
+        arsort($indexes);
+
+        return $indexes;
     }
 }
