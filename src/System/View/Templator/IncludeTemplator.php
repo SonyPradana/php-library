@@ -64,7 +64,7 @@ class IncludeTemplator extends AbstractTemplatorParse implements DependencyTempl
                 }
 
                 $this->maks_dept--;
-                $this->dependent_on[$templatePath] = $this->dept++;
+                $this->dependent_on[$templatePath] = ++$this->dept;
 
                 return trim($this->parse($includedTemplate));
             },

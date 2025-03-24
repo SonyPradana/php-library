@@ -68,4 +68,17 @@ final class SectionTest extends TestCase
         ');
         $this->assertEquals('<p><strong>taylor</strong></p>', trim($out));
     }
+
+    /**
+     * @test
+     */
+    public function itCanGetDependencyView()
+    {
+        $finder    = new TemplatorFinder([__DIR__ . '/view/'], ['']);
+        $templator = new Templator($finder, __DIR__);
+        $templator->templates('{% extend(\'section.template\') %} {% section(\'title\') %}<strong>taylor</strong>{% endsection %}', 'test');
+        $this->assertEquals([
+            $finder->find('section.template') => 1,
+        ], $templator->getDependency('test'));
+    }
 }

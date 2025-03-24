@@ -86,6 +86,19 @@ final class ComponentTest extends TestCase
         $out = $templator->templates('{% component(\'TestClassComponent\', bg:\'bg-red\', size:"md") %}inner text{% endcomponent %}');
         $this->assertEquals('<p class="bg-red md">inner text</p>', trim($out));
     }
+
+    /**
+     * @test
+     */
+    public function itCanGetDependencyView()
+    {
+        $finder    = new TemplatorFinder([__DIR__ . '/view/'], ['']);
+        $templator = new Templator($finder, __DIR__);
+        $templator->templates('{% component(\'component.template\') %}<main>core component</main>{% endcomponent %}', 'test');
+        $this->assertEquals([
+            $finder->find('component.template') => 1,
+        ], $templator->getDependency('test'));
+    }
 }
 
 class TestClassComponent
