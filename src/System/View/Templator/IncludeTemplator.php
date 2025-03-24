@@ -5,13 +5,23 @@ declare(strict_types=1);
 namespace System\View\Templator;
 
 use System\View\AbstractTemplatorParse;
+use System\View\DependencyTemplatorInterface;
 use System\View\InteractWithCacheTrait;
 
-class IncludeTemplator extends AbstractTemplatorParse
+class IncludeTemplator extends AbstractTemplatorParse implements DependencyTemplatorInterface
 {
     use InteractWithCacheTrait;
 
     private int $maks_dept = 5;
+
+    private int $dept = 0;
+
+    /**
+     * Dependen on.
+     *
+     * @var array<string, int>
+     */
+    private array $dependent_on = [];
 
     /**
      * File get content cached.
@@ -25,6 +35,14 @@ class IncludeTemplator extends AbstractTemplatorParse
         $this->maks_dept = $maks_dept;
 
         return $this;
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    public function dependentOn(): array
+    {
+        return $this->dependent_on;
     }
 
     public function parse(string $template): string
@@ -46,6 +64,7 @@ class IncludeTemplator extends AbstractTemplatorParse
                 }
 
                 $this->maks_dept--;
+                $this->dependent_on[$templatePath] = ++$this->dept;
 
                 return trim($this->parse($includedTemplate));
             },
