@@ -158,6 +158,7 @@ class ViewCommand extends Command
     {
         warn('Clear cache file in ' . view_path() . $this->prefix)->out(false);
 
+        $compiled    = [];
         $width       = $this->getWidth(40, 80);
         $signal      = false;
         $get_indexes = $this->getIndexFiles();
@@ -165,12 +166,34 @@ class ViewCommand extends Command
             return 1;
         }
 
+        // register ctrl+c
         exit_prompt('Press any key to stop watching', [
             'yes' => static function () use (&$signal) {
                 $signal = true;
             },
         ]);
 
+        // pre compile
+        $watch_start     = microtime(true);
+        foreach ($get_indexes as $file => $time) {
+            $filename        = Str::replace($file, view_path(), '');
+            $templator->compile($filename);
+            $dependency = $templator->getDependency($file);
+            foreach ($dependency as $compile => $time) {
+                $compile                   = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $compile);
+                $compiled[$compile][$file] = $time;
+            }
+        }
+        $excutime        = round(microtime(true) - $watch_start, 3) * 1000;
+        $excutime_length = strlen((string) $excutime);
+        style('PRE-COMPILE')
+            ->textYellow()->bold()
+            ->repeat('.', $width - $excutime_length - 13)->textDim()
+            ->push((string) $excutime)
+            ->push('ms')->textYellow()
+            ->out();
+
+        // watch file change until signal
         do {
             $reindex = false;
             foreach ($get_indexes as $file => $time) {
@@ -178,25 +201,21 @@ class ViewCommand extends Command
                 $now = filemtime($file);
 
                 if ($now > $time) {
-                    $dependency_views = $templator->getDependency($file);
-                    asort($dependency_views);
-                    $templator->addDependency($file, $file); // self dependecy
+                    $this->compile($templator, $file, $width);
+                    $dependency = $templator->getDependency($file);
+                    foreach ($dependency as $compile => $time) {
+                        $compile                   = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $compile);
+                        $compiled[$compile][$file] = $time;
+                    }
+                    $get_indexes[$file] = $now;
+                    $reindex            = true;
 
-                    foreach ($dependency_views as $file_path => $depth) {
-                        $watch_start     = microtime(true);
-                        $filename        = Str::replace($file_path, view_path(), '');
-                        $templator->compile($filename);
-                        $lenght                  = strlen($filename);
-                        $excutime                = round(microtime(true) - $watch_start, 3) * 1000;
-                        $excutime_length         = strlen((string) $excutime);
-                        $get_indexes[$file_path] = $now;
-                        $reindex                 = true;
-
-                        style($filename)
-                            ->repeat('.', $width - $lenght - $excutime_length - 2)->textDim()
-                            ->push((string) $excutime)
-                            ->push('ms')->textYellow()
-                            ->out(false);
+                    // recompile dependent
+                    if (isset($compiled[$file])) {
+                        foreach ($compiled[$file] as $compile => $time) {
+                            $this->compile($templator, $compile, $width);
+                            $get_indexes[$compile] = $now;
+                        }
                     }
                 }
             }
@@ -242,5 +261,21 @@ class ViewCommand extends Command
         arsort($indexes);
 
         return $indexes;
+    }
+
+    private function compile(Templator $templator, string $file_path, int $width): void
+    {
+        $watch_start     = microtime(true);
+        $filename        = Str::replace($file_path, view_path(), '');
+        $templator->compile($filename);
+        $lenght                  = strlen($filename);
+        $excutime                = round(microtime(true) - $watch_start, 3) * 1000;
+        $excutime_length         = strlen((string) $excutime);
+
+        style($filename)
+            ->repeat('.', $width - $lenght - $excutime_length - 2)->textDim()
+            ->push((string) $excutime)
+            ->push('ms')->textYellow()
+            ->out();
     }
 }
