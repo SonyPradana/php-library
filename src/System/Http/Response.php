@@ -40,19 +40,18 @@ class Response
     ];
 
     // property
+
     /**
      * Http body content.
      *
      * @var string|array<mixed, mixed>
      */
-    private $content;
+    private string|array $content;
 
     /**
-     * http respone code.
-     *
-     * @var int
+     * Http respone code.
      */
-    private $respone_code;
+    private int $respone_code;
 
     /**
      * Header array pools.
@@ -64,19 +63,22 @@ class Response
      *
      * @var array<int, string>
      */
-    private $remove_headers = [];
+    private array $remove_headers = [];
 
     /**
      * Content type.
-     *
-     * @var string
-     * */
-    private $content_type = 'text/html';
+     */
+    private string $content_type = 'text/html';
 
     /**
      * Http Protocol version (1.0 or 1.1).
      */
     private string $protocol_version;
+
+    /**
+     * Set encoding option for encode json data.
+     */
+    protected int $encoding_option = JSON_NUMERIC_CHECK;
 
     /**
      * Create rosone http base on conten and header.
@@ -106,7 +108,7 @@ class Response
 
         $header_lines = (string) $this->headers;
         $content      = is_array($this->content)
-            ? json_encode($this->content, JSON_NUMERIC_CHECK)
+            ? json_encode($this->content, $this->encoding_option)
             : $this->content;
 
         return
@@ -141,7 +143,7 @@ class Response
         }
 
         // remove header
-        if ($this->remove_headers === null) {
+        if ([] === $this->remove_headers) {
             header_remove();
         } else {
             foreach ($this->remove_headers as $header) {
@@ -159,7 +161,7 @@ class Response
     protected function sendContent()
     {
         echo is_array($this->content)
-            ? json_encode($this->content, JSON_NUMERIC_CHECK)
+            ? json_encode($this->content, $this->encoding_option)
             : $this->content;
     }
 
@@ -373,6 +375,16 @@ class Response
     }
 
     /**
+     * Set content type.
+     */
+    public function setContentType(string $content_type): self
+    {
+        $this->content_type = $content_type;
+
+        return $this;
+    }
+
+    /**
      * Remove header from origin header.
      *
      * @deprecated use headers property instead
@@ -442,6 +454,14 @@ class Response
     public function getProtocolVersion(): string
     {
         return $this->protocol_version;
+    }
+
+    /**
+     * Get Content http response content type.
+     */
+    public function getContentType(): string
+    {
+        return $this->content_type;
     }
 
     /**
