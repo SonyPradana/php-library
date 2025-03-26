@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Integrate\Console;
 
 use System\Console\Command;
+use System\Console\Style\Decorate;
 use System\Console\Style\ProgressBar;
 use System\Console\Traits\PrintHelpTrait;
 use System\Text\Str;
@@ -173,25 +174,8 @@ class ViewCommand extends Command
             },
         ]);
 
-        // pre compile
-        $watch_start     = microtime(true);
-        foreach ($get_indexes as $file => $time) {
-            $filename        = Str::replace($file, view_path(), '');
-            $templator->compile($filename);
-            $dependency = $templator->getDependency($file);
-            foreach ($dependency as $compile => $time) {
-                $compile                   = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $compile);
-                $compiled[$compile][$file] = $time;
-            }
-        }
-        $excutime        = round(microtime(true) - $watch_start, 3) * 1000;
-        $excutime_length = strlen((string) $excutime);
-        style('PRE-COMPILE')
-            ->textYellow()->bold()
-            ->repeat('.', $width - $excutime_length - 13)->textDim()
-            ->push((string) $excutime)
-            ->push('ms')->textYellow()
-            ->out();
+        // precompile
+        $compiled = $this->precompile($templator, $get_indexes, $width);
 
         // watch file change until signal
         do {
@@ -200,9 +184,9 @@ class ViewCommand extends Command
                 clearstatcache(true, $file);
                 $now = filemtime($file);
 
+                // compile only newst file
                 if ($now > $time) {
-                    $this->compile($templator, $file, $width);
-                    $dependency = $templator->getDependency($file);
+                    $dependency = $this->compile($templator, $file, $width);
                     foreach ($dependency as $compile => $time) {
                         $compile                   = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $compile);
                         $compiled[$compile][$file] = $time;
@@ -223,6 +207,7 @@ class ViewCommand extends Command
             // reindexing
             if (count($get_indexes) !== count($new_indexes = $this->getIndexFiles())) {
                 $get_indexes = $new_indexes;
+                $compiled    = $this->precompile($templator, $get_indexes, $width);
             }
             if ($reindex) {
                 asort($get_indexes);
@@ -263,7 +248,10 @@ class ViewCommand extends Command
         return $indexes;
     }
 
-    private function compile(Templator $templator, string $file_path, int $width): void
+    /**
+     * @return array<string, int>
+     */
+    private function compile(Templator $templator, string $file_path, int $width): array
     {
         $watch_start     = microtime(true);
         $filename        = Str::replace($file_path, view_path(), '');
@@ -277,5 +265,37 @@ class ViewCommand extends Command
             ->push((string) $excutime)
             ->push('ms')->textYellow()
             ->out();
+
+        return $templator->getDependency($file_path);
+    }
+
+    /**
+     * @param array<string, int> $get_indexes
+     * @param int                $width       Console acceptable width
+     *
+     * @return array<string, array<string, int>>
+     */
+    private function precompile(Templator $templator, array $get_indexes, int $width): array
+    {
+        $compiled        = [];
+        $watch_start     = microtime(true);
+        foreach ($get_indexes as $file => $time) {
+            $filename        = Str::replace($file, view_path(), '');
+            $templator->compile($filename);
+            foreach ($templator->getDependency($file) as $compile => $time) {
+                $compile                   = str_replace(['/', '\\'], DIRECTORY_SEPARATOR, $compile);
+                $compiled[$compile][$file] = $time;
+            }
+        }
+        $excutime        = round(microtime(true) - $watch_start, 3) * 1000;
+        $excutime_length = strlen((string) $excutime);
+        style('PRE-COMPILE')
+            ->bold()->rawReset([Decorate::RESET])->textYellow()
+            ->repeat('.', $width - $excutime_length - 13)->textDim()
+            ->push((string) $excutime)
+            ->push('ms')->textYellow()
+            ->out();
+
+        return $compiled;
     }
 }
