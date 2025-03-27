@@ -91,4 +91,21 @@ final class SectionTest extends TestCase
         $out       = $templator->templates('{% extend(\'sectiondefault.template\') %}');
         $this->assertEquals('<p>nuno</p>', trim($out));
     }
+
+    /**
+     * @test
+     */
+    public function itCanRenderSectionWithMulyLine()
+    {
+        $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
+        $out       = $templator->templates('
+{% extend(\'section.template\') %}
+
+{% section(\'title\') %}
+taylor
+otwell
+{% endsection %}
+        ');
+        $this->assertEquals("<p>taylor\notwell</p>", trim($out));
+    }
 }

@@ -105,6 +105,19 @@ class SectionTemplator extends AbstractTemplatorParse implements DependencyTempl
             $layout
         );
 
+        // multy line yield
+        $template = preg_replace_callback(
+            "/\{%\s*yield(?:\s*\(\s*'?(\w+)'?\s*\))?\s*%\}(.?)\{%\s*endyield\s%\}/s",
+            function ($matches) {
+                if (array_key_exists($matches[1], $this->sections)) {
+                    return $this->sections[$matches[1]];
+                }
+
+                return trim($matches[2]);
+            },
+            $template
+        );
+
         return $template;
     }
 }
