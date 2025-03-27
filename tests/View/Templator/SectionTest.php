@@ -101,4 +101,14 @@ final class SectionTest extends TestCase
         $out       = $templator->templates('{% extend(\'sectiondefaultmultylines.template\') %}');
         $this->assertEquals("<li>\n<ul>one</ul>\n<ul>two</ul>\n<ul>three</ul>\n</li>", trim($out));
     }
+
+    /**
+     * @test
+     */
+    public function itWillThrowErrorHaveTwoDefault()
+    {
+        $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
+        $this->expectExceptionMessage('The yield statement cannot have both a default value and content.');
+        $templator->templates('{% extend(\'sectiondefaultandmultylines.template\') %}');
+    }
 }

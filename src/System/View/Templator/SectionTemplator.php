@@ -57,25 +57,23 @@ class SectionTemplator extends AbstractTemplatorParse implements DependencyTempl
         // add parent dependency
         $this->dependent_on[$templatePath] = 1;
 
-        // section using parameters
+        // Process all sections first
         $template = preg_replace_callback(
             '/{%\s*section\s*\(\s*[\'"]([^\'"]+)[\'"]\s*,\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/s',
             fn ($matches) => $this->sections[$matches[1]] = htmlspecialchars(trim($matches[2])),
             $template
         );
 
-        // section using brackets
         $template = preg_replace_callback(
             '/{%\s*section\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}(.*?){%\s*endsection\s*%}/s',
             fn ($matches) => $this->sections[$matches[1]] = trim($matches[2]),
             $template
         );
 
-        // multy linesection
         $template = preg_replace_callback(
             '/{%\s*sections\s*\\s*%}(.*?){%\s*endsections\s*%}/s',
             function ($matches) {
-                $lines = explode("\n", $matches[1]);
+                $lines = explode(PHP_EOL, str_replace(["\r\n", "\r", "\n"], PHP_EOL, $matches[1]));
                 foreach ($lines as $line) {
                     if (Str::contains($line, ':')) {
                         $current                           = explode(':', trim($line));
@@ -88,36 +86,34 @@ class SectionTemplator extends AbstractTemplatorParse implements DependencyTempl
             $template
         );
 
-        // multy line yield
-        $template = preg_replace_callback(
-            "/{%\s*yield(?:\s*\(\s*'?(\w+)'?\s*\))?\s*%\}(.*?)\{%\s*endyield\s%}/s",
-            function ($matches): string {
-                if (array_key_exists($matches[1], $this->sections)) {
-                    return $this->sections[$matches[1]];
-                }
-
-                return trim($matches[2]);
-            },
-            $layout
-        );
-
-        // yeild using default parameters
-        $template = preg_replace_callback(
-            '/{%\s*yield\(\s*[\'"](\w+)[\'"](?:\s*,\s*([\'\"].*?[\'\"]|null))?\s*\)\s*%}/',
+        // yield section
+        return preg_replace_callback(
+            '/{%\s*yield(?:\s*\(\s*[\'"](\w+)[\'"](?:\s*,\s*([\'\"].*?[\'\"]|null))?\s*\))?\s*%}(?:(.*?){%\s*endyield\s*%})?/s',
             function ($matches) use ($matches_layout): string {
-                if (array_key_exists($matches[1], $this->sections)) {
+                if (isset($matches[2]) && '' != $matches[2] && isset($matches[3])) {
+                    throw new \Exception('The yield statement cannot have both a default value and content.');
+                }
+
+                // yield with given section
+                if (isset($matches[1]) && array_key_exists($matches[1], $this->sections)) {
                     return $this->sections[$matches[1]];
                 }
 
+                // yield with default value
+                if (isset($matches[3])) {
+                    return trim($matches[3]);
+                }
+
+                // yield with default parameter
                 if (isset($matches[2])) {
                     return trim($matches[2], '\'"');
                 }
 
-                throw new \Exception("Slot with extends '{$matches_layout[1]}' required '{$matches[1]}'");
+                if (isset($matches[1])) {
+                    throw new \Exception("Slot with extends '{$matches_layout[1]}' required '{$matches[1]}'");
+                }
             },
-            $template
+            $layout
         );
-
-        return $template;
     }
 }
