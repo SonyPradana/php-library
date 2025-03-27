@@ -89,7 +89,8 @@ class SectionTemplator extends AbstractTemplatorParse implements DependencyTempl
         // yield section
         return preg_replace_callback(
             '/{%\s*yield(?:\s*\(\s*[\'"](\w+)[\'"](?:\s*,\s*([\'\"].*?[\'\"]|null))?\s*\))?\s*%}(?:(.*?){%\s*endyield\s*%})?/s',
-            function ($matches) use ($matches_layout): string {
+            /** @param string[] $matches */
+            function (array $matches) use ($matches_layout): string {
                 if (isset($matches[2]) && '' != $matches[2] && isset($matches[3])) {
                     throw new \Exception('The yield statement cannot have both a default value and content.');
                 }
@@ -112,6 +113,8 @@ class SectionTemplator extends AbstractTemplatorParse implements DependencyTempl
                 if (isset($matches[1])) {
                     throw new \Exception("Slot with extends '{$matches_layout[1]}' required '{$matches[1]}'");
                 }
+
+                return '';
             },
             $layout
         );
