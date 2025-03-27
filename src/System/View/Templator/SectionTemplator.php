@@ -57,18 +57,21 @@ class SectionTemplator extends AbstractTemplatorParse implements DependencyTempl
         // add parent dependency
         $this->dependent_on[$templatePath] = 1;
 
+        // section using parameters
         $template = preg_replace_callback(
             '/{%\s*section\s*\(\s*[\'"]([^\'"]+)[\'"]\s*,\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}/s',
             fn ($matches) => $this->sections[$matches[1]] = htmlspecialchars(trim($matches[2])),
             $template
         );
 
+        // section using brackets
         $template = preg_replace_callback(
             '/{%\s*section\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)\s*%}(.*?){%\s*endsection\s*%}/s',
             fn ($matches) => $this->sections[$matches[1]] = trim($matches[2]),
             $template
         );
 
+        // multy linesection
         $template = preg_replace_callback(
             '/{%\s*sections\s*\\s*%}(.*?){%\s*endsections\s*%}/s',
             function ($matches) {
@@ -85,14 +88,19 @@ class SectionTemplator extends AbstractTemplatorParse implements DependencyTempl
             $template
         );
 
+        // yeild using default parameters
         $template = preg_replace_callback(
-            "/{%\s*yield\(\'(\w+)\'\)\s*%}/",
-            function ($matches) use ($matches_layout) {
+            '/{%\s*yield\(\s*[\'"](\w+)[\'"](?:\s*,\s*([\'\"].*?[\'\"]|null))?\s*\)\s*%}/',
+            function ($matches) {
                 if (array_key_exists($matches[1], $this->sections)) {
                     return $this->sections[$matches[1]];
                 }
 
-                throw new \Exception("Slot with extends '{$matches_layout[1]}' required '{$matches[1]}'");
+                if (isset($matches[2])) {
+                    return trim($matches[2], '\'"');
+                }
+
+                throw new \Exception("Slot with extends '{$matches[1]}' required '{$matches[1]}'");
             },
             $layout
         );

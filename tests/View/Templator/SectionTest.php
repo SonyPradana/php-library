@@ -81,4 +81,14 @@ final class SectionTest extends TestCase
             $finder->find('section.template') => 1,
         ], $templator->getDependency('test'));
     }
+
+    /**
+     * @test
+     */
+    public function itCanRenderSectionScopeWithDefaultYeild()
+    {
+        $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
+        $out       = $templator->templates('{% extend(\'sectiondefault.template\') %}');
+        $this->assertEquals('<p>nuno</p>', trim($out));
+    }
 }
