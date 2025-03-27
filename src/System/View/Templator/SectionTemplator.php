@@ -88,6 +88,19 @@ class SectionTemplator extends AbstractTemplatorParse implements DependencyTempl
             $template
         );
 
+        // multy line yield
+        $template = preg_replace_callback(
+            "/{%\s*yield(?:\s*\(\s*'?(\w+)'?\s*\))?\s*%\}(.*?)\{%\s*endyield\s%}/s",
+            function ($matches): string {
+                if (array_key_exists($matches[1], $this->sections)) {
+                    return $this->sections[$matches[1]];
+                }
+
+                return trim($matches[2]);
+            },
+            $layout
+        );
+
         // yeild using default parameters
         $template = preg_replace_callback(
             '/{%\s*yield\(\s*[\'"](\w+)[\'"](?:\s*,\s*([\'\"].*?[\'\"]|null))?\s*\)\s*%}/',
@@ -101,19 +114,6 @@ class SectionTemplator extends AbstractTemplatorParse implements DependencyTempl
                 }
 
                 throw new \Exception("Slot with extends '{$matches_layout[1]}' required '{$matches[1]}'");
-            },
-            $layout
-        );
-
-        // multy line yield
-        $template = preg_replace_callback(
-            "/\{%\s*yield(?:\s*\(\s*'?(\w+)'?\s*\))?\s*%\}(.?)\{%\s*endyield\s%\}/s",
-            function ($matches): string {
-                if (array_key_exists($matches[1], $this->sections)) {
-                    return $this->sections[$matches[1]];
-                }
-
-                return trim($matches[2]);
             },
             $template
         );

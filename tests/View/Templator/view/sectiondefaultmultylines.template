@@ -1,0 +1,7 @@
+<li>
+{% yield('list') %}
+<ul>one</ul>
+<ul>two</ul>
+<ul>three</ul>
+{% endyield %}
+</li>

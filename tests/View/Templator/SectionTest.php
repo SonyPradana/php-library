@@ -98,14 +98,7 @@ final class SectionTest extends TestCase
     public function itCanRenderSectionWithMulyLine()
     {
         $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
-        $out       = $templator->templates('
-{% extend(\'section.template\') %}
-
-{% section(\'title\') %}
-taylor
-otwell
-{% endsection %}
-        ');
-        $this->assertEquals("<p>taylor\notwell</p>", trim($out));
+        $out       = $templator->templates('{% extend(\'sectiondefaultmultylines.template\') %}');
+        $this->assertEquals("<li>\n<ul>one</ul>\n<ul>two</ul>\n<ul>three</ul>\n</li>", trim($out));
     }
 }
