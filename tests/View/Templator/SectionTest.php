@@ -81,4 +81,34 @@ final class SectionTest extends TestCase
             $finder->find('section.template') => 1,
         ], $templator->getDependency('test'));
     }
+
+    /**
+     * @test
+     */
+    public function itCanRenderSectionScopeWithDefaultYeild()
+    {
+        $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
+        $out       = $templator->templates('{% extend(\'sectiondefault.template\') %}');
+        $this->assertEquals('<p>nuno</p>', trim($out));
+    }
+
+    /**
+     * @test
+     */
+    public function itCanRenderSectionWithMulyLine()
+    {
+        $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
+        $out       = $templator->templates('{% extend(\'sectiondefaultmultylines.template\') %}');
+        $this->assertEquals("<li>\n<ul>one</ul>\n<ul>two</ul>\n<ul>three</ul>\n</li>", trim($out));
+    }
+
+    /**
+     * @test
+     */
+    public function itWillThrowErrorHaveTwoDefault()
+    {
+        $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
+        $this->expectExceptionMessage('The yield statement cannot have both a default value and content.');
+        $templator->templates('{% extend(\'sectiondefaultandmultylines.template\') %}');
+    }
 }
