@@ -6,9 +6,9 @@ namespace System\Test\Database\Model;
 
 use System\Database\MyModel\Model;
 use System\Database\MyQuery\Insert;
-use System\Test\Database\BaseConnection;
+use System\Test\Database\TestConnection;
 
-final class BaseModelTest extends BaseConnection
+final class BaseModelTest extends TestConnection
 {
     protected function setUp(): void
     {

@@ -5,9 +5,20 @@ declare(strict_types=1);
 namespace System\Test\Database\RealDatabase\Schema\DB;
 
 use System\Database\MySchema\DB\Drop;
+use System\Test\Database\TestConnection;
 
-final class DropTest extends \RealDatabaseConnectionTest
+final class DropTest extends TestConnection
 {
+    protected function setUp(): void
+    {
+        $this->createConnection();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->dropConnection();
+    }
+
     /**
      * @test
      *

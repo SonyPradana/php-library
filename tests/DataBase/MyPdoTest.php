@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Test\Database;
 
-final class MyPdoTest extends BaseConnection
+final class MyPdoTest extends TestConnection
 {
     protected function setUp(): void
     {

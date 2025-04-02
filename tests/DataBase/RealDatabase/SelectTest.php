@@ -6,9 +6,31 @@ namespace System\Test\Database\RealDatabase;
 
 use System\Database\MyQuery;
 use System\Database\MyQuery\Join\InnerJoin;
+use System\Test\Database\Asserts\ConnectionAssertation;
+use System\Test\Database\TestConnection;
 
-final class SelectTest extends \RealDatabaseConnectionTest
+final class SelectTest extends TestConnection
 {
+    use ConnectionAssertation;
+
+    protected function setUp(): void
+    {
+        $this->createConnection();
+        $this->createUserSchema();
+        $this->createUser([
+            [
+                'user'     => 'taylor',
+                'password' => 'secret',
+                'stat'     => 99,
+            ],
+        ]);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->dropConnection();
+    }
+
     private function profileFactory()
     {
         // factory
@@ -46,7 +68,7 @@ final class SelectTest extends \RealDatabaseConnectionTest
         ;
 
         $this->assertArrayHasKey('user', $users[0]);
-        $this->assertArrayHasKey('pwd', $users[0]);
+        $this->assertArrayHasKey('password', $users[0]);
         $this->assertArrayHasKey('stat', $users[0]);
     }
 
@@ -63,7 +85,7 @@ final class SelectTest extends \RealDatabaseConnectionTest
         ;
 
         $this->assertArrayHasKey('user', $users[0]);
-        $this->assertArrayNotHasKey('pwd', $users[0]);
+        $this->assertArrayNotHasKey('password', $users[0]);
         $this->assertArrayNotHasKey('stat', $users[0]);
     }
 
@@ -198,7 +220,7 @@ final class SelectTest extends \RealDatabaseConnectionTest
         ;
 
         $this->assertArrayHasKey('user', $users[0]);
-        $this->assertArrayHasKey('pwd', $users[0]);
+        $this->assertArrayHasKey('password', $users[0]);
         $this->assertArrayHasKey('stat', $users[0]);
     }
 
@@ -217,7 +239,7 @@ final class SelectTest extends \RealDatabaseConnectionTest
         ;
 
         $this->assertArrayHasKey('user', $users[0]);
-        $this->assertArrayHasKey('pwd', $users[0]);
+        $this->assertArrayHasKey('password', $users[0]);
         $this->assertArrayHasKey('stat', $users[0]);
     }
 
@@ -235,7 +257,7 @@ final class SelectTest extends \RealDatabaseConnectionTest
         ;
 
         $this->assertArrayHasKey('user', $users[0]);
-        $this->assertArrayHasKey('pwd', $users[0]);
+        $this->assertArrayHasKey('password', $users[0]);
         $this->assertArrayHasKey('stat', $users[0]);
     }
 
@@ -274,7 +296,7 @@ final class SelectTest extends \RealDatabaseConnectionTest
         ;
 
         $this->assertArrayHasKey('user', $users[0]);
-        $this->assertArrayHasKey('pwd', $users[0]);
+        $this->assertArrayHasKey('password', $users[0]);
         $this->assertArrayHasKey('stat', $users[0]);
         $this->assertArrayHasKey('real_name', $users[0]);
     }

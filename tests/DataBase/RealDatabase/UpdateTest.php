@@ -5,9 +5,31 @@ declare(strict_types=1);
 namespace System\Test\Database\RealDatabase;
 
 use System\Database\MyQuery;
+use System\Test\Database\Asserts\ConnectionAssertation;
+use System\Test\Database\TestConnection;
 
-final class UpdateTest extends \RealDatabaseConnectionTest
+final class UpdateTest extends TestConnection
 {
+    use ConnectionAssertation;
+
+    protected function setUp(): void
+    {
+        $this->createConnection();
+        $this->createUserSchema();
+        $this->createUser([
+            [
+                'user'     => 'taylor',
+                'password' => 'secret',
+                'stat'     => 99,
+            ],
+        ]);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->dropConnection();
+    }
+
     /**
      * @test
      *

@@ -5,9 +5,31 @@ declare(strict_types=1);
 namespace System\Test\Database\RealDatabase;
 
 use System\Database\MyQuery;
+use System\Test\Database\Asserts\ConnectionAssertation;
+use System\Test\Database\TestConnection;
 
-final class ReplaceTest extends \RealDatabaseConnectionTest
+final class ReplaceTest extends TestConnection
 {
+    use ConnectionAssertation;
+
+    protected function setUp(): void
+    {
+        $this->createConnection();
+        $this->createUserSchema();
+        $this->createUser([
+            [
+                'user'     => 'taylor',
+                'password' => 'secret',
+                'stat'     => 99,
+            ],
+        ]);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->dropConnection();
+    }
+
     /**
      * @test
      *
@@ -18,9 +40,9 @@ final class ReplaceTest extends \RealDatabaseConnectionTest
         MyQuery::from('users', $this->pdo)
             ->replace()
             ->values([
-                'user' => 'sony',
-                'pwd'  => 'secret',
-                'stat' => 99,
+                'user'      => 'sony',
+                'password'  => 'secret',
+                'stat'      => 99,
             ])
             ->execute();
 
@@ -37,18 +59,18 @@ final class ReplaceTest extends \RealDatabaseConnectionTest
         MyQuery::from('users', $this->pdo)
             ->insert()
             ->values([
-                'user' => 'sony',
-                'pwd'  => 'secret',
-                'stat' => 99,
+                'user'      => 'sony',
+                'password'  => 'secret',
+                'stat'      => 99,
             ])
             ->execute();
 
         MyQuery::from('users', $this->pdo)
             ->replace()
             ->values([
-                'user' => 'sony',
-                'pwd'  => 'secret',
-                'stat' => 66,
+                'user'      => 'sony',
+                'password'  => 'secret',
+                'stat'      => 66,
             ])
             ->execute();
 
@@ -65,9 +87,9 @@ final class ReplaceTest extends \RealDatabaseConnectionTest
         MyQuery::from('users', $this->pdo)
             ->insert()
             ->values([
-                'user' => 'sony',
-                'pwd'  => 'secret',
-                'stat' => 99,
+                'user'      => 'sony',
+                'password'  => 'secret',
+                'stat'      => 99,
             ])
             ->execute();
 
@@ -75,14 +97,14 @@ final class ReplaceTest extends \RealDatabaseConnectionTest
             ->replace()
             ->rows([
                 [
-                    'user' => 'sony',
-                    'pwd'  => 'secret',
-                    'stat' => 66,
+                    'user'      => 'sony',
+                    'password'  => 'secret',
+                    'stat'      => 66,
                 ],
                 [
-                    'user' => 'sony2',
-                    'pwd'  => 'secret',
-                    'stat' => 66,
+                    'user'      => 'sony2',
+                    'password'  => 'secret',
+                    'stat'      => 66,
                 ],
             ])
             ->execute();
