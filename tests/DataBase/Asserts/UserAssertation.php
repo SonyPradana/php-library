@@ -6,13 +6,10 @@ namespace System\Test\Database\Asserts;
 
 use System\Database\MyQuery;
 
-use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertTrue;
 
-trait ConnectionAssertation
+trait UserAssertation
 {
-    // assert
-
     protected function assertUserExist(string $user)
     {
         $data  = MyQuery::from('users', $this->pdo)
@@ -41,12 +38,5 @@ trait ConnectionAssertation
             ->all();
 
         $this->assertEquals($expect, (int) $data[0]['stat']);
-    }
-
-    protected function assertDbExists(string $database_name)
-    {
-        $a = $this->pdo_schema->query('SHOW DATABASES LIKE ' . $database_name)->resultset();
-
-        assertCount(1, $a);
     }
 }

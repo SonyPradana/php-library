@@ -6,12 +6,12 @@ namespace System\Test\Database\RealDatabase;
 
 use System\Database\MyQuery;
 use System\Database\MyQuery\Join\InnerJoin;
-use System\Test\Database\Asserts\ConnectionAssertation;
+use System\Test\Database\Asserts\UserAssertation;
 use System\Test\Database\TestConnection;
 
 final class SelectTest extends TestConnection
 {
-    use ConnectionAssertation;
+    use UserAssertation;
 
     protected function setUp(): void
     {

@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace System\Test\Database\RealDatabase\Schema\Table;
 
 use System\Database\MySchema\Table\Drop;
-use System\Test\Database\Asserts\ConnectionAssertation;
+use System\Test\Database\Asserts\UserAssertation;
 use System\Test\Database\TestConnection;
 
 final class DropTest extends TestConnection
 {
-    use ConnectionAssertation;
+    use UserAssertation;
 
     protected function setUp(): void
     {

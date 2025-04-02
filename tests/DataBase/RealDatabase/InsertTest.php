@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace System\Test\Database\RealDatabase;
 
 use System\Database\MyQuery;
-use System\Test\Database\Asserts\ConnectionAssertation;
+use System\Test\Database\Asserts\UserAssertation;
 use System\Test\Database\TestConnection;
 
 final class InsertTest extends TestConnection
 {
-    use ConnectionAssertation;
+    use UserAssertation;
 
     protected function setUp(): void
     {
