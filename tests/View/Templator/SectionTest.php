@@ -99,7 +99,7 @@ final class SectionTest extends TestCase
     {
         $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
         $out       = $templator->templates('{% extend(\'sectiondefaultmultylines.template\') %}');
-        $this->assertEquals("<li>\n<ul>one</ul>\n<ul>two</ul>\n<ul>three</ul>\n</li>", trim($out));
+        $this->assertEquals('<li>' . PHP_EOL . '<ul>one</ul>' . PHP_EOL . '<ul>two</ul>' . PHP_EOL . '<ul>three</ul>' . PHP_EOL . '</li>', trim($out));
     }
 
     /**
