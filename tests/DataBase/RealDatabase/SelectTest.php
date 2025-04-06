@@ -7,9 +7,9 @@ namespace System\Test\Database\RealDatabase;
 use System\Database\MyQuery;
 use System\Database\MyQuery\Join\InnerJoin;
 use System\Test\Database\Asserts\UserAssertation;
-use System\Test\Database\TestConnection;
+use System\Test\Database\TestDatabase;
 
-final class SelectTest extends TestConnection
+final class SelectTest extends TestDatabase
 {
     use UserAssertation;
 

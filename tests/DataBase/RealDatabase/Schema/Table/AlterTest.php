@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace System\Test\Database\RealDatabase\Schema\Table;
 
 use System\Database\MySchema\Table\Alter;
-use System\Test\Database\TestConnection;
+use System\Test\Database\TestDatabase;
 
-final class AlterTest extends TestConnection
+final class AlterTest extends TestDatabase
 {
     protected function setUp(): void
     {

@@ -44,7 +44,7 @@
             "System\\Test\\Database\\Asserts\\": "tests/DataBase/Asserts"
         },
         "files": [
-            "tests/DataBase/TestConnection.php",
+            "tests/DataBase/TestDatabase.php",
             "tests/DataBase/QueryStringTest.php",
             "tests/Integrate/Commands/CommandTest.php"
         ]

@@ -7,9 +7,9 @@ namespace System\Test\Database\RealDatabase;
 use System\Database\MyQuery\InnerQuery;
 use System\Database\MyQuery\Join\InnerJoin;
 use System\Database\MyQuery\Select;
-use System\Test\Database\TestConnection;
+use System\Test\Database\TestDatabase;
 
-final class SubQueryTest extends TestConnection
+final class SubQueryTest extends TestDatabase
 {
     // scehema
 

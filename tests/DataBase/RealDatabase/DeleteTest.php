@@ -6,9 +6,9 @@ namespace System\Test\Database\RealDatabase;
 
 use System\Database\MyQuery;
 use System\Test\Database\Asserts\UserAssertation;
-use System\Test\Database\TestConnection;
+use System\Test\Database\TestDatabase;
 
-final class DeleteTest extends TestConnection
+final class DeleteTest extends TestDatabase
 {
     use UserAssertation;
 

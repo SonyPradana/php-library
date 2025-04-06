@@ -9,10 +9,10 @@ use System\Integrate\Application;
 use System\Integrate\Console\MakeCommand;
 use System\Support\Facades\PDO;
 use System\Support\Facades\Schema;
-use System\Test\Database\TestConnection;
+use System\Test\Database\TestDatabase;
 use System\Text\Str;
 
-final class MakeCommandsWithDatabaseTest extends TestConnection
+final class MakeCommandsWithDatabaseTest extends TestDatabase
 {
     private Application $app;
 

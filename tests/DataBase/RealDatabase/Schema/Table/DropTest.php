@@ -6,9 +6,9 @@ namespace System\Test\Database\RealDatabase\Schema\Table;
 
 use System\Database\MySchema\Table\Drop;
 use System\Test\Database\Asserts\UserAssertation;
-use System\Test\Database\TestConnection;
+use System\Test\Database\TestDatabase;
 
-final class DropTest extends TestConnection
+final class DropTest extends TestDatabase
 {
     use UserAssertation;
 

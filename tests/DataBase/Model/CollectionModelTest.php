@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace System\Test\Database\Model;
 
-use System\Test\Database\TestConnection;
+use System\Test\Database\TestDatabase;
 
-final class CollectionModelTest extends TestConnection
+final class CollectionModelTest extends TestDatabase
 {
     protected function setUp(): void
     {

@@ -6,9 +6,9 @@ namespace System\Test\Database\RealDatabase;
 
 use System\Database\MyQuery;
 use System\Test\Database\Asserts\UserAssertation;
-use System\Test\Database\TestConnection;
+use System\Test\Database\TestDatabase;
 
-final class ReplaceTest extends TestConnection
+final class ReplaceTest extends TestDatabase
 {
     use UserAssertation;
 

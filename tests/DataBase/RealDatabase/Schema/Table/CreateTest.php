@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace System\Test\Database\RealDatabase\Schema\Table;
 
 use System\Database\MySchema\Table\Create;
-use System\Test\Database\TestConnection;
+use System\Test\Database\TestDatabase;
 
-final class CreateTest extends TestConnection
+final class CreateTest extends TestDatabase
 {
     protected function setUp(): void
     {
