@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace System\Test\Database\Query;
 
 use System\Database\MyQuery;
+use System\Test\Database\TestDatabaseQuery;
 
-final class LimitTest extends \QueryStringTest
+final class LimitTest extends TestDatabaseQuery
 {
     /** @test */
     public function itCorrectSelectQueryWithLimitOrder(): void
     {
-        $select = MyQuery::from('test', $this->PDO)
+        $select = MyQuery::from('test', $this->pdo)
             ->select()
             ->between('column_1', 1, 100)
             ->limit(1, 10)
@@ -33,7 +34,7 @@ final class LimitTest extends \QueryStringTest
     /** @test */
     public function itCorrectSelectQueryWithLimitEndOrderWIthLimitEndLessThatZero(): void
     {
-        $select = MyQuery::from('test', $this->PDO)
+        $select = MyQuery::from('test', $this->pdo)
             ->select()
             ->between('column_1', 1, 100)
             ->limit(2, -1)
@@ -55,7 +56,7 @@ final class LimitTest extends \QueryStringTest
     /** @test */
     public function itCorrectSelectQueryWithLimitStartLessThatZero(): void
     {
-        $select = MyQuery::from('test', $this->PDO)
+        $select = MyQuery::from('test', $this->pdo)
             ->select()
             ->between('column_1', 1, 100)
             ->limit(-1, 2)
@@ -75,7 +76,7 @@ final class LimitTest extends \QueryStringTest
     /** @test */
     public function itCorrectSelectQueryWithLimitAndOffet(): void
     {
-        $select = MyQuery::from('test', $this->PDO)
+        $select = MyQuery::from('test', $this->pdo)
             ->select()
             ->between('column_1', 1, 100)
             ->limitStart(1)
@@ -96,7 +97,7 @@ final class LimitTest extends \QueryStringTest
     /** @test */
     public function itCorrectSelectQueryWithLimitStartAndLimitEndtLessThatZero(): void
     {
-        $select = MyQuery::from('test', $this->PDO)
+        $select = MyQuery::from('test', $this->pdo)
             ->select()
             ->between('column_1', 1, 100)
             ->limit(-1, -1)

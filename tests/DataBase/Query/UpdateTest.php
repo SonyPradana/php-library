@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace System\Test\Database\Query;
 
 use System\Database\MyQuery;
+use System\Test\Database\TestDatabaseQuery;
 
-final class UpdateTest extends \QueryStringTest
+final class UpdateTest extends TestDatabaseQuery
 {
     /** @test */
     public function itCanUpdateBetween()
     {
-        $update = MyQuery::from('test', $this->PDO)
+        $update = MyQuery::from('test', $this->pdo)
             ->update()
             ->value('a', 'b')
             ->between('column_1', 1, 100)
@@ -31,7 +32,7 @@ final class UpdateTest extends \QueryStringTest
     /** @test */
     public function itCanUpdateCompare()
     {
-        $update = MyQuery::from('test', $this->PDO)
+        $update = MyQuery::from('test', $this->pdo)
             ->update()
             ->value('a', 'b')
             ->compare('column_1', '=', 100)
@@ -51,7 +52,7 @@ final class UpdateTest extends \QueryStringTest
     /** @test */
     public function itCanUpdateEqual()
     {
-        $update = MyQuery::from('test', $this->PDO)
+        $update = MyQuery::from('test', $this->pdo)
             ->update()
             ->value('a', 'b')
             ->equal('column_1', 100)
@@ -71,7 +72,7 @@ final class UpdateTest extends \QueryStringTest
     /** @test */
     public function itCanUpdateIn()
     {
-        $update = MyQuery::from('test', $this->PDO)
+        $update = MyQuery::from('test', $this->pdo)
             ->update()
             ->value('a', 'b')
             ->in('column_1', [1, 2])
@@ -91,7 +92,7 @@ final class UpdateTest extends \QueryStringTest
     /** @test */
     public function itCanUpdateLike()
     {
-        $update = MyQuery::from('test', $this->PDO)
+        $update = MyQuery::from('test', $this->pdo)
             ->update()
             ->value('a', 'b')
             ->like('column_1', 'test')
@@ -111,7 +112,7 @@ final class UpdateTest extends \QueryStringTest
     /** @test */
     public function itCanUpdateWhere()
     {
-        $update = MyQuery::from('test', $this->PDO)
+        $update = MyQuery::from('test', $this->pdo)
             ->update()
             ->value('a', 'b')
             ->where('a < :a OR b > :b', [[':a', 1], [':b', 2]])
@@ -133,7 +134,7 @@ final class UpdateTest extends \QueryStringTest
     /** @test */
     public function itCorrectUpdateWithStrictOff(): void
     {
-        $update = MyQuery::from('test', $this->PDO)
+        $update = MyQuery::from('test', $this->pdo)
             ->update()
             ->value('a', 'b')
             ->equal('column_1', 123)

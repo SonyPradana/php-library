@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace System\Test\Database\Query\Schema\Table;
 
 use System\Database\MySchema\Table\Drop;
+use System\Test\Database\TestDatabaseQuery;
 
-final class DropTest extends \QueryStringTest
+final class DropTest extends TestDatabaseQuery
 {
     /** @test */
     public function itCanGenerateCreateDatabase()

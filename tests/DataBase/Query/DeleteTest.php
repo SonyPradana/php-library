@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace System\Test\Database\Query;
 
 use System\Database\MyQuery;
+use System\Test\Database\TestDatabaseQuery;
 
-final class DeleteTest extends \QueryStringTest
+final class DeleteTest extends TestDatabaseQuery
 {
     /** @test */
     public function itCanDeleteBetween()
     {
-        $delete = MyQuery::from('test', $this->PDO)
+        $delete = MyQuery::from('test', $this->pdo)
             ->delete()
             ->between('column_1', 1, 100)
         ;
@@ -30,7 +31,7 @@ final class DeleteTest extends \QueryStringTest
     /** @test */
     public function itCanDeleteCompare()
     {
-        $delete = MyQuery::from('test', $this->PDO)
+        $delete = MyQuery::from('test', $this->pdo)
             ->delete()
             ->compare('column_1', '=', 100)
         ;
@@ -49,7 +50,7 @@ final class DeleteTest extends \QueryStringTest
     /** @test */
     public function itCanDeleteEqual()
     {
-        $delete = MyQuery::from('test', $this->PDO)
+        $delete = MyQuery::from('test', $this->pdo)
             ->delete()
             ->equal('column_1', 100)
         ;
@@ -68,7 +69,7 @@ final class DeleteTest extends \QueryStringTest
     /** @test */
     public function itCanDeleteIn()
     {
-        $delete = MyQuery::from('test', $this->PDO)
+        $delete = MyQuery::from('test', $this->pdo)
             ->delete()
             ->in('column_1', [1, 2])
         ;
@@ -87,7 +88,7 @@ final class DeleteTest extends \QueryStringTest
     /** @test */
     public function itCanDeleteLike()
     {
-        $delete = MyQuery::from('test', $this->PDO)
+        $delete = MyQuery::from('test', $this->pdo)
             ->delete()
             ->like('column_1', 'test')
         ;
@@ -106,7 +107,7 @@ final class DeleteTest extends \QueryStringTest
     /** @test */
     public function itCanDeleteWhere()
     {
-        $delete = MyQuery::from('test', $this->PDO)
+        $delete = MyQuery::from('test', $this->pdo)
             ->delete()
             ->where('a < :a OR b > :b', [[':a', 1], [':b', 2]])
         ;
@@ -127,7 +128,7 @@ final class DeleteTest extends \QueryStringTest
     /** @test */
     public function itCorrectDeleteWithStrictOff(): void
     {
-        $delete = MyQuery::from('test', $this->PDO)
+        $delete = MyQuery::from('test', $this->pdo)
             ->delete()
             ->equal('column_1', 123)
             ->equal('column_2', 'abc')

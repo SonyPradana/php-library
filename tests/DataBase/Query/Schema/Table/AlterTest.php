@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace System\Test\Database\Query\Schema\Table;
 
 use System\Database\MySchema\Table\Alter;
+use System\Test\Database\TestDatabaseQuery;
 
-final class AlterTest extends \QueryStringTest
+final class AlterTest extends TestDatabaseQuery
 {
     /** @test */
     public function itCanGenerateQueryUsingModifyColumn()
