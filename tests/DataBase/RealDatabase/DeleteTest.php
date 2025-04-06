@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace System\Test\Database\RealDatabase;
 
 use System\Database\MyQuery;
-use System\Test\Database\Asserts\UserAssertation;
+use System\Test\Database\Asserts\UserTrait;
 use System\Test\Database\TestDatabase;
 
 final class DeleteTest extends TestDatabase
 {
-    use UserAssertation;
+    use UserTrait;
 
     protected function setUp(): void
     {

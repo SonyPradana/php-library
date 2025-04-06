@@ -6,7 +6,7 @@ namespace System\Test\Database\Asserts;
 
 use function PHPUnit\Framework\assertCount;
 
-trait TableAssertation
+trait TableTrait
 {
     protected function assertDbExists(string $database_name)
     {

@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace System\Test\Database\RealDatabase\Schema\Table;
 
 use System\Database\MySchema\Table\Truncate;
-use System\Test\Database\Asserts\UserAssertation;
+use System\Test\Database\Asserts\UserTrait;
 use System\Test\Database\TestDatabase;
 
 final class TruncateTest extends TestDatabase
 {
-    use UserAssertation;
+    use UserTrait;
 
     protected function setUp(): void
     {
