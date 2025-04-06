@@ -5,9 +5,20 @@ declare(strict_types=1);
 namespace System\Test\Database\RealDatabase\Schema\Table;
 
 use System\Database\MySchema\Table\Raw;
+use System\Test\Database\TestDatabase;
 
-final class RawTest extends \RealDatabaseConnectionTest
+final class RawTest extends TestDatabase
 {
+    protected function setUp(): void
+    {
+        $this->createConnection();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->dropConnection();
+    }
+
     /**
      * @test
      *

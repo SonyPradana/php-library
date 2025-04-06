@@ -6,9 +6,9 @@ namespace System\Test\Database\RealDatabase;
 
 use System\Database\MyQuery;
 use System\Database\MyQuery\Join\InnerJoin;
-use System\Test\Database\BaseConnection;
+use System\Test\Database\TestDatabase;
 
-final class JoinTest extends BaseConnection
+final class JoinTest extends TestDatabase
 {
     protected function setUp(): void
     {

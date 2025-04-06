@@ -7,9 +7,9 @@ namespace System\Test\Database\Model;
 use System\Database\MyModel\Model;
 use System\Database\MyQuery;
 use System\Database\MyQuery\Insert;
-use System\Test\Database\BaseConnection;
+use System\Test\Database\TestDatabase;
 
-final class CostumeModelTest extends BaseConnection
+final class CostumeModelTest extends TestDatabase
 {
     private $profiles = [
         'taylor' => [

@@ -9,15 +9,16 @@ use System\Integrate\Console\SeedCommand;
 use System\Support\Facades\DB;
 use System\Support\Facades\PDO as FacadesPDO;
 use System\Support\Facades\Schema;
+use System\Test\Database\TestDatabase;
 use System\Text\Str;
 
-final class SeedCommandsWithDabaseTest extends \RealDatabaseConnectionTest
+final class SeedCommandsWithDabaseTest extends TestDatabase
 {
     private Application $app;
 
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->createConnection();
         require_once __DIR__ . '//database//seeders//BasicSeeder.php';
         require_once __DIR__ . '//database//seeders//UserSeeder.php';
         require_once __DIR__ . '//database//seeders//ChainSeeder.php';
@@ -35,7 +36,7 @@ final class SeedCommandsWithDabaseTest extends \RealDatabaseConnectionTest
 
     protected function tearDown(): void
     {
-        parent::tearDown();
+        $this->dropConnection();
         $this->app->flush();
     }
 

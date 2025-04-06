@@ -9,15 +9,16 @@ use System\Integrate\Application;
 use System\Integrate\Console\MakeCommand;
 use System\Support\Facades\PDO;
 use System\Support\Facades\Schema;
+use System\Test\Database\TestDatabase;
 use System\Text\Str;
 
-final class MakeCommandsWithDatabaseTest extends \RealDatabaseConnectionTest
+final class MakeCommandsWithDatabaseTest extends TestDatabase
 {
     private Application $app;
 
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->createConnection();
 
         $this->app = new Application(__DIR__);
         $this->app->set('environment', 'dev');
@@ -32,7 +33,7 @@ final class MakeCommandsWithDatabaseTest extends \RealDatabaseConnectionTest
 
     protected function tearDown(): void
     {
-        parent::tearDown();
+        $this->dropConnection();
         $this->app->flush();
 
         if (file_exists($client =  __DIR__ . '/assets/Client.php')) {

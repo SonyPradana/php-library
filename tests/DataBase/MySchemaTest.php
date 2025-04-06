@@ -7,8 +7,19 @@ namespace System\Test\Database;
 use System\Database\MySchema;
 use System\Database\MySchema\Table\Alter;
 
-final class MySchemaTest extends \RealDatabaseConnectionTest
+final class MySchemaTest extends TestDatabase
 {
+    protected function setUp(): void
+    {
+        $this->createConnection();
+        $this->createUserSchema();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->dropConnection();
+    }
+
     /**
      * @test
      *

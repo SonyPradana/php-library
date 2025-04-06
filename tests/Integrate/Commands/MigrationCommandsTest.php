@@ -10,10 +10,10 @@ use System\Integrate\Application;
 use System\Integrate\Console\MigrationCommand;
 use System\Support\Facades\Facade;
 use System\Support\Facades\Schema;
-use System\Test\Database\BaseConnection;
+use System\Test\Database\TestDatabase;
 use System\Text\Str;
 
-final class MigrationCommandsTest extends BaseConnection
+final class MigrationCommandsTest extends TestDatabase
 {
     private Application $app;
 

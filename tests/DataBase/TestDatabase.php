@@ -9,7 +9,7 @@ use System\Database\MyPDO;
 use System\Database\MyQuery\Insert;
 use System\Database\MySchema;
 
-abstract class BaseConnection extends TestCase
+abstract class TestDatabase extends TestCase
 {
     protected $env;
     protected MyPDO $pdo;

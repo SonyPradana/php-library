@@ -5,9 +5,31 @@ declare(strict_types=1);
 namespace System\Test\Database\RealDatabase;
 
 use System\Database\MyQuery;
+use System\Test\Database\Asserts\UserTrait;
+use System\Test\Database\TestDatabase;
 
-final class InsertTest extends \RealDatabaseConnectionTest
+final class InsertTest extends TestDatabase
 {
+    use UserTrait;
+
+    protected function setUp(): void
+    {
+        $this->createConnection();
+        $this->createUserSchema();
+        $this->createUser([
+            [
+                'user'     => 'taylor',
+                'password' => 'secret',
+                'stat'     => 99,
+            ],
+        ]);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->dropConnection();
+    }
+
     /**
      * @test
      *
@@ -18,9 +40,9 @@ final class InsertTest extends \RealDatabaseConnectionTest
         MyQuery::from('users', $this->pdo)
             ->insert()
             ->values([
-                'user' => 'sony',
-                'pwd'  => 'secret',
-                'stat' => 99,
+                'user'      => 'sony',
+                'password'  => 'secret',
+                'stat'      => 99,
             ])
             ->execute();
 
@@ -38,13 +60,13 @@ final class InsertTest extends \RealDatabaseConnectionTest
             ->insert()
             ->rows([
                 [
-                    'user' => 'sony',
-                    'pwd'  => 'secret',
-                    'stat' => 1,
+                    'user'      => 'sony',
+                    'password'  => 'secret',
+                    'stat'      => 1,
                 ], [
-                    'user' => 'pradana',
-                    'pwd'  => 'secret',
-                    'stat' => 2,
+                    'user'      => 'pradana',
+                    'password'  => 'secret',
+                    'stat'      => 2,
                 ],
             ])
             ->execute();
@@ -63,18 +85,18 @@ final class InsertTest extends \RealDatabaseConnectionTest
         MyQuery::from('users', $this->pdo)
             ->insert()
             ->values([
-                'user' => 'sony',
-                'pwd'  => 'secret',
-                'stat' => 99,
+                'user'      => 'sony',
+                'password'  => 'secret',
+                'stat'      => 99,
             ])
             ->execute();
 
         MyQuery::from('users', $this->pdo)
             ->insert()
             ->values([
-                'user' => 'sony',
-                'pwd'  => 'secret',
-                'stat' => 66,
+                'user'      => 'sony',
+                'password'  => 'secret',
+                'stat'      => 66,
             ])
             ->on('stat')
             ->execute();
@@ -92,9 +114,9 @@ final class InsertTest extends \RealDatabaseConnectionTest
         MyQuery::from('users', $this->pdo)
             ->insert()
             ->values([
-                'user' => 'sony',
-                'pwd'  => 'secret',
-                'stat' => 99,
+                'user'      => 'sony',
+                'password'  => 'secret',
+                'stat'      => 99,
             ])
             ->execute();
 
@@ -102,14 +124,14 @@ final class InsertTest extends \RealDatabaseConnectionTest
             ->insert()
             ->rows([
                 [
-                    'user' => 'sony',
-                    'pwd'  => 'secret',
-                    'stat' => 66,
+                    'user'      => 'sony',
+                    'password'  => 'secret',
+                    'stat'      => 66,
                 ],
                 [
-                    'user' => 'sony2',
-                    'pwd'  => 'secret',
-                    'stat' => 66,
+                    'user'      => 'sony2',
+                    'password'  => 'secret',
+                    'stat'      => 66,
                 ],
             ])
             ->on('user')

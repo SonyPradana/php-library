@@ -40,10 +40,12 @@
         ]
     },
     "autoload-dev": {
+        "psr-4": {
+            "System\\Test\\Database\\Asserts\\": "tests/DataBase/Asserts"
+        },
         "files": [
-            "tests/DataBase/BaseConnection.php",
+            "tests/DataBase/TestDatabase.php",
             "tests/DataBase/QueryStringTest.php",
-            "tests/DataBase/RealDatabaseConnectionTest.php",
             "tests/Integrate/Commands/CommandTest.php"
         ]
     },

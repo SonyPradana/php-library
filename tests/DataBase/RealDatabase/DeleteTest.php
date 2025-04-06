@@ -5,9 +5,31 @@ declare(strict_types=1);
 namespace System\Test\Database\RealDatabase;
 
 use System\Database\MyQuery;
+use System\Test\Database\Asserts\UserTrait;
+use System\Test\Database\TestDatabase;
 
-final class DeleteTest extends \RealDatabaseConnectionTest
+final class DeleteTest extends TestDatabase
 {
+    use UserTrait;
+
+    protected function setUp(): void
+    {
+        $this->createConnection();
+        $this->createUserSchema();
+        $this->createUser([
+            [
+                'user'     => 'taylor',
+                'password' => 'secret',
+                'stat'     => 99,
+            ],
+        ]);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->dropConnection();
+    }
+
     /**
      * @test
      *
