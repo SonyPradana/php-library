@@ -12,6 +12,7 @@ final class MySchemaTest extends TestConnection
     protected function setUp(): void
     {
         $this->createConnection();
+        $this->createUserSchema();
     }
 
     protected function tearDown(): void
