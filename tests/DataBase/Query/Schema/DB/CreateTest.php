@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace System\Test\Database\Query\Schema\DB;
 
 use System\Database\MySchema\DB\Create;
+use System\Test\Database\TestDatabaseQuery;
 
-final class CreateTest extends \QueryStringTest
+final class CreateTest extends TestDatabaseQuery
 {
     /** @test */
     public function itCanGenerateCreateDatabase()

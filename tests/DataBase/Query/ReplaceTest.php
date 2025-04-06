@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace System\Test\Database\Query;
 
 use System\Database\MyQuery;
+use System\Test\Database\TestDatabaseQuery;
 
-final class ReplaceTest extends \QueryStringTest
+final class ReplaceTest extends TestDatabaseQuery
 {
     /** @test */
     public function itCorrectInsert(): void
     {
-        $insert = MyQuery::from('test', $this->PDO)
+        $insert = MyQuery::from('test', $this->pdo)
             ->replace()
             ->value('a', 1)
         ;
@@ -30,7 +31,7 @@ final class ReplaceTest extends \QueryStringTest
     /** @test */
     public function itCorrectInsertValues(): void
     {
-        $insert = MyQuery::from('test', $this->PDO)
+        $insert = MyQuery::from('test', $this->pdo)
             ->replace()
             ->values([
                 'a' => 'b',
@@ -53,7 +54,7 @@ final class ReplaceTest extends \QueryStringTest
     /** @test */
     public function itCorrectInsertQueryMultyValues(): void
     {
-        $insert = MyQuery::from('test', $this->PDO)
+        $insert = MyQuery::from('test', $this->pdo)
             ->replace()
             ->values([
                 'a' => 'b',
@@ -77,7 +78,7 @@ final class ReplaceTest extends \QueryStringTest
     /** @test */
     public function itCorrectInsertQueryMultyRaws(): void
     {
-        $insert = MyQuery::from('test', $this->PDO)
+        $insert = MyQuery::from('test', $this->pdo)
             ->replace()
             ->rows([
                 [

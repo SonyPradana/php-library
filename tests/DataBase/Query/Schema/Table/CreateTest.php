@@ -6,8 +6,9 @@ namespace System\Test\Database\Query\Schema\Table;
 
 use System\Database\MySchema\Table\Column;
 use System\Database\MySchema\Table\Create;
+use System\Test\Database\TestDatabaseQuery;
 
-final class CreateTest extends \QueryStringTest
+final class CreateTest extends TestDatabaseQuery
 {
     /** @test */
     public function itCanGenerateQueryUsingAddColumn()

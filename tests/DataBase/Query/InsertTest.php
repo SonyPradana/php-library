@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace System\Test\Database\Query;
 
 use System\Database\MyQuery;
+use System\Test\Database\TestDatabaseQuery;
 
-final class InsertTest extends \QueryStringTest
+final class InsertTest extends TestDatabaseQuery
 {
     /** @test */
     public function itCorrectInsert(): void
     {
-        $insert = MyQuery::from('test', $this->PDO)
+        $insert = MyQuery::from('test', $this->pdo)
             ->insert()
             ->value('a', 1)
         ;
@@ -30,7 +31,7 @@ final class InsertTest extends \QueryStringTest
     /** @test */
     public function itCorrectInsertValues(): void
     {
-        $insert = MyQuery::from('test', $this->PDO)
+        $insert = MyQuery::from('test', $this->pdo)
             ->insert()
             ->values([
                 'a' => 'b',
@@ -53,7 +54,7 @@ final class InsertTest extends \QueryStringTest
     /** @test */
     public function itCorrectInsertQueryMultyValues(): void
     {
-        $insert = MyQuery::from('test', $this->PDO)
+        $insert = MyQuery::from('test', $this->pdo)
             ->insert()
             ->values([
                 'a' => 'b',
@@ -77,7 +78,7 @@ final class InsertTest extends \QueryStringTest
     /** @test */
     public function itCorrectInsertQueryMultyRaws(): void
     {
-        $insert = MyQuery::from('test', $this->PDO)
+        $insert = MyQuery::from('test', $this->pdo)
             ->insert()
             ->rows([
                 [
@@ -105,7 +106,7 @@ final class InsertTest extends \QueryStringTest
     /** @test */
     public function itCorrectInsertOnDuplicateKeyUpdate(): void
     {
-        $insert = MyQuery::from('test', $this->PDO)
+        $insert = MyQuery::from('test', $this->pdo)
             ->insert()
             ->value('a', 1)
             ->on('a')
