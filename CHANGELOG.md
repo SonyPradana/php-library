@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.38.0] - 2025-04-07
+### Added
+- Added support get request authorization (bearer token) (#416).
+- Added new templator directive boolean (#418).
+- Added tempaltor dependency manager (#422).
+- Added new Command `View:watch` to watch any changes (view files) and rerender it (#421).
+- Added new Json Responese class, extend from Responese. This help to create json responsone directly (#420).
+
+### Changed
+- Templator Section now support default `yield` as paramater or section (multy lines) (#423).
+
+
 ## [0.37.1] - 2025-01-08
 ### Fixed
 - Fixed incorrect variable usage in JSON body processing.
