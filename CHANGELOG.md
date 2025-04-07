@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.38.1] - 2025-04-07
+### Fixed
+- Fixed split repo version not follow last tags version.
+
 ## [0.38.0] - 2025-04-07
 ### Added
 - Added support get request authorization (bearer token) (#416).
