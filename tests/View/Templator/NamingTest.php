@@ -23,6 +23,16 @@ final class NamingTest extends TestCase
     /**
      * @test
      */
+    public function itCanRenderNamingWithoutEscape()
+    {
+        $templator = new Templator(new TemplatorFinder([__DIR__], ['']), __DIR__);
+        $out       = $templator->templates('<html><head></head><body><h1>your {!! $name !!}, ages {!! $age !!} </h1></body></html>');
+        $this->assertEquals('<html><head></head><body><h1>your <?php echo $name ; ?>, ages <?php echo $age ; ?> </h1></body></html>', $out);
+    }
+
+    /**
+     * @test
+     */
     public function itCanRenderNamingWithCallFunction()
     {
         $templator = new Templator(new TemplatorFinder([__DIR__], ['']), __DIR__);

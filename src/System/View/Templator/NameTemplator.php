@@ -17,10 +17,8 @@ class NameTemplator extends AbstractTemplatorParse
             return '##RAW_BLOCK##';
         }, $template);
 
-        $template = preg_replace('/{{\s*([^}]+)\s*\?\?\s*([^:}]+)\s*:\s*([^}]+)\s*}}/',
-            '<?php echo ($1 !== null) ? $1 : $3; ?>',
-            preg_replace('/{{\s*([^}]+)\s*}}/', '<?php echo htmlspecialchars($1); ?>', $template)
-        );
+        $template = preg_replace('/{!!\s*([^}]+)\s*!!}/', '<?php echo $1; ?>', $template);
+        $template = preg_replace('/{{\s*([^}]+)\s*}}/', '<?php echo htmlspecialchars($1); ?>', $template);
 
         foreach ($rawBlocks as $rawBlock) {
             $template = preg_replace('/##RAW_BLOCK##/', $rawBlock, $template, 1);
