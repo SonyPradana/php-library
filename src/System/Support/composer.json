@@ -9,7 +9,7 @@
     ],
     "require": {
         "php": "^8.0",
-        "sonypradana/macroable": "^0.38.1"
+        "sonypradana/macroable": "^0.38.2"
     },
     "autoload": {
         "psr-4": {

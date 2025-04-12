@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.38.2] - 2025-04-12
+### Fixed
+- Fixed templator `if` nesting.
+- Fixed templator `foreach` nesting.
+
 ## [0.38.1] - 2025-04-07
 ### Fixed
 - Fixed split repo version not follow last tags version.
