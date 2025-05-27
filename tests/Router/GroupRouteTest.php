@@ -75,6 +75,39 @@ class GroupRouteTest extends TestCase
         $res = $this->dispatcher('/bar', 'get');
         $this->assertEquals('foo', $res);
     }
+
+    /**
+     * @test
+     */
+    public function itCanHandleNestedPrefixes()
+    {
+        Router::prefix('/api')->group(function () {
+            Router::get('/status', function () {
+                echo 'api-status';
+            });
+
+            Router::prefix('/v1')->group(function () {
+                Router::get('/users', function () {
+                    echo 'api-v1-users';
+                });
+
+                Router::prefix('/admin')->group(function () {
+                    Router::get('/dashboard', function () {
+                        echo 'api-v1-admin-dashboard';
+                    });
+                });
+            });
+        });
+
+        $res = $this->dispatcher('/api/status', 'get');
+        $this->assertEquals('api-status', $res);
+
+        $res = $this->dispatcher('/api/v1/users', 'get');
+        $this->assertEquals('api-v1-users', $res);
+
+        $res = $this->dispatcher('/api/v1/admin/dashboard', 'get');
+        $this->assertEquals('api-v1-admin-dashboard', $res);
+    }
 }
 
 class SomeClass
