@@ -389,13 +389,32 @@ class Response
     }
 
     /**
-     * Remove header from origin header.
+     * Removes a specified header from the origin headers
+     * and handles exceptions when sending headers to the client.
+     *
+     * @param string|array<int, string> $headers
+     */
+    public function removeHeader(string|array $headers): self
+    {
+        if (is_string($headers)) {
+            $this->remove_headers[] = $headers;
+
+            return $this;
+        }
+
+        // @deprecated use `removeHeaders` instead
+        $this->removeHeaders($headers);
+
+        return $this;
+    }
+
+    /**
+     * Removes a specified header from the origin headers
+     * and handles exceptions when sending headers to the client.
      *
      * @param array<int, string> $headers
-     *
-     * @return self
      */
-    public function removeHeader($headers = [])
+    public function removeHeaders(array $headers): self
     {
         $this->remove_headers = [];
         foreach ($headers as $header) {
