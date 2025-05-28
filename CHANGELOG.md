@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.38.3] - 2025-05-28
+### Fixed
+- Fixed remove default header before set header (#431).
+- Fixed prefix grouping functionality (#432).
+
 ## [0.38.2] - 2025-04-12
 ### Fixed
 - Fixed templator `if` nesting.
