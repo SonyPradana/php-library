@@ -38,7 +38,7 @@ class View
         return (new Response())
             ->setContent($html)
             ->setResponeCode(Response::HTTP_OK)
-            ->removeHeader([
+            ->removeHeaders([
                 'Expires',
                 'Pragma',
                 'X-Powered-By',

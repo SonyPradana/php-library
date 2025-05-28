@@ -65,6 +65,8 @@ class Response
      */
     private array $remove_headers = [];
 
+    private bool $remove_default_headers = false;
+
     /**
      * Content type.
      */
@@ -129,6 +131,12 @@ class Response
         if (headers_sent()) {
             return;
         }
+
+        // remove default header
+        if ($this->remove_default_headers) {
+            header_remove();
+        }
+
         // header respone code
         $respone_code     = $this->respone_code;
         $respone_text     = Response::$statusTexts[$respone_code] ?? 'unknown status';
@@ -143,12 +151,8 @@ class Response
         }
 
         // remove header
-        if ([] === $this->remove_headers) {
-            header_remove();
-        } else {
-            foreach ($this->remove_headers as $header) {
-                header_remove($header);
-            }
+        foreach ($this->remove_headers as $header) {
+            header_remove($header);
         }
     }
 
@@ -385,20 +389,44 @@ class Response
     }
 
     /**
-     * Remove header from origin header.
+     * Removes a specified header from the origin headers
+     * and handles exceptions when sending headers to the client.
      *
-     * @deprecated use headers property instead
+     * @param string|array<int, string> $headers
+     */
+    public function removeHeader(string|array $headers): self
+    {
+        if (is_string($headers)) {
+            $this->remove_headers[] = $headers;
+
+            return $this;
+        }
+
+        // @deprecated use `removeHeaders` instead
+        $this->removeHeaders($headers);
+
+        return $this;
+    }
+
+    /**
+     * Removes a specified header from the origin headers
+     * and handles exceptions when sending headers to the client.
      *
      * @param array<int, string> $headers
-     *
-     * @return self
      */
-    public function removeHeader($headers = [])
+    public function removeHeaders(array $headers): self
     {
         $this->remove_headers = [];
         foreach ($headers as $header) {
             $this->remove_headers[] = $header;
         }
+
+        return $this;
+    }
+
+    public function removeDefaultHeader(bool $remove_default_header = false): self
+    {
+        $this->remove_default_headers = $remove_default_header;
 
         return $this;
     }
