@@ -151,20 +151,22 @@ class Router
     }
 
     /**
-     * Grouping routes using same prafix.
+     * Grouping routes using same prefix.
      *
-     * @param string $prefix Prefix of router exprestion
+     * @param string $prefix Prefix of router expression
      */
     public static function prefix(string $prefix): RouteGroup
     {
+        $previous_prefix = self::$group['prefix'];
+
         return new RouteGroup(
             // set up
-            function () use ($prefix) {
-                Router::$group['prefix'] = $prefix;
+            function () use ($prefix, $previous_prefix) {
+                Router::$group['prefix'] = $previous_prefix . $prefix;
             },
             // reset
-            function () {
-                Router::$group['prefix'] = '';
+            function () use ($previous_prefix) {
+                Router::$group['prefix'] = $previous_prefix;
             }
         );
     }
