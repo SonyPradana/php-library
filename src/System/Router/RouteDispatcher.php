@@ -171,94 +171,84 @@ final class RouteDispatcher
      */
     private function dispatch($basepath = '', $case_matters = false, $trailing_slash_matters = false, $multimatch = false): void
     {
-        // The basepath never needs a trailing slash
-        // Because the trailing slash will be added using the route expressions
-        $basepath = rtrim($basepath, '/');
-
-        // Parse current URL
+        $basepath   = rtrim($basepath, '/');
         $parsed_url = parse_url($this->request->getUrl());
+        $path       = '/';
 
-        $path = '/';
-
-        // If there is a path available
         if (isset($parsed_url['path'])) {
-            // If the trailing slash matters
             if ($trailing_slash_matters) {
                 $path = $parsed_url['path'];
             } else {
-                // If the path is not equal to the base path (including a trailing slash)
-                if ($basepath . '/' != $parsed_url['path']) {
-                    // Cut the trailing slash away because it does not matters
-                    $path = rtrim($parsed_url['path'], '/');
-                } else {
-                    $path = $parsed_url['path'];
-                }
+                $path = ($basepath . '/' != $parsed_url['path']) ? rtrim($parsed_url['path'], '/') : $parsed_url['path'];
             }
         }
 
-        // Get current request method
-        $method = $this->request->getMethod();
-
+        $method            = $this->request->getMethod();
         $path_match_found  = false;
         $route_match_found = false;
 
         foreach ($this->routes as $route) {
-            // If the method matches check the path
+            $expression          = $route['expression'];
+            $original_expression = $expression;
 
-            // Add basepath to matching string
-            if ($basepath != '' && $basepath != '/') {
-                $route['expression'] = '(' . $basepath . ')' . $route['expression'];
+            // Legacy support: (:slug), etc.
+            foreach (Router::$patterns as $key => $pattern) {
+                $expression = str_replace($key, $pattern, $expression);
             }
 
-            // Add 'find string start' automatically
-            $route['expression'] = '^' . $route['expression'];
+            // Named with type: (name:type)
+            $expression = preg_replace_callback('/\((\w+):(\w+)\)/', static function ($m) {
+                $pattern = Router::$patterns["(:{$m[2]})"] ?? '[^/]+';
 
-            // Add 'find string end' automatically
-            $route['expression'] .= '$';
+                return "(?P<{$m[1]}>{$pattern})";
+            }, $expression);
 
-            // Check path match
-            if (preg_match('#' . $route['expression'] . '#' . ($case_matters ? '' : 'i') . 'u', $path, $matches)) {
+            // Simple named parameter: :slug
+            // $expression = preg_replace_callback('/\:([a-zA-Z_][a-zA-Z0-9_]*)/', function ($m) {
+            //     return '(?P<' . $m[1] . '>[^/]+)';
+            // }, $expression);
+
+            if ($basepath !== '' && $basepath !== '/') {
+                $expression = "({$basepath}){$expression}";
+            }
+
+            $expression = "^{$expression}$";
+
+            if (preg_match("#{$expression}#" . ($case_matters ? '' : 'i') . 'u', $path, $matches)) {
                 $path_match_found = true;
 
-                // Cast allowed method to array if it's not one already, then run through all methods
                 foreach ((array) $route['method'] as $allowedMethod) {
-                    // Check method match
-                    if (strtolower($method) == strtolower($allowedMethod)) {
-                        array_shift($matches); // Always remove first element. This contains the whole string
-
-                        if ($basepath != '' && $basepath != '/') {
-                            array_shift($matches); // Remove basepath
+                    if (strtolower($method) === strtolower($allowedMethod)) {
+                        $namedMatches = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+                        if (false === empty($namedMatches)) {
+                            $cleanMatches = array_filter($namedMatches, function ($key) {
+                                return !is_numeric($key);
+                            }, ARRAY_FILTER_USE_KEY);
+                            $cleanMatches = array_values($cleanMatches);
+                        } else {
+                            array_shift($matches);
+                            $cleanMatches = array_values($matches);
                         }
 
-                        // execute request
-                        $this->trigger($this->found, [$route['function'], $matches], $route['middleware'] ?? []);
-                        $this->current = $route;
-
-                        $route_match_found = true;
-
-                        // Do not check other routes
+                        $this->trigger($this->found, [$route['function'], $cleanMatches], $route['middleware'] ?? []);
+                        $this->current               = $route;
+                        $this->current['expression'] = "^{$original_expression}$";
+                        $route_match_found           = true;
                         break;
                     }
                 }
             }
 
-            // Break the loop if the first found route is a match
-            if ($route_match_found && !$multimatch) {
+            if ($route_match_found && false === $multimatch) {
                 break;
             }
         }
 
-        // No matching route was found
-        if (!$route_match_found) {
-            // But a matching path exists
-            if ($path_match_found) {
-                if ($this->method_not_allowed) {
-                    $this->trigger($this->method_not_allowed, [$path, $method]);
-                }
-            } else {
-                if ($this->not_found) {
-                    $this->trigger($this->not_found, [$path]);
-                }
+        if (false === $route_match_found) {
+            if ($path_match_found && $this->method_not_allowed) {
+                $this->trigger($this->method_not_allowed, [$path, $method]);
+            } elseif (false === $path_match_found && $this->not_found) {
+                $this->trigger($this->not_found, [$path]);
             }
         }
     }
