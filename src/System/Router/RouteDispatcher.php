@@ -198,58 +198,59 @@ final class RouteDispatcher
 
             // Named with type: (name:type)
             $expression = preg_replace_callback('/\((\w+):(\w+)\)/', function ($m) {
-                $name    = $m[1];
-                $type    = $m[2];
-                $pattern = Router::$patterns['(:' . $type . ')'] ?? '[^/]+';
+                $pattern = Router::$patterns["(:{$m[2]})"] ?? '[^/]+';
+                // $pattern = Router::$patterns['(:' . $m[2] . ')'] ?? '[^/]+';
 
-                return '(?P<' . $name . '>' . $pattern . ')';
+                return "(?P<{$m[1]}>{$pattern})";
+                // return '(?P<' . $m[1] . '>' . $pattern . ')';
             }, $expression);
 
             // Simple named parameter: :slug
-            $expression = preg_replace_callback('/\:([a-zA-Z_][a-zA-Z0-9_]*)/', function ($m) {
-                return '(?P<' . $m[1] . '>[^/]+)';
-            }, $expression);
+            // $expression = preg_replace_callback('/\:([a-zA-Z_][a-zA-Z0-9_]*)/', function ($m) {
+            //     return '(?P<' . $m[1] . '>[^/]+)';
+            // }, $expression);
 
-            // Add basepath
             if ($basepath != '' && $basepath != '/') {
-                $expression = '(' . $basepath . ')' . $expression;
+                $expression = "({$basepath}){$expression}";
+                // $expression = '(' . $basepath . ')' . $expression;
             }
 
-            $expression = '^' . $expression . '$';
+            $expression = "^{$expression}$";
+            // $expression = '^' . $expression . '$';
 
-            if (preg_match('#' . $expression . '#' . ($case_matters ? '' : 'i') . 'u', $path, $matches)) {
+            if (preg_match("#{$expression}#" . ($case_matters ? 'u' : 'iu'), $path, $matches)) {
+            // if (preg_match('#' . $expression . '#' . ($case_matters ? '' : 'i') . 'u', $path, $matches)) {
                 $path_match_found = true;
 
                 foreach ((array) $route['method'] as $allowedMethod) {
                     if (strtolower($method) === strtolower($allowedMethod)) {
-                        // Clean matches array - remove full match and non-capture groups
-                        array_shift($matches); // Remove full match
-                        $cleanMatches = array_values($matches); // Re-index array
+                        array_shift($matches);
+                        $cleanMatches = array_values($matches);
 
-                        // If we have named parameters, use those instead
                         $namedMatches = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
-                        if (!empty($namedMatches)) {
+                        if (false === empty($namedMatches)) {
                             $cleanMatches = $namedMatches;
                         }
 
                         $this->trigger($this->found, [$route['function'], $cleanMatches], $route['middleware'] ?? []);
                         $this->current               = $route;
-                        $this->current['expression'] = '^' . $original_expression . '$';
+                        $this->current['expression'] = "^{$original_expression}$";
+                        // $this->current['expression'] = '^' . $original_expression . '$';
                         $route_match_found           = true;
                         break;
                     }
                 }
             }
 
-            if ($route_match_found && !$multimatch) {
+            if ($route_match_found && false === $multimatch) {
                 break;
             }
         }
 
-        if (!$route_match_found) {
+        if (false === $route_match_found) {
             if ($path_match_found && $this->method_not_allowed) {
                 $this->trigger($this->method_not_allowed, [$path, $method]);
-            } elseif (!$path_match_found && $this->not_found) {
+            } elseif (false === $path_match_found && $this->not_found) {
                 $this->trigger($this->not_found, [$path]);
             }
         }
