@@ -204,9 +204,9 @@ final class RouteDispatcher
             }, $expression);
 
             // Simple named parameter: :slug
-            $expression = preg_replace_callback('/\:([a-zA-Z_][a-zA-Z0-9_]*)/', function ($m) {
-                return '(?P<' . $m[1] . '>[^/]+)';
-            }, $expression);
+            // $expression = preg_replace_callback('/\:([a-zA-Z_][a-zA-Z0-9_]*)/', function ($m) {
+            //     return '(?P<' . $m[1] . '>[^/]+)';
+            // }, $expression);
 
             if ($basepath !== '' && $basepath !== '/') {
                 $expression = "({$basepath}){$expression}";
