@@ -221,9 +221,7 @@ final class RouteDispatcher
                     if (strtolower($method) === strtolower($allowedMethod)) {
                         $namedMatches = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
                         if (false === empty($namedMatches)) {
-                            $cleanMatches = array_filter($namedMatches, function ($key) {
-                                return !is_numeric($key);
-                            }, ARRAY_FILTER_USE_KEY);
+                            $cleanMatches = array_filter($namedMatches, fn ($key) => !is_numeric($key), ARRAY_FILTER_USE_KEY);
                             $cleanMatches = array_values($cleanMatches);
                         } else {
                             array_shift($matches);
