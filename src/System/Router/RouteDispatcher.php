@@ -191,28 +191,8 @@ final class RouteDispatcher
             $expression          = $route['expression'];
             $original_expression = $expression;
 
-            // Legacy support: (:slug), etc.
-            foreach (Router::$patterns as $key => $pattern) {
-                $expression = str_replace($key, $pattern, $expression);
-            }
-
-            // Named with type: (name:type)
-            $expression = preg_replace_callback('/\((\w+):(\w+)\)/', static function ($m) {
-                $pattern = Router::$patterns["(:{$m[2]})"] ?? '[^/]+';
-
-                return "(?P<{$m[1]}>{$pattern})";
-            }, $expression);
-
-            // Simple named parameter: :slug
-            // $expression = preg_replace_callback('/\:([a-zA-Z_][a-zA-Z0-9_]*)/', function ($m) {
-            //     return '(?P<' . $m[1] . '>[^/]+)';
-            // }, $expression);
-
-            if ($basepath !== '' && $basepath !== '/') {
-                $expression = "({$basepath}){$expression}";
-            }
-
-            $expression = "^{$expression}$";
+            // Build the regex expression
+            $expression = $this->makeRouteExpression($expression, $basepath);
 
             if (preg_match("#{$expression}#" . ($case_matters ? '' : 'i') . 'u', $path, $matches)) {
                 $path_match_found = true;
@@ -221,7 +201,7 @@ final class RouteDispatcher
                     if (strtolower($method) === strtolower($allowedMethod)) {
                         $namedMatches = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
                         if (false === empty($namedMatches)) {
-                            $cleanMatches = array_filter($namedMatches, fn ($key) => !is_numeric($key), ARRAY_FILTER_USE_KEY);
+                            $cleanMatches = array_filter($namedMatches, static fn (string $key): bool => false === is_numeric($key), ARRAY_FILTER_USE_KEY);
                             $cleanMatches = array_values($cleanMatches);
                         } else {
                             array_shift($matches);
@@ -249,5 +229,29 @@ final class RouteDispatcher
                 $this->trigger($this->not_found, [$path]);
             }
         }
+    }
+
+    /**
+     * Build the route expression regex from the route definition.
+     */
+    private function makeRouteExpression(string $expression, string $basepath): string
+    {
+        // Legacy support: (:slug), etc.
+        foreach (Router::$patterns as $key => $pattern) {
+            $expression = str_replace($key, $pattern, $expression);
+        }
+
+        // Named with type: (name:type)
+        $expression = preg_replace_callback('/\((\w+):(\w+)\)/', static function ($m) {
+            $pattern = Router::$patterns["(:{$m[2]})"] ?? '[^/]+';
+
+            return "(?P<{$m[1]}>{$pattern})";
+        }, $expression);
+
+        if ($basepath !== '' && $basepath !== '/') {
+            $expression = "({$basepath}){$expression}";
+        }
+
+        return "^{$expression}$";
     }
 }
