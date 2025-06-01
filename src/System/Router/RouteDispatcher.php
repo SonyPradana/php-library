@@ -174,14 +174,12 @@ final class RouteDispatcher
         $basepath   = rtrim($basepath, '/');
         $parsed_url = parse_url($this->request->getUrl());
         $path       = '/';
-
-        if (isset($parsed_url['path'])) {
-            if ($trailing_slash_matters) {
-                $path = $parsed_url['path'];
-            } else {
-                $path = ($basepath . '/' != $parsed_url['path']) ? rtrim($parsed_url['path'], '/') : $parsed_url['path'];
-            }
-        }
+        $path       = match (true) {
+            false === isset($parsed_url['path'])   => $path, // erly return match
+            $trailing_slash_matters                => $parsed_url['path'],
+            "{$basepath}/" !== $parsed_url['path'] => rtrim($parsed_url['path'], '/'),
+            default                                => $parsed_url['path'],
+        };
 
         $method            = $this->request->getMethod();
         $path_match_found  = false;
@@ -190,30 +188,30 @@ final class RouteDispatcher
         foreach ($this->routes as $route) {
             $expression          = $route['expression'];
             $original_expression = $expression;
-
-            // Build the regex expression
-            $expression = $this->makeRouteExpression($expression, $basepath);
+            $expression          = $this->makeRouteExpression($expression, $basepath);
 
             if (preg_match("#{$expression}#" . ($case_matters ? '' : 'i') . 'u', $path, $matches)) {
                 $path_match_found = true;
 
                 foreach ((array) $route['method'] as $allowedMethod) {
-                    if (strtolower($method) === strtolower($allowedMethod)) {
-                        $namedMatches = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
-                        if (false === empty($namedMatches)) {
-                            $cleanMatches = array_filter($namedMatches, static fn (string $key): bool => false === is_numeric($key), ARRAY_FILTER_USE_KEY);
-                            $cleanMatches = array_values($cleanMatches);
-                        } else {
-                            array_shift($matches);
-                            $cleanMatches = array_values($matches);
-                        }
-
-                        $this->trigger($this->found, [$route['function'], $cleanMatches], $route['middleware'] ?? []);
-                        $this->current               = $route;
-                        $this->current['expression'] = "^{$original_expression}$";
-                        $route_match_found           = true;
-                        break;
+                    if (strtolower($method) !== strtolower($allowedMethod)) {
+                        continue;
                     }
+
+                    $namedMatches = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+                    if (false === empty($namedMatches)) {
+                        $cleanMatches = array_filter($namedMatches, static fn (string $key): bool => false === is_numeric($key), ARRAY_FILTER_USE_KEY);
+                        $cleanMatches = array_values($cleanMatches);
+                    } else {
+                        array_shift($matches);
+                        $cleanMatches = array_values($matches);
+                    }
+
+                    $this->trigger($this->found, [$route['function'], $cleanMatches], $route['middleware'] ?? []);
+                    $this->current               = $route;
+                    $this->current['expression'] = "^{$original_expression}$";
+                    $route_match_found           = true;
+                    break;
                 }
             }
 
