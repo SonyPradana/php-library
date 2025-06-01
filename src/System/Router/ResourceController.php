@@ -51,7 +51,7 @@ class ResourceController
         if (array_key_exists('index', $map)) {
             $this->resource->set($map['index'],
                 (new Route([
-                    'expression' => Router::mapPatterns($uri),
+                    'expression' => Router::mapPatterns($uri, Router::$patterns),
                     'function'   => [$class_name, $map['index']],
                     'method'     => 'get',
                     'middleware' => Router::$group['middleware'] ?? [],
@@ -62,7 +62,7 @@ class ResourceController
         if (array_key_exists('create', $map)) {
             $this->resource->set($map['create'],
                 (new Route([
-                    'expression' => Router::mapPatterns("{$uri}create"),
+                    'expression' => Router::mapPatterns("{$uri}create", Router::$patterns),
                     'function'   => [$class_name, $map['create']],
                     'method'     => 'get',
                     'middleware' => Router::$group['middleware'] ?? [],
@@ -73,7 +73,7 @@ class ResourceController
         if (array_key_exists('store', $map)) {
             $this->resource->set($map['store'],
                 (new Route([
-                    'expression' => Router::mapPatterns($uri),
+                    'expression' => Router::mapPatterns($uri, Router::$patterns),
                     'function'   => [$class_name, $map['store']],
                     'method'     => 'post',
                     'middleware' => Router::$group['middleware'] ?? [],
@@ -84,7 +84,7 @@ class ResourceController
         if (array_key_exists('show', $map)) {
             $this->resource->set($map['show'],
                 (new Route([
-                    'expression' => Router::mapPatterns("{$uri}(:id)"),
+                    'expression' => Router::mapPatterns("{$uri}(:id)", Router::$patterns),
                     'function'   => [$class_name, $map['show']],
                     'method'     => 'get',
                     'middleware' => Router::$group['middleware'] ?? [],
@@ -95,7 +95,7 @@ class ResourceController
         if (array_key_exists('edit', $map)) {
             $this->resource->set($map['edit'],
                 (new Route([
-                    'expression' => Router::mapPatterns("{$uri}(:id)/edit"),
+                    'expression' => Router::mapPatterns("{$uri}(:id)/edit", Router::$patterns),
                     'function'   => [$class_name, $map['edit']],
                     'method'     => 'get',
                     'middleware' => Router::$group['middleware'] ?? [],
@@ -106,7 +106,7 @@ class ResourceController
         if (array_key_exists('update', $map)) {
             $this->resource->set($map['update'],
                 (new Route([
-                    'expression' => Router::mapPatterns("{$uri}(:id)"),
+                    'expression' => Router::mapPatterns("{$uri}(:id)", Router::$patterns),
                     'function'   => [$class_name, $map['update']],
                     'method'     => ['put', 'patch'],
                     'middleware' => Router::$group['middleware'] ?? [],
@@ -117,7 +117,7 @@ class ResourceController
         if (array_key_exists('destroy', $map)) {
             $this->resource->set($map['destroy'],
                 (new Route([
-                    'expression' => Router::mapPatterns("{$uri}(:id)"),
+                    'expression' => Router::mapPatterns("{$uri}(:id)", Router::$patterns),
                     'function'   => [$class_name, $map['destroy']],
                     'method'     => 'delete',
                     'middleware' => Router::$group['middleware'] ?? [],

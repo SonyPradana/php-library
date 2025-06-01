@@ -175,7 +175,7 @@ final class RouteDispatcher
         $parsed_url = parse_url($this->request->getUrl());
         $path       = '/';
         $path       = match (true) {
-            false === isset($parsed_url['path'])   => $path, // erly return match
+            false === isset($parsed_url['path'])   => $path, // early return match
             $trailing_slash_matters                => $parsed_url['path'],
             "{$basepath}/" !== $parsed_url['path'] => rtrim($parsed_url['path'], '/'),
             default                                => $parsed_url['path'],
