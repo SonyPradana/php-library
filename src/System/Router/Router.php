@@ -43,10 +43,16 @@ class Router
      */
     public static function mapPatterns(string $url): string
     {
-        $user_pattern         = array_keys(self::$patterns);
-        $allow_pattern        = array_values(self::$patterns);
+        $user_pattern  = array_keys(self::$patterns);
+        $allow_pattern = array_values(self::$patterns);
 
-        return str_replace($user_pattern, $allow_pattern, $url);
+        $expression = str_replace($user_pattern, $allow_pattern, $url);
+
+        return preg_replace_callback('/\((\w+):(\w+)\)/', static function (array $matchs): string {
+            $pattern = self::$patterns["(:{$matchs[2]})"] ?? '[^/]+';
+
+            return "(?P<{$matchs[1]}>{$pattern})";
+        }, $expression);
     }
 
     /**

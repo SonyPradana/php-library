@@ -188,9 +188,12 @@ final class RouteDispatcher
         foreach ($this->routes as $route) {
             $expression          = $route['expression'];
             $original_expression = $expression;
-            $expression          = $this->makeRouteExpression($expression, $basepath);
 
-            if (preg_match("#{$expression}#" . ($case_matters ? '' : 'i') . 'u', $path, $matches)) {
+            if ($basepath !== '' && $basepath !== '/') {
+                $expression = "({$basepath}){$expression}";
+            }
+
+            if (preg_match("#^{$expression}$#" . ($case_matters ? '' : 'i') . 'u', $path, $matches)) {
                 $path_match_found = true;
 
                 foreach ((array) $route['method'] as $allowedMethod) {
@@ -227,29 +230,5 @@ final class RouteDispatcher
                 $this->trigger($this->not_found, [$path]);
             }
         }
-    }
-
-    /**
-     * Build the route expression regex from the route definition.
-     */
-    private function makeRouteExpression(string $expression, string $basepath): string
-    {
-        // Legacy support: (:slug), etc.
-        foreach (Router::$patterns as $key => $pattern) {
-            $expression = str_replace($key, $pattern, $expression);
-        }
-
-        // Named with type: (name:type)
-        $expression = preg_replace_callback('/\((\w+):(\w+)\)/', static function ($m) {
-            $pattern = Router::$patterns["(:{$m[2]})"] ?? '[^/]+';
-
-            return "(?P<{$m[1]}>{$pattern})";
-        }, $expression);
-
-        if ($basepath !== '' && $basepath !== '/') {
-            $expression = "({$basepath}){$expression}";
-        }
-
-        return "^{$expression}$";
     }
 }
