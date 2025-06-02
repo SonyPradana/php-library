@@ -35,7 +35,9 @@ final class KarnelTest extends TestCase
             {
                 return [
                     'callable'   => fn () => new Response('ok', 200),
-                    'parameters' => [],
+                    'parameters' => [
+                        'foo' => 'bar',
+                    ],
                     'middleware' => [
                         new class {
                             public function handle(Request $request, Closure $next): Response
@@ -46,7 +48,11 @@ final class KarnelTest extends TestCase
                         new class {
                             public function handle(Request $request, Closure $next): Response
                             {
-                                return new Response('redirect', 303);
+                                if ($request->getAttribute('foo', null) === 'bar') {
+                                    return new Response('redirect', 303);
+                                }
+
+                                return $next($request);
                             }
                         },
                         new class {
@@ -71,7 +77,12 @@ final class KarnelTest extends TestCase
         $this->karnel = null;
     }
 
-    /** @test */
+    /**
+     * This test contain test for middleware and
+     * test for register request attribute.
+     *
+     * @test
+     */
     public function itCanRedirectByMiddleware()
     {
         $respone = $this->app->make(Karnel::class);
