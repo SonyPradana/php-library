@@ -77,6 +77,7 @@ class RouteCacheCommand extends Command
                 'function'   => $route['function'],
                 'middleware' => $route['middleware'],
                 'name'       => $route['name'],
+                'patterns'   => $route['patterns'] ?? [],
             ];
         }
         $cached_route = '<?php return ' . var_export($routes, true) . ';' . PHP_EOL;
