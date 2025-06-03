@@ -39,13 +39,29 @@ class RouteCacheCommand extends Command
                 'config:cache' => 'Build route cache',
                 'config:clear' => 'Remove route cache',
             ],
-            'options'   => [],
-            'relation'  => [],
+            'options'   => [
+                '--files' => 'Load spesific config router.',
+            ],
+            'relation'  => [
+                'config:cache' => ['--files'],
+            ],
         ];
     }
 
     public function cache(Application $app, Router $router): int
     {
+        if (false !== ($files = $this->option('files', false))) {
+            foreach ($files as $file) {
+                if (false === file_exists($app->basePath() . $file)) {
+                    warn("Route file cant be load '{$file}'.")->out();
+
+                    return 1;
+                }
+
+                require $app->basePath() . $file;
+            }
+        }
+
         $routes = [];
         foreach ($router->getRoutesRaw() as $route) {
             if (is_callable($route['function'])) {

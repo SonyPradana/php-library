@@ -47,6 +47,60 @@ class RouteCacheCommandTest extends TestCase
 
         $this->assertEquals(0, $status);
         $this->assertStringContainsString('Route file has successfully created.', $out);
+        $this->assertNotEmpty(Router::getRoutes());
+
+        $app->flush();
+    }
+
+    /**
+     * @test
+     */
+    public function itCanCreateRouteCacheFromFiles(): void
+    {
+        $app = new Application(dirname(__DIR__) . '/assets/app1/');
+        $app->setConfigPath('/config/');
+
+        $command = new RouteCacheCommand(
+            argv: [],
+            default_option: [
+                'files' => [['/routes/web.php']],
+            ]
+        );
+        Router::Reset();
+
+        ob_start();
+        $status = $command->cache($app, new Router());
+        $out    = ob_get_clean();
+
+        $this->assertEquals(0, $status);
+        $this->assertStringContainsString('Route file has successfully created.', $out);
+        $this->assertNotEmpty(Router::getRoutes());
+
+        $app->flush();
+    }
+
+    /**
+     * @test
+     */
+    public function itFailCreateRouteCacheFromFiles(): void
+    {
+        $app = new Application(dirname(__DIR__) . '/assets/app1/');
+        $app->setConfigPath('/config/');
+
+        $command = new RouteCacheCommand(
+            argv: [],
+            default_option: [
+                'files' => [['/routes/api.php']],
+            ]
+        );
+        Router::Reset();
+
+        ob_start();
+        $status = $command->cache($app, new Router());
+        $out    = ob_get_clean();
+
+        $this->assertEquals(1, $status);
+        $this->assertStringContainsString('Route file cant be load \'/routes/api.php\'.', $out);
 
         $app->flush();
     }
@@ -93,6 +147,7 @@ class RouteCacheCommandTest extends TestCase
         }
 
         $this->assertEquals(0, $status);
+        $this->assertNotEmpty(Router::getRoutes());
 
         $app->flush();
     }
