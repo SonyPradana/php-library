@@ -7,7 +7,7 @@ use System\Collection\CollectionImmutable;
 class CollectionTest extends TestCase
 {
     /** @test */
-    public function itCollectionFunctionalWorKProperly(): void
+    public function itCanGetGetterSetter(): void
     {
         $original = [
             'buah_1' => 'mangga',
@@ -18,129 +18,194 @@ class CollectionTest extends TestCase
             'buah_6' => 'peer',
         ];
         $test = new Collection($original);
-
-        // getter
-        $this->assertEquals($test->buah_1, 'mangga', 'add new item colection using __set');
-        $this->assertEquals($test->get('buah_1'), 'mangga', 'add new item collection using set()');
-
-        // add new item
+        $this->assertEquals($test->buah_1, 'mangga');
+        $this->assertEquals($test->get('buah_1'), 'mangga');
         $test->set('buah_7', 'kelengkeng');
         $test->buah_8 = 'cherry';
-        $this->assertEquals($test->buah_8, 'cherry', 'get item colection using __get');
-        $this->assertEquals($test->get('buah_7'), 'kelengkeng', 'get item colection using get()');
-
-        // raname item
+        $this->assertEquals($test->buah_8, 'cherry');
+        $this->assertEquals($test->get('buah_7'), 'kelengkeng');
         $test->set('buah_7', 'durian');
         $test->buah_8 = 'nanas';
-        $this->assertEquals($test->buah_8, 'nanas', 'replece exis item colection using __get');
-        $this->assertEquals($test->get('buah_7'), 'durian', 'replece exis item colection using get()');
+        $this->assertEquals($test->buah_8, 'nanas');
+        $this->assertEquals($test->get('buah_7'), 'durian');
+    }
 
-        // cek array key
-        $this->assertTrue($test->has('buah_1'), 'collection have item with key');
-
-        // cek contain
-        $this->assertTrue($test->contain('mangga'), 'collection have item');
-
-        // remove item
+    /** @test */
+    public function itCanGetAddRemoveHasContain(): void
+    {
+        $original = [
+            'buah_1' => 'mangga',
+            'buah_2' => 'jeruk',
+            'buah_3' => 'apel',
+            'buah_4' => 'melon',
+            'buah_5' => 'rambutan',
+            'buah_6' => 'peer',
+        ];
+        $test = new Collection($original);
+        $this->assertTrue($test->has('buah_1'));
+        $this->assertTrue($test->contain('mangga'));
         $test->remove('buah_2');
-        $this->assertFalse($test->has('buah_2'), 'remove some item using key');
-
-        // reset to origin
+        $this->assertFalse($test->has('buah_2'));
         $test->replace($original);
+    }
 
-        // count
-        $this->assertEquals($test->count(), 6, 'count item in collection');
-
-        // count by
+    /** @test */
+    public function itCanGetCountAndCountIf(): void
+    {
+        $original = [
+            'buah_1' => 'mangga',
+            'buah_2' => 'jeruk',
+            'buah_3' => 'apel',
+            'buah_4' => 'melon',
+            'buah_5' => 'rambutan',
+            'buah_6' => 'peer',
+        ];
+        $test = new Collection($original);
+        $this->assertEquals($test->count(), 6);
         $countIf = $test->countIf(function ($item) {
-            // find letter contain 'e' letter
-            return strpos($item, 'e') !== false ? true : false;
+            return strpos($item, 'e') !== false;
         });
-        $this->assertEquals(4, $countIf, 'count item in collection with some condition');
+        $this->assertEquals(4, $countIf);
+    }
 
-        // first and last item cek
-        $this->assertEquals('mangga', $test->first('bukan buah'), 'get first item in collection');
-        $this->assertEquals('peer', $test->last('bukan buah'), 'get last item in collection');
+    /** @test */
+    public function itCanGetFirstLast(): void
+    {
+        $original = [
+            'buah_1' => 'mangga',
+            'buah_2' => 'jeruk',
+            'buah_3' => 'apel',
+            'buah_4' => 'melon',
+            'buah_5' => 'rambutan',
+            'buah_6' => 'peer',
+        ];
+        $test = new Collection($original);
+        $this->assertEquals('mangga', $test->first('bukan buah'));
+        $this->assertEquals('peer', $test->last('bukan buah'));
+    }
 
-        // test clear and empty cek
+    /** @test */
+    public function itCanGetClearIsEmptyReplaceAll(): void
+    {
+        $original = [
+            'buah_1' => 'mangga',
+            'buah_2' => 'jeruk',
+            'buah_3' => 'apel',
+            'buah_4' => 'melon',
+            'buah_5' => 'rambutan',
+            'buah_6' => 'peer',
+        ];
+        $test = new Collection($original);
         $this->assertFalse($test->isEmpty());
         $test->clear();
-        $this->assertTrue($test->isEmpty(), 'cek collection empty');
-        // same with origin
+        $this->assertTrue($test->isEmpty());
         $test->replace($original);
-        $this->assertEquals($test->all(), $original, 'replace axis collection with new data');
+        $this->assertEquals($test->all(), $original);
+    }
 
-        // test array keys and vules
+    /** @test */
+    public function itCanGetKeysItems(): void
+    {
+        $original = [
+            'buah_1' => 'mangga',
+            'buah_2' => 'jeruk',
+            'buah_3' => 'apel',
+            'buah_4' => 'melon',
+            'buah_5' => 'rambutan',
+            'buah_6' => 'peer',
+        ];
+        $test  = new Collection($original);
         $keys  = array_keys($original);
         $items = array_values($original);
-        $this->assertEquals($keys, $test->keys(), 'get all key in collection');
-        $this->assertEquals($items, $test->items(), 'get all item value in collection');
+        $this->assertEquals($keys, $test->keys());
+        $this->assertEquals($items, $test->items());
+    }
 
-        // each funtion
+    /** @test */
+    public function itCanGetEachMapFilter(): void
+    {
+        $original = [
+            'buah_1' => 'mangga',
+            'buah_2' => 'jeruk',
+            'buah_3' => 'apel',
+            'buah_4' => 'melon',
+            'buah_5' => 'rambutan',
+            'buah_6' => 'peer',
+        ];
+        $test = new Collection($original);
         $test->each(function ($item, $key) use ($original) {
-            $this->assertTrue(in_array($item, $original), 'test each with value');
-            $this->assertTrue(array_key_exists($key, $original), 'test each with key');
+            $this->assertTrue(in_array($item, $original));
+            $this->assertTrue(array_key_exists($key, $original));
         });
-
-        // map funtion
         $test->map(fn ($item) => ucfirst($item));
         $copy_origin = array_map(fn ($item) => ucfirst($item), $original);
-        $this->assertEquals($test->all(), $copy_origin, 'replace some/all item using map');
+        $this->assertEquals($test->all(), $copy_origin);
         $test->replace($original);
-
-        // filter funtion
         $test->filter(function ($item) {
-            // find letter contain 'e' letter
-            return strpos($item, 'e') !== false ? true : false;
+            return strpos($item, 'e') !== false;
         });
         $copy_origin = array_filter($original, function ($item) {
-            // find letter contain 'e' letter
-            return strpos($item, 'e') !== false ? true : false;
+            return strpos($item, 'e') !== false;
         });
-        $this->assertEquals($test->all(), $copy_origin, 'filter item in collection');
+        $this->assertEquals($test->all(), $copy_origin);
         $test->replace($original);
+    }
 
-        // test the collection have item with e letter
+    /** @test */
+    public function itCanGetSomeEvery(): void
+    {
+        $original = [
+            'buah_1' => 'mangga',
+            'buah_2' => 'jeruk',
+            'buah_3' => 'apel',
+            'buah_4' => 'melon',
+            'buah_5' => 'rambutan',
+            'buah_6' => 'peer',
+        ];
+        $test = new Collection($original);
         $some = $test->some(function ($item) {
-            // find letter contain 'e' letter
-            return strpos($item, 'e') !== false ? true : false;
+            return strpos($item, 'e') !== false;
         });
-        $this->assertTrue($some, 'test the collection have item with "e" letter');
-
-        // test the collection every item dont have 'x' letter
+        $this->assertTrue($some);
         $every = $test->every(function ($item) {
-            // find letter contain 'x' letter
-            return strpos($item, 'x') === false ? true : false;
+            return strpos($item, 'x') === false;
         });
-        $this->assertTrue($every, 'collection every item dont have "x" letter');
+        $this->assertTrue($every);
+    }
 
-        // json output
+    /** @test */
+    public function itCanGetJson(): void
+    {
+        $original = [
+            'buah_1' => 'mangga',
+            'buah_2' => 'jeruk',
+            'buah_3' => 'apel',
+            'buah_4' => 'melon',
+            'buah_5' => 'rambutan',
+            'buah_6' => 'peer',
+        ];
+        $test = new Collection($original);
         $json = json_encode($original);
-        $this->assertJsonStringEqualsJsonString($test->json(), $json, 'collection convert to json string');
+        $this->assertJsonStringEqualsJsonString($test->json(), $json);
+    }
 
-        // collection reverse
+    /** @test */
+    public function itCanGetReverseSort(): void
+    {
+        $original = [
+            'buah_1' => 'mangga',
+            'buah_2' => 'jeruk',
+            'buah_3' => 'apel',
+            'buah_4' => 'melon',
+            'buah_5' => 'rambutan',
+            'buah_6' => 'peer',
+        ];
+        $test        = new Collection($original);
         $copy_origin = $original;
-        $this->assertEquals(
-            $test->reverse()->all(),
-            array_reverse($copy_origin),
-            'test reverse collection'
-        );
+        $this->assertEquals($test->reverse()->all(), array_reverse($copy_origin));
         $test->replace($original);
-
-        // sort collection
-        // sort asc
-        $this->assertEquals(
-            $test->sort()->first(),
-            'apel',
-            'testing sort asc collection'
-        );
-        // sort desc
-        $this->assertEquals(
-            $test->sortDesc()->first(),
-            'rambutan',
-            'testing sort desc collection'
-        );
-        // sort using collback
+        $this->assertEquals($test->sort()->first(), 'apel');
+        $this->assertEquals($test->sortDesc()->first(), 'rambutan');
         $test->sortBy(function ($a, $b) {
             if ($a == $b) {
                 return 0;
@@ -148,11 +213,7 @@ class CollectionTest extends TestCase
 
             return ($a < $b) ? -1 : 1;
         });
-        $this->assertEquals(
-            $test->first(),
-            'apel',
-            'sort using user define asceding'
-        );
+        $this->assertEquals($test->first(), 'apel');
         $test->sortByDecs(function ($a, $b) {
             if ($a == $b) {
                 return 0;
@@ -160,90 +221,50 @@ class CollectionTest extends TestCase
 
             return ($a < $b) ? -1 : 1;
         });
-        $this->assertEquals(
-            $test->first(),
-            'rambutan',
-            'sort using user define decsending'
-        );
-
-        // sort colection by key
-        $this->assertEquals(
-            $test->sortKey()->first(),
-            'mangga',
-            'sort collection asc with key'
-        );
-        $this->assertEquals(
-            $test->sortKeyDesc()->first(),
-            'peer',
-            'sort collection desc with key'
-        );
+        $this->assertEquals($test->first(), 'rambutan');
+        $this->assertEquals($test->sortKey()->first(), 'mangga');
+        $this->assertEquals($test->sortKeyDesc()->first(), 'peer');
         $test->replace($original);
+    }
 
-        // clone collection
-        $this->assertEquals(
-            $test->clone()->reverse()->first(),
-            $test->last(),
-            'clone collection without interupt original'
-        );
-
-        // reject
+    /** @test */
+    public function itCanGetCloneRejectChunkSplitOnlyExceptFlatten(): void
+    {
+        $original = [
+            'buah_1' => 'mangga',
+            'buah_2' => 'jeruk',
+            'buah_3' => 'apel',
+            'buah_4' => 'melon',
+            'buah_5' => 'rambutan',
+            'buah_6' => 'peer',
+        ];
+        $test = new Collection($original);
+        $this->assertEquals($test->clone()->reverse()->first(), $test->last());
         $copy_origin = $original;
         unset($copy_origin['buah_2']);
-        $this->assertEquals(
-            $test->reject(fn ($item) => $item == 'jeruk')->all(),
-            $copy_origin,
-            'its like filter but the oposite'
-        );
-
-        // chunk
+        $this->assertEquals($test->reject(fn ($item) => $item == 'jeruk')->all(), $copy_origin);
         $chunk = $test->clone()->chunk(3)->all();
-        $this->assertEquals(
-            [
-                ['buah_1' => 'mangga', 'buah_3' => 'apel', 'buah_4' => 'melon'],
-                ['buah_5' => 'rambutan', 'buah_6' => 'peer'],
-            ],
-            $chunk,
-            'chunk to 3'
-        );
-
-        // split
+        $this->assertEquals([
+            ['buah_1' => 'mangga', 'buah_3' => 'apel', 'buah_4' => 'melon'],
+            ['buah_5' => 'rambutan', 'buah_6' => 'peer'],
+        ], $chunk);
         $split = $test->clone()->split(3)->all();
-        $this->assertEquals(
-            [
-                ['buah_1' => 'mangga', 'buah_3' => 'apel'],
-                ['buah_4' => 'melon', 'buah_5' => 'rambutan'],
-                ['buah_6' => 'peer'],
-            ],
-            $split,
-            'split to 2'
-        );
-
+        $this->assertEquals([
+            ['buah_1' => 'mangga', 'buah_3' => 'apel'],
+            ['buah_4' => 'melon', 'buah_5' => 'rambutan'],
+            ['buah_6' => 'peer'],
+        ], $split);
         $only = $test->clone()->only(['buah_1', 'buah_5']);
-        $this->assertEquals(
-            ['buah_1' => 'mangga', 'buah_5' => 'rambutan'],
-            $only->all(),
-            'show only some'
-        );
-
+        $this->assertEquals(['buah_1' => 'mangga', 'buah_5' => 'rambutan'], $only->all());
         $except = $test->clone()->except(['buah_3', 'buah_4', 'buah_6']);
-        $this->assertEquals(
-            ['buah_1' => 'mangga', 'buah_5' => 'rambutan'],
-            $except->all(),
-            'show list with except'
-        );
-
-        // fletten
+        $this->assertEquals(['buah_1' => 'mangga', 'buah_5' => 'rambutan'], $except->all());
         $array_nesting = [
             'first' => ['buah_1' => 'mangga', ['buah_2' => 'jeruk', 'buah_3' => 'apel', 'buah_4' => 'melon']],
             'mid'   => ['buah_4' => 'melon', ['buah_5' => 'rambutan']],
             'last'  => ['buah_6' => 'peer'],
         ];
         $flatten = new Collection($array_nesting);
-        $this->assertEquals(
-            $original,
-            $flatten->flatten()->all(),
-            'flatten nesting array'
-        );
+        $this->assertEquals($original, $flatten->flatten()->all());
     }
 
     /** @test */
@@ -648,5 +669,44 @@ class CollectionTest extends TestCase
             ['user' => 'user2', 'age' => 12],
             ['user' => 'user3', 'age' => 10],
         ], $wherein->toArray());
+    }
+
+    /** @test */
+    public function itCanConvertToImmutable(): void
+    {
+        $coll      = new Collection(['a' => 1, 'b' => 2]);
+        $immutable = $coll->immutable();
+        $this->assertInstanceOf(CollectionImmutable::class, $immutable);
+        $this->assertEquals(['a' => 1, 'b' => 2], $immutable->all());
+    }
+
+    /** @test */
+    public function itCanHandleEmptyCollection(): void
+    {
+        $coll = new Collection([]);
+        $this->assertTrue($coll->isEmpty());
+        $this->assertNull($coll->first());
+        $this->assertNull($coll->last());
+        $this->assertEquals([], $coll->keys());
+        $this->assertEquals([], $coll->items());
+    }
+
+    /** @test */
+    public function itCanHandleNullKeyAndValue(): void
+    {
+        $coll = new Collection([null => null]);
+        $this->assertTrue($coll->has(null));
+        $this->assertNull($coll->get(null));
+    }
+
+    /** @test */
+    public function itCanDumpWithoutError(): void
+    {
+        $coll = new Collection(['a' => 1]);
+
+        $this->expectNotToPerformAssertions();
+        ob_start();
+        $coll->dump();
+        ob_get_clean();
     }
 }
