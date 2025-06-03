@@ -171,16 +171,9 @@ final class RouteDispatcher
      */
     private function dispatch($basepath = '', $case_matters = false, $trailing_slash_matters = false, $multimatch = false): void
     {
-        $basepath   = rtrim($basepath, '/');
-        $parsed_url = parse_url($this->request->getUrl());
-        $path       = '/';
-        $path       = match (true) {
-            false === isset($parsed_url['path'])   => $path, // early return match
-            $trailing_slash_matters                => $parsed_url['path'],
-            "{$basepath}/" !== $parsed_url['path'] => rtrim($parsed_url['path'], '/'),
-            default                                => $parsed_url['path'],
-        };
-
+        $basepath          = rtrim($basepath, '/');
+        $parsed_url        = parse_url($this->request->getUrl());
+        $path              = $this->resolvePath($parsed_url, $basepath, $trailing_slash_matters);
         $method            = $this->request->getMethod();
         $path_match_found  = false;
         $route_match_found = false;
@@ -201,16 +194,13 @@ final class RouteDispatcher
                         continue;
                     }
 
-                    $namedMatches = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
-                    if (false === empty($namedMatches)) {
-                        $cleanMatches = array_filter($namedMatches, static fn (string $key): bool => false === is_numeric($key), ARRAY_FILTER_USE_KEY);
-                        $cleanMatches = array_values($cleanMatches);
-                    } else {
-                        array_shift($matches);
-                        $cleanMatches = array_values($matches);
-                    }
+                    $parameters = $this->resolveNamedParameters($matches);
 
-                    $this->trigger($this->found, [$route['function'], $cleanMatches], $route['middleware'] ?? []);
+                    $this->trigger(
+                        callable: $this->found,
+                        params: [$route['function'], $parameters],
+                        middleware: $route['middleware'] ?? []
+                    );
                     $this->current               = $route;
                     $this->current['expression'] = "^{$original_expression}$";
                     $route_match_found           = true;
@@ -230,5 +220,43 @@ final class RouteDispatcher
                 $this->trigger($this->not_found, [$path]);
             }
         }
+    }
+
+    /**
+     * Resolve path to santize trailing slash.
+     *
+     * @param string[]|null $parsed_url
+     */
+    private function resolvePath(array $parsed_url, string $basepath, bool $trailing_slash_matters): string
+    {
+        $parsed_path = $parsed_url['path'] ?? null;
+
+        return match (true) {
+            null === $parsed_path           => '/',
+            $trailing_slash_matters         => $parsed_path,
+            "{$basepath}/" !== $parsed_path => rtrim($parsed_path, '/'),
+            default                         => $parsed_path,
+        };
+    }
+
+    /**
+     * Resolve matches from preg_match path.
+     *
+     * @param string[] $matches
+     *
+     * @return array<string, string>
+     */
+    private function resolveNamedParameters(array $matches): array
+    {
+        $namedMatches = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+        if (false === empty($namedMatches)) {
+            $cleanMatches = array_filter($namedMatches, static fn (string $key): bool => false === is_numeric($key), ARRAY_FILTER_USE_KEY);
+            $cleanMatches = array_values($cleanMatches);
+        } else {
+            array_shift($matches);
+            $cleanMatches = array_values($matches);
+        }
+
+        return $cleanMatches;
     }
 }
