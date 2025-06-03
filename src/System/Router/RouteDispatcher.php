@@ -225,9 +225,9 @@ final class RouteDispatcher
     /**
      * Resolve path to santize trailing slash.
      *
-     * @param string[]|null $parsed_url
+     * @param array<string, int|string>|false $parsed_url
      */
-    private function resolvePath(array $parsed_url, string $basepath, bool $trailing_slash_matters): string
+    private function resolvePath($parsed_url, string $basepath, bool $trailing_slash_matters): string
     {
         $parsed_path = $parsed_url['path'] ?? null;
 
@@ -244,7 +244,7 @@ final class RouteDispatcher
      *
      * @param string[] $matches
      *
-     * @return array<string, string>
+     * @return string[]
      */
     private function resolveNamedParameters(array $matches): array
     {
