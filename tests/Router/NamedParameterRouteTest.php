@@ -56,6 +56,13 @@ class NamedParameterRouteTest extends TestCase
         })->name('api.user.post');
     }
 
+    private function registerRouterWithRefresrsibleParams()
+    {
+        Router::get('/users/(userId:num)/(type:text)', function ($type, $userId) {
+            echo "User {$userId} is of type {$type}";
+        })->name('users.type');
+    }
+
     /**
      * @test
      */
@@ -97,6 +104,19 @@ class NamedParameterRouteTest extends TestCase
             'Blog post from 05/2023: my-awesome-post',
             $response,
             'Should handle three named parameters with different types'
+        );
+    }
+
+    /** @test */
+    public function itHandlesRefresrsibleNamedParameters(): void
+    {
+        $this->registerRouterWithRefresrsibleParams();
+
+        $response = $this->getRespone('get', '/users/123/admin');
+        $this->assertEquals(
+            'User 123 is of type admin',
+            $response,
+            'Should handle multiple named parameters correctly'
         );
     }
 

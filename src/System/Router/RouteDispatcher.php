@@ -244,17 +244,16 @@ final class RouteDispatcher
      *
      * @param string[] $matches
      *
-     * @return string[]
+     * @return array<string|int, string>
      */
     private function resolveNamedParameters(array $matches): array
     {
         $namedMatches = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
-        if (false === empty($namedMatches)) {
-            $cleanMatches = array_filter($namedMatches, static fn (string $key): bool => false === is_numeric($key), ARRAY_FILTER_USE_KEY);
-            $cleanMatches = array_values($cleanMatches);
-        } else {
+        if (empty($namedMatches)) {
             array_shift($matches);
-            $cleanMatches = array_values($matches);
+            $cleanMatches = $matches;
+        } else {
+            $cleanMatches = array_filter($namedMatches, static fn (string $key): bool => false === is_numeric($key), ARRAY_FILTER_USE_KEY);
         }
 
         return $cleanMatches;
