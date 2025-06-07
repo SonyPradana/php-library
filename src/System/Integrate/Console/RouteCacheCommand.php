@@ -40,7 +40,7 @@ class RouteCacheCommand extends Command
                 'route:clear' => 'Remove route cache',
             ],
             'options'   => [
-                '--files' => 'Load spesific route router.',
+                '--files' => 'Cache spesific router files.',
             ],
             'relation'  => [
                 'route:cache' => ['--files'],
