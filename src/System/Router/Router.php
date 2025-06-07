@@ -37,16 +37,23 @@ class Router
     /**
      * Repalce alias to regex.
      *
-     * @param string $url Alias patern url
+     * @param string                $url      Alias patern url
+     * @param array<string, string> $patterns
      *
      * @return string Patern regex
      */
-    public static function mapPatterns(string $url): string
+    public static function mapPatterns(string $url, array $patterns): string
     {
-        $user_pattern         = array_keys(self::$patterns);
-        $allow_pattern        = array_values(self::$patterns);
+        $user_pattern  = array_keys($patterns);
+        $allow_pattern = array_values($patterns);
 
-        return str_replace($user_pattern, $allow_pattern, $url);
+        $expression = str_replace($user_pattern, $allow_pattern, $url);
+
+        return preg_replace_callback('/\((\w+):(\w+)\)/', static function (array $matchs) use ($patterns): string {
+            $pattern = $patterns["(:{$matchs[2]})"] ?? '[^/]+';
+
+            return "(?P<{$matchs[1]}>{$pattern})";
+        }, $expression);
     }
 
     /**
@@ -329,7 +336,7 @@ class Router
         return self::$routes[] = new Route([
             'method'      => $method,
             'uri'         => $uri,
-            'expression'  => self::mapPatterns($uri),
+            'expression'  => self::mapPatterns($uri, self::$patterns),
             'function'    => $callback,
             'middleware'  => $middleware,
         ]);
