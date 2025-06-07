@@ -36,14 +36,14 @@ class RouteCacheCommand extends Command
     {
         return [
             'commands'  => [
-                'config:cache' => 'Build route cache',
-                'config:clear' => 'Remove route cache',
+                'route:cache' => 'Build route cache',
+                'route:clear' => 'Remove route cache',
             ],
             'options'   => [
-                '--files' => 'Load spesific config router.',
+                '--files' => 'Load spesific route router.',
             ],
             'relation'  => [
-                'config:cache' => ['--files'],
+                'route:cache' => ['--files'],
             ],
         ];
     }
