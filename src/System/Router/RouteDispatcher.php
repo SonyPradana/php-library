@@ -181,7 +181,7 @@ final class RouteDispatcher
         foreach ($this->routes as $route) {
             $expression          = $route['expression'];
             $original_expression = $expression;
-            $expression          = $this->makeRouterPattern($expression, $route['patterns'] ?? []);
+            $expression          = $this->makeRoutePatterns($expression, $route['patterns'] ?? []);
 
             if ($basepath !== '' && $basepath !== '/') {
                 $expression = "({$basepath}){$expression}";
@@ -245,7 +245,7 @@ final class RouteDispatcher
      *
      * @param array<string, string> $pattern
      */
-    private function makeRouterPattern(string $expression, array $pattern): string
+    private function makeRoutePatterns(string $expression, array $pattern): string
     {
         if ([] === $pattern) {
             return $expression;
