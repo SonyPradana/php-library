@@ -181,6 +181,7 @@ final class RouteDispatcher
         foreach ($this->routes as $route) {
             $expression          = $route['expression'];
             $original_expression = $expression;
+            $expression          = $this->makeRoutePatterns($expression, $route['patterns'] ?? []);
 
             if ($basepath !== '' && $basepath !== '/') {
                 $expression = "({$basepath}){$expression}";
@@ -237,6 +238,20 @@ final class RouteDispatcher
             "{$basepath}/" !== $parsed_path => rtrim($parsed_path, '/'),
             default                         => $parsed_path,
         };
+    }
+
+    /**
+     * Parse expression with costume pattern.
+     *
+     * @param array<string, string> $pattern
+     */
+    private function makeRoutePatterns(string $expression, array $pattern): string
+    {
+        if ([] === $pattern) {
+            return $expression;
+        }
+
+        return Router::mapPatterns($expression, $pattern);
     }
 
     /**

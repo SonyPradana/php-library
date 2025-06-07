@@ -329,4 +329,26 @@ class BasicRouteTest extends TestCase
         $this->assertTrue(Router::has('route.test'));
         $this->assertFalse(Router::has('route.success'));
     }
+
+    /**
+     * @test
+     */
+    public function itCanUseCostumePattern(): void
+    {
+        Router::get('/test/costume/{costume}', function ($costume) {
+            echo 'render success, with costume is - ' . $costume;
+        })
+            ->name('route.test.costume')
+            ->where([
+                '{costume}'   => '([0-9]+)',
+            ])
+        ;
+
+        $route_costume = $this->getRespone('get', '/test/costume/123');
+        $this->assertEquals(
+            'render success, with costume is - 123',
+            $route_costume,
+            'the route must output same text'
+        );
+    }
 }
