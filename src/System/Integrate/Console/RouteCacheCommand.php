@@ -51,6 +51,7 @@ class RouteCacheCommand extends Command
     public function cache(Application $app, Router $router): int
     {
         if (false !== ($files = $this->option('files', false))) {
+            $router->Reset();
             $files = is_string($files) ? [$files] : $files;
             foreach ($files as $file) {
                 if (false === file_exists($app->basePath() . $file)) {
