@@ -64,6 +64,8 @@ class Karnel
 
             $dispatcher = $this->dispatcher($request);
 
+            $request->with($dispatcher['parameters']);
+
             $pipeline = array_reduce(
                 array_merge($this->middleware, $dispatcher['middleware']),
                 fn ($next, $middleware) => fn ($req) => $this->app->call([$middleware, 'handle'], ['request' => $req, 'next' => $next]),
