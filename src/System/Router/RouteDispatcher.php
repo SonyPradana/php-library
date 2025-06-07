@@ -171,95 +171,91 @@ final class RouteDispatcher
      */
     private function dispatch($basepath = '', $case_matters = false, $trailing_slash_matters = false, $multimatch = false): void
     {
-        // The basepath never needs a trailing slash
-        // Because the trailing slash will be added using the route expressions
-        $basepath = rtrim($basepath, '/');
-
-        // Parse current URL
-        $parsed_url = parse_url($this->request->getUrl());
-
-        $path = '/';
-
-        // If there is a path available
-        if (isset($parsed_url['path'])) {
-            // If the trailing slash matters
-            if ($trailing_slash_matters) {
-                $path = $parsed_url['path'];
-            } else {
-                // If the path is not equal to the base path (including a trailing slash)
-                if ($basepath . '/' != $parsed_url['path']) {
-                    // Cut the trailing slash away because it does not matters
-                    $path = rtrim($parsed_url['path'], '/');
-                } else {
-                    $path = $parsed_url['path'];
-                }
-            }
-        }
-
-        // Get current request method
-        $method = $this->request->getMethod();
-
+        $basepath          = rtrim($basepath, '/');
+        $parsed_url        = parse_url($this->request->getUrl());
+        $path              = $this->resolvePath($parsed_url, $basepath, $trailing_slash_matters);
+        $method            = $this->request->getMethod();
         $path_match_found  = false;
         $route_match_found = false;
 
         foreach ($this->routes as $route) {
-            // If the method matches check the path
+            $expression          = $route['expression'];
+            $original_expression = $expression;
 
-            // Add basepath to matching string
-            if ($basepath != '' && $basepath != '/') {
-                $route['expression'] = '(' . $basepath . ')' . $route['expression'];
+            if ($basepath !== '' && $basepath !== '/') {
+                $expression = "({$basepath}){$expression}";
             }
 
-            // Add 'find string start' automatically
-            $route['expression'] = '^' . $route['expression'];
-
-            // Add 'find string end' automatically
-            $route['expression'] .= '$';
-
-            // Check path match
-            if (preg_match('#' . $route['expression'] . '#' . ($case_matters ? '' : 'i') . 'u', $path, $matches)) {
+            if (preg_match("#^{$expression}$#" . ($case_matters ? '' : 'i') . 'u', $path, $matches)) {
                 $path_match_found = true;
 
-                // Cast allowed method to array if it's not one already, then run through all methods
                 foreach ((array) $route['method'] as $allowedMethod) {
-                    // Check method match
-                    if (strtolower($method) == strtolower($allowedMethod)) {
-                        array_shift($matches); // Always remove first element. This contains the whole string
-
-                        if ($basepath != '' && $basepath != '/') {
-                            array_shift($matches); // Remove basepath
-                        }
-
-                        // execute request
-                        $this->trigger($this->found, [$route['function'], $matches], $route['middleware'] ?? []);
-                        $this->current = $route;
-
-                        $route_match_found = true;
-
-                        // Do not check other routes
-                        break;
+                    if (strtolower($method) !== strtolower($allowedMethod)) {
+                        continue;
                     }
+
+                    $parameters = $this->resolveNamedParameters($matches);
+
+                    $this->trigger(
+                        callable: $this->found,
+                        params: [$route['function'], $parameters],
+                        middleware: $route['middleware'] ?? []
+                    );
+                    $this->current               = $route;
+                    $this->current['expression'] = "^{$original_expression}$";
+                    $route_match_found           = true;
+                    break;
                 }
             }
 
-            // Break the loop if the first found route is a match
-            if ($route_match_found && !$multimatch) {
+            if ($route_match_found && false === $multimatch) {
                 break;
             }
         }
 
-        // No matching route was found
-        if (!$route_match_found) {
-            // But a matching path exists
-            if ($path_match_found) {
-                if ($this->method_not_allowed) {
-                    $this->trigger($this->method_not_allowed, [$path, $method]);
-                }
-            } else {
-                if ($this->not_found) {
-                    $this->trigger($this->not_found, [$path]);
-                }
+        if (false === $route_match_found) {
+            if ($path_match_found && $this->method_not_allowed) {
+                $this->trigger($this->method_not_allowed, [$path, $method]);
+            } elseif (false === $path_match_found && $this->not_found) {
+                $this->trigger($this->not_found, [$path]);
             }
         }
+    }
+
+    /**
+     * Resolve path to santize trailing slash.
+     *
+     * @param array<string, int|string>|false $parsed_url
+     */
+    private function resolvePath($parsed_url, string $basepath, bool $trailing_slash_matters): string
+    {
+        $parsed_path = $parsed_url['path'] ?? null;
+
+        return match (true) {
+            null === $parsed_path           => '/',
+            $trailing_slash_matters         => $parsed_path,
+            "{$basepath}/" !== $parsed_path => rtrim($parsed_path, '/'),
+            default                         => $parsed_path,
+        };
+    }
+
+    /**
+     * Resolve matches from preg_match path.
+     *
+     * @param string[] $matches
+     *
+     * @return array<string|int, string>
+     */
+    private function resolveNamedParameters(array $matches): array
+    {
+        $namedMatches = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+        if (empty($namedMatches)) {
+            array_shift($matches);
+            $cleanMatches = $matches;
+        } else {
+            $cleanMatches = array_filter($namedMatches, static fn (string $key): bool => false === is_numeric($key), ARRAY_FILTER_USE_KEY);
+        }
+
+        return $cleanMatches;
     }
 }
