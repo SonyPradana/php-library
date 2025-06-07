@@ -411,13 +411,28 @@ class Collection extends AbstractCollectionImmutable
      *
      * @return TValue|null
      */
-    public function reduse(callable $callable, $carry = null)
+    public function reduce(callable $callable, $carry = null)
     {
         foreach ($this->collection as $item) {
             $carry = $callable($carry, $item);
         }
 
         return $carry;
+    }
+
+    /**
+     * Reduce items.
+     *
+     * @deprecated typo use `reduce` instead
+     *
+     * @param callable(TValue, TValue): TValue $callable
+     * @param TValue|null                      $carry
+     *
+     * @return TValue|null
+     */
+    public function reduse(callable $callable, $carry = null)
+    {
+        return $this->reduce($callable, $carry);
     }
 
     /**

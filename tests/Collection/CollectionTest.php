@@ -403,7 +403,7 @@ class CollectionTest extends TestCase
     {
         $collection = new Collection([1, 2, 3, 4]);
 
-        $sum = $collection->reduse(fn ($carry, $item) => $carry + $item);
+        $sum = $collection->reduce(fn ($carry, $item) => $carry + $item);
 
         $this->assertTrue($sum === 10);
     }
