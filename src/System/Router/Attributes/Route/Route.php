@@ -1,0 +1,22 @@
+<?php
+
+declare(strict_types=1);
+
+namespace System\Router\Attributes\Route;
+
+#[\Attribute(\Attribute::TARGET_METHOD)]
+class Route
+{
+    /**
+     * @var array{method: string[], expression: string}
+     */
+    public array $route;
+
+    public function __construct(array $method, string $expression)
+    {
+        $this->route = [
+            'method'      => $method,
+            'expression'  => $expression,
+        ];
+    }
+}
