@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Router\Attributes;
+namespace System\Router\Attribute;
 
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
 final class Name

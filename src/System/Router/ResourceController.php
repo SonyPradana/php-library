@@ -155,16 +155,4 @@ class ResourceController
 
         return $this;
     }
-
-    public function with(string $resource_name, string $to): self
-    {
-        if (false === $this->resource->has($resource_name)) {
-            return $this;
-        }
-
-        $this->resource->set($to, $this->resource->get($resource_name));
-        $this->resource->remove($resource_name);
-
-        return $this;
-    }
 }

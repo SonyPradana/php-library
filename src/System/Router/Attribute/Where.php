@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace System\Router\Attributes;
+namespace System\Router\Attribute;
 
-#[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
+#[\Attribute(\Attribute::TARGET_METHOD)]
 final class Where
 {
     public function __construct(
         /**
          * @var array<string, string>
          */
-        public array $where,
+        public array $pattern,
     ) {
     }
 }

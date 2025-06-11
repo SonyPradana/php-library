@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace System\Router;
 
+use System\Router\Attribute\Middleware;
+use System\Router\Attribute\Name;
+use System\Router\Attribute\Where;
+
 class Router
 {
     /** @var Route[] */
@@ -316,6 +320,53 @@ class Router
         }
 
         return $router;
+    }
+
+    public static function register(string|array $class_name): void
+    {
+    }
+
+    private function resolveRouteAttribute(string $uri, string $class_name, \ReflectionClass $reflector): array
+    {
+        $prefix_name = '';
+        $middlewares = [];
+        $name        = '';
+        $pattern     = [];
+        $classes     = [];
+
+        foreach ($reflector->getAttributes() as $class_attribute) {
+            if (($attribute_middleawre = $class_attribute->newInstance()) instanceof Middleware) {
+                $middlewares = $attribute_middleawre->middlware;
+            }
+            if (($attribute_name = $class_attribute->newInstance()) instanceof Name) {
+                $prefix_name = $attribute_name->name;
+            }
+        }
+
+        foreach ($reflector->getMethods() as $methods) {
+            foreach ($methods->getAttributes() as $method) {
+                if (($attribute_middleawre = $method->newInstance()) instanceof Middleware) {
+                    $middlewares = array_merge($middlewares, $attribute_middleawre->middlware);
+                }
+                if (($attribute_name = $method->newInstance()) instanceof Name) {
+                    $name = $attribute_name->name;
+                }
+                if (($attribute_patterns = $method->newInstance()) instanceof Where) {
+                    $pattern = $attribute_patterns->pattern;
+                }
+
+                $classes = [
+                    'patterns'   => $pattern,
+                    'uri'        => $uri,
+                    'expression' => self::mapPatterns($uri, self::$patterns),
+                    'function'   => [$class_name, $method->getName()],
+                    'middleware' => $middlewares,
+                    'name'       => "{$prefix_name}{$name}",
+                ];
+            }
+        }
+
+        return $classes;
     }
 
     /**
