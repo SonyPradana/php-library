@@ -41,7 +41,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "System\\Test\\Database\\": "tests/DataBase"
+            "System\\Test\\Database\\": "tests/DataBase",
+            "System\\Test\\Router\\Attribute\\": "tests/Router/Attribute"
         },
         "files": [
             "tests/Integrate/Commands/CommandTest.php"
