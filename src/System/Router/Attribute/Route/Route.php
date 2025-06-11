@@ -12,6 +12,9 @@ class Route
      */
     public array $route;
 
+    /**
+     * @param string[] $method
+     */
     public function __construct(array $method, string $expression)
     {
         $this->route = [

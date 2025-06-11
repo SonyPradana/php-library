@@ -6,6 +6,8 @@ namespace System\Router;
 
 use System\Router\Attribute\Middleware;
 use System\Router\Attribute\Name;
+use System\Router\Attribute\Prefix;
+// use System\Router\Attribute\Route\Route;
 use System\Router\Attribute\Where;
 
 class Router
@@ -322,47 +324,79 @@ class Router
         return $router;
     }
 
+    /**
+     * @param class-string|class-string[] $class_name
+     */
     public static function register(string|array $class_name): void
     {
+        $class_names = is_string($class_name) ? [$class_name] : $class_name;
+        foreach ($class_names as $class) {
+            $reflection     = new \ReflectionClass($class);
+            self::$routes[] = new Route(
+                route: self::resolveRouteAttribute($class, $reflection->getAttributes(), $reflection->getMethods())
+            );
+        }
     }
 
-    private function resolveRouteAttribute(string $uri, string $class_name, \ReflectionClass $reflector): array
+    /**
+     * @param \ReflectionAttribute<object>[] $attributes
+     * @param \ReflectionMethod[]            $attributes_methods
+     *
+     * @return array<string, string|array<string, string>>
+     */
+    private static function resolveRouteAttribute(string $class_name, array $attributes = [], array $attributes_methods = []): array
     {
+        $prefix_uri  = '';
         $prefix_name = '';
         $middlewares = [];
         $name        = '';
         $pattern     = [];
         $classes     = [];
 
-        foreach ($reflector->getAttributes() as $class_attribute) {
-            if (($attribute_middleawre = $class_attribute->newInstance()) instanceof Middleware) {
-                $middlewares = $attribute_middleawre->middlware;
+        foreach ($attributes as $class_attribute) {
+            $instance = $class_attribute->newInstance();
+            if ($instance instanceof Middleware) {
+                $middlewares = $instance->middlware;
             }
-            if (($attribute_name = $class_attribute->newInstance()) instanceof Name) {
-                $prefix_name = $attribute_name->name;
+            if ($instance instanceof Name) {
+                $prefix_name = $instance->name;
+            }
+            if ($instance instanceof Prefix) {
+                $prefix_uri = $instance->prefix;
             }
         }
 
-        foreach ($reflector->getMethods() as $methods) {
-            foreach ($methods->getAttributes() as $method) {
-                if (($attribute_middleawre = $method->newInstance()) instanceof Middleware) {
-                    $middlewares = array_merge($middlewares, $attribute_middleawre->middlware);
-                }
-                if (($attribute_name = $method->newInstance()) instanceof Name) {
-                    $name = $attribute_name->name;
-                }
-                if (($attribute_patterns = $method->newInstance()) instanceof Where) {
-                    $pattern = $attribute_patterns->pattern;
+        foreach ($attributes_methods as $method) {
+            foreach ($method->getAttributes() as $attribute) {
+                $instance = $attribute->newInstance();
+
+                if ($instance instanceof Middleware) {
+                    $middlewares = array_merge($middlewares, $instance->middlware);
                 }
 
-                $classes = [
-                    'patterns'   => $pattern,
-                    'uri'        => $uri,
-                    'expression' => self::mapPatterns($uri, self::$patterns),
-                    'function'   => [$class_name, $method->getName()],
-                    'middleware' => $middlewares,
-                    'name'       => "{$prefix_name}{$name}",
-                ];
+                if ($instance instanceof Name) {
+                    $name = $instance->name;
+                }
+
+                if ($instance instanceof Where) {
+                    $pattern = $instance->pattern;
+                }
+
+                if ($instance instanceof Attribute\Route\Route) {
+                    [
+                        'method'     => $http_method,
+                        'expression' => $uri,
+                    ]        = $instance->route;
+                    $classes = [
+                        'method'     => $http_method,
+                        'patterns'   => $pattern,
+                        'uri'        => "{$prefix_uri}{$uri}",
+                        'expression' => self::mapPatterns("{$prefix_uri}{$uri}", self::$patterns),
+                        'function'   => [$class_name, $method->getName()],
+                        'middleware' => $middlewares,
+                        'name'       => "{$prefix_name}{$name}",
+                    ];
+                }
             }
         }
 
