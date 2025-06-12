@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.39.0] - 2025-06-12
+### Feat
+- Added `NameTemplator` support handle unescaped variables (#430).
+- Added support router with named parameters with types (#433).
+- Added request parameters handling in `Karnel`(#434).
+- Added `RouteCacheCommand` to cache route files for optimize route load (#436).
+- Added `where` method to costume route patterns (#437).
+- Added route Attribute to register route using attribute route (#439).
+
+### Fixed
+- Fixed typo `Collection::reduse()` to ``Collection::reduce()`` (#345).
+
 ## [0.38.3] - 2025-05-28
 ### Fixed
 - Fixed remove default header before set header (#431).
