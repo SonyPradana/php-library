@@ -13,12 +13,19 @@ class MyPDO extends BasePDO
      */
     public function __construct(array $configs)
     {
-        $host             = $configs['host'];
-        $user             = $configs['user'];
-        $pass             = $configs['password'];
+        $username               = $configs['user'] ?? $configs['username'];
+        $password               = $configs['password'];
+        $dsn_config['username'] = $username; // coverage old config
+        $dsn_config['password'] = $password; // coverage old config
 
-        $this->configs = $configs;
-        $dsn           = "mysql:host=$host;charset=utf8mb4";
-        $this->useDsn($dsn, $user, $pass);
+        // mapping deprecated config
+        $dsn_config['driver']   =  $configs['driver'] ?? 'mysql';
+        $dsn_config['host']     =  $configs['host'];
+        $dsn_config['port']     =  $configs['port'];
+        $dsn_config['chartset'] =  $configs['chartset'];
+
+        $dsn           = $this->dsn($dsn_config);
+        $this->configs = $dsn_config;
+        $this->useDsn($dsn, $username, $password);
     }
 }

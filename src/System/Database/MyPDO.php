@@ -36,14 +36,21 @@ class MyPDO
      */
     public function __construct(array $configs)
     {
-        $database_name    = $configs['database_name'];
-        $host             = $configs['host'];
-        $user             = $configs['user'];
-        $pass             = $configs['password'];
+        $username               = $configs['user'] ?? $configs['username'];
+        $password               = $configs['password'];
+        $dsn_config['username'] = $username; // coverage old config
+        $dsn_config['password'] = $password; // coverage old config
 
-        $this->configs = $configs;
-        $dsn           = "mysql:host=$host;dbname=$database_name";
-        $this->useDsn($dsn, $user, $pass);
+        // mapping deprecated config
+        $dsn_config['driver']   =  $configs['driver'] ?? 'mysql';
+        $dsn_config['host']     =  $configs['host'];
+        $dsn_config['database'] =  $configs['database'] ?? $configs['database_name'];
+        $dsn_config['port']     =  $configs['port'];
+        $dsn_config['chartset'] =  $configs['chartset'];
+
+        $dsn           = $this->dsn($dsn_config);
+        $this->configs = $dsn_config;
+        $this->useDsn($dsn, $username, $password);
     }
 
     /**
@@ -95,6 +102,63 @@ class MyPDO
     public function configs()
     {
         return $this->configs;
+    }
+
+    /**
+     * @param array{driver: string, host:string, database:string, port: int, chartset: string} $configs
+     */
+    public function dsn(array $configs): string
+    {
+        $driver = $configs['driver'] ?? 'mysql';
+
+        $dsn = match ($driver) {
+            'mysql', 'mariadb' => static function (array $config): string {
+                // required
+                if (false === array_key_exists('host', $config)) {
+                    throw new \InvalidArgumentException('mysql driver require `host`.');
+                }
+
+                $port     = $configs['port'] ?? 3306;
+                $chartset = $configs['chartset'] ?? 'utf8mb4';
+
+                $dsn['host']     = "host:{$config['host']}";
+                $dsn['dbname']   = isset($config['database']) ? "dbname:{$config['database']}" : '';
+                $dsn['port']     = "port:{$port}";
+                $dsn['chartset'] = "chartset:{$chartset}";
+                $build           = implode(';', array_filter($dsn, fn (string $item): bool => '' === $item));
+
+                return "mysql:{$build}";
+            },
+            'pgsql' => static function (array $config): string {
+                // required
+                if (false === array_key_exists('host', $config)) {
+                    throw new \InvalidArgumentException('pgsql driver require `host` and `dbname`.');
+                }
+
+                $port     = $configs['port'] ?? 3306;
+
+                $dsn['host']     = "host:{$config['host']}";
+                $dsn['dbname']   = isset($config['database']) ? "dbname:{$config['database']}" : '';
+                $dsn['port']     = "port:{$port}";
+                $build           = implode(';', array_filter($dsn, fn (string $item): bool => '' === $item));
+
+                return "pgsql:{$build}";
+            },
+            'sqlite' => static function (array $config): string {
+                // required
+                if (false === array_key_exists('database', $config)) {
+                    throw new \InvalidArgumentException('sqlite driver require `dbname`.');
+                }
+                $dbname   = "dbname:{$config['database']}";
+
+                return "sqlite:{$dbname}";
+            },
+            default => static function (array $config): string {
+                throw new \InvalidArgumentException('sqlite driver require `dbname`.');
+            },
+        };
+
+        return (string) $dsn($configs);
     }
 
     /**

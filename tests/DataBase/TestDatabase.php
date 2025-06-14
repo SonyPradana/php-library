@@ -19,10 +19,13 @@ abstract class TestDatabase extends TestCase
     protected function createConnection(): void
     {
         $this->env = [
-            'host'           => '127.0.0.1',
-            'user'           => 'root',
-            'password'       => '',
-            'database_name'  => 'testing_db',
+            'driver'   => 'mariadb',
+            'host'     => '127.0.0.1',
+            'username' => 'root',
+            'password' => '',
+            'database' => 'testing_db',
+            'port'     => 3306,
+            'chartset' => 'utf8mb4',
         ];
 
         $this->pdo_schema = new MySchema\MyPDO($this->env);
