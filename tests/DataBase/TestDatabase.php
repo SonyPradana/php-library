@@ -19,7 +19,7 @@ abstract class TestDatabase extends TestCase
     protected function createConnection(): void
     {
         $this->env = [
-            'driver'   => 'mariadb',
+            'driver'   => 'mysql',
             'host'     => '127.0.0.1',
             'username' => 'root',
             'password' => '',
