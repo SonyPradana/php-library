@@ -105,13 +105,11 @@ class MyPDO
     }
 
     /**
-     * @param array{host: string, driver: ?string, database: ?string, port: ?int, chartset: ?string} $configs
+     * @param array{host: string, driver: string, database: ?string, port: ?int, chartset: ?string} $configs
      */
     public function dsn(array $configs): string
     {
-        $driver = $configs['driver'] ?? 'mysql';
-
-        $dsn = match ($driver) {
+        $dsn = match ($configs['driver']) {
             'mysql', 'mariadb' => static function (array $config): string {
                 // required
                 if (false === array_key_exists('host', $config)) {
@@ -121,10 +119,10 @@ class MyPDO
                 $port     = $config['port'] ?? 3306;
                 $chartset = $config['chartset'] ?? 'utf8mb4';
 
-                $dsn['host']     = "host:{$config['host']}";
-                $dsn['dbname']   = isset($config['database']) ? "dbname:{$config['database']}" : '';
-                $dsn['port']     = "port:{$port}";
-                $dsn['chartset'] = "chartset:{$chartset}";
+                $dsn['host']     = "host={$config['host']}";
+                $dsn['dbname']   = isset($config['database']) ? "dbname={$config['database']}" : '';
+                $dsn['port']     = "port={$port}";
+                $dsn['chartset'] = "chartset={$chartset}";
                 $build           = implode(';', array_filter($dsn, fn (string $item): bool => '' === $item));
 
                 return "{$config['driver']}:{$build}";
@@ -137,9 +135,9 @@ class MyPDO
 
                 $port     = $config['port'] ?? 3306;
 
-                $dsn['host']     = "host:{$config['host']}";
-                $dsn['dbname']   = isset($config['database']) ? "dbname:{$config['database']}" : '';
-                $dsn['port']     = "port:{$port}";
+                $dsn['host']     = "host={$config['host']}";
+                $dsn['dbname']   = isset($config['database']) ? "dbname={$config['database']}" : '';
+                $dsn['port']     = "port={$port}";
                 $build           = implode(';', array_filter($dsn, fn (string $item): bool => '' === $item));
 
                 return "pgsql:{$build}";
@@ -149,7 +147,7 @@ class MyPDO
                 if (false === array_key_exists('database', $config)) {
                     throw new \InvalidArgumentException('sqlite driver require `dbname`.');
                 }
-                $dbname   = "dbname:{$config['database']}";
+                $dbname   = "dbname={$config['database']}";
 
                 return "sqlite:{$dbname}";
             },
