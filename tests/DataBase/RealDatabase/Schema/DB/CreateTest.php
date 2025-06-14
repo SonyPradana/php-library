@@ -28,7 +28,7 @@ final class CreateTest extends TestDatabase
     {
         // need clean up
         $this->tearDown();
-        $schema = new Create($this->pdo_schema->configs()['database_name'], $this->pdo_schema);
+        $schema = new Create($this->pdo_schema->configs()['database'], $this->pdo_schema);
 
         $this->assertTrue($schema->execute());
     }
