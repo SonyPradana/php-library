@@ -22,7 +22,7 @@ class Drop
 
     public function table(string $table_name): Table\Drop
     {
-        $database_name = $this->pdo->configs()['database_name'];
+        $database_name = $this->pdo->configs()['database'];
 
         return new Table\Drop($database_name, $table_name, $this->pdo);
     }

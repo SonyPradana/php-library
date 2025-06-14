@@ -22,7 +22,7 @@ class Create
 
     public function table(string $table_name): Table\Create
     {
-        $database_name = $this->pdo->configs()['database_name'];
+        $database_name = $this->pdo->configs()['database'];
 
         return new Table\Create($database_name, $table_name, $this->pdo);
     }

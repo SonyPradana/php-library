@@ -117,7 +117,7 @@ class MigrationCommand extends Command
 
     private function DbName(): string
     {
-        return app()->get('dsn.sql')['database_name'];
+        return app()->get('dsn.sql')['database'];
     }
 
     private function runInDev(): bool
