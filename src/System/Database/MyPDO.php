@@ -123,7 +123,7 @@ class MyPDO
                 $dsn['dbname']   = isset($config['database']) ? "dbname={$config['database']}" : '';
                 $dsn['port']     = "port={$port}";
                 $dsn['chartset'] = "chartset={$chartset}";
-                $build           = implode(';', array_filter($dsn, fn (string $item): bool => '' === $item));
+                $build           = implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
 
                 return "{$config['driver']}:{$build}";
             },
@@ -138,7 +138,7 @@ class MyPDO
                 $dsn['host']     = "host={$config['host']}";
                 $dsn['dbname']   = isset($config['database']) ? "dbname={$config['database']}" : '';
                 $dsn['port']     = "port={$port}";
-                $build           = implode(';', array_filter($dsn, fn (string $item): bool => '' === $item));
+                $build           = implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
 
                 return "pgsql:{$build}";
             },
