@@ -26,7 +26,7 @@ final class DropTest extends TestDatabase
      */
     public function itCanGenerateCreateDatabase()
     {
-        $schema = new Drop($this->pdo_schema->configs()['database_name'], $this->pdo_schema);
+        $schema = new Drop($this->pdo_schema->configs()['database'], $this->pdo_schema);
 
         $this->assertTrue($schema->execute());
     }

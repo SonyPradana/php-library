@@ -37,7 +37,7 @@ final class TruncateTest extends TestDatabase
      */
     public function itCanGenerateTruncateDatabase()
     {
-        $schema = new Truncate($this->pdo_schema->configs()['database_name'], 'users', $this->pdo_schema);
+        $schema = new Truncate($this->pdo_schema->configs()['database'], 'users', $this->pdo_schema);
 
         $this->assertTrue($schema->execute());
     }

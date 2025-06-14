@@ -38,7 +38,7 @@ final class AlterTest extends TestDatabase
     public function itCanExcuteQueryUsingModifyColumn()
     {
         $schema = new Alter(
-            $this->pdo_schema->configs()['database_name'],
+            $this->pdo_schema->configs()['database'],
             'profiles',
             $this->pdo_schema
         );
@@ -55,7 +55,7 @@ final class AlterTest extends TestDatabase
     public function itCanExcuteQueryUsingAddColumn()
     {
         $schema = new Alter(
-            $this->pdo_schema->configs()['database_name'],
+            $this->pdo_schema->configs()['database'],
             'profiles',
             $this->pdo_schema
         );
@@ -73,7 +73,7 @@ final class AlterTest extends TestDatabase
     public function itCanExcuteQueryUsingDropColumn()
     {
         $schema = new Alter(
-            $this->pdo_schema->configs()['database_name'],
+            $this->pdo_schema->configs()['database'],
             'profiles',
             $this->pdo_schema
         );
@@ -92,7 +92,7 @@ final class AlterTest extends TestDatabase
     public function itCanExcuteQueryUsingRenameColumn()
     {
         $schema = new Alter(
-            $this->pdo_schema->configs()['database_name'],
+            $this->pdo_schema->configs()['database'],
             'profiles',
             $this->pdo_schema
         );
@@ -110,7 +110,7 @@ final class AlterTest extends TestDatabase
     public function itCanExcuteQueryUsingRenamesColumn()
     {
         $schema = new Alter(
-            $this->pdo_schema->configs()['database_name'],
+            $this->pdo_schema->configs()['database'],
             'profiles',
             $this->pdo_schema
         );
@@ -129,7 +129,7 @@ final class AlterTest extends TestDatabase
     public function itCanExcuteQueryUsingAlterColumn()
     {
         $schema = new Alter(
-            $this->pdo_schema->configs()['database_name'],
+            $this->pdo_schema->configs()['database'],
             'profiles',
             $this->pdo_schema
         );
@@ -149,7 +149,7 @@ final class AlterTest extends TestDatabase
     public function itCanExcuteQueryUsingModifyAddWithOrder()
     {
         $schema = new Alter(
-            $this->pdo_schema->configs()['database_name'],
+            $this->pdo_schema->configs()['database'],
             'profiles',
             $this->pdo_schema
         );
@@ -167,7 +167,7 @@ final class AlterTest extends TestDatabase
     public function itCanExcuteQueryUsingModifyColumnWithOrder()
     {
         $schema = new Alter(
-            $this->pdo_schema->configs()['database_name'],
+            $this->pdo_schema->configs()['database'],
             'profiles',
             $this->pdo_schema
         );
