@@ -19,10 +19,11 @@ class MyPDO extends BasePDO
         $dsn_config['password'] = $password; // coverage old config
 
         // mapping deprecated config
-        $dsn_config['driver']   =  $configs['driver'] ?? 'mysql';
-        $dsn_config['host']     =  $configs['host'];
-        $dsn_config['port']     =  $configs['port'];
-        $dsn_config['chartset'] =  $configs['chartset'];
+        $dsn_config['driver']   = $configs['driver'] ?? 'mysql';
+        $dsn_config['host']     = $configs['host'];
+        $dsn_config['port']     = (int) $configs['port'];
+        $dsn_config['chartset'] = $configs['chartset'];
+        $dsn_config['database'] = null;
 
         $dsn           = $this->dsn($dsn_config);
         $this->configs = $dsn_config;

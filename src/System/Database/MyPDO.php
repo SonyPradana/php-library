@@ -42,11 +42,11 @@ class MyPDO
         $dsn_config['password'] = $password; // coverage old config
 
         // mapping deprecated config
-        $dsn_config['driver']   =  $configs['driver'] ?? 'mysql';
-        $dsn_config['host']     =  $configs['host'];
-        $dsn_config['database'] =  $configs['database'] ?? $configs['database_name'];
-        $dsn_config['port']     =  $configs['port'];
-        $dsn_config['chartset'] =  $configs['chartset'];
+        $dsn_config['driver']   = $configs['driver'] ?? 'mysql';
+        $dsn_config['host']     = $configs['host'];
+        $dsn_config['database'] = $configs['database'] ?? $configs['database_name'];
+        $dsn_config['port']     = (int) $configs['port'];
+        $dsn_config['chartset'] = $configs['chartset'];
 
         $dsn           = $this->dsn($dsn_config);
         $this->configs = $dsn_config;
@@ -105,7 +105,7 @@ class MyPDO
     }
 
     /**
-     * @param array{driver: string, host:string, database:string, port: int, chartset: string} $configs
+     * @param array{host: string, driver: ?string, database: ?string, port: ?int, chartset: ?string} $configs
      */
     public function dsn(array $configs): string
     {
@@ -118,8 +118,8 @@ class MyPDO
                     throw new \InvalidArgumentException('mysql driver require `host`.');
                 }
 
-                $port     = $configs['port'] ?? 3306;
-                $chartset = $configs['chartset'] ?? 'utf8mb4';
+                $port     = $config['port'] ?? 3306;
+                $chartset = $config['chartset'] ?? 'utf8mb4';
 
                 $dsn['host']     = "host:{$config['host']}";
                 $dsn['dbname']   = isset($config['database']) ? "dbname:{$config['database']}" : '';
@@ -127,7 +127,7 @@ class MyPDO
                 $dsn['chartset'] = "chartset:{$chartset}";
                 $build           = implode(';', array_filter($dsn, fn (string $item): bool => '' === $item));
 
-                return "mysql:{$build}";
+                return "{$config['driver']}:{$build}";
             },
             'pgsql' => static function (array $config): string {
                 // required
@@ -135,7 +135,7 @@ class MyPDO
                     throw new \InvalidArgumentException('pgsql driver require `host` and `dbname`.');
                 }
 
-                $port     = $configs['port'] ?? 3306;
+                $port     = $config['port'] ?? 3306;
 
                 $dsn['host']     = "host:{$config['host']}";
                 $dsn['dbname']   = isset($config['database']) ? "dbname:{$config['database']}" : '';
