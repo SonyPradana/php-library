@@ -7,23 +7,29 @@ namespace System\Database\MySchema;
 /** Proxy for drop database and table */
 class Drop
 {
-    /** @var MyPDO */
-    private $pdo;
-
-    public function __construct(MyPDO $pdo)
-    {
-        $this->pdo = $pdo;
+    public function __construct(
+        private MyPDO $pdo,
+        private ?string $database_name = null,
+    ) {
     }
 
+    /**
+     * Drop database.
+     */
     public function database(string $database_name): DB\Drop
     {
         return new DB\Drop($database_name, $this->pdo);
     }
 
+    /**
+     * Drop table.
+     */
     public function table(string $table_name): Table\Drop
     {
-        $database_name = $this->pdo->configs()['database'];
+        [$database, $table] = array_pad(explode('.', $table_name, 2), 2, null);
+        $database           = $database ?: $this->database_name;
+        $table              = $table ?: $table_name;
 
-        return new Table\Drop($database_name, $table_name, $this->pdo);
+        return new Table\Drop($database, $table, $this->pdo);
     }
 }

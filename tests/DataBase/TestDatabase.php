@@ -11,7 +11,8 @@ use System\Database\MySchema;
 
 abstract class TestDatabase extends TestCase
 {
-    protected $env;
+    /** @var array<string, string|int> */
+    protected array $env;
     protected MyPDO $pdo;
     protected MySchema\MyPDO $pdo_schema;
     protected MySchema $schema;
@@ -19,7 +20,7 @@ abstract class TestDatabase extends TestCase
     protected function createConnection(): void
     {
         $this->env = [
-            'driver'   => 'mysql',
+            'driver'   => $_ENV['DB_DRIVER'] ?? 'mysql',
             'host'     => '127.0.0.1',
             'username' => 'root',
             'password' => '',
@@ -29,17 +30,17 @@ abstract class TestDatabase extends TestCase
         ];
 
         $this->pdo_schema = new MySchema\MyPDO($this->env);
-        $this->schema     = new MySchema($this->pdo_schema);
+        $this->schema     = new MySchema($this->pdo_schema, $this->env['database']);
 
         // building the database
-        $this->schema->create()->database('testing_db')->ifNotExists()->execute();
+        $this->schema->create()->database($this->env['database'])->ifNotExists()->execute();
 
-        $this->pdo        = new MyPDO($this->env);
+        $this->pdo = new MyPDO($this->env);
     }
 
     protected function dropConnection(): void
     {
-        $this->schema->drop()->database('testing_db')->ifExists()->execute();
+        $this->schema->drop()->database($this->env['database'])->ifExists()->execute();
     }
 
     protected function createUserSchema(): bool

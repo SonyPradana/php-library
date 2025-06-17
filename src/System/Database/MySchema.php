@@ -4,45 +4,39 @@ declare(strict_types=1);
 
 namespace System\Database;
 
-use System\Database\MySchema\Create;
-use System\Database\MySchema\Drop;
-use System\Database\MySchema\MyPDO;
-use System\Database\MySchema\Table\Alter;
-use System\Database\MySchema\Table\Create as CreateTable;
-use System\Database\MySchema\Table\Raw;
-use System\Database\MySchema\Table\Truncate;
-
 class MySchema
 {
-    /** @var MyPDO PDO property */
-    private $pdo;
-
-    public function __construct(MyPDO $pdo)
-    {
-        $this->pdo = $pdo;
+    public function __construct(
+        private MySchema\MyPDO $pdo,
+        private ?string $database_name = null,
+    ) {
+        $database_name ??= $this->pdo->getDatabase();
     }
 
-    public function create(): Create
+    public function create(): MySchema\Create
     {
-        return new Create($this->pdo);
+        return new MySchema\Create($this->pdo, $this->database_name);
     }
 
-    public function drop(): Drop
+    public function drop(): MySchema\Drop
     {
-        return new Drop($this->pdo);
+        return new MySchema\Drop($this->pdo, $this->database_name);
     }
 
-    public function refresh(string $table_name): Truncate
+    public function refresh(string $table_name): MySchema\Table\Truncate
     {
-        $database_name = $this->pdo->configs()['database'];
-
-        return new Truncate($database_name, $table_name, $this->pdo);
+        return new MySchema\Table\Truncate($this->database_name, $table_name, $this->pdo);
     }
 
-    public function table(string $table_name, callable $blueprint): CreateTable
+    /**
+     * Create table schema.
+     *
+     * @param string                                $table_name Target table name
+     * @param callable(MySchema\Table\Create): void $blueprint
+     */
+    public function table(string $table_name, callable $blueprint): MySchema\Table\Create
     {
-        $database_name = $this->pdo->configs()['database'];
-        $columns       = new CreateTable($database_name, $table_name, $this->pdo);
+        $columns = new MySchema\Table\Create($this->database_name, $table_name, $this->pdo);
         $blueprint($columns);
 
         return $columns;
@@ -51,13 +45,12 @@ class MySchema
     /**
      * Update table structur.
      *
-     * @param string                $table_name Target table name
-     * @param callable(Alter): void $blueprint
+     * @param string                               $table_name Target table name
+     * @param callable(MySchema\Table\Alter): void $blueprint
      */
-    public function alter(string $table_name, callable $blueprint): Alter
+    public function alter(string $table_name, callable $blueprint): MySchema\Table\Alter
     {
-        $database_name = $this->pdo->configs()['database'];
-        $columns       = new Alter($database_name, $table_name, $this->pdo);
+        $columns       = new MySchema\Table\Alter($this->database_name, $table_name, $this->pdo);
         $blueprint($columns);
 
         return $columns;
@@ -66,8 +59,8 @@ class MySchema
     /**
      * Run raw table.
      */
-    public function raw(string $raw): Raw
+    public function raw(string $raw): MySchema\Table\Raw
     {
-        return new Raw($raw, $this->pdo);
+        return new MySchema\Table\Raw($raw, $this->pdo);
     }
 }

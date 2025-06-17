@@ -19,6 +19,7 @@ final class MakeCommandsWithDatabaseTest extends TestDatabase
     protected function setUp(): void
     {
         $this->createConnection();
+        $this->createUserSchema();
 
         $this->app = new Application(__DIR__);
         $this->app->set('environment', 'dev');
