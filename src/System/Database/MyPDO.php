@@ -6,10 +6,14 @@ namespace System\Database;
 
 class MyPDO
 {
-    /** @var \PDO PDO */
-    private $dbh;
-    /** @var \PDOStatement */
-    private $stmt;
+    protected \PDO $dbh;
+    private \PDOStatement $stmt;
+
+    /** @var mixed[] */
+    protected array $option = [
+        \PDO::ATTR_PERSISTENT => true,
+        \PDO::ATTR_ERRMODE    => \PDO::ERRMODE_EXCEPTION,
+    ];
 
     /**
      * Connection configuration.
@@ -47,10 +51,11 @@ class MyPDO
         $dsn_config['database'] = $configs['database'] ?? $configs['database_name'];
         $dsn_config['port']     = (int) $configs['port'];
         $dsn_config['chartset'] = $configs['chartset'];
+        $dsn_config['options']  = $configs['options'] ?? $this->option;
 
-        $dsn           = $this->dsn($dsn_config);
         $this->configs = $dsn_config;
-        $this->useDsn($dsn, $username, $password);
+        $dsn           = $this->getDsn($dsn_config);
+        $this->dbh     = $this->createConnection($dsn, $dsn_config, $dsn_config['options']);
     }
 
     /**
@@ -64,6 +69,8 @@ class MyPDO
     }
 
     /**
+     * @deprecated use createConnection instead
+     *
      * @throws \Exception
      */
     protected function useDsn(string $dsn, string $user, string $pass): self
@@ -80,6 +87,22 @@ class MyPDO
         }
 
         return $this;
+    }
+
+    /**
+     * @throws \Exception
+     */
+    protected function createConnection(string $dsn, array $config, array $options): \PDO
+    {
+        [$username, $password] = [
+            $config['username'] ?? null, $config['password'] ?? null,
+        ];
+
+        try {
+            return new \PDO($dsn, $username, $password, $options);
+        } catch (\PDOException $e) {
+            throw new \Exception($e->getMessage());
+        }
     }
 
     /**
@@ -107,56 +130,51 @@ class MyPDO
     /**
      * @param array{host: string, driver: string, database: ?string, port: ?int, chartset: ?string} $configs
      */
-    public function dsn(array $configs): string
+    public function getDsn(array $configs): string
     {
-        $dsn = match ($configs['driver']) {
-            'mysql', 'mariadb' => static function (array $config): string {
-                // required
-                if (false === array_key_exists('host', $config)) {
-                    throw new \InvalidArgumentException('mysql driver require `host`.');
-                }
-
-                $port     = $config['port'] ?? 3306;
-                $chartset = $config['chartset'] ?? 'utf8mb4';
-
-                $dsn['host']     = "host={$config['host']}";
-                $dsn['dbname']   = isset($config['database']) ? "dbname={$config['database']}" : '';
-                $dsn['port']     = "port={$port}";
-                $dsn['chartset'] = "chartset={$chartset}";
-                $build           = implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
-
-                return "{$config['driver']}:{$build}";
-            },
-            'pgsql' => static function (array $config): string {
-                // required
-                if (false === array_key_exists('host', $config)) {
-                    throw new \InvalidArgumentException('pgsql driver require `host` and `dbname`.');
-                }
-
-                $port     = $config['port'] ?? 3306;
-
-                $dsn['host']     = "host={$config['host']}";
-                $dsn['dbname']   = isset($config['database']) ? "dbname={$config['database']}" : '';
-                $dsn['port']     = "port={$port}";
-                $build           = implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
-
-                return "pgsql:{$build}";
-            },
-            'sqlite' => static function (array $config): string {
-                // required
-                if (false === array_key_exists('database', $config)) {
-                    throw new \InvalidArgumentException('sqlite driver require `dbname`.');
-                }
-                $dbname   = "dbname={$config['database']}";
-
-                return "sqlite:{$dbname}";
-            },
+        return match ($configs['driver']) {
+            'mysql', 'mariadb' => $this->makeMysqlDsn($configs),
+            'pgsql' => $this->makePgsqlDsn($configs),
             default => static function (array $config): string {
                 throw new \InvalidArgumentException('sqlite driver require `dbname`.');
             },
         };
+    }
 
-        return (string) $dsn($configs);
+    private function makeMysqlDsn(array $config): string
+    {
+        // required
+        if (false === array_key_exists('host', $config)) {
+            throw new \InvalidArgumentException('mysql driver require `host`.');
+        }
+
+        $port     = $config['port'] ?? 3306;
+        $chartset = $config['chartset'] ?? 'utf8mb4';
+
+        $dsn['host']     = "host={$config['host']}";
+        $dsn['dbname']   = isset($config['database']) ? "dbname={$config['database']}" : '';
+        $dsn['port']     = "port={$port}";
+        $dsn['chartset'] = "chartset={$chartset}";
+        $build           = implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
+
+        return "{$config['driver']}:{$build}";
+    }
+
+    private function makePgsqlDsn(array $config): string
+    {
+        // required
+        if (false === array_key_exists('host', $config)) {
+            throw new \InvalidArgumentException('pgsql driver require `host` and `dbname`.');
+        }
+
+        $port     = $config['port'] ?? 3306;
+
+        $dsn['host']     = "host={$config['host']}";
+        $dsn['dbname']   = isset($config['database']) ? "dbname={$config['database']}" : '';
+        $dsn['port']     = "port={$port}";
+        $build           = implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
+
+        return "pgsql:{$build}";
     }
 
     /**
