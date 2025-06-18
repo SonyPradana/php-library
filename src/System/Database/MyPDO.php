@@ -47,7 +47,7 @@ class MyPDO
 
         // mapping deprecated config
         $dsn_config['driver']   = $configs['driver'] ?? 'mysql';
-        $dsn_config['host']     = $configs['host'];
+        $dsn_config['host']     = $configs['host'] ?? 'localhost';
         $dsn_config['database'] = $configs['database'] ?? $configs['database_name'];
         $dsn_config['port']     = $configs['port'] ?? 3306;
         $dsn_config['chartset'] = $configs['chartset'] ?? 'utf8mb4';
@@ -137,8 +137,9 @@ class MyPDO
     {
         return match ($configs['driver']) {
             'mysql', 'mariadb' => $this->makeMysqlDsn($configs),
-            'pgsql' => $this->makePgsqlDsn($configs),
-            default => static function (array $config): string {
+            'pgsql'  => $this->makePgsqlDsn($configs),
+            'sqlite' => $this->makeSqliteDsn($configs),
+            default  => static function (array $config): string {
                 throw new \InvalidArgumentException('sqlite driver require `dbname`.');
             },
         };
@@ -165,7 +166,7 @@ class MyPDO
         $dsn['chartset'] = "chartset={$chartset}";
         $build           = implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
 
-        return "{$config['driver']}:{$build}";
+        return "mysql:{$build}";
     }
 
     /**
@@ -188,6 +189,32 @@ class MyPDO
         $build           = implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
 
         return "pgsql:{$build}";
+    }
+
+    /**
+     * @param array<string, string|int|array<int, string|bool>> $config
+     *
+     * @throws \InvalidArgumentException
+     */
+    private function makeSqliteDsn(array $config): string
+    {
+        if (false === array_key_exists('database', $config)) {
+            throw new \InvalidArgumentException('sqlite driver require `database`.');
+        }
+        $path = $config['database'];
+
+        if ($path === ':memory:'
+            || str_contains($path, '?mode=memory')
+            || str_contains($path, '&mode=memory')
+        ) {
+            return "sqlite:{$path}";
+        }
+
+        if (false === ($path = realpath($path))) {
+            throw new \InvalidArgumentException('sqlite driver require `database` with absolute path.');
+        }
+
+        return "sqlite:{$path}";
     }
 
     /**
