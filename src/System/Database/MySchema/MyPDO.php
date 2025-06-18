@@ -28,9 +28,10 @@ class MyPDO extends BasePDO
         $dsn_config['database'] = null;
         $dsn_config['option']   = $configs['option'] ?? $this->option;
 
-        $this->configs = $dsn_config;
-        $dsn           = $this->getDsn($dsn_config);
-        $this->dbh     = $this->createConnection($dsn, $dsn_config, $dsn_config['option']);
+        $this->configs  = $dsn_config;
+        $this->database = $configs['database'] ?? $configs['database_name'];
+        $dsn            = $this->getDsn($dsn_config);
+        $this->dbh      = $this->createConnection($dsn, $dsn_config, $dsn_config['option']);
     }
 
     public function getDatabase(): string

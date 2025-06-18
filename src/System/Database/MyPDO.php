@@ -9,7 +9,7 @@ class MyPDO
     protected \PDO $dbh;
     private \PDOStatement $stmt;
 
-    /** @var mixed[] */
+    /** @var array<int, int|bool> */
     protected array $option = [
         \PDO::ATTR_PERSISTENT => true,
         \PDO::ATTR_ERRMODE    => \PDO::ERRMODE_EXCEPTION,
@@ -36,7 +36,7 @@ class MyPDO
     protected $logs = [];
 
     /**
-     * @param array<string, string> $configs
+     * @param array<string, string|int|array<int, int|bool>> $configs
      */
     public function __construct(array $configs)
     {
@@ -90,12 +90,15 @@ class MyPDO
     }
 
     /**
+     * @param array<string, string> $configs
+     * @param array<int, int|bool>  $options
+     *
      * @throws \Exception
      */
-    protected function createConnection(string $dsn, array $config, array $options): \PDO
+    protected function createConnection(string $dsn, array $configs, array $options): \PDO
     {
         [$username, $password] = [
-            $config['username'] ?? null, $config['password'] ?? null,
+            $configs['username'] ?? null, $configs['password'] ?? null,
         ];
 
         try {
@@ -141,6 +144,11 @@ class MyPDO
         };
     }
 
+    /**
+     * @param array<string, string|int|array<int, string|bool>> $config
+     *
+     * @throws \InvalidArgumentException
+     */
     private function makeMysqlDsn(array $config): string
     {
         // required
@@ -160,6 +168,11 @@ class MyPDO
         return "{$config['driver']}:{$build}";
     }
 
+    /**
+     * @param array<string, string|int|array<int, string|bool>> $config
+     *
+     * @throws \InvalidArgumentException
+     */
     private function makePgsqlDsn(array $config): string
     {
         // required
