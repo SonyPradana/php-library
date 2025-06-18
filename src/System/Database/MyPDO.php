@@ -49,8 +49,8 @@ class MyPDO
         $dsn_config['driver']   = $configs['driver'] ?? 'mysql';
         $dsn_config['host']     = $configs['host'];
         $dsn_config['database'] = $configs['database'] ?? $configs['database_name'];
-        $dsn_config['port']     = (int) $configs['port'];
-        $dsn_config['chartset'] = $configs['chartset'];
+        $dsn_config['port']     = $configs['port'] ?? 3306;
+        $dsn_config['chartset'] = $configs['chartset'] ?? 'utf8mb4';
         $dsn_config['options']  = $configs['options'] ?? $this->option;
 
         $this->configs = $dsn_config;

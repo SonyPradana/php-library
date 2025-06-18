@@ -23,8 +23,8 @@ class MyPDO extends BasePDO
         // mapping deprecated config
         $dsn_config['driver']   = $configs['driver'] ?? 'mysql';
         $dsn_config['host']     = $configs['host'];
-        $dsn_config['port']     = (int) $configs['port'];
-        $dsn_config['chartset'] = $configs['chartset'];
+        $dsn_config['port']     = $configs['port'] ?? 3306;
+        $dsn_config['chartset'] = $configs['chartset'] ?? 'utf8mb4';
         $dsn_config['database'] = null;
         $dsn_config['option']   = $configs['option'] ?? $this->option;
 
