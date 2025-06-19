@@ -359,7 +359,7 @@ class ApplicationTest extends TestCase
                 ],
                 'sqlite' => [
                     'driver'   => 'sqlite',
-                    'database' => $this->databasePath() . 'database.sqlite',
+                    'database' => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'database.sqlite',
                     'options'  => [
                         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
                         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
