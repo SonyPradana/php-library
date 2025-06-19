@@ -18,9 +18,9 @@ class MyPDO
     /**
      * Connection configuration.
      *
-     * @var array<string, string>
+     * @var array{driver: string, host: ?string, database: ?string, port: ?int, chartset: ?string, username: ?string, password: ?string, options: array<int, string|int|bool>}
      */
-    protected $configs;
+    protected array $configs;
 
     /**
      * Query prepare statment;.
@@ -36,26 +36,13 @@ class MyPDO
     protected $logs = [];
 
     /**
-     * @param array<string, string|int|array<int, int|bool>> $configs
+     * @param array<string, string|int|array<int, string|int|bool>|null> $configs
      */
     public function __construct(array $configs)
     {
-        $username               = $configs['user'] ?? $configs['username'] ?? null;
-        $password               = $configs['password'] ?? null;
-        $dsn_config['username'] = $username; // coverage old config
-        $dsn_config['password'] = $password; // coverage old config
-
-        // mapping deprecated config
-        $dsn_config['driver']   = $configs['driver'] ?? 'mysql';
-        $dsn_config['host']     = $configs['host'] ?? null;
-        $dsn_config['database'] = $configs['database'] ?? $configs['database_name'] ?? null;
-        $dsn_config['port']     = $configs['port'] ?? null;
-        $dsn_config['chartset'] = $configs['chartset'] ?? null;
-        $dsn_config['options']  = $configs['options'] ?? $this->option;
-
-        $this->configs = $dsn_config;
-        $dsn           = $this->getDsn($dsn_config);
-        $this->dbh     = $this->createConnection($dsn, $dsn_config, $dsn_config['options']);
+        $dsn_config = $this->setConfigs($configs);
+        $dsn        = $this->getDsn($dsn_config);
+        $this->dbh  = $this->createConnection($dsn, $dsn_config, $dsn_config['options']);
     }
 
     /**
@@ -104,7 +91,7 @@ class MyPDO
         try {
             return new \PDO($dsn, $username, $password, $options);
         } catch (\PDOException $e) {
-            throw new \Exception($e->getMessage());
+            throw new \Exception($e->getMessage(), $e->getCode());
         }
     }
 
@@ -123,11 +110,30 @@ class MyPDO
     /**
      * Get connection configuration.
      *
-     * @return array<string, string>
+     * @return array{driver: string, host: ?string, database: ?string, port: ?int, chartset: ?string, username: ?string, password: ?string, options: array<int, string|int|bool>}
      */
     public function configs()
     {
         return $this->configs;
+    }
+
+    /**
+     * @param array<string, string|int|array<int, int|bool>|null> $configs
+     *
+     * @return array{driver: string, host: ?string, database: ?string, port: ?int, chartset: ?string, username: ?string, password: ?string, options: array<int, string|int|bool>}
+     */
+    protected function setConfigs(array $configs): array
+    {
+        return $this->configs = [
+            'driver'   => $configs['driver'] ?? 'mysql',
+            'host'     => $configs['host'] ?? null,
+            'database' => $configs['database'] ?? null,
+            'port'     => $configs['port'] ?? null,
+            'chartset' => $configs['chartset'] ?? null,
+            'username' => $configs['user'] ?? $configs['username'] ?? null,
+            'password' => $configs['password'] ?? null,
+            'options'  => $configs['options'] ?? $this->option,
+        ];
     }
 
     /**

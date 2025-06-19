@@ -19,16 +19,7 @@ abstract class TestDatabase extends TestCase
 
     protected function createConnection(): void
     {
-        $this->env = [
-            'driver'   => $_ENV['DB_DRIVER'] ?? 'mysql',
-            'host'     => '127.0.0.1',
-            'username' => 'root',
-            'password' => '',
-            'database' => 'testing_db',
-            'port'     => 3306,
-            'chartset' => 'utf8mb4',
-        ];
-
+        $this->setupEnv($_ENV['DB_CONNECTION'] ?? 'mysql');
         $this->pdo_schema = new MySchema\MyPDO($this->env);
         $this->schema     = new MySchema($this->pdo_schema, $this->env['database']);
 
@@ -54,6 +45,21 @@ abstract class TestDatabase extends TestCase
                 PRIMARY KEY (user)
             )')
            ->execute();
+    }
+
+    protected function setupEnv(string $use_connection = 'mysql'): void
+    {
+        $this->env = match ($use_connection) {
+            'mysql', 'mariadb' => [
+                'driver'   => 'mysql',
+                'host'     => '127.0.0.1',
+                'username' => 'root',
+                'password' => '',
+                'database' => 'testing_db',
+                'port'     => 3306,
+                'chartset' => 'utf8mb4',
+            ],
+        };
     }
 
     /**
