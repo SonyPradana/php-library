@@ -9,7 +9,7 @@ class MyPDO
     protected \PDO $dbh;
     private \PDOStatement $stmt;
 
-    /** @var array<int, int|bool> */
+    /** @var array<int, string|int|bool> */
     protected array $option = [
         \PDO::ATTR_PERSISTENT => true,
         \PDO::ATTR_ERRMODE    => \PDO::ERRMODE_EXCEPTION,
@@ -90,8 +90,8 @@ class MyPDO
     }
 
     /**
-     * @param array<string, string> $configs
-     * @param array<int, int|bool>  $options
+     * @param array<string, string>       $configs
+     * @param array<int, string|int|bool> $options
      *
      * @throws \Exception
      */
@@ -178,11 +178,13 @@ class MyPDO
             throw new \InvalidArgumentException('pgsql driver require `host` and `dbname`.');
         }
 
-        $port     = $config['port'] ?? 3306;
+        $port     = $config['port'] ?? 5432;
+        $chartset = $config['chartset'] ?? 'utf8';
 
         $dsn['host']     = "host={$config['host']}";
         $dsn['dbname']   = isset($config['database']) ? "dbname={$config['database']}" : '';
         $dsn['port']     = "port={$port}";
+        $dsn['encoding'] = "client_encoding={$chartset}";
         $build           = implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
 
         return "pgsql:{$build}";
