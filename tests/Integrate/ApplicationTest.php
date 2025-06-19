@@ -304,17 +304,69 @@ class ApplicationTest extends TestCase
             'CACHE_PATH'            => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR,
             'CACHE_VIEW_PATH'       => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR,
             'PUBLIC_PATH'           => DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR,
+            'DATABASE_PATH'         => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR,
             'MIGRATION_PATH'        => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migration' . DIRECTORY_SEPARATOR,
             'SEEDER_PATH'           => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'seeders' . DIRECTORY_SEPARATOR,
+
             'PROVIDERS'             => [
                 // provider class name
             ],
 
             // db config
-            'DB_HOST'               => 'localhost',
-            'DB_USER'               => 'root',
-            'DB_PASS'               => '',
-            'DB_NAME'               => '',
+            'db.default'     => 'mysql',
+            'db.connections' => [
+                'mysql' => [
+                    'driver'    => 'mysql',
+                    'host'      => 'localhost',
+                    'username'  => 'root',
+                    'password'  => '',
+                    'database'  => '',
+                    'port'      => 3306,
+                    'chartset'  => 'utf8mb4',
+                    'options'   => [
+                        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                        PDO::ATTR_EMULATE_PREPARES   => false,
+                    ],
+                ],
+                'mariadb' => [
+                    'driver'    => 'mariadb',
+                    'host'      => 'localhost',
+                    'username'  => 'root',
+                    'password'  => '',
+                    'database'  => '',
+                    'port'      => 3306,
+                    'chartset'  => 'utf8mb4',
+                    'options'   => [
+                        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                        PDO::ATTR_EMULATE_PREPARES   => false,
+                    ],
+                ],
+                'pgsql' => [
+                    'driver'   => 'pgsql',
+                    'host'     => 'localhost',
+                    'username' => 'root',
+                    'password' => '',
+                    'database' => '',
+                    'port'     => (int) 5432,
+                    'charset'  => 'utf8',
+                    'options'  => [
+                        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                        PDO::ATTR_EMULATE_PREPARES   => false,
+                    ],
+                ],
+                'sqlite' => [
+                    'driver'   => 'sqlite',
+                    'database' => $this->databasePath() . 'database.sqlite',
+                    'options'  => [
+                        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                        PDO::ATTR_EMULATE_PREPARES   => false,
+                    ],
+                ],
+            ],
 
             // pusher
             'PUSHER_APP_ID'         => '',

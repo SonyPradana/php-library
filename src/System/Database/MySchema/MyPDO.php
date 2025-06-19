@@ -15,16 +15,16 @@ class MyPDO extends BasePDO
      */
     public function __construct(array $configs)
     {
-        $username               = $configs['user'] ?? $configs['username'];
-        $password               = $configs['password'];
+        $username               = $configs['user'] ?? $configs['username'] ?? null;
+        $password               = $configs['password'] ?? null;
         $dsn_config['username'] = $username; // coverage old config
         $dsn_config['password'] = $password; // coverage old config
 
         // mapping deprecated config
         $dsn_config['driver']   = $configs['driver'] ?? 'mysql';
-        $dsn_config['host']     = $configs['host'] ?? 'localhost';
-        $dsn_config['port']     = $configs['port'] ?? 3306;
-        $dsn_config['chartset'] = $configs['chartset'] ?? 'utf8mb4';
+        $dsn_config['host']     = $configs['host'] ?? null;
+        $dsn_config['port']     = $configs['port'] ?? null;
+        $dsn_config['chartset'] = $configs['chartset'] ?? null;
         $dsn_config['database'] = null;
         $dsn_config['option']   = $configs['option'] ?? $this->option;
 

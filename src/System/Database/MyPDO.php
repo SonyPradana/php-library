@@ -40,17 +40,17 @@ class MyPDO
      */
     public function __construct(array $configs)
     {
-        $username               = $configs['user'] ?? $configs['username'];
-        $password               = $configs['password'];
+        $username               = $configs['user'] ?? $configs['username'] ?? null;
+        $password               = $configs['password'] ?? null;
         $dsn_config['username'] = $username; // coverage old config
         $dsn_config['password'] = $password; // coverage old config
 
         // mapping deprecated config
         $dsn_config['driver']   = $configs['driver'] ?? 'mysql';
-        $dsn_config['host']     = $configs['host'] ?? 'localhost';
-        $dsn_config['database'] = $configs['database'] ?? $configs['database_name'];
-        $dsn_config['port']     = $configs['port'] ?? 3306;
-        $dsn_config['chartset'] = $configs['chartset'] ?? 'utf8mb4';
+        $dsn_config['host']     = $configs['host'] ?? null;
+        $dsn_config['database'] = $configs['database'] ?? $configs['database_name'] ?? null;
+        $dsn_config['port']     = $configs['port'] ?? null;
+        $dsn_config['chartset'] = $configs['chartset'] ?? null;
         $dsn_config['options']  = $configs['options'] ?? $this->option;
 
         $this->configs = $dsn_config;
@@ -131,7 +131,7 @@ class MyPDO
     }
 
     /**
-     * @param array{host: string, driver: string, database: ?string, port: ?int, chartset: ?string} $configs
+     * @param array{host: string, driver: 'mysql'|'mariadb'|'pgsql'|'sqlite', database: ?string, port: ?int, chartset: ?string} $configs
      */
     public function getDsn(array $configs): string
     {
@@ -139,9 +139,6 @@ class MyPDO
             'mysql', 'mariadb' => $this->makeMysqlDsn($configs),
             'pgsql'  => $this->makePgsqlDsn($configs),
             'sqlite' => $this->makeSqliteDsn($configs),
-            default  => static function (array $config): string {
-                throw new \InvalidArgumentException('sqlite driver require `dbname`.');
-            },
         };
     }
 
