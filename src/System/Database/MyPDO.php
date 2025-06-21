@@ -127,7 +127,7 @@ class MyPDO
         return $this->configs = [
             'driver'   => $configs['driver'] ?? 'mysql',
             'host'     => $configs['host'] ?? null,
-            'database' => $configs['database'] ?? null,
+            'database' => $configs['database_name'] ?? $configs['database'] ?? null,
             'port'     => $configs['port'] ?? null,
             'chartset' => $configs['chartset'] ?? null,
             'username' => $configs['user'] ?? $configs['username'] ?? null,

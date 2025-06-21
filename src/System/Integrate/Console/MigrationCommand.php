@@ -10,6 +10,7 @@ use System\Console\Prompt;
 use System\Console\Style\Style;
 use System\Console\Traits\PrintHelpTrait;
 use System\Database\MyQuery;
+use System\Database\MySchema\MyPDO;
 use System\Database\MySchema\Table\Create;
 use System\Support\Facades\DB;
 use System\Support\Facades\PDO;
@@ -115,9 +116,12 @@ class MigrationCommand extends Command
         ];
     }
 
+    /**
+     * Target database to use.
+     */
     private function DbName(): string
     {
-        return app()->get('dsn.sql')['database'];
+        return app()->get(MyPDO::class)->getDatabase();
     }
 
     private function runInDev(): bool

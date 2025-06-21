@@ -10,7 +10,7 @@ class MySchema
         private MySchema\MyPDO $pdo,
         private ?string $database_name = null,
     ) {
-        $database_name ??= $this->pdo->getDatabase();
+        $this->database_name ??= $this->pdo->getDatabase();
     }
 
     public function create(): MySchema\Create
