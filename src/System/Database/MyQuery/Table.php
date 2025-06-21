@@ -105,7 +105,7 @@ class Table
                 TABLE_SCHEMA = :dbs AND TABLE_NAME = :table'
         );
         $this->PDO->bind(':table', $this->table_name);
-        $this->PDO->bind(':dbs', $this->PDO->configs()['database_name']);
+        $this->PDO->bind(':dbs', $this->PDO->configs()['database']);
 
         $result = $this->PDO->resultset();
 
