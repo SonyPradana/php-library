@@ -610,7 +610,7 @@ class MigrationCommand extends Command
         $result = PDO::instance()->query(
             "SELECT COUNT(table_name) as total
             FROM information_schema.tables
-            WHERE DATABASE()
+            WHERE table_schema = DATABASE()
             AND table_name = 'migration'"
         )->single();
 
