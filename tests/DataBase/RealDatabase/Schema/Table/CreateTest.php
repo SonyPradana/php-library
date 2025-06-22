@@ -26,7 +26,7 @@ final class CreateTest extends TestDatabase
      */
     public function itCanGenerateCreateDatabase()
     {
-        $schema = new Create($this->pdo_schema->configs()['database_name'], 'profiles', $this->pdo_schema);
+        $schema = new Create($this->env['database'], 'profiles', $this->pdo_schema);
 
         $schema('id')->int(3)->notNull();
         $schema('name')->varchar(32)->notNull();
@@ -43,7 +43,7 @@ final class CreateTest extends TestDatabase
      */
     public function itCanExecuteQueryWithMultyPrimeryKey()
     {
-        $schema = new Create($this->pdo_schema->configs()['database_name'], 'profiles', $this->pdo_schema);
+        $schema = new Create($this->env['database'], 'profiles', $this->pdo_schema);
 
         $schema('id')->int(3)->notNull();
         $schema('xid')->int(3)->notNull();
@@ -62,7 +62,7 @@ final class CreateTest extends TestDatabase
      */
     public function itCanExecuteQueryWithMultyUniqe()
     {
-        $schema = new Create($this->pdo_schema->configs()['database_name'], 'profiles', $this->pdo_schema);
+        $schema = new Create($this->env['database'], 'profiles', $this->pdo_schema);
 
         $schema('id')->int(3)->notNull();
         $schema('name')->varchar(32)->notNull();
@@ -80,7 +80,7 @@ final class CreateTest extends TestDatabase
      */
     public function itCanGenerateCreateDatabaseWithEngine()
     {
-        $schema = new Create($this->pdo_schema->configs()['database_name'], 'profiles', $this->pdo_schema);
+        $schema = new Create($this->env['database'], 'profiles', $this->pdo_schema);
 
         $schema('id')->int(3)->notNull();
         $schema('name')->varchar(32)->notNull();
@@ -99,7 +99,7 @@ final class CreateTest extends TestDatabase
      */
     public function itCanGenerateDefaultConstraint()
     {
-        $schema = new Create($this->pdo_schema->configs()['database_name'], 'profiles', $this->pdo_schema);
+        $schema = new Create($this->env['database'], 'profiles', $this->pdo_schema);
         $schema('PersonID')->int()->unsigned()->default(1);
         $schema('LastName')->varchar(255)->default('-');
         $schema('sufix')->varchar(15)->defaultNull();
