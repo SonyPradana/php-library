@@ -26,10 +26,6 @@ class Create
      */
     public function table(string $table_name): Table\Create
     {
-        [$database, $table] = array_pad(explode('.', $table_name, 2), 2, null);
-        $database           = $database ?: $this->database_name;
-        $table              = $table ?: $table_name;
-
         return new Table\Create($this->database_name, $table_name, $this->pdo);
     }
 }

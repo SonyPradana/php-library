@@ -80,7 +80,7 @@ class MyPDO
      * @param array<string, string>       $configs
      * @param array<int, string|int|bool> $options
      *
-     * @throws \Exception
+     * @throws \PDOException
      */
     protected function createConnection(string $dsn, array $configs, array $options): \PDO
     {
@@ -91,7 +91,8 @@ class MyPDO
         try {
             return new \PDO($dsn, $username, $password, $options);
         } catch (\PDOException $e) {
-            throw new \Exception($e->getMessage(), $e->getCode());
+            // TODO: retry connection if nessary
+            throw $e;
         }
     }
 
