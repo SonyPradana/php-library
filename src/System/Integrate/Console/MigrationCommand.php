@@ -104,6 +104,7 @@ class MigrationCommand extends Command
                 '--seed'              => 'Run seeder after migration.',
                 '--seed-namespace'    => 'Run seeder after migration using class namespace.',
                 '--yes'               => 'Accept it without having it ask any questions',
+                '--database'          => 'Target database to use.',
             ],
             'relation'  => [
                 'migrate'                   => ['--seed', '--dry-run', '--force'],
@@ -111,8 +112,10 @@ class MigrationCommand extends Command
                 'migrate:reset'             => ['--dry-run', '--force'],
                 'migrate:refresh'           => ['--seed', '--dry-run', '--force'],
                 'migrate:rollback'          => ['--batch', '--take', '--dry-run', '--force'],
-                'database:create'           => ['--force'],
-                'database:drop'             => ['--force'], ],
+                'database:create'           => ['--database', '--force'],
+                'database:drop'             => ['--database', '--force'],
+                'database:show'             => ['--database', '--force'],
+            ],
         ];
     }
 
@@ -121,7 +124,7 @@ class MigrationCommand extends Command
      */
     private function DbName(): string
     {
-        return app()->get(MyPDO::class)->getDatabase();
+        return $this->option('database', app()->get(MyPDO::class)->getDatabase());
     }
 
     private function runInDev(): bool
@@ -607,10 +610,9 @@ class MigrationCommand extends Command
         $result = PDO::instance()->query(
             "SELECT COUNT(table_name) as total
             FROM information_schema.tables
-            WHERE table_schema = :dbname
+            WHERE DATABASE()
             AND table_name = 'migration'"
-        )->bind(':dbname', $this->DbName())
-        ->single();
+        )->single();
 
         if ($result) {
             return $result['total'] > 0;
