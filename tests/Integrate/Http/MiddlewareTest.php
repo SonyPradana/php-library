@@ -39,32 +39,40 @@ final class MiddlewareTest extends TestCase
     }
 
     /**
-     * This test contain test for middleware and
-     * test for register request attribute.
+     * Test middleware pipeline with a dispatcher that returns a response.
      *
      * @test
      */
-    public function itCanHandleMiddlewareReserve(): void
+    public function itCanHandleMiddlewareReserveabel(): void
     {
         $middleware = [
             new class {
                 public function handle(Request $request, Closure $next): Response
                 {
-                    echo 'middeleware A.before';
-                    $next($request);
-                    echo 'middeleware A.after';
+                    echo 'middeleware.A.before/';
+                    $response =  $next($request);
+                    echo 'middeleware.A.after/';
 
+                    return $response;
+                }
+            },
+            new class {
+                public function handle(Request $request, Closure $next): Response
+                {
+                    echo 'middeleware.B.before/';
+
+                    // skip reverseable middleware
                     return $next($request);
                 }
             },
             new class {
                 public function handle(Request $request, Closure $next): Response
                 {
-                    echo 'middeleware B.before';
-                    $next($request);
-                    echo 'middeleware B.after';
+                    echo 'middeleware.C.before/';
+                    $response = $next($request);
+                    echo 'middeleware.C.after/';
 
-                    return $next($request);
+                    return $response;
                 }
             },
         ];
@@ -75,7 +83,7 @@ final class MiddlewareTest extends TestCase
                 return new Response('');
             },
             'parameters' => [
-                'param' => 'final response',
+                'param' => 'final response/',
             ],
         ];
         ob_start();
@@ -84,8 +92,9 @@ final class MiddlewareTest extends TestCase
         $out = ob_get_clean();
 
         $this->assertEquals(
-            'middeleware A.beforemiddeleware B.beforefinal responsemiddeleware B.afterfinal responsemiddeleware A.aftermiddeleware B.beforefinal responsemiddeleware B.afterfinal response',
-            $out
+            'middeleware.A.before/middeleware.B.before/middeleware.C.before/final response/middeleware.C.after/middeleware.A.after/',
+            $out,
+            'middleware must be called in order and reserveable'
         );
     }
 }
