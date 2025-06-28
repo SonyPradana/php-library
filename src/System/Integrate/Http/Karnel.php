@@ -143,6 +143,12 @@ class Karnel
         return Router::current()['middleware'] ?? [];
     }
 
+    /**
+     * @param array<int, class-string|object>                             $middleware
+     * @param array{callable: callable, parameters: array<string, mixed>} $dispatcher
+     *
+     * @return \Closure(Request): Response
+     */
     protected function middlewarePipeline(array $middleware, array $dispatcher): \Closure
     {
         return array_reduce(
