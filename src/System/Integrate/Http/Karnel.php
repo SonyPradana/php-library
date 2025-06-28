@@ -63,16 +63,11 @@ class Karnel
             $this->bootstrap();
 
             $dispatcher = $this->dispatcher($request);
-
             $request->with($dispatcher['parameters']);
 
-            $pipeline = array_reduce(
-                array_merge($this->middleware, $dispatcher['middleware']),
-                fn ($next, $middleware) => fn ($req) => $this->app->call([$middleware, 'handle'], ['request' => $req, 'next' => $next]),
-                fn ()                   => $this->responesType($dispatcher['callable'], $dispatcher['parameters'])
-            );
-
-            $response = $pipeline($request);
+            $middleware = array_merge($this->middleware, $dispatcher['middleware']);
+            $pipeline   = $this->middlewarePipeline($middleware, $dispatcher);
+            $response   = $pipeline($request);
         } catch (\Throwable $th) {
             $handler = $this->app->get(Handler::class);
 
@@ -146,5 +141,14 @@ class Karnel
     protected function dispatcherMiddleware(Request $request)
     {
         return Router::current()['middleware'] ?? [];
+    }
+
+    protected function middlewarePipeline(array $middleware, array $dispatcher): \Closure
+    {
+        return array_reduce(
+            array_reverse($middleware),
+            fn ($next, $middleware) => fn (Request $request) => $this->app->call([$middleware, 'handle'], ['request' => $request, 'next' => $next]),
+            fn (): Response         => $this->responesType($dispatcher['callable'], $dispatcher['parameters'])
+        );
     }
 }
