@@ -45,15 +45,15 @@ final class MiddlewareTest extends TestCase
      *
      * @covers \System\Integrate\Http\Karnel::middlewarePipeline
      */
-    public function itCanHandleMiddlewareReserveabel(): void
+    public function itCanHandleMiddlewareReversible(): void
     {
         $middleware = [
             new class {
                 public function handle(Request $request, Closure $next): Response
                 {
-                    echo 'middeleware.A.before/';
+                    echo 'middleware.A.before/';
                     $response =  $next($request);
-                    echo 'middeleware.A.after/';
+                    echo 'middleware.A.after/';
 
                     return $response;
                 }
@@ -61,18 +61,18 @@ final class MiddlewareTest extends TestCase
             new class {
                 public function handle(Request $request, Closure $next): Response
                 {
-                    echo 'middeleware.B.before/';
+                    echo 'middleware.B.before/';
 
-                    // skip reverseable middleware
+                    // skip reversible middleware
                     return $next($request);
                 }
             },
             new class {
                 public function handle(Request $request, Closure $next): Response
                 {
-                    echo 'middeleware.C.before/';
+                    echo 'middleware.C.before/';
                     $response = $next($request);
-                    echo 'middeleware.C.after/';
+                    echo 'middleware.C.after/';
 
                     return $response;
                 }
@@ -94,9 +94,9 @@ final class MiddlewareTest extends TestCase
         $out = ob_get_clean();
 
         $this->assertEquals(
-            'middeleware.A.before/middeleware.B.before/middeleware.C.before/final response/middeleware.C.after/middeleware.A.after/',
+            'final response/',
             $out,
-            'middleware must be called in order and reserveable'
+            'middleware with anonymous class is not allowed, it will skip to next middleware'
         );
     }
 
@@ -108,26 +108,26 @@ final class MiddlewareTest extends TestCase
      * @covers \System\Integrate\Http\Karnel::middlewarePipeline
      * @covers \System\Integrate\Http\Karnel::executeMiddleware
      */
-    public function itCanHandleMiddlewareReserveabelUsingFunction(): void
+    public function itCanHandleMiddlewareReversibleUsingFunction(): void
     {
         $middleware = [
             function (Request $request, Closure $next): Response {
-                echo 'middeleware.A.before/';
+                echo 'middleware.A.before/';
                 $response =  $next($request);
-                echo 'middeleware.A.after/';
+                echo 'middleware.A.after/';
 
                 return $response;
             },
             function (Request $request, Closure $next): Response {
-                echo 'middeleware.B.before/';
+                echo 'middleware.B.before/';
 
-                // skip reverseable middleware
+                // skip reversible middleware
                 return $next($request);
             },
             function (Request $request, Closure $next): Response {
-                echo 'middeleware.C.before/';
+                echo 'middleware.C.before/';
                 $response = $next($request);
-                echo 'middeleware.C.after/';
+                echo 'middleware.C.after/';
 
                 return $response;
             },
@@ -148,9 +148,9 @@ final class MiddlewareTest extends TestCase
         $out = ob_get_clean();
 
         $this->assertEquals(
-            'middeleware.A.before/middeleware.B.before/middeleware.C.before/final response/middeleware.C.after/middeleware.A.after/',
+            'final response/',
             $out,
-            'middleware must be called in order and reserveable using function'
+            'middleware with anonymous closure is not allowed, it will skip to next middleware'
         );
     }
 
@@ -162,7 +162,7 @@ final class MiddlewareTest extends TestCase
      * @covers \System\Integrate\Http\Karnel::middlewarePipeline
      * @covers \System\Integrate\Http\Karnel::executeMiddleware
      */
-    public function itCanHandleMiddlewareReserveabelUsingClassString(): void
+    public function itCanHandleMiddlewareReversibleUsingClassString(): void
     {
         $middleware = [
             ClassA::class,
@@ -185,9 +185,9 @@ final class MiddlewareTest extends TestCase
         $out = ob_get_clean();
 
         $this->assertEquals(
-            'middeleware.A.before/middeleware.B.before/middeleware.C.before/final response/middeleware.C.after/middeleware.A.after/',
+            'middleware.A.before/middleware.B.before/middleware.C.before/final response/middleware.C.after/middleware.A.after/',
             $out,
-            'middleware must be called in order and reserveable using function'
+            'middleware must be called in order and reversible using function'
         );
     }
 }
@@ -198,9 +198,9 @@ class ClassA
 {
     public function handle(Request $request, Closure $next): Response
     {
-        echo 'middeleware.A.before/';
+        echo 'middleware.A.before/';
         $response =  $next($request);
-        echo 'middeleware.A.after/';
+        echo 'middleware.A.after/';
 
         return $response;
     }
@@ -210,9 +210,9 @@ class ClassB
 {
     public function handle(Request $request, Closure $next): Response
     {
-        echo 'middeleware.B.before/';
+        echo 'middleware.B.before/';
 
-        // skip reverseable middleware
+        // skip reversible middleware
         return $next($request);
     }
 }
@@ -221,9 +221,9 @@ class ClassC
 {
     public function handle(Request $request, Closure $next): Response
     {
-        echo 'middeleware.C.before/';
+        echo 'middleware.C.before/';
         $response = $next($request);
-        echo 'middeleware.C.after/';
+        echo 'middleware.C.after/';
 
         return $response;
     }

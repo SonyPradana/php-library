@@ -23,15 +23,15 @@ class Karnel
      */
     protected Application $app;
 
-    /** @var array<int, class-string> Global middleware */
+    /** @var array<int, class-string|string> Global middleware */
     protected $middleware = [
         MaintenanceMiddleware::class,
     ];
 
-    /** @var array<int, class-string> Middleware has register */
+    /** @var array<int, class-string|string> Middleware has register */
     protected $middleware_used = [];
 
-    /** @var array<int, class-string> Apllication bootstrap register. */
+    /** @var array<int, class-string|string> Apllication bootstrap register. */
     protected array $bootstrappers = [
         ConfigProviders::class,
         HandleExceptions::class,
@@ -136,7 +136,7 @@ class Karnel
     /**
      * Dispatch to get requets middleware.
      *
-     * @return array<int, class-string>|null
+     * @return array<int, class-string|string>|null
      */
     protected function dispatcherMiddleware(Request $request)
     {
@@ -144,7 +144,7 @@ class Karnel
     }
 
     /**
-     * @param array<int, class-string|object>                             $middleware
+     * @param array<int, class-string|string|object>                      $middleware
      * @param array{callable: callable, parameters: array<string, mixed>} $dispatcher
      *
      * @return \Closure(Request): Response
@@ -161,15 +161,11 @@ class Karnel
     /**
      * Execute a middleware.
      *
-     * @param callable|object|string $middleware Middleware instance, class name, or callable
+     * @param class-string|string $middleware Middleware instance, class name, or callable
      */
     protected function executeMiddleware($middleware, Request $request, callable $next): Response
     {
-        if (is_callable($middleware)) {
-            return $middleware($request, $next);
-        }
-
-        if (method_exists($middleware, 'handle')) {
+        if (is_string($middleware) && method_exists($middleware, 'handle')) {
             return $this->app->call(
                 [$middleware, 'handle'],
                 ['request' => $request, 'next' => $next]
