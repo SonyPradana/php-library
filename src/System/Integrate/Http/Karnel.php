@@ -153,8 +153,29 @@ class Karnel
     {
         return array_reduce(
             array_reverse($middleware),
-            fn ($next, $middleware) => fn (Request $request) => $this->app->call([$middleware, 'handle'], ['request' => $request, 'next' => $next]),
-            fn (): Response         => $this->responesType($dispatcher['callable'], $dispatcher['parameters'])
+            fn ($next, $middleware): \Closure => fn (Request $request): Response => $this->executeMiddleware($middleware, $request, $next),
+            fn (): Response                   => $this->responesType($dispatcher['callable'], $dispatcher['parameters'])
         );
+    }
+
+    /**
+     * Execute a middleware.
+     *
+     * @param callable|object|string $middleware Middleware instance, class name, or callable
+     */
+    protected function executeMiddleware($middleware, Request $request, callable $next): Response
+    {
+        if (is_callable($middleware)) {
+            return $middleware($request, $next);
+        }
+
+        if (method_exists($middleware, 'handle')) {
+            return $this->app->call(
+                [$middleware, 'handle'],
+                ['request' => $request, 'next' => $next]
+            );
+        }
+
+        return $next($request);
     }
 }
