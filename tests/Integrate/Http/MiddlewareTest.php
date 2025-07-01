@@ -26,132 +26,13 @@ final class MiddlewareTest extends TestCase
         ));
         $this->kernel = new Kernel($this->app);
 
-        $this->app->set(
-            Kernel::class,
-            fn () => $this->kernel
-        );
+        $this->app->set(Kernel::class, fn () => $this->kernel);
     }
 
     protected function tearDown(): void
     {
         $this->app->flush();
         $this->kernel = null;
-    }
-
-    /**
-     * Test middleware pipeline with a dispatcher that returns a response.
-     *
-     * @test
-     *
-     * @covers \System\Integrate\Http\Karnel::middlewarePipeline
-     */
-    public function itCanHandleMiddlewareReversible(): void
-    {
-        $middleware = [
-            new class {
-                public function handle(Request $request, Closure $next): Response
-                {
-                    echo 'middleware.A.before/';
-                    $response =  $next($request);
-                    echo 'middleware.A.after/';
-
-                    return $response;
-                }
-            },
-            new class {
-                public function handle(Request $request, Closure $next): Response
-                {
-                    echo 'middleware.B.before/';
-
-                    // skip reversible middleware
-                    return $next($request);
-                }
-            },
-            new class {
-                public function handle(Request $request, Closure $next): Response
-                {
-                    echo 'middleware.C.before/';
-                    $response = $next($request);
-                    echo 'middleware.C.after/';
-
-                    return $response;
-                }
-            },
-        ];
-        $dispatcher = [
-            'callable' => function ($param) {
-                echo $param;
-
-                return new Response('');
-            },
-            'parameters' => [
-                'param' => 'final response/',
-            ],
-        ];
-        ob_start();
-        $pipe = (fn () => $this->{'middlewarePipeline'}($middleware, $dispatcher))->call($this->app[Kernel::class]);
-        $pipe(new Request('/'));
-        $out = ob_get_clean();
-
-        $this->assertEquals(
-            'final response/',
-            $out,
-            'middleware with anonymous class is not allowed, it will skip to next middleware'
-        );
-    }
-
-    /**
-     * Test middleware pipeline with a dispatcher that returns a response using function.
-     *
-     * @test
-     *
-     * @covers \System\Integrate\Http\Karnel::middlewarePipeline
-     * @covers \System\Integrate\Http\Karnel::executeMiddleware
-     */
-    public function itCanHandleMiddlewareReversibleUsingFunction(): void
-    {
-        $middleware = [
-            function (Request $request, Closure $next): Response {
-                echo 'middleware.A.before/';
-                $response =  $next($request);
-                echo 'middleware.A.after/';
-
-                return $response;
-            },
-            function (Request $request, Closure $next): Response {
-                echo 'middleware.B.before/';
-
-                // skip reversible middleware
-                return $next($request);
-            },
-            function (Request $request, Closure $next): Response {
-                echo 'middleware.C.before/';
-                $response = $next($request);
-                echo 'middleware.C.after/';
-
-                return $response;
-            },
-        ];
-        $dispatcher = [
-            'callable' => function ($param) {
-                echo $param;
-
-                return new Response('');
-            },
-            'parameters' => [
-                'param' => 'final response/',
-            ],
-        ];
-        ob_start();
-        $pipe = (fn () => $this->{'middlewarePipeline'}($middleware, $dispatcher))->call($this->app[Kernel::class]);
-        $pipe(new Request('/'));
-        $out = ob_get_clean();
-
-        $this->assertEquals(
-            'final response/',
-            $out,
-            'middleware with anonymous closure is not allowed, it will skip to next middleware'
-        );
     }
 
     /**
@@ -190,6 +71,35 @@ final class MiddlewareTest extends TestCase
             'middleware must be called in order and reversible using function'
         );
     }
+
+    /**
+     * Test middleware pipeline with a dispatcher that returns a response using function.
+     *
+     * @test
+     *
+     * @covers \System\Integrate\Http\Karnel::middlewarePipeline
+     * @covers \System\Integrate\Http\Karnel::executeMiddleware
+     */
+    public function itThrowInvalidArgumentMethodNotFound(): void
+    {
+        $middleware = [ClassD::class];
+        $dispatcher = [
+            'callable' => function ($param) {
+                echo $param;
+
+                return new Response($param);
+            },
+            'parameters' => [
+                'param' => 'final response/',
+            ],
+        ];
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Middleware must be a class with handle method');
+
+        $pipe = (fn () => $this->{'middlewarePipeline'}($middleware, $dispatcher))->call($this->app[Kernel::class]);
+        $pipe(new Request('/'));
+    }
 }
 
 // code below is the middleware classes used in the tests
@@ -224,6 +134,18 @@ class ClassC
         echo 'middleware.C.before/';
         $response = $next($request);
         echo 'middleware.C.after/';
+
+        return $response;
+    }
+}
+
+class ClassD
+{
+    public function __invoke(Request $request, Closure $next): Response
+    {
+        echo 'middleware.D.before/';
+        $response = $next($request);
+        echo 'middleware.D.after/';
 
         return $response;
     }

@@ -3,8 +3,6 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use System\Http\Request;
-use System\Http\Response;
 use System\Integrate\Application;
 use System\Integrate\Http\Karnel;
 use System\Integrate\PackageManifest;

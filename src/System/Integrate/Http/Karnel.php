@@ -163,15 +163,15 @@ class Karnel
      *
      * @param class-string|string $middleware Middleware instance, class name, or callable
      */
-    protected function executeMiddleware($middleware, Request $request, callable $next): Response
+    protected function executeMiddleware(string $middleware, Request $request, callable $next): Response
     {
-        if (is_string($middleware) && method_exists($middleware, 'handle')) {
-            return $this->app->call(
-                [$middleware, 'handle'],
-                ['request' => $request, 'next' => $next]
-            );
+        if (false === method_exists($middleware, 'handle')) {
+            throw new \InvalidArgumentException('Middleware must be a class with handle method');
         }
 
-        return $next($request);
+        return $this->app->call(
+            [$middleware, 'handle'],
+            ['request' => $request, 'next' => $next]
+        );
     }
 }
