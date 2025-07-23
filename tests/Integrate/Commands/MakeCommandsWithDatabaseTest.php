@@ -48,6 +48,7 @@ final class MakeCommandsWithDatabaseTest extends TestDatabase
      */
     public function itCanCallMakeCommandModelWithSuccess()
     {
+        $this->createUserSchema();
         $make_model = new MakeCommand(['cli', 'make:model', 'Client', '--table-name', 'users']);
         ob_start();
         $exit = $make_model->make_model();

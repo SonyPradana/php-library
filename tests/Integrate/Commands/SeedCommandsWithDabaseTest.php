@@ -63,6 +63,7 @@ final class SeedCommandsWithDabaseTest extends TestDatabase
      */
     public function itCanRunSeederRunnerWithRealInsertData()
     {
+        $this->createUserSchema();
         $seeder = new SeedCommand(['cli', 'db:seed', '--class', 'UserSeeder']);
         ob_start();
         $seeder->main();
