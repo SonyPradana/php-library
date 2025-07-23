@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.39.1] - 2025-07-23
+### Fix
+- Fixed migration rollback command does not deletion migration table on success
+
 ## [0.39.0] - 2025-06-12
 ### Feat
 - Added `NameTemplator` support handle unescaped variables (#430).
