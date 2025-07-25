@@ -23,15 +23,15 @@ class Karnel
      */
     protected Application $app;
 
-    /** @var array<int, class-string> Global middleware */
+    /** @var array<int, class-string|string> Global middleware */
     protected $middleware = [
         MaintenanceMiddleware::class,
     ];
 
-    /** @var array<int, class-string> Middleware has register */
+    /** @var array<int, class-string|string> Middleware has register */
     protected $middleware_used = [];
 
-    /** @var array<int, class-string> Apllication bootstrap register. */
+    /** @var array<int, class-string|string> Apllication bootstrap register. */
     protected array $bootstrappers = [
         ConfigProviders::class,
         HandleExceptions::class,
@@ -63,16 +63,11 @@ class Karnel
             $this->bootstrap();
 
             $dispatcher = $this->dispatcher($request);
-
             $request->with($dispatcher['parameters']);
 
-            $pipeline = array_reduce(
-                array_merge($this->middleware, $dispatcher['middleware']),
-                fn ($next, $middleware) => fn ($req) => $this->app->call([$middleware, 'handle'], ['request' => $req, 'next' => $next]),
-                fn ()                   => $this->responesType($dispatcher['callable'], $dispatcher['parameters'])
-            );
-
-            $response = $pipeline($request);
+            $middleware = array_merge($this->middleware, $dispatcher['middleware']);
+            $pipeline   = $this->middlewarePipeline($middleware, $dispatcher);
+            $response   = $pipeline($request);
         } catch (\Throwable $th) {
             $handler = $this->app->get(Handler::class);
 
@@ -141,10 +136,42 @@ class Karnel
     /**
      * Dispatch to get requets middleware.
      *
-     * @return array<int, class-string>|null
+     * @return array<int, class-string|string>|null
      */
     protected function dispatcherMiddleware(Request $request)
     {
         return Router::current()['middleware'] ?? [];
+    }
+
+    /**
+     * @param array<int, class-string|string|object>                      $middleware
+     * @param array{callable: callable, parameters: array<string, mixed>} $dispatcher
+     *
+     * @return \Closure(Request): Response
+     */
+    protected function middlewarePipeline(array $middleware, array $dispatcher): \Closure
+    {
+        return array_reduce(
+            array_reverse($middleware),
+            fn ($next, $middleware): \Closure => fn (Request $request): Response => $this->executeMiddleware($middleware, $request, $next),
+            fn (): Response                   => $this->responesType($dispatcher['callable'], $dispatcher['parameters'])
+        );
+    }
+
+    /**
+     * Execute a middleware.
+     *
+     * @param class-string|string $middleware Middleware instance, class name, or callable
+     */
+    protected function executeMiddleware(string $middleware, Request $request, callable $next): Response
+    {
+        if (false === method_exists($middleware, 'handle')) {
+            throw new \InvalidArgumentException('Middleware must be a class with handle method');
+        }
+
+        return $this->app->call(
+            [$middleware, 'handle'],
+            ['request' => $request, 'next' => $next]
+        );
     }
 }
