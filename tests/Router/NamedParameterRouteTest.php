@@ -215,4 +215,49 @@ class NamedParameterRouteTest extends TestCase
             'Should handle special characters in parameters'
         );
     }
+
+    /**
+     * @test
+     */
+    public function itMakeSureRouterNameIsNotOverwritten(): void
+    {
+        $route = [
+            'name'    => 'test.route',
+            'path'    => '/test',
+            'method'  => 'get',
+            'handler' => function () {
+                echo 'Test Route';
+            },
+        ];
+        $routeInstance = new System\Router\Route($route);
+        $this->assertEquals('test.route', $routeInstance->route()['name'], 'Route name should not be overwritten');
+        $routeInstance->name('new.route');
+        $this->assertEquals('new.route', $routeInstance->route()['name'], 'Route name should remain unchanged after setting a new name');
+    }
+
+    /**
+     * Test the prefix name is always added the beaginning of the route name.
+     *
+     * @test
+     */
+    public function itMakesureRouterNameIsNotOverwrittenWithPrefixGivven(): void
+    {
+        $backup        = Router::$group;
+        Router::$group = ['as' => 'prefix.'];
+        $route         = [
+            'name'    => 'test.route',
+            'path'    => '/test',
+            'method'  => 'get',
+            'handler' => function () {
+                echo 'Test Route';
+            },
+        ];
+
+        $routeInstance = new System\Router\Route($route);
+        $this->assertEquals('prefix.test.route', $routeInstance['name'], 'Route name should not be overwritten');
+        $routeInstance->name('new.route');
+        $this->assertEquals('prefix.new.route', $routeInstance->route()['name'], 'Route name should remain unchanged after setting a new name');
+
+        Router::$group = $backup;
+    }
 }
