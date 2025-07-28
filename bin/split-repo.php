@@ -17,12 +17,12 @@ $command = new class($argv) extends Command {
     {
         return match (true) {
             'validate' === $this->CMD   => $this->validate(),
-            'realise' === $this->CMD    => $this->realise(),
+            'release' === $this->CMD    => $this->release(),
             default                     => 0,
         };
     }
 
-    public function realise(): int
+    public function release(): int
     {
         $config                = $this->loadConfig();
         $version               = $config['tag_version'];
