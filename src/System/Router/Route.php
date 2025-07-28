@@ -12,7 +12,7 @@ use ArrayAccess;
 class Route implements \ArrayAccess
 {
     /** @var array<string, mixed> */
-    private $route;
+    private array $route;
     private string $prefix_name;
 
     /**
@@ -21,8 +21,9 @@ class Route implements \ArrayAccess
     public function __construct(array $route)
     {
         $this->prefix_name = Router::$group['as'] ?? '';
-        $route['name']     = $this->prefix_name;
-        $this->route       = $route;
+        $route['name'] ??= '';
+        $route['name'] = $this->prefix_name . $route['name'];
+        $this->route   = $route;
     }
 
     /**
