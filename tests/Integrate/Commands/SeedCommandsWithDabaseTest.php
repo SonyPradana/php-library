@@ -19,10 +19,14 @@ final class SeedCommandsWithDabaseTest extends TestDatabase
     protected function setUp(): void
     {
         $this->createConnection();
+        $this->createUserSchema();
+
+        // load seeder classes
         require_once __DIR__ . '//database//seeders//BasicSeeder.php';
         require_once __DIR__ . '//database//seeders//UserSeeder.php';
         require_once __DIR__ . '//database//seeders//ChainSeeder.php';
         require_once __DIR__ . '//database//seeders//CostumeNamespaceSeeder.php';
+
         $this->app = new Application(__DIR__);
         $this->app->setSeederPath(__DIR__ . '//database//seeders//');
         $this->app->set('environment', 'dev');
@@ -63,7 +67,6 @@ final class SeedCommandsWithDabaseTest extends TestDatabase
      */
     public function itCanRunSeederRunnerWithRealInsertData()
     {
-        $this->createUserSchema();
         $seeder = new SeedCommand(['cli', 'db:seed', '--class', 'UserSeeder']);
         ob_start();
         $seeder->main();

@@ -225,6 +225,15 @@ if (!function_exists('provider_path')) {
     }
 }
 
+if (!function_exists('database_path')) {
+    function database_path(string $surfix_path = ''): string
+    {
+        $path = app()->databasePath() . $surfix_path;
+
+        return $path;
+    }
+}
+
 if (!function_exists('migration_path')) {
     function migration_path(string $surfix_path = ''): string
     {
