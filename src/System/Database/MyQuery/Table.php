@@ -102,7 +102,7 @@ class Table
             FROM
                 INFORMATION_SCHEMA.COLUMNS
             WHERE
-                TABLE_SVHEMA = DATABASE() AND TABLE_NAME = :table'
+                TABLE_SCHEMA = DATABASE() AND TABLE_NAME = :table'
         );
         $this->PDO->bind(':table', $this->table_name);
 

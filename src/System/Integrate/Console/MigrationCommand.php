@@ -415,6 +415,10 @@ class MigrationCommand extends Command
 
             try {
                 $success = $down->every(fn ($item) => $item->execute());
+
+                if ($success) {
+                    $success = $this->deleteMigrationTable((int) $val['batch']);
+                }
             } catch (\Throwable $th) {
                 $success = false;
                 fail($th->getMessage())->out(false);
@@ -660,6 +664,18 @@ class MigrationCommand extends Command
         return DB::table('migration')
             ->insert()
             ->values($migration)
+            ->execute()
+        ;
+    }
+
+    /**
+     * Save insert migration file with batch to migration table.
+     */
+    private function deleteMigrationTable(int $batch_number): bool
+    {
+        return DB::table('migration')
+            ->delete()
+            ->equal('batch', $batch_number)
             ->execute()
         ;
     }

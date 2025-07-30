@@ -10,9 +10,9 @@
     "require": {
         "php": "^8.0",
         "sonypradana/validator": "^0.8",
-        "sonypradana/collection": "^0.39.0",
-        "sonypradana/macroable": "^0.39.0",
-        "sonypradana/text": "^0.39.0"
+        "sonypradana/collection": "^0.39.2",
+        "sonypradana/macroable": "^0.39.2",
+        "sonypradana/text": "^0.39.2"
     },
     "autoload": {
         "psr-4": {
