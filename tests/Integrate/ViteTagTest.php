@@ -14,7 +14,7 @@ final class ViteTagTest extends TestCase
         Vite::flush();
     }
 
-    public function testEscapeUrl()
+    public function testEscapeUrl(): void
     {
         $vite   = new Vite(__DIR__, '');
         $escape = (fn ($url) => $this->{'escapeUrl'}($url))->call($vite, 'foo"bar');
@@ -23,7 +23,7 @@ final class ViteTagTest extends TestCase
         $this->assertEquals('https://example.com/path', $escape2, 'this must return escaped url for normal url');
     }
 
-    public function testIsCssFile()
+    public function testIsCssFile(): void
     {
         $vite  = new Vite(__DIR__, '');
         $isCss = (fn ($file) => $this->{'isCssFile'}($file))->call($vite, 'foo.css');
@@ -34,7 +34,21 @@ final class ViteTagTest extends TestCase
         $this->assertFalse($isCss3, 'should not detect .js as css file');
     }
 
-    public function testCreateStyleTag()
+    public function testbuildAttributeString(): void
+    {
+        $vite   = new Vite(__DIR__, '');
+
+        $buildAttributeString    = (fn ($attributes) => $this->{'buildAttributeString'}($attributes))->call($vite, [
+            'data-foo'                => 123,
+            'async'                   => 'true',
+            'defer'                   => true,
+            'false-should-be-ignored' => false,
+            'null-should-be-ignored'  => null,
+        ]);
+        $this->assertEquals('data-foo="123" async="true" defer', $buildAttributeString, 'should build attribute string from array');
+    }
+
+    public function testCreateStyleTag(): void
     {
         $vite = new Vite(__DIR__, '');
 
@@ -42,7 +56,7 @@ final class ViteTagTest extends TestCase
         $this->assertEquals('<link rel="stylesheet" href="foo.css">', $createStyleTag);
     }
 
-    public function testCreateScriptTag()
+    public function testCreateScriptTag(): void
     {
         $vite   = new Vite(__DIR__, '');
 
@@ -50,7 +64,26 @@ final class ViteTagTest extends TestCase
         $this->assertEquals('<script type="module" src="foo.js"></script>', $createScriptTag);
     }
 
-    public function testGetTag()
+    public function testCreateTagWithAttributes(): void
+    {
+        $vite   = new Vite(__DIR__, '');
+
+        $createTagWithAttributes = (
+            fn (string $url, string $entrypoint, array $attributes) => $this->{'createTagWithAttributes'}($url, $entrypoint, $attributes)
+        )->call(
+            $vite,
+            'foo.js',
+            'resources/js/app.js',
+            [
+                'data-foo' => 'bar',
+                'async'    => 'true',
+            ],
+        );
+
+        $this->assertEquals('<script type="module" src="foo.js" data-foo="bar" async="true"></script>', $createTagWithAttributes);
+    }
+
+    public function testGetTag(): void
     {
         $vite = new Vite(__DIR__ . '/assets/manifest/public', 'build/');
 
@@ -58,7 +91,7 @@ final class ViteTagTest extends TestCase
         $this->assertEquals('<link rel="stylesheet" href="build/assets/app-4ed993c7.css">', $tag);
     }
 
-    public function testGetTags()
+    public function testGetTags(): void
     {
         $vite = new Vite(__DIR__ . '/assets/manifest/public', 'build/');
 
@@ -66,6 +99,24 @@ final class ViteTagTest extends TestCase
         $this->assertEquals(
             '<script type="module" src="build/assets/app-0d91dc04.js"></script>' . "\n" .
             '<link rel="stylesheet" href="build/assets/app-4ed993c7.css">',
+            $tag
+        );
+    }
+
+    public function testGetTagsWithAttributes(): void
+    {
+        $vite = new Vite(__DIR__ . '/assets/manifest/public', 'build/');
+
+        $tag = $vite->tagsWithAttributes(
+            [
+                'defer' => true,
+                'async' => 'true',
+            ],
+            'resources/js/app.js',
+        );
+
+        $this->assertEquals(
+            '<script type="module" src="build/assets/app-0d91dc04.js" defer async="true"></script>',
             $tag
         );
     }

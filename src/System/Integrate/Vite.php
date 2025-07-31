@@ -192,6 +192,28 @@ class Vite
         return filemtime($this->manifest());
     }
 
+    /**
+     * Generate tags with custom attributes.
+     *
+     * @param array<string, string> $attributes
+     */
+    public function tagsWithAttributes(array $attributes, string ...$entrypoints): string
+    {
+        $tags = [];
+
+        if ($this->isRunningHRM()) {
+            $tags[] = $this->getHmrScript();
+        }
+
+        $assets = $this->gets($entrypoints);
+
+        foreach ($assets as $entrypoint => $url) {
+            $tags[] = $this->createTagWithAttributes($url, $entrypoint, $attributes);
+        }
+
+        return implode("\n", $tags);
+    }
+
     public function tags(string ...$entrypoints): string
     {
         $tags = [];
@@ -233,7 +255,7 @@ class Vite
     {
         $url = $this->escapeUrl($url);
 
-        return sprintf('<script type="module" src="%s"></script>', $url);
+        return "<script type=\"module\" src=\"{$url}\"></script>";
     }
 
     private function createStyleTag(string $url): string
@@ -241,13 +263,30 @@ class Vite
         $url = $this->escapeUrl($url);
 
         if ($this->isRunningHRM()) {
-            return sprintf('<script type="module" src="%s"></script>', $url);
+            return "<script type=\"module\" src=\"{$url}\"></script>";
         }
 
-        return sprintf('<link rel="stylesheet" href="%s">', $url);
+        return "<link rel=\"stylesheet\" href=\"{$url}\">";
     }
 
-    // helper functions -----------
+    /**
+     * Create tag with custom attributes.
+     *
+     * @param array<string, string> $attributes
+     */
+    private function createTagWithAttributes(string $url, string $entrypoint, array $attributes): string
+    {
+        $url   = $this->escapeUrl($url);
+        $attrs = $this->buildAttributeString($attributes);
+
+        if ($this->isCssFile($entrypoint) && !$this->isRunningHRM()) {
+            return "<link rel=\"stylesheet\" href=\"{$url}\" {$attrs}>";
+        }
+
+        return "<script type=\"module\" src=\"{$url}\" {$attrs}></script>";
+    }
+
+    // helper functions
 
     private function isCssFile(string $filename): bool
     {
@@ -257,5 +296,34 @@ class Vite
     private function escapeUrl(string $url): string
     {
         return htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+    }
+
+    /**
+     * Build attribute string from array.
+     *
+     * @param array<string, string> $attributes
+     */
+    private function buildAttributeString(array $attributes): string
+    {
+        if (empty($attributes)) {
+            return '';
+        }
+
+        $parts = [];
+        foreach ($attributes as $key => $value) {
+            $key = htmlspecialchars($key, ENT_QUOTES, 'UTF-8');
+
+            $part = match (true) {
+                is_bool($value) => $value ? $key : null,
+                $value === null => null,
+                default         => $key . '="' . htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8') . '"',
+            };
+
+            if ($part !== null) {
+                $parts[] = $part;
+            }
+        }
+
+        return implode(' ', $parts);
     }
 }
