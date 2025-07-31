@@ -191,4 +191,71 @@ class Vite
     {
         return filemtime($this->manifest());
     }
+
+    public function tags(string ...$entrypoints): string
+    {
+        $tags = [];
+
+        if ($this->isRunningHRM()) {
+            $tags[] = $this->getHmrScript();
+        }
+
+        $assets = $this->gets($entrypoints);
+
+        foreach ($assets as $entrypoint => $url) {
+            $tags[] = $this->createTag($url, $entrypoint);
+        }
+
+        return implode("\n", $tags);
+    }
+
+    public function tag(string $entrypoint): string
+    {
+        if ($this->isRunningHRM()) {
+            return $this->getHmrScript();
+        }
+
+        $url = $this->get($entrypoint);
+
+        return $this->createTag($url, $entrypoint);
+    }
+
+    private function createTag(string $url, string $entrypoint): string
+    {
+        if ($this->isCssFile($entrypoint)) {
+            return $this->createStyleTag($url);
+        }
+
+        return $this->createScriptTag($url);
+    }
+
+    private function createScriptTag(string $url): string
+    {
+        $url = $this->escapeUrl($url);
+
+        return sprintf('<script type="module" src="%s"></script>', $url);
+    }
+
+    private function createStyleTag(string $url): string
+    {
+        $url = $this->escapeUrl($url);
+
+        if ($this->isRunningHRM()) {
+            return sprintf('<script type="module" src="%s"></script>', $url);
+        }
+
+        return sprintf('<link rel="stylesheet" href="%s">', $url);
+    }
+
+    // helper functions -----------
+
+    private function isCssFile(string $filename): bool
+    {
+        return preg_match('/\.(css|less|sass|scss|styl|stylus|pcss|postcss)$/', $filename) === 1;
+    }
+
+    private function escapeUrl(string $url): string
+    {
+        return htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+    }
 }

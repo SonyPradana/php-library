@@ -21,7 +21,7 @@ final class ViteTest extends TestCase
 
         $file = $asset->get('resources/css/app.css');
 
-        $this->assertEquals('build/assets/app-4ed993c7.js', $file);
+        $this->assertEquals('build/assets/app-4ed993c7.css', $file);
     }
 
     /** @test */
@@ -35,7 +35,7 @@ final class ViteTest extends TestCase
         ]);
 
         $this->assertEquals([
-            'resources/css/app.css' => 'build/assets/app-4ed993c7.js',
+            'resources/css/app.css' => 'build/assets/app-4ed993c7.css',
             'resources/js/app.js'   => 'build/assets/app-0d91dc04.js',
         ], $files);
     }
@@ -98,7 +98,7 @@ final class ViteTest extends TestCase
 
         $file = $asset('resources/css/app.css');
 
-        $this->assertEquals('build/assets/app-4ed993c7.js', $file);
+        $this->assertEquals('build/assets/app-4ed993c7.css', $file);
     }
 
     /** @test */
@@ -112,7 +112,7 @@ final class ViteTest extends TestCase
         );
 
         $this->assertEquals([
-            'resources/css/app.css' => 'build/assets/app-4ed993c7.js',
+            'resources/css/app.css' => 'build/assets/app-4ed993c7.css',
             'resources/js/app.js'   => 'build/assets/app-0d91dc04.js',
         ], $files);
     }
