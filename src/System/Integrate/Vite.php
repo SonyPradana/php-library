@@ -26,19 +26,37 @@ class Vite
 
     /**
      * Get resource using entri ponit(s).
-     *
-     * @param string $entry_ponits
-     *
-     * @return array<string, string>|string
-     *                                      If entry point is string will return string,
-     *                                      otherwise if entry point is array return as array
      */
-    public function __invoke(...$entry_ponits)
+    public function __invoke(string ...$entrypoints): string
     {
-        $resource = $this->gets($entry_ponits);
-        $first    = array_key_first($resource);
+        $tags = [];
 
-        return 1 === count($resource) ? $resource[$first] : $resource;
+        if ($this->isRunningHRM()) {
+            $tags[] = $this->getHmrScript();
+            $assets = $this->gets($entrypoints);
+
+            foreach ($assets as $entrypoint => $url) {
+                $tags[] = $this->createTag($url, $entrypoint);
+            }
+
+            return implode("\n", $tags);
+        }
+
+        $assets = $this->gets($entrypoints);
+
+        foreach ($assets as $entrypoint => $url) {
+            if ($this->isCssFile($entrypoint)) {
+                $tags[] = $this->createStyleTag($url);
+            }
+        }
+
+        foreach ($assets as $entrypoint => $url) {
+            if (!$this->isCssFile($entrypoint)) {
+                $tags[] = $this->createScriptTag($url);
+            }
+        }
+
+        return implode("\n", $tags);
     }
 
     public function manifestName(string $manifest_name): self
