@@ -195,7 +195,7 @@ class Vite
     /**
      * Generate tags with custom attributes.
      *
-     * @param array<string, string> $attributes
+     * @param array<string, string|bool|int> $attributes
      */
     public function tagsWithAttributes(array $attributes, string ...$entrypoints): string
     {
@@ -242,6 +242,23 @@ class Vite
         return $this->createTag($url, $entrypoint);
     }
 
+    /**
+     * Create tag with custom attributes.
+     *
+     * @param array<string, string|bool|int> $attributes
+     */
+    private function createTagWithAttributes(string $url, string $entrypoint, array $attributes): string
+    {
+        $url   = $this->escapeUrl($url);
+        $attrs = $this->buildAttributeString($attributes);
+
+        if ($this->isCssFile($entrypoint) && !$this->isRunningHRM()) {
+            return "<link rel=\"stylesheet\" href=\"{$url}\" {$attrs}>";
+        }
+
+        return "<script type=\"module\" src=\"{$url}\" {$attrs}></script>";
+    }
+
     private function createTag(string $url, string $entrypoint): string
     {
         if ($this->isCssFile($entrypoint)) {
@@ -269,23 +286,6 @@ class Vite
         return "<link rel=\"stylesheet\" href=\"{$url}\">";
     }
 
-    /**
-     * Create tag with custom attributes.
-     *
-     * @param array<string, string> $attributes
-     */
-    private function createTagWithAttributes(string $url, string $entrypoint, array $attributes): string
-    {
-        $url   = $this->escapeUrl($url);
-        $attrs = $this->buildAttributeString($attributes);
-
-        if ($this->isCssFile($entrypoint) && !$this->isRunningHRM()) {
-            return "<link rel=\"stylesheet\" href=\"{$url}\" {$attrs}>";
-        }
-
-        return "<script type=\"module\" src=\"{$url}\" {$attrs}></script>";
-    }
-
     // helper functions
 
     private function isCssFile(string $filename): bool
@@ -301,7 +301,7 @@ class Vite
     /**
      * Build attribute string from array.
      *
-     * @param array<string, string> $attributes
+     * @param array<string, string|bool|int> $attributes
      */
     private function buildAttributeString(array $attributes): string
     {
