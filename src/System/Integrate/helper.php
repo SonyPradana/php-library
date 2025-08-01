@@ -355,7 +355,10 @@ if (!function_exists('vite')) {
         /** @var System\Integrate\Vite */
         $vite = app()->get('vite.gets');
 
-        return $vite(...$entry_ponits);
+        $resource = $vite->gets($entry_ponits);
+        $first    = array_key_first($resource);
+
+        return 1 === count($resource) ? $resource[$first] : $resource;
     }
 }
 

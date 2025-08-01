@@ -26,19 +26,43 @@ class Vite
 
     /**
      * Get resource using entri ponit(s).
-     *
-     * @param string $entry_ponits
-     *
-     * @return array<string, string>|string
-     *                                      If entry point is string will return string,
-     *                                      otherwise if entry point is array return as array
      */
-    public function __invoke(...$entry_ponits)
+    public function __invoke(string ...$entrypoints): string
     {
-        $resource = $this->gets($entry_ponits);
-        $first    = array_key_first($resource);
+        $tags = [];
 
-        return 1 === count($resource) ? $resource[$first] : $resource;
+        if ($this->isRunningHRM()) {
+            $tags[] = $this->getHmrScript();
+            $assets = $this->gets($entrypoints);
+
+            foreach ($assets as $entrypoint => $url) {
+                $tags[] = $this->createTag($url, $entrypoint);
+            }
+
+            return implode("\n", $tags);
+        }
+
+        $assets = $this->gets($entrypoints);
+
+        foreach ($assets as $entrypoint => $url) {
+            if (!$this->isCssFile($entrypoint)) {
+                $tags[] = $this->createPreloadTag($url);
+            }
+        }
+
+        foreach ($assets as $entrypoint => $url) {
+            if ($this->isCssFile($entrypoint)) {
+                $tags[] = $this->createStyleTag($url);
+            }
+        }
+
+        foreach ($assets as $entrypoint => $url) {
+            if (!$this->isCssFile($entrypoint)) {
+                $tags[] = $this->createScriptTag($url);
+            }
+        }
+
+        return implode("\n", $tags);
     }
 
     public function manifestName(string $manifest_name): self
@@ -190,5 +214,165 @@ class Vite
     public function manifestTime(): int
     {
         return filemtime($this->manifest());
+    }
+
+    public function tagsPreload(string ...$entrypoints): string
+    {
+        if ($this->isRunningHRM()) {
+            return '';
+        }
+
+        $tags   = [];
+        $assets = $this->gets($entrypoints);
+
+        foreach ($assets as $entrypoint => $url) {
+            if (!$this->isCssFile($entrypoint)) {
+                $tags[] = $this->createPreloadTag($url);
+            }
+        }
+
+        return implode("\n", $tags);
+    }
+
+    /**
+     * Generate tags with custom attributes.
+     *
+     * @param array<string, string|bool|int|null> $attributes
+     */
+    public function tagsWithAttributes(array $attributes, string ...$entrypoints): string
+    {
+        $tags = [];
+
+        if ($this->isRunningHRM()) {
+            $tags[] = $this->getHmrScript();
+        }
+
+        $assets = $this->gets($entrypoints);
+
+        foreach ($assets as $entrypoint => $url) {
+            $tags[] = $this->createTagWithAttributes($url, $entrypoint, $attributes);
+        }
+
+        return implode("\n", $tags);
+    }
+
+    public function tags(string ...$entrypoints): string
+    {
+        $tags = [];
+
+        if ($this->isRunningHRM()) {
+            $tags[] = $this->getHmrScript();
+        }
+
+        $assets = $this->gets($entrypoints);
+
+        foreach ($assets as $entrypoint => $url) {
+            $tags[] = $this->createTag($url, $entrypoint);
+        }
+
+        return implode("\n", $tags);
+    }
+
+    public function tag(string $entrypoint): string
+    {
+        if ($this->isRunningHRM()) {
+            return $this->getHmrScript();
+        }
+
+        $url = $this->get($entrypoint);
+
+        return $this->createTag($url, $entrypoint);
+    }
+
+    /**
+     * Create tag with custom attributes.
+     *
+     * @param array<string, string|bool|int|null> $attributes
+     */
+    private function createTagWithAttributes(string $url, string $entrypoint, array $attributes): string
+    {
+        $url   = $this->escapeUrl($url);
+        $attrs = $this->buildAttributeString($attributes);
+
+        if ($this->isCssFile($entrypoint) && !$this->isRunningHRM()) {
+            return "<link rel=\"stylesheet\" href=\"{$url}\" {$attrs}>";
+        }
+
+        return "<script type=\"module\" src=\"{$url}\" {$attrs}></script>";
+    }
+
+    private function createTag(string $url, string $entrypoint): string
+    {
+        if ($this->isCssFile($entrypoint)) {
+            return $this->createStyleTag($url);
+        }
+
+        return $this->createScriptTag($url);
+    }
+
+    private function createScriptTag(string $url): string
+    {
+        $url = $this->escapeUrl($url);
+
+        return "<script type=\"module\" src=\"{$url}\"></script>";
+    }
+
+    private function createStyleTag(string $url): string
+    {
+        $url = $this->escapeUrl($url);
+
+        if ($this->isRunningHRM()) {
+            return "<script type=\"module\" src=\"{$url}\"></script>";
+        }
+
+        return "<link rel=\"stylesheet\" href=\"{$url}\">";
+    }
+
+    private function createPreloadTag(string $url): string
+    {
+        $url = $this->escapeUrl($url);
+
+        return '<link rel="modulepreload" href="' . $url . '">';
+    }
+
+    // helper functions
+
+    private function isCssFile(string $filename): bool
+    {
+        return preg_match('/\.(css|less|sass|scss|styl|stylus|pcss|postcss)$/', $filename) === 1;
+    }
+
+    private function escapeUrl(string $url): string
+    {
+        return htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+    }
+
+    /**
+     * Build attribute string from array.
+     *
+     * @param array<string, string|bool|int|null> $attributes
+     */
+    private function buildAttributeString(array $attributes): string
+    {
+        if (empty($attributes)) {
+            return '';
+        }
+
+        $parts = [];
+        foreach ($attributes as $key => $value) {
+            $key = htmlspecialchars($key, ENT_QUOTES, 'UTF-8');
+
+            $part = match (true) {
+                is_bool($value) => $value ? $key : null,
+                $value === null => null,
+                default         => $key . '="' . htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8') . '"',
+            };
+
+            if ($part !== null) {
+                $parts[] = $part;
+            }
+        }
+
+        return implode(' ', $parts);
     }
 }
