@@ -195,7 +195,7 @@ class Vite
     /**
      * Generate tags with custom attributes.
      *
-     * @param array<string, string|bool|int> $attributes
+     * @param array<string, string|bool|int|null> $attributes
      */
     public function tagsWithAttributes(array $attributes, string ...$entrypoints): string
     {
@@ -245,7 +245,7 @@ class Vite
     /**
      * Create tag with custom attributes.
      *
-     * @param array<string, string|bool|int> $attributes
+     * @param array<string, string|bool|int|null> $attributes
      */
     private function createTagWithAttributes(string $url, string $entrypoint, array $attributes): string
     {
@@ -301,7 +301,7 @@ class Vite
     /**
      * Build attribute string from array.
      *
-     * @param array<string, string|bool|int> $attributes
+     * @param array<string, string|bool|int|null> $attributes
      */
     private function buildAttributeString(array $attributes): string
     {
