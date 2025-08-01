@@ -83,6 +83,14 @@ final class ViteTagTest extends TestCase
         $this->assertEquals('<script type="module" src="foo.js" data-foo="bar" async="true"></script>', $createTagWithAttributes);
     }
 
+    public function testCreatePreloadTag(): void
+    {
+        $vite = new Vite(__DIR__, '');
+
+        $createPreloadTag    = (fn () => $this->{'createPreloadTag'}('foo.css'))->call($vite);
+        $this->assertEquals('<link rel="modulepreload" href="foo.css">', $createPreloadTag);
+    }
+
     public function testGetTag(): void
     {
         $vite = new Vite(__DIR__ . '/assets/manifest/public', 'build/');
@@ -117,6 +125,17 @@ final class ViteTagTest extends TestCase
 
         $this->assertEquals(
             '<script type="module" src="build/assets/app-0d91dc04.js" defer async="true"></script>',
+            $tag
+        );
+    }
+
+    public function testTagsPreload(): void
+    {
+        $vite = new Vite(__DIR__ . '/assets/manifest/public', 'build/');
+
+        $tag = $vite->tagsPreload('resources/js/app.js', 'resources/css/app.css');
+        $this->assertEquals(
+            '<link rel="modulepreload" href="build/assets/app-0d91dc04.js">',
             $tag
         );
     }

@@ -45,6 +45,12 @@ class Vite
         $assets = $this->gets($entrypoints);
 
         foreach ($assets as $entrypoint => $url) {
+            if (!$this->isCssFile($entrypoint)) {
+                $tags[] = $this->createPreloadTag($url);
+            }
+        }
+
+        foreach ($assets as $entrypoint => $url) {
             if ($this->isCssFile($entrypoint)) {
                 $tags[] = $this->createStyleTag($url);
             }
@@ -210,6 +216,24 @@ class Vite
         return filemtime($this->manifest());
     }
 
+    public function tagsPreload(string ...$entrypoints): string
+    {
+        if ($this->isRunningHRM()) {
+            return '';
+        }
+
+        $tags   = [];
+        $assets = $this->gets($entrypoints);
+
+        foreach ($assets as $entrypoint => $url) {
+            if (!$this->isCssFile($entrypoint)) {
+                $tags[] = $this->createPreloadTag($url);
+            }
+        }
+
+        return implode("\n", $tags);
+    }
+
     /**
      * Generate tags with custom attributes.
      *
@@ -302,6 +326,13 @@ class Vite
         }
 
         return "<link rel=\"stylesheet\" href=\"{$url}\">";
+    }
+
+    private function createPreloadTag(string $url): string
+    {
+        $url = $this->escapeUrl($url);
+
+        return '<link rel="modulepreload" href="' . $url . '">';
     }
 
     // helper functions

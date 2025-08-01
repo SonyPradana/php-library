@@ -124,6 +124,7 @@ final class ViteTest extends TestCase
         );
 
         $this->assertEquals(
+            '<link rel="modulepreload" href="build/assets/app-0d91dc04.js">' . "\n" .
             '<link rel="stylesheet" href="build/assets/app-4ed993c7.css">' . "\n" .
             '<script type="module" src="build/assets/app-0d91dc04.js"></script>',
             $headtag
