@@ -32,33 +32,40 @@ class Vite
         $tags = [];
 
         if ($this->isRunningHRM()) {
-            $tags[] = $this->getHmrScript();
-            $assets = $this->gets($entrypoints);
+            $tags['hmr'] = $this->getHmrScript();
+            $assets      = $this->gets($entrypoints);
 
             foreach ($assets as $entrypoint => $url) {
-                $tags[] = $this->createTag($url, $entrypoint);
+                $tags[$entrypoint] = $this->createTag($url, $entrypoint);
             }
 
             return implode("\n", $tags);
         }
 
         $assets = $this->gets($entrypoints);
+        [
+            'imports' => $preload_imports,
+            'css'     => $preload_css,
+        ] = $this->getManifestImports($entrypoints);
 
-        foreach ($assets as $entrypoint => $url) {
-            if (!$this->isCssFile($entrypoint)) {
-                $tags[] = $this->createPreloadTag($url);
-            }
+        foreach ($preload_imports as $entrypoint) {
+            $url               = $this->get($entrypoint);
+            $tags[$entrypoint] = $this->createPreloadTag($url);
+        }
+
+        foreach ($preload_css as $entrypoint) {
+            $tags[$entrypoint] = $this->createStyleTag($this->build_path . $entrypoint);
         }
 
         foreach ($assets as $entrypoint => $url) {
             if ($this->isCssFile($entrypoint)) {
-                $tags[] = $this->createStyleTag($url);
+                $tags[$entrypoint] = $this->createStyleTag($url);
             }
         }
 
         foreach ($assets as $entrypoint => $url) {
             if (!$this->isCssFile($entrypoint)) {
-                $tags[] = $this->createScriptTag($url);
+                $tags[$entrypoint] = $this->createScriptTag($url);
             }
         }
 
@@ -91,7 +98,7 @@ class Vite
     }
 
     /**
-     * @return array<string, array<string, string>>
+     * @return array<string, array<string, string|string[]>>
      */
     public function loader(): array
     {
@@ -127,6 +134,8 @@ class Vite
      * @param string[] $resource_names
      *
      * @return array<string, string>
+     *
+     * @deprecated Since v0.40
      */
     public function getsManifest($resource_names)
     {
@@ -140,6 +149,52 @@ class Vite
         }
 
         return $resources;
+    }
+
+    /**
+     * @param string[] $resources
+     *
+     * @return array{imports: string[], css: string[]}
+     */
+    public function getManifestImports(array $resources): array
+    {
+        $assets      = $this->loader();
+        $resourceSet = array_fill_keys($resources, true);
+
+        $preload = ['imports' => [], 'css' => []];
+
+        foreach ($assets as $name => $asset) {
+            if (isset($resourceSet[$name])) {
+                $this->collectImports($assets, $asset, $preload);
+            }
+        }
+
+        $preload['imports'] = array_values(array_unique($preload['imports']));
+        $preload['css']     = array_values(array_unique($preload['css']));
+
+        return $preload;
+    }
+
+    /**
+     * @param array<string, array<string, string|string[]>> $assets
+     * @param array<string, string|string[]>                $asset
+     * @param array{imports: string[], css: string[]}       $preload
+     */
+    private function collectImports(array $assets, array $asset, array &$preload): void
+    {
+        if (false === empty($asset['css'])) {
+            $preload['css'] = array_merge($preload['css'], $asset['css']);
+        }
+
+        if (false === empty($asset['imports'])) {
+            foreach ($asset['imports'] as $import) {
+                $preload['imports'][] = $import;
+
+                if (isset($assets[$import])) {
+                    $this->collectImports($assets, $assets[$import], $preload);
+                }
+            }
+        }
     }
 
     /**

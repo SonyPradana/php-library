@@ -124,9 +124,25 @@ final class ViteTest extends TestCase
         );
 
         $this->assertEquals(
-            '<link rel="modulepreload" href="build/assets/app-0d91dc04.js">' . "\n" .
             '<link rel="stylesheet" href="build/assets/app-4ed993c7.css">' . "\n" .
             '<script type="module" src="build/assets/app-0d91dc04.js"></script>',
+            $headtag
+        );
+    }
+
+    /** @test */
+    public function itCanRenderHeadHtmlTagWithPreload()
+    {
+        $vite = new Vite(__DIR__ . '/assets/manifest/public', 'preload/');
+
+        $headtag = $vite('resources/js/app.js');
+
+        $this->assertEquals(
+            '<link rel="modulepreload" href="preload/assets/vendor.222bbb.js">' . "\n" .
+            '<link rel="modulepreload" href="preload/assets/chunk-vue.333ccc.js">' . "\n" .
+            '<link rel="modulepreload" href="preload/assets/chunk-utils.444ddd.js">' . "\n" .
+            '<link rel="stylesheet" href="preload/assets/app.111aaa.css">' . "\n" .
+            '<script type="module" src="preload/assets/app.111aaa.js"></script>',
             $headtag
         );
     }

@@ -103,7 +103,7 @@ final class ViteTagTest extends TestCase
     {
         $vite = new Vite(__DIR__ . '/assets/manifest/public', 'build/');
 
-        $tag = $vite->tags('resources/js/app.js', 'resources/css/app.css');
+        $tag = $vite->tags(['resources/js/app.js', 'resources/css/app.css']);
         $this->assertEquals(
             '<script type="module" src="build/assets/app-0d91dc04.js"></script>' . "\n" .
             '<link rel="stylesheet" href="build/assets/app-4ed993c7.css">',
@@ -116,11 +116,13 @@ final class ViteTagTest extends TestCase
         $vite = new Vite(__DIR__ . '/assets/manifest/public', 'build/');
 
         $tag = $vite->tagsWithAttributes(
-            [
+            attributes: [
                 'defer' => true,
                 'async' => 'true',
             ],
-            'resources/js/app.js',
+            entrypoints: [
+                'resources/js/app.js',
+            ],
         );
 
         $this->assertEquals(
@@ -133,7 +135,7 @@ final class ViteTagTest extends TestCase
     {
         $vite = new Vite(__DIR__ . '/assets/manifest/public', 'build/');
 
-        $tag = $vite->tagsPreload('resources/js/app.js', 'resources/css/app.css');
+        $tag = $vite->tagsPreload(['resources/js/app.js', 'resources/css/app.css']);
         $this->assertEquals(
             '<link rel="modulepreload" href="build/assets/app-0d91dc04.js">',
             $tag

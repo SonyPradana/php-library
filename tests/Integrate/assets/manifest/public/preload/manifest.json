@@ -1,0 +1,13 @@
+{
+  "resources/js/app.js": {
+    "file": "assets/app.111aaa.js",
+    "css": ["assets/app.111aaa.css"],
+    "imports": ["assets/vendor.222bbb.js"]
+  },
+  "assets/vendor.222bbb.js": {
+    "file": "assets/vendor.222bbb.js",
+    "imports": ["assets/chunk-vue.333ccc.js", "assets/chunk-utils.444ddd.js"]
+  },
+  "assets/chunk-vue.333ccc.js": { "file": "assets/chunk-vue.333ccc.js" },
+  "assets/chunk-utils.444ddd.js": { "file": "assets/chunk-utils.444ddd.js" }
+}
