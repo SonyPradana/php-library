@@ -216,7 +216,10 @@ class Vite
         return filemtime($this->manifest());
     }
 
-    public function tagsPreload(string ...$entrypoints): string
+    /**
+     * @param string[] $entrypoints
+     */
+    public function tagsPreload(array $entrypoints): string
     {
         if ($this->isRunningHRM()) {
             return '';
@@ -238,8 +241,9 @@ class Vite
      * Generate tags with custom attributes.
      *
      * @param array<string, string|bool|int|null> $attributes
+     * @param string[]                            $entrypoints
      */
-    public function tagsWithAttributes(array $attributes, string ...$entrypoints): string
+    public function tagsWithAttributes(array $attributes, array $entrypoints): string
     {
         $tags = [];
 
@@ -256,7 +260,10 @@ class Vite
         return implode("\n", $tags);
     }
 
-    public function tags(string ...$entrypoints): string
+    /**
+     * @param string[] $entrypoints
+     */
+    public function tags(array $entrypoints): string
     {
         $tags = [];
 
