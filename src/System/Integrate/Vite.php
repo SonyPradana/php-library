@@ -29,44 +29,52 @@ class Vite
      */
     public function __invoke(string ...$entrypoints): string
     {
+        if (empty($entrypoints)) {
+            return '';
+        }
+
         $tags = [];
 
         if ($this->isRunningHRM()) {
-            $tags['hmr'] = $this->getHmrScript();
-            $assets      = $this->gets($entrypoints);
+            $tags[] = $this->getHmrScript();
+            $hmrUrl = $this->getHmrUrl();
 
-            foreach ($assets as $entrypoint => $url) {
-                $tags[$entrypoint] = $this->createTag($url, $entrypoint);
+            foreach ($entrypoints as $entrypoint) {
+                $url    = $hmrUrl . $entrypoint;
+                $tags[] = $this->createTag($url, $entrypoint);
             }
 
             return implode("\n", $tags);
         }
 
-        $assets = $this->gets($entrypoints);
-        [
-            'imports' => $preload_imports,
-            'css'     => $preload_css,
-        ] = $this->getManifestImports($entrypoints);
-
-        foreach ($preload_imports as $entrypoint) {
+        $assets  = $this->gets($entrypoints);
+        $imports = $this->getManifestImports($entrypoints);
+        foreach ($imports['imports'] as $entrypoint) {
             $url               = $this->get($entrypoint);
             $tags[$entrypoint] = $this->createPreloadTag($url);
         }
 
-        foreach ($preload_css as $entrypoint) {
+        foreach ($imports['css'] as $entrypoint) {
             $tags[$entrypoint] = $this->createStyleTag($this->build_path . $entrypoint);
         }
 
+        $cssAssets = [];
+        $jsAssets  = [];
+
         foreach ($assets as $entrypoint => $url) {
             if ($this->isCssFile($entrypoint)) {
-                $tags[$entrypoint] = $this->createStyleTag($url);
+                $cssAssets[$entrypoint] = $url;
+            } else {
+                $jsAssets[$entrypoint] = $url;
             }
         }
 
-        foreach ($assets as $entrypoint => $url) {
-            if (!$this->isCssFile($entrypoint)) {
-                $tags[$entrypoint] = $this->createScriptTag($url);
-            }
+        foreach ($cssAssets as $entrypoint => $url) {
+            $tags[$entrypoint] = $this->createStyleTag($url);
+        }
+
+        foreach ($jsAssets as $entrypoint => $url) {
+            $tags[$entrypoint] = $this->createScriptTag($url);
         }
 
         return implode("\n", $tags);
