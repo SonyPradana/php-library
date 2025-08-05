@@ -111,17 +111,24 @@ class Vite
     public function loader(): array
     {
         $file_name = $this->manifest();
+        $current_time = $this->manifestTime();
 
-        if (array_key_exists($file_name, static::$cache)) {
+        if (array_key_exists($file_name, static::$cache)
+        && $this->cache_time === $current_time) {
             return static::$cache[$file_name];
         }
 
-        $this->cache_time = $this->manifestTime();
-        $load             = file_get_contents($file_name);
-        $json             = json_decode($load, true);
+        $this->cache_time = $current_time;
+        $load = file_get_contents($file_name);
 
-        if (false === $json) {
-            throw new \Exception('Manifest doest support');
+        if ($load === false) {
+            throw new \Exception("Failed to read manifest file: {$file_name}");
+        }
+
+        $json = json_decode($load, true);
+
+        if ($json === null && json_last_error() !== JSON_ERROR_NONE) {
+            throw new \Exception('Manifest JSON decode error: ' . json_last_error_msg());
         }
 
         return static::$cache[$file_name] = $json;
