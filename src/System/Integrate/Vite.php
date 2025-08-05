@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace System\Integrate;
 
-use System\Collection\Collection;
-use System\Text\Str;
-
 class Vite
 {
     private string $public_path;
@@ -241,10 +238,10 @@ class Vite
 
         $hot  = $this->getHmrUrl();
 
-        return (new Collection($resource_names))
-            ->assocBy(fn ($asset) => [$asset => $hot . $asset])
-            ->toArray()
-        ;
+        return array_combine(
+            $resource_names,
+            array_map(fn ($asset) => $hot . $asset, $resource_names)
+        );
     }
 
     /**
@@ -264,9 +261,15 @@ class Vite
             return static::$hot;
         }
 
-        $hot  = file_get_contents("{$this->public_path}/hot");
+        $hotFile = "{$this->public_path}/hot";
+        $hot     = file_get_contents($hotFile);
+
+        if ($hot === false) {
+            throw new \Exception("Failed to read hot file: {$hotFile}");
+        }
+
         $hot  = rtrim($hot);
-        $dash = Str::endsWith($hot, '/') ? '' : '/';
+        $dash = str_ends_with($hot, '/') ? '' : '/';
 
         return static::$hot = $hot . $dash;
     }
