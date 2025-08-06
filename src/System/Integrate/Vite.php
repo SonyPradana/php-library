@@ -320,13 +320,24 @@ class Vite
      */
     public function getTags(array $entrypoints, ?array $attributes = null): string
     {
+        return $this->getCostumeTags(
+            array_combine($entrypoints, array_fill(0, count($entrypoints), $attributes ?? []))
+        );
+    }
+
+    /**
+     * @param array<string, array<string|int, string|bool|int|null>> $entrypoints
+     * @param array<string|int, string|bool|int|null>                $default_attributes
+     */
+    public function getCostumeTags(array $entrypoints, array $default_attributes = []): string
+    {
         $tags = [];
 
         if ($this->isRunningHRM()) {
             $tags[] = $this->getHmrScript();
         }
 
-        $assets    = $this->gets($entrypoints);
+        $assets    = $this->gets(array_keys($entrypoints));
         $cssAssets = array_filter(
             $assets,
             fn ($file, $url) => $this->isCssFile($file),
@@ -335,8 +346,16 @@ class Vite
 
         $jsAssets = array_diff_key($assets, $cssAssets);
         $tags     = array_merge(
-            array_map(fn ($url) => $this->createStyleTag($url, $attributes), $cssAssets),
-            array_map(fn ($url) => $this->createScriptTag($url, $attributes), $jsAssets)
+            array_map(
+                fn ($url, $file) => $this->createStyleTag($url, $entrypoints[$file] ?? $default_attributes),
+                array_values($cssAssets),
+                array_keys($cssAssets)
+            ),
+            array_map(
+                fn ($url, $file) => $this->createScriptTag($url, $entrypoints[$file] ?? $default_attributes),
+                array_values($jsAssets),
+                array_keys($jsAssets)
+            )
         );
 
         return implode("\n", $tags);

@@ -103,7 +103,7 @@ final class ViteTagTest extends TestCase
         );
     }
 
-    public function testGetTagsWithAttributes(): void
+    public function testGetTagsAttributes(): void
     {
         $vite = new Vite(__DIR__ . '/assets/manifest/public', 'build/');
 
@@ -119,6 +119,28 @@ final class ViteTagTest extends TestCase
         );
 
         $this->assertEquals(
+            '<script type="module" defer async="true" crossorigin src="build/assets/app-0d91dc04.js"></script>',
+            $tag
+        );
+    }
+
+    public function testGetTagsAttributesWithException(): void
+    {
+        $vite = new Vite(__DIR__ . '/assets/manifest/public', 'build/');
+
+        $tag = $vite->getCostumeTags(
+            entrypoints: [
+                'resources/js/app.js' => [
+                    'defer' => true,
+                    'async' => 'true',
+                    'crossorigin',
+                ],
+                'resources/css/app.css' => [],
+            ],
+        );
+
+        $this->assertEquals(
+            '<link rel="stylesheet" href="build/assets/app-4ed993c7.css">' . "\n" .
             '<script type="module" defer async="true" crossorigin src="build/assets/app-0d91dc04.js"></script>',
             $tag
         );
