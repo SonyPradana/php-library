@@ -224,8 +224,17 @@ class Vite
      */
     public function gets($resource_names)
     {
-        if (!$this->isRunningHRM()) {
-            return $this->getsManifest($resource_names);
+        if (false === $this->isRunningHRM()) {
+            $asset     = $this->loader();
+            $resources = [];
+
+            foreach ($resource_names as $resource) {
+                if (array_key_exists($resource, $asset)) {
+                    $resources[$resource] = $this->build_path . $asset[$resource]['file'];
+                }
+            }
+
+            return $resources;
         }
 
         $hot  = $this->getHmrUrl();
