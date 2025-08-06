@@ -303,7 +303,7 @@ class Vite
         $imports = $this->getManifestImports($entrypoints);
 
         foreach ($imports['imports'] as $entrypoint) {
-            $url    = $this->get($entrypoint);
+            $url    = $this->getManifest($entrypoint);
             $tags[] = $this->createPreloadTag($url);
         }
 
