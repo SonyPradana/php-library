@@ -380,6 +380,7 @@ class Vite
             return $this->createScriptTag($url, $attributes);
         }
 
+        $attributes ??= [];
         $attributes['rel']  = 'stylesheet';
         $attributes['href'] = $this->escapeUrl($url);
         $attributes         = $this->buildAttributeString($attributes);
