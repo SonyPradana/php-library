@@ -13,8 +13,8 @@ class Vite
     public static ?string $hot = null;
 
     public function __construct(
-        public string $public_path,
-        public string $build_path,
+        private string $public_path,
+        private string $build_path,
     ) {
         $this->manifest_name = 'manifest.json';
     }
