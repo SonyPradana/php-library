@@ -28,9 +28,8 @@ class Vite
             return '';
         }
 
-        $tags = [];
-
         if ($this->isRunningHRM()) {
+            $tags   = [];
             $tags[] = $this->getHmrScript();
             $hmrUrl = $this->getHmrUrl();
 
@@ -43,35 +42,29 @@ class Vite
         }
 
         $imports = $this->getManifestImports($entrypoints);
+        $preload = [];
         foreach ($imports['imports'] as $entrypoint) {
-            $url    = $this->getManifest($entrypoint);
-            $tags[] = $this->createPreloadTag($url);
+            $url       = $this->getManifest($entrypoint);
+            $preload[] = $this->createPreloadTag($url);
         }
 
         foreach ($imports['css'] as $entrypoint) {
-            $tags[] = $this->createStyleTag($this->build_path . $entrypoint);
+            $preload[] = $this->createStyleTag($this->build_path . $entrypoint);
         }
 
         $assets    = $this->gets($entrypoints);
-        $cssAssets = [];
-        $jsAssets  = [];
+        $cssAssets = array_filter(
+            $assets,
+            fn ($file, $url) => $this->isCssFile($file),
+            ARRAY_FILTER_USE_BOTH
+        );
 
-        foreach ($assets as $entrypoint => $url) {
-            if ($this->isCssFile($entrypoint)) {
-                $cssAssets[$entrypoint] = $url;
-                continue;
-            }
-
-            $jsAssets[$entrypoint] = $url;
-        }
-
-        foreach ($cssAssets as $entrypoint => $url) {
-            $tags[] = $this->createStyleTag($url);
-        }
-
-        foreach ($jsAssets as $entrypoint => $url) {
-            $tags[] = $this->createScriptTag($url);
-        }
+        $jsAssets = array_diff_key($assets, $cssAssets);
+        $tags     = array_merge(
+            $preload,
+            array_map(fn ($url) => $this->createStyleTag($url), $cssAssets),
+            array_map(fn ($url) => $this->createScriptTag($url), $jsAssets)
+        );
 
         return implode("\n", $tags);
     }
