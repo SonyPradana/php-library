@@ -14,7 +14,7 @@ class Vite
 
     public function __construct(
         public string $public_path,
-        public string $build_path
+        public string $build_path,
     ) {
         $this->manifest_name        = 'manifest.json';
     }
@@ -313,12 +313,10 @@ class Vite
     }
 
     /**
-     * Generate tags with custom attributes.
-     *
-     * @param array<string, string|bool|int|null> $attributes
      * @param string[]                            $entrypoints
+     * @param array<string, string|bool|int|null> $attributes
      */
-    public function tagsWithAttributes(array $attributes, array $entrypoints): string
+    public function tags(array $entrypoints, ?array $attributes = null): string
     {
         $tags = [];
 
@@ -326,47 +324,18 @@ class Vite
             $tags[] = $this->getHmrScript();
         }
 
-        $assets = $this->gets($entrypoints);
+        $assets    = $this->gets($entrypoints);
+        $cssAssets = array_filter(
+            $assets,
+            fn ($file, $url) => $this->isCssFile($file),
+            ARRAY_FILTER_USE_BOTH
+        );
 
-        foreach ($assets as $entrypoint => $url) {
-            $tags[] = $this->createTagWithAttributes($url, $entrypoint, $attributes);
-        }
-
-        return implode("\n", $tags);
-    }
-
-    /**
-     * @param string[] $entrypoints
-     */
-    public function tags(array $entrypoints): string
-    {
-        $tags = [];
-
-        if ($this->isRunningHRM()) {
-            $tags[] = $this->getHmrScript();
-        }
-
-        $assets = $this->gets($entrypoints);
-
-        $cssAssets = [];
-        $jsAssets  = [];
-
-        foreach ($assets as $entrypoint => $url) {
-            if ($this->isCssFile($entrypoint)) {
-                $cssAssets[$entrypoint] = $url;
-                continue;
-            }
-
-            $jsAssets[$entrypoint] = $url;
-        }
-
-        foreach ($cssAssets as $entrypoint => $url) {
-            $tags[] = $this->createStyleTag($url);
-        }
-
-        foreach ($jsAssets as $entrypoint => $url) {
-            $tags[] = $this->createScriptTag($url);
-        }
+        $jsAssets = array_diff_key($assets, $cssAssets);
+        $tags     = array_merge(
+            array_map(fn ($url) => $this->createStyleTag($url, $attributes), $cssAssets),
+            array_map(fn ($url) => $this->createScriptTag($url, $attributes), $jsAssets)
+        );
 
         return implode("\n", $tags);
     }
@@ -383,54 +352,55 @@ class Vite
     }
 
     /**
-     * Create tag with custom attributes.
-     *
      * @param array<string, string|bool|int|null> $attributes
      */
-    private function createTagWithAttributes(string $url, string $entrypoint, array $attributes): string
-    {
-        $url   = $this->escapeUrl($url);
-        $attrs = $this->buildAttributeString($attributes);
-
-        if ($this->isCssFile($entrypoint) && !$this->isRunningHRM()) {
-            return "<link rel=\"stylesheet\" href=\"{$url}\" {$attrs}>";
-        }
-
-        return "<script type=\"module\" src=\"{$url}\" {$attrs}></script>";
-    }
-
-    private function createTag(string $url, string $entrypoint): string
+    private function createTag(string $url, string $entrypoint, ?array $attributes = null): string
     {
         if ($this->isCssFile($entrypoint)) {
             return $this->createStyleTag($url);
         }
 
-        return $this->createScriptTag($url);
+        return $this->createScriptTag($url, $attributes);
     }
 
-    private function createScriptTag(string $url): string
+    /**
+     * @param array<string, string|bool|int|null> $attributes
+     */
+    private function createScriptTag(string $url, ?array $attributes = null): string
     {
-        $url = $this->escapeUrl($url);
-
-        return "<script type=\"module\" src=\"{$url}\"></script>";
-    }
-
-    private function createStyleTag(string $url): string
-    {
-        $url = $this->escapeUrl($url);
-
-        if ($this->isRunningHRM()) {
-            return "<script type=\"module\" src=\"{$url}\"></script>";
+        if (false === isset($attributes['type'])) {
+            $attributes = array_merge(['type' => 'module'], $attributes ?? []);
         }
 
-        return "<link rel=\"stylesheet\" href=\"{$url}\">";
+        $attributes['src'] = $this->escapeUrl($url);
+        $attributes        = $this->buildAttributeString($attributes);
+
+        return "<script {$attributes}></script>";
+    }
+
+    /**
+     * @param array<string, string|bool|int|null> $attributes
+     */
+    private function createStyleTag(string $url, ?array $attributes = null): string
+    {
+        if ($this->isRunningHRM()) {
+            return $this->createScriptTag($url, $attributes);
+        }
+
+        $attributes['rel']  = 'stylesheet';
+        $attributes['href'] = $this->escapeUrl($url);
+        $attributes         = $this->buildAttributeString($attributes);
+
+        return "<link {$attributes} />";
     }
 
     private function createPreloadTag(string $url): string
     {
-        $url = $this->escapeUrl($url);
+        $attributes['rel']  = 'modulepreload';
+        $attributes['href'] = $this->escapeUrl($url);
+        $attributes         = $this->buildAttributeString($attributes);
 
-        return '<link rel="modulepreload" href="' . $url . '">';
+        return "<link {$attributes} />";
     }
 
     // helper functions
