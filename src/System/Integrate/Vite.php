@@ -6,18 +6,16 @@ namespace System\Integrate;
 
 class Vite
 {
-    private string $public_path;
-    private string $build_path;
     private string $manifest_name;
     private int $cache_time = 0;
     /** @var array<string, array<string, array<string, string>>> */
     public static array $cache = [];
     public static ?string $hot = null;
 
-    public function __construct(string $public_path, string $build_path)
-    {
-        $this->public_path          = $public_path;
-        $this->build_path           = $build_path;
+    public function __construct(
+        public string $public_path,
+        public string $build_path
+    ) {
         $this->manifest_name        = 'manifest.json';
     }
 
@@ -44,34 +42,35 @@ class Vite
             return implode("\n", $tags);
         }
 
-        $assets  = $this->gets($entrypoints);
         $imports = $this->getManifestImports($entrypoints);
         foreach ($imports['imports'] as $entrypoint) {
-            $url               = $this->get($entrypoint);
-            $tags[$entrypoint] = $this->createPreloadTag($url);
+            $url    = $this->getManifest($entrypoint);
+            $tags[] = $this->createPreloadTag($url);
         }
 
         foreach ($imports['css'] as $entrypoint) {
-            $tags[$entrypoint] = $this->createStyleTag($this->build_path . $entrypoint);
+            $tags[] = $this->createStyleTag($this->build_path . $entrypoint);
         }
 
+        $assets    = $this->gets($entrypoints);
         $cssAssets = [];
         $jsAssets  = [];
 
         foreach ($assets as $entrypoint => $url) {
             if ($this->isCssFile($entrypoint)) {
                 $cssAssets[$entrypoint] = $url;
-            } else {
-                $jsAssets[$entrypoint] = $url;
+                continue;
             }
+
+            $jsAssets[$entrypoint] = $url;
         }
 
         foreach ($cssAssets as $entrypoint => $url) {
-            $tags[$entrypoint] = $this->createStyleTag($url);
+            $tags[] = $this->createStyleTag($url);
         }
 
         foreach ($jsAssets as $entrypoint => $url) {
-            $tags[$entrypoint] = $this->createScriptTag($url);
+            $tags[] = $this->createScriptTag($url);
         }
 
         return implode("\n", $tags);
@@ -298,13 +297,16 @@ class Vite
             return '';
         }
 
-        $tags   = [];
-        $assets = $this->gets($entrypoints);
+        $tags    = [];
+        $imports = $this->getManifestImports($entrypoints);
 
-        foreach ($assets as $entrypoint => $url) {
-            if (!$this->isCssFile($entrypoint)) {
-                $tags[] = $this->createPreloadTag($url);
-            }
+        foreach ($imports['imports'] as $entrypoint) {
+            $url    = $this->get($entrypoint);
+            $tags[] = $this->createPreloadTag($url);
+        }
+
+        foreach ($imports['css'] as $entrypoint) {
+            $tags[] = $this->createStyleTag($this->build_path . $entrypoint);
         }
 
         return implode("\n", $tags);
@@ -346,8 +348,24 @@ class Vite
 
         $assets = $this->gets($entrypoints);
 
+        $cssAssets = [];
+        $jsAssets  = [];
+
         foreach ($assets as $entrypoint => $url) {
-            $tags[] = $this->createTag($url, $entrypoint);
+            if ($this->isCssFile($entrypoint)) {
+                $cssAssets[$entrypoint] = $url;
+                continue;
+            }
+
+            $jsAssets[$entrypoint] = $url;
+        }
+
+        foreach ($cssAssets as $entrypoint => $url) {
+            $tags[] = $this->createStyleTag($url);
+        }
+
+        foreach ($jsAssets as $entrypoint => $url) {
+            $tags[] = $this->createScriptTag($url);
         }
 
         return implode("\n", $tags);

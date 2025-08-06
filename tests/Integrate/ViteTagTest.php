@@ -105,8 +105,8 @@ final class ViteTagTest extends TestCase
 
         $tag = $vite->tags(['resources/js/app.js', 'resources/css/app.css']);
         $this->assertEquals(
-            '<script type="module" src="build/assets/app-0d91dc04.js"></script>' . "\n" .
-            '<link rel="stylesheet" href="build/assets/app-4ed993c7.css">',
+            '<link rel="stylesheet" href="build/assets/app-4ed993c7.css">' . "\n" .
+            '<script type="module" src="build/assets/app-0d91dc04.js"></script>',
             $tag
         );
     }
@@ -133,11 +133,14 @@ final class ViteTagTest extends TestCase
 
     public function testTagsPreload(): void
     {
-        $vite = new Vite(__DIR__ . '/assets/manifest/public', 'build/');
+        $vite = new Vite(__DIR__ . '/assets/manifest/public', 'preload/');
 
-        $tag = $vite->tagsPreload(['resources/js/app.js', 'resources/css/app.css']);
+        $tag = $vite->tagsPreload(['resources/js/app.js']);
         $this->assertEquals(
-            '<link rel="modulepreload" href="build/assets/app-0d91dc04.js">',
+            '<link rel="modulepreload" href="preload/assets/vendor.222bbb.js">' . "\n" .
+            '<link rel="modulepreload" href="preload/assets/chunk-vue.333ccc.js">' . "\n" .
+            '<link rel="modulepreload" href="preload/assets/chunk-utils.444ddd.js">' . "\n" .
+            '<link rel="stylesheet" href="preload/assets/app.111aaa.css">',
             $tag
         );
     }
