@@ -373,7 +373,7 @@ class Vite
         $attributes ??= [];
 
         if (false === isset($attributes['type'])) {
-            $attributes = array_merge(['type' => 'module'], $attributes ?? []);
+            $attributes = array_merge(['type' => 'module'], $attributes);
         }
 
         $attributes['src'] = $this->escapeUrl($url);
@@ -401,9 +401,10 @@ class Vite
 
     private function createPreloadTag(string $url): string
     {
-        $attributes['rel']  = 'modulepreload';
-        $attributes['href'] = $this->escapeUrl($url);
-        $attributes         = $this->buildAttributeString($attributes);
+        $attributes = $this->buildAttributeString([
+            'rel'  => 'modulepreload',
+            'href' => $this->escapeUrl($url),
+        ]);
 
         return "<link {$attributes} />";
     }
