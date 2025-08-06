@@ -361,6 +361,8 @@ class Vite
      */
     private function createScriptTag(string $url, ?array $attributes = null): string
     {
+        $attributes ??= [];
+
         if (false === isset($attributes['type'])) {
             $attributes = array_merge(['type' => 'module'], $attributes ?? []);
         }
