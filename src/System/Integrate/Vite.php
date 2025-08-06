@@ -396,7 +396,7 @@ class Vite
         $attributes['href'] = $this->escapeUrl($url);
         $attributes         = $this->buildAttributeString($attributes);
 
-        return "<link {$attributes} />";
+        return "<link {$attributes}>";
     }
 
     private function createPreloadTag(string $url): string
@@ -406,7 +406,7 @@ class Vite
             'href' => $this->escapeUrl($url),
         ]);
 
-        return "<link {$attributes} />";
+        return "<link {$attributes}>";
     }
 
     // helper functions

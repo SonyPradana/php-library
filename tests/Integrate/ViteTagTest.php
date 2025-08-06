@@ -53,7 +53,7 @@ final class ViteTagTest extends TestCase
         $vite = new Vite(__DIR__, '');
 
         $createStyleTag    = (fn () => $this->{'createStyleTag'}('foo.css'))->call($vite);
-        $this->assertEquals('<link rel="stylesheet" href="foo.css" />', $createStyleTag);
+        $this->assertEquals('<link rel="stylesheet" href="foo.css">', $createStyleTag);
     }
 
     public function testCreateScriptTag(): void
@@ -88,7 +88,7 @@ final class ViteTagTest extends TestCase
         $vite = new Vite(__DIR__, '');
 
         $createPreloadTag    = (fn () => $this->{'createPreloadTag'}('foo.css'))->call($vite);
-        $this->assertEquals('<link rel="modulepreload" href="foo.css" />', $createPreloadTag);
+        $this->assertEquals('<link rel="modulepreload" href="foo.css">', $createPreloadTag);
     }
 
     public function testGetTag(): void
@@ -96,7 +96,7 @@ final class ViteTagTest extends TestCase
         $vite = new Vite(__DIR__ . '/assets/manifest/public', 'build/');
 
         $tag = $vite->tag('resources/css/app.css');
-        $this->assertEquals('<link rel="stylesheet" href="build/assets/app-4ed993c7.css" />', $tag);
+        $this->assertEquals('<link rel="stylesheet" href="build/assets/app-4ed993c7.css">', $tag);
     }
 
     public function testGetTags(): void
@@ -105,7 +105,7 @@ final class ViteTagTest extends TestCase
 
         $tag = $vite->tags(['resources/js/app.js', 'resources/css/app.css']);
         $this->assertEquals(
-            '<link rel="stylesheet" href="build/assets/app-4ed993c7.css" />' . "\n" .
+            '<link rel="stylesheet" href="build/assets/app-4ed993c7.css">' . "\n" .
             '<script type="module" src="build/assets/app-0d91dc04.js"></script>',
             $tag
         );
@@ -137,10 +137,10 @@ final class ViteTagTest extends TestCase
 
         $tag = $vite->tagsPreload(['resources/js/app.js']);
         $this->assertEquals(
-            '<link rel="modulepreload" href="preload/assets/vendor.222bbb.js" />' . "\n" .
-            '<link rel="modulepreload" href="preload/assets/chunk-vue.333ccc.js" />' . "\n" .
-            '<link rel="modulepreload" href="preload/assets/chunk-utils.444ddd.js" />' . "\n" .
-            '<link rel="stylesheet" href="preload/assets/app.111aaa.css" />',
+            '<link rel="modulepreload" href="preload/assets/vendor.222bbb.js">' . "\n" .
+            '<link rel="modulepreload" href="preload/assets/chunk-vue.333ccc.js">' . "\n" .
+            '<link rel="modulepreload" href="preload/assets/chunk-utils.444ddd.js">' . "\n" .
+            '<link rel="stylesheet" href="preload/assets/app.111aaa.css">',
             $tag
         );
     }
