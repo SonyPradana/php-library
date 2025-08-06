@@ -91,19 +91,11 @@ final class ViteTagTest extends TestCase
         $this->assertEquals('<link rel="modulepreload" href="foo.css">', $createPreloadTag);
     }
 
-    public function testGetTag(): void
-    {
-        $vite = new Vite(__DIR__ . '/assets/manifest/public', 'build/');
-
-        $tag = $vite->tag('resources/css/app.css');
-        $this->assertEquals('<link rel="stylesheet" href="build/assets/app-4ed993c7.css">', $tag);
-    }
-
     public function testGetTags(): void
     {
         $vite = new Vite(__DIR__ . '/assets/manifest/public', 'build/');
 
-        $tag = $vite->tags(['resources/js/app.js', 'resources/css/app.css']);
+        $tag = $vite->getTags(['resources/js/app.js', 'resources/css/app.css']);
         $this->assertEquals(
             '<link rel="stylesheet" href="build/assets/app-4ed993c7.css">' . "\n" .
             '<script type="module" src="build/assets/app-0d91dc04.js"></script>',
@@ -115,27 +107,28 @@ final class ViteTagTest extends TestCase
     {
         $vite = new Vite(__DIR__ . '/assets/manifest/public', 'build/');
 
-        $tag = $vite->tags(
+        $tag = $vite->getTags(
             entrypoints: [
                 'resources/js/app.js',
             ],
             attributes: [
                 'defer' => true,
                 'async' => 'true',
+                'crossorigin',
             ],
         );
 
         $this->assertEquals(
-            '<script type="module" defer async="true" src="build/assets/app-0d91dc04.js"></script>',
+            '<script type="module" defer async="true" crossorigin src="build/assets/app-0d91dc04.js"></script>',
             $tag
         );
     }
 
-    public function testTagsPreload(): void
+    public function testgetPreloadTagss(): void
     {
         $vite = new Vite(__DIR__ . '/assets/manifest/public', 'preload/');
 
-        $tag = $vite->tagsPreload(['resources/js/app.js']);
+        $tag = $vite->getPreloadTags(['resources/js/app.js']);
         $this->assertEquals(
             '<link rel="modulepreload" href="preload/assets/vendor.222bbb.js">' . "\n" .
             '<link rel="modulepreload" href="preload/assets/chunk-vue.333ccc.js">' . "\n" .

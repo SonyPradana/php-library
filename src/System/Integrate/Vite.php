@@ -16,11 +16,11 @@ class Vite
         public string $public_path,
         public string $build_path,
     ) {
-        $this->manifest_name        = 'manifest.json';
+        $this->manifest_name = 'manifest.json';
     }
 
     /**
-     * Get resource using entri ponit(s).
+     * Get/render resource using entri ponit(s).
      */
     public function __invoke(string ...$entrypoints): string
     {
@@ -293,7 +293,7 @@ class Vite
     /**
      * @param string[] $entrypoints
      */
-    public function tagsPreload(array $entrypoints): string
+    public function getPreloadTags(array $entrypoints): string
     {
         if ($this->isRunningHRM()) {
             return '';
@@ -315,10 +315,10 @@ class Vite
     }
 
     /**
-     * @param string[]                            $entrypoints
-     * @param array<string, string|bool|int|null> $attributes
+     * @param string[]                                $entrypoints
+     * @param array<string|int, string|bool|int|null> $attributes
      */
-    public function tags(array $entrypoints, ?array $attributes = null): string
+    public function getTags(array $entrypoints, ?array $attributes = null): string
     {
         $tags = [];
 
@@ -342,19 +342,8 @@ class Vite
         return implode("\n", $tags);
     }
 
-    public function tag(string $entrypoint): string
-    {
-        if ($this->isRunningHRM()) {
-            return $this->getHmrScript();
-        }
-
-        $url = $this->get($entrypoint);
-
-        return $this->createTag($url, $entrypoint);
-    }
-
     /**
-     * @param array<string, string|bool|int|null> $attributes
+     * @param array<string|int, string|bool|int|null> $attributes
      */
     private function createTag(string $url, string $entrypoint, ?array $attributes = null): string
     {
@@ -366,7 +355,7 @@ class Vite
     }
 
     /**
-     * @param array<string, string|bool|int|null> $attributes
+     * @param array<string|int, string|bool|int|null> $attributes
      */
     private function createScriptTag(string $url, ?array $attributes = null): string
     {
@@ -383,7 +372,7 @@ class Vite
     }
 
     /**
-     * @param array<string, string|bool|int|null> $attributes
+     * @param array<string|int, string|bool|int|null> $attributes
      */
     private function createStyleTag(string $url, ?array $attributes = null): string
     {
@@ -424,7 +413,7 @@ class Vite
     /**
      * Build attribute string from array.
      *
-     * @param array<string, string|bool|int|null> $attributes
+     * @param array<string|int, string|bool|int|null> $attributes
      */
     private function buildAttributeString(array $attributes): string
     {
@@ -434,6 +423,11 @@ class Vite
 
         $parts = [];
         foreach ($attributes as $key => $value) {
+            if (is_int($key)) {
+                $parts[] = htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+                continue;
+            }
+
             $key = htmlspecialchars($key, ENT_QUOTES, 'UTF-8');
 
             $part = match (true) {
