@@ -16,7 +16,7 @@ final class EachContinueTest extends TestCase
     public function itCanRenderEachContinue()
     {
         $templator = new Templator(new TemplatorFinder([__DIR__], ['']), __DIR__);
-        $out       = $templator->templates('{% foreach $numbsers as $number %}{% continue %}{% endforeach %}');
+        $out       = $templator->templates('{% foreach ($numbsers as $number) %}{% continue %}{% endforeach %}');
         $this->assertEquals('<?php foreach ($numbsers as $number): ?><?php continue ; ?><?php endforeach; ?>', $out);
     }
 }
