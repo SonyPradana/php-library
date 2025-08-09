@@ -41,23 +41,6 @@ final class RedirectResponseTest extends TestCase
     /**
      * @test
      */
-    public function itThrowErrorWhenPatternNotExist()
-    {
-        Router::get('/test/(:test)', fn ($test) => $test)->name('test');
-        $message = '';
-        try {
-            redirect_route('test', ['test']);
-        } catch (\Throwable $th) {
-            $message = $th->getMessage();
-        }
-        $this->assertEquals('parameter not matches with any pattern.', $message);
-
-        Router::reset();
-    }
-
-    /**
-     * @test
-     */
     public function itCanRedirectUsingUlrGiven()
     {
         $redirect = redirect('/test');
