@@ -326,7 +326,7 @@ class Router
             }
 
             $stringValue = (string) $value;
-            if (false === preg_match("/^{$regex}$/", $stringValue)) {
+            if (1 !== preg_match("/^{$regex}$/", $stringValue)) {
                 throw new \InvalidArgumentException("Named parameter '{$paramName}' with value '{$value}' doesn't match pattern {$patternKey} ({$regex})");
             }
 
@@ -361,7 +361,7 @@ class Router
                 }
 
                 $stringValue = (string) $value;
-                if (false === preg_match("/^{$regex}$/", $stringValue)) {
+                if (1 !== preg_match("/^{$regex}$/", $stringValue)) {
                     throw new \InvalidArgumentException("Parameter '{$value}' doesn't match pattern {$pattern} ({$regex})");
                 }
 
