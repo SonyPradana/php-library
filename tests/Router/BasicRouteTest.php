@@ -1,6 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use System\Router\Route;
 use System\Router\Router;
 use System\Test\Router\Attribute\TestBasicRouteAttribute;
 use System\Test\Router\Attribute\TestRouteAttribute;
@@ -448,5 +449,31 @@ class BasicRouteTest extends TestCase
                 'name'       => 'test.test',
             ],
         ], $routes);
+    }
+
+    /**
+     * @test
+     */
+    public function itCanRebuildUrlFromRoute(): void
+    {
+        $url =  Router::routeToUrl(new Route([
+            'uri' => '/user/(:id)/posts',
+        ]), ['100']);
+        $this->assertEquals('/user/100/posts', $url);
+
+        $url =  Router::routeToUrl(new Route([
+            'uri' => '/user/(:id)/profile/(:slug)',
+        ]), ['123', 'john-doe']);
+        $this->assertEquals('/user/123/profile/john-doe', $url);
+
+        $url =  Router::routeToUrl(new Route([
+            'uri' => '/about',
+        ]), []);
+        $this->assertEquals('/about', $url);
+
+        $url =  Router::routeToUrl(new Route([
+            'uri' => '/posts/(:num)/(:text)',
+        ]), [2024, 'title']);
+        $this->assertEquals('/posts/2024/title', $url);
     }
 }
