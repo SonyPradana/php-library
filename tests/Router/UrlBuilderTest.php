@@ -3,15 +3,28 @@
 use PHPUnit\Framework\TestCase;
 use System\Router\Route;
 use System\Router\Router;
+use System\Router\RouteUrlBuilder;
 
-class UrlBuilderTest extends TestCase
+final class UrlBuilderTest extends TestCase
 {
+    private ?RouteUrlBuilder $builder;
+
+    protected function setUp(): void
+    {
+        $this->builder = new RouteUrlBuilder(Router::$patterns);
+    }
+
+    protected function tearDown(): void
+    {
+        $this->builder = null;
+    }
+
     /** @test */
     public function itCanGenerateSimpleStandardPattern()
     {
         $this->assertSame(
             '/user/123',
-            Router::routeToUrl(
+            $this->builder->buildUrl(
                 new Route([
                     'uri' => '/user/(:id)',
                 ]),
@@ -25,7 +38,7 @@ class UrlBuilderTest extends TestCase
     {
         $this->assertSame(
             '/user/123/profile/john-doe',
-            Router::routeToUrl(
+            $this->builder->buildUrl(
                 new Route([
                     'uri' => '/user/(:id)/profile/(:slug)',
                 ]),
@@ -39,7 +52,7 @@ class UrlBuilderTest extends TestCase
     {
         $this->assertSame(
             '/absensi/456/today',
-            Router::routeToUrl(
+            $this->builder->buildUrl(
                 new Route([
                     'uri' => '/absensi/(identitas:id)/(tanggal:text)',
                 ]),
@@ -55,7 +68,7 @@ class UrlBuilderTest extends TestCase
     {
         $this->assertSame(
             '/user/123/absensi/456/hari-ini',
-            Router::routeToUrl(
+            $this->builder->buildUrl(
                 new Route([
                     'uri' => '/user/(:id)/absensi/(identitas:id)/hari-ini',
                 ]),
@@ -71,7 +84,7 @@ class UrlBuilderTest extends TestCase
     {
         $this->assertSame(
             '/admin/users/999/edit',
-            Router::routeToUrl(
+            $this->builder->buildUrl(
                 new Route([
                     'uri' => '/admin/(section:text)/(userId:id)/edit',
                 ]),
@@ -87,7 +100,7 @@ class UrlBuilderTest extends TestCase
     {
         $this->assertSame(
             '/api/1/query_123/page/5/active-users',
-            Router::routeToUrl(
+            $this->builder->buildUrl(
                 new Route([
                     'uri' => '/api/(:id)/(search:any)/page/(:num)/(filter:slug)',
                 ]),
@@ -105,7 +118,7 @@ class UrlBuilderTest extends TestCase
     {
         $this->assertSame(
             '/color/ff00ff',
-            Router::routeToUrl(
+            $this->builder->buildUrl(
                 new Route([
                     'uri'      => '/color/(:hex)',
                     'patterns' => ['(:hex)' => '([0-9a-fA-F]+)'],
@@ -120,7 +133,7 @@ class UrlBuilderTest extends TestCase
     {
         $this->assertSame(
             '/user/0/profile/',
-            Router::routeToUrl(
+            $this->builder->buildUrl(
                 new Route([
                     'uri' => '/user/(:id)/profile/(:text)',
                 ]),
@@ -134,7 +147,7 @@ class UrlBuilderTest extends TestCase
     {
         $this->assertSame(
             '/company/1/employee/456/profile/john-doe/large',
-            Router::routeToUrl(
+            $this->builder->buildUrl(
                 new Route([
                     'uri' => '/company/(:id)/employee/(empId:num)/profile/(:slug)/(avatar:text)',
                 ]),
@@ -152,7 +165,7 @@ class UrlBuilderTest extends TestCase
     {
         $this->assertSame(
             '/tags/php/related/laravel',
-            Router::routeToUrl(
+            $this->builder->buildUrl(
                 new Route([
                     'uri' => '/tags/(:slug)/related/(:slug)',
                 ]),

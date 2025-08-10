@@ -7,6 +7,7 @@ declare(strict_types=1);
 use System\Http\RedirectResponse;
 use System\Integrate\Exceptions\ApplicationNotAvailable;
 use System\Router\Router;
+use System\Router\RouteUrlBuilder;
 
 if (!function_exists('app_path')) {
     /**
@@ -367,10 +368,10 @@ if (!function_exists('redirect_route')) {
      */
     function redirect_route(string $route_name, array $parameter = []): RedirectResponse
     {
-        $route      = Router::redirect($route_name);
-        $url        = Router::routeToUrl($route, $parameter);
+        $route   = Router::redirect($route_name);
+        $builder = new RouteUrlBuilder(Router::$patterns);
 
-        return new RedirectResponse($url);
+        return new RedirectResponse($builder->buildUrl($route, $parameter));
     }
 }
 

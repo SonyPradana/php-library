@@ -2,30 +2,10 @@
 
 use PHPUnit\Framework\TestCase;
 use System\Router\Route;
-use System\Router\Router;
+use System\Router\RouteUrlBuilder;
 
 class UrlBuilderInvalidArgumentTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        Router::$patterns = [
-            '(:num)' => '\d+',
-            '(:any)' => '.+',
-        ];
-    }
-
-    protected function tearDown(): void
-    {
-        Router::$patterns = [
-            '(:id)'   => '(\d+)',
-            '(:num)'  => '([0-9]*)',
-            '(:text)' => '([a-zA-Z]*)',
-            '(:any)'  => '([0-9a-zA-Z_+-]*)',
-            '(:slug)' => '([0-9a-zA-Z_-]*)',
-            '(:all)'  => '(.*)',
-        ];
-    }
-
     public static function invalidArgumentCases(): array
     {
         return [
@@ -129,8 +109,12 @@ class UrlBuilderInvalidArgumentTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage($expectedMessage);
 
-        $route = new Route($route);
+        $route   = new Route($route);
+        $builder = new RouteUrlBuilder([
+            '(:num)' => '\d+',
+            '(:any)' => '.+',
+        ]);
 
-        Router::routeToUrl($route, $parameters);
+        $builder->buildUrl($route, $parameters);
     }
 }
