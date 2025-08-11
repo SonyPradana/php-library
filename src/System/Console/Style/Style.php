@@ -223,9 +223,7 @@ class Style
             foreach ($this->text_color_rule as $text_color) {
                 $this->rules[] = $text_color;
             }
-        }
 
-        if ($this->colorize) {
             // bg color
             foreach ($this->bg_color_rule as $bg_color) {
                 $this->rules[] = $bg_color;
