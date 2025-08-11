@@ -17,6 +17,10 @@ trait PrinterTrait
      */
     protected function rules(array $rule, $text, bool $reset = true, array $reset_rule = [Decorate::RESET]): string
     {
+        if ([] === $rule && [] === $reset_rule) {
+            return (string) $text;
+        }
+
         $string_rules       = implode(';', $rule);
         $string_reset_rules = implode(';', $reset_rule);
 

@@ -197,7 +197,7 @@ final class StyleTest extends TestCase
     }
 
     /** @test */
-    public function itCanCountTextLengthWithoutRuleCounted()
+    public function itCanCountTextLengthWithRuleCounted()
     {
         $text = new Style('12345');
         $text->bgBlue()->textWhite()->underline();
@@ -206,7 +206,7 @@ final class StyleTest extends TestCase
     }
 
     /** @test */
-    public function itCanCountTextNumberLengthWithoutRuleCounted()
+    public function itCanCountTextNumberLengthWithRuleCounted()
     {
         $text = new Style(12345);
         $text->bgBlue()->textWhite()->underline();
@@ -375,5 +375,113 @@ final class StyleTest extends TestCase
         rewind($stream);
         $this->assertEquals('', stream_get_contents($stream));
         fclose($stream);
+    }
+
+    /** @test */
+    public function itCanRenderWithNoColor(): void
+    {
+        $cmd = new Style('text', [
+            'colorize' => false,
+            'decorate' => true,
+        ]);
+
+        $cmd('i')
+            ->textDim()
+            ->push('love')
+            ->textRed()
+            ->push('php')
+            ->textBlue()
+            ->underline()
+        ;
+
+        ob_start();
+        $cmd->out(false);
+        $text = ob_get_clean();
+
+        $this->assertEquals(
+            sprintf('%s[mi%s[0m%s[mlove%s[0m%s[4mphp%s[0;24m', chr(27), chr(27), chr(27), chr(27), chr(27), chr(27)),
+            $text,
+            'render without color rule'
+        );
+    }
+
+    /** @test */
+    public function itCanRenderWithNoDecorate(): void
+    {
+        $cmd = new Style('text', [
+            'colorize' => true,
+            'decorate' => false,
+        ]);
+
+        $cmd('i')
+            ->textDim()
+            ->push('love')
+            ->textRed()
+            ->push('php')
+            ->textBlue()
+            ->underline()
+        ;
+
+        ob_start();
+        $cmd->out(false);
+        $text = ob_get_clean();
+
+        $this->assertEquals(
+            sprintf('%s[2;49mi%s[0m%s[31;49mlove%s[0m%s[34;49mphp%s[0;24m', chr(27), chr(27), chr(27), chr(27), chr(27), chr(27)),
+            $text,
+            'render without decorate rule'
+        );
+    }
+
+    /** @test */
+    public function itCanRenderWithNoColorNoDecorete(): void
+    {
+        $cmd = new Style('text', [
+            'colorize' => false,
+            'decorate' => false,
+        ]);
+
+        $cmd('i')
+            ->textDim()
+            ->bold()
+            ->push('love')
+            ->textRed()
+            ->push('php')
+            ->textBlue()
+            ->underline()
+        ;
+
+        ob_start();
+        $cmd->out(false);
+        $text = ob_get_clean();
+
+        $this->assertEquals('ilovephp', $text, 'render without color and decorate rule');
+    }
+
+    /** @test */
+    public function itCanRenderWithDecoratedUsingTap(): void
+    {
+        $cmd  = new Style('text', [
+            'colorize' => false,
+            'decorate' => false,
+        ]);
+        $cmd->textBlue()->bold();
+
+        $tap = new Style('text2', [
+            'colorize' => false,
+            'decorate' => false,
+        ]);
+        $tap->textRed();
+
+        $cmd->tap($tap);
+
+        ob_start();
+        $cmd->out(false);
+        $text = ob_get_clean();
+
+        $this->assertEquals(
+            'texttext2',
+            $text
+        );
     }
 }
