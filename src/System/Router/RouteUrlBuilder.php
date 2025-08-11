@@ -111,11 +111,9 @@ class RouteUrlBuilder
     /**
      * @param array<string|int, string|int|bool> $parameters
      *
-     * @return string|int|bool
-     *
      * @throws \InvalidArgumentException
      */
-    private function extractParameterValue(array $parameters, string $paramName, int $paramIndex, bool $isAssociative)
+    private function extractParameterValue(array $parameters, string $paramName, int $paramIndex, bool $isAssociative): string|int|bool
     {
         if ($isAssociative) {
             if (false === isset($parameters[$paramName])) {
@@ -135,24 +133,18 @@ class RouteUrlBuilder
     /**
      * @param array<string|int, string|int|bool> $parameters
      *
-     * @return string|int|bool
-     *
      * @throws \InvalidArgumentException
      */
-    private function getNextParameterValue(array $parameters, string $pattern, int $paramIndex, bool $isAssociative)
+    private function getNextParameterValue(array $parameters, string $pattern, int $paramIndex, bool $isAssociative): string|int|bool
     {
         if ($isAssociative) {
             $patternName = trim($pattern, '(:)');
 
-            if (isset($parameters[$paramIndex])) {
-                return $parameters[$paramIndex];
-            }
-
-            if (isset($parameters[$patternName])) {
-                return $parameters[$patternName];
-            }
-
-            throw new \InvalidArgumentException("Missing parameter for pattern {$pattern}. Provide either numeric index {$paramIndex} or key '{$patternName}'");
+            return match (true) {
+                isset($parameters[$patternName]) => $parameters[$patternName],
+                isset($parameters[$paramIndex])  => $parameters[$paramIndex],
+                default                          => throw new \InvalidArgumentException("Missing parameter for pattern {$pattern}. Provide either numeric index {$paramIndex} or key '{$patternName}'"),
+            };
         }
 
         if (false === isset($parameters[$paramIndex])) {
@@ -163,12 +155,9 @@ class RouteUrlBuilder
     }
 
     /**
-     * @param mixed      $value
-     * @param string|int $identifier
-     *
      * @throws \InvalidArgumentException
      */
-    private function validateParameterAgainstPattern($value, $identifier, string $pattern, string $regex): void
+    private function validateParameterAgainstPattern(mixed $value, string|int $identifier, string $pattern, string $regex): void
     {
         $stringValue = (string) $value;
 
