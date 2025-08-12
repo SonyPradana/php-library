@@ -46,4 +46,43 @@ trait TerminalTrait
     {
         return $value < $min ? $min : ($value > $max ? $max : $value);
     }
+
+    /**
+     * Reference: Composer\XdebugHandler\Process::supportsColor
+     * https://github.com/composer/xdebug-handler.
+     *
+     * the origina code
+     *
+     * @source https://github.com/symfony/console/blob/6.4/Output%2FStreamOutput.php#L80-L124
+     *
+     * @param resource $stream
+     */
+    protected function hasColorSupport($stream = \STDOUT): bool
+    {
+        if ('' !== (($_SERVER['NO_COLOR'] ?? getenv('NO_COLOR'))[0] ?? '')) {
+            return false;
+        }
+
+        if (!@stream_isatty($stream) && !\in_array(strtoupper((string) getenv('MSYSTEM')), ['MINGW32', 'MINGW64'], true)) {
+            return false;
+        }
+
+        if ('\\' === \DIRECTORY_SEPARATOR && @sapi_windows_vt100_support($stream)) {
+            return true;
+        }
+
+        if ('Hyper' === getenv('TERM_PROGRAM')
+            || false !== getenv('COLORTERM')
+            || false !== getenv('ANSICON')
+            || 'ON' === getenv('ConEmuANSI')
+        ) {
+            return true;
+        }
+
+        if ('dumb' === $term = (string) getenv('TERM')) {
+            return false;
+        }
+
+        return 1 === preg_match('/^((screen|xterm|vt100|vt220|putty|rxvt|ansi|cygwin|linux).*)|(.*-256(color)?(-bce)?)$/', $term);
+    }
 }
