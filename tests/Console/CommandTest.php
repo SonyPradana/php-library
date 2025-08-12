@@ -9,6 +9,11 @@ use System\Console\Command;
 
 class CommandTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        $this->resetEnv();
+    }
+
     /** @test */
     public function itCanGetWidth()
     {
@@ -48,66 +53,141 @@ class CommandTest extends TestCase
     }
 
     /** @test */
-    public function itCanGetColorSupport(): void
+    public function itDisablesWhenNoColor(): void
     {
-        $this->resetEnv();
-        $command = new class([]) extends Command {
+        $cmd = new class([]) extends Command {
             public function color($stream = STDOUT): bool
             {
                 return $this->hasColorSupport($stream);
             }
         };
 
-        // Case 1: NO_COLOR
         putenv('NO_COLOR=1');
-        $this->assertFalse($command->color());
+        $this->assertFalse($cmd->color());
+    }
 
-        // Case 2: TERM matches pattern
-        $this->resetEnv();
-        putenv('TERM=xterm-256color');
-        $this->assertTrue($command->color());
-
-        // Case 3: TERM=dumb
-        $this->resetEnv();
-        putenv('TERM=dumb');
-        $fp = fopen('php://temp', 'w');
-        $this->assertFalse($command->color($fp));
-
-        // Case 4: TERM_PROGRAM=Hyper
-        $this->resetEnv();
-        putenv('TERM_PROGRAM=Hyper');
-        $this->assertTrue($command->color());
-
-        // Case 5: COLORTERM set
-        $this->resetEnv();
-        putenv('COLORTERM=truecolor');
-        $this->assertTrue($command->color());
-
-        // Case 6: ANSICON set
-        $this->resetEnv();
-        putenv('ANSICON=1');
-        $this->assertTrue($command->color());
-
-        // Case 7: ConEmuANSI=ON
-        $this->resetEnv();
-        putenv('ConEmuANSI=ON');
-        $this->assertTrue($command->color());
-
-        // Case 8: MSYSTEM MinGW
-        $this->resetEnv();
-        putenv('MSYSTEM=MINGW64');
-        putenv('TERM=xterm');
-        $fp = fopen('php://temp', 'w');
-        $this->assertTrue($command->color($fp));
-
-        // Case 9: Windows VT100
-        if (DIRECTORY_SEPARATOR === '\\'
-            && function_exists('sapi_windows_vt100_support')
-            && @stream_isatty(STDOUT)
-            && @sapi_windows_vt100_support(STDOUT)
-        ) {
-            $this->resetEnv();
-            $this->assertTrue($command->color());
+    /** @test */
+    public function itMatchesTermPattern(): void
+    {
+        if (!@stream_isatty(STDOUT)) {
+            $this->markTestSkipped('Not a TTY, TERM match pattern test skipped');
         }
+
+        $cmd = new class([]) extends Command {
+            public function color($stream = STDOUT): bool
+            {
+                return $this->hasColorSupport($stream);
+            }
+        };
+
+        putenv('TERM=xterm-256color');
+        $this->assertTrue($cmd->color());
+    }
+
+    /** @test */
+    public function itDisablesWhenTermDumb(): void
+    {
+        $cmd = new class([]) extends Command {
+            public function color($stream = STDOUT): bool
+            {
+                return $this->hasColorSupport($stream);
+            }
+        };
+
+        putenv('TERM=dumb');
+        $fp = fopen('php://temp', 'w'); // not a TTY
+        $this->assertFalse($cmd->color($fp));
+    }
+
+    /** @test */
+    public function itMatchesTermProgramHyper(): void
+    {
+        $cmd = new class([]) extends Command {
+            public function color($stream = STDOUT): bool
+            {
+                return $this->hasColorSupport($stream);
+            }
+        };
+
+        putenv('TERM_PROGRAM=Hyper');
+        $this->assertTrue($cmd->color());
+    }
+
+    /** @test */
+    public function itMatchesColorterm(): void
+    {
+        $cmd = new class([]) extends Command {
+            public function color($stream = STDOUT): bool
+            {
+                return $this->hasColorSupport($stream);
+            }
+        };
+
+        putenv('COLORTERM=truecolor');
+        $this->assertTrue($cmd->color());
+    }
+
+    /** @test */
+    public function itMatchesAnsicon(): void
+    {
+        $cmd = new class([]) extends Command {
+            public function color($stream = STDOUT): bool
+            {
+                return $this->hasColorSupport($stream);
+            }
+        };
+
+        putenv('ANSICON=1');
+        $this->assertTrue($cmd->color());
+    }
+
+    /** @test */
+    public function itMatchesConEmuAnsi(): void
+    {
+        $cmd = new class([]) extends Command {
+            public function color($stream = STDOUT): bool
+            {
+                return $this->hasColorSupport($stream);
+            }
+        };
+
+        putenv('ConEmuANSI=ON');
+        $this->assertTrue($cmd->color());
+    }
+
+    /** @test */
+    public function itMatchesMsSystemMingw(): void
+    {
+        $cmd = new class([]) extends Command {
+            public function color($stream = STDOUT): bool
+            {
+                return $this->hasColorSupport($stream);
+            }
+        };
+
+        putenv('MSYSTEM=MINGW64');
+        putenv('TERM=xterm'); // ensure regex matches
+        $fp = fopen('php://temp', 'w'); // not a TTY
+        $this->assertTrue($cmd->color($fp));
+    }
+
+    /** @test */
+    public function itMatchesWindowsVt100(): void
+    {
+        if (DIRECTORY_SEPARATOR !== '\\'
+            || !function_exists('sapi_windows_vt100_support')
+            || !@stream_isatty(STDOUT)
+            || !@sapi_windows_vt100_support(STDOUT)
+        ) {
+            $this->markTestSkipped('Windows VT100 not supported in this environment');
+        }
+
+        $cmd = new class([]) extends Command {
+            public function color($stream = STDOUT): bool
+            {
+                return $this->hasColorSupport($stream);
+            }
+        };
+        $this->assertTrue($cmd->color());
     }
 }
