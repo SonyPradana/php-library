@@ -221,15 +221,16 @@ class Command implements \ArrayAccess
         return $this->option_mapper[''];
     }
 
+    /**
+     * Inject default options without overwriting
+     * 1. quiet with flag --quite
+     * 2. verbose with flag -v,-vv or -vvv
+     * 3. debug with flag --debug
+     * if there is no default option set,
+     * then set default verbosity to normal,
+     */
     protected function getDefaultVerbosity(): int
     {
-        // inject default options without overwriting
-        // 1. quiet with flag --quite
-        // 2. verbose with flag -v,-vv or -vvv
-        // 3. debug with flag --debug
-        // if there is no default option set,
-        // then set default verbosity to normal
-
         if ($this->hasOption('silent')) {
             return self::VERBOSITY_SILENT;
         }
