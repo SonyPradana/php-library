@@ -48,10 +48,14 @@ class HasColorSupportTest extends TestCase
 
     public function testColorSupportedTerminals(): void
     {
+        if ($this->isCI) {
+            $this->markTestSkipped('CI environment does not support color programs');
+        }
+
         $supportedTerminals = [
-            // 'xterm'          => true, // WARNING: ci (ubuntu-latest) does not support this
-            // 'xterm-256color' => true, // WARNING: ci (ubuntu-latest) does not support this
-            // 'screen'         => true, // WARNING: ci (ubuntu-latest) does not support this
+            'xterm'          => true,
+            'xterm-256color' => true,
+            'screen'         => true,
             'tmux-256color'  => true,
             'linux'          => true,
             // 'dumb' => false,     // WARNING: windows (local) does not support this
@@ -73,10 +77,14 @@ class HasColorSupportTest extends TestCase
 
     public function testColorEnabledBySpecialPrograms(): void
     {
+        if ($this->isCI) {
+            $this->markTestSkipped('CI environment does not support color programs');
+        }
+
         $colorPrograms = [
-            // 'TERM_PROGRAM' => 'Hyper', // WARNING: ci (ubuntu-latest) does not support this
-            // 'COLORTERM'    => 'truecolor', // WARNING: ci (ubuntu-latest) does not support this
-            // 'ANSICON'      => '1', // WARNING: ci (ubuntu-latest) does not support this
+            'TERM_PROGRAM' => 'Hyper',
+            'COLORTERM'    => 'truecolor',
+            'ANSICON'      => '1',
             'ConEmuANSI'   => 'ON',
         ];
 
