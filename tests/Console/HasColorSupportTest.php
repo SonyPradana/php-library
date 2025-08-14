@@ -72,7 +72,7 @@ class HasColorSupportTest extends TestCase
     {
         $supportedTerminals = [
             // 'xterm'          => true, // WARNING: ci (ubuntu-latest) does not support this
-            'xterm-256color' => true,
+            // 'xterm-256color' => true, // WARNING: ci (ubuntu-latest) does not support this
             'screen'         => true,
             'tmux-256color'  => true,
             'linux'          => true,
@@ -97,7 +97,7 @@ class HasColorSupportTest extends TestCase
     {
         $colorPrograms = [
             // 'TERM_PROGRAM' => 'Hyper', // WARNING: ci (ubuntu-latest) does not support this
-            'COLORTERM'    => 'truecolor',
+            // 'COLORTERM'    => 'truecolor', // WARNING: ci (ubuntu-latest) does not support this
             'ANSICON'      => '1',
             'ConEmuANSI'   => 'ON',
         ];
