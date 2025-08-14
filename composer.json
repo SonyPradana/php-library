@@ -41,12 +41,10 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "System\\Test\\Console\\": "tests/Console",
             "System\\Test\\Database\\": "tests/DataBase",
             "System\\Test\\Router\\Attribute\\": "tests/Router/Attribute"
-        },
-        "files": [
-            "tests/Integrate/Commands/CommandTest.php"
-        ]
+        }
     },
     "replace": {
         "sonypradana/cache": "self.version",
