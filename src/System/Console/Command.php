@@ -92,11 +92,12 @@ class Command implements \ArrayAccess
         $this->CMD           = array_shift($argv) ?? '';
         $this->OPTION        = $argv;
         $this->option_mapper = $default_option;
-        self::$verbosity     = $this->getDefaultVerbosity();
 
         foreach ($this->option_mapper($argv) as $key => $value) {
             $this->option_mapper[$key] = $value;
         }
+
+        self::$verbosity     = $this->getDefaultVerbosity();
     }
 
     /**
@@ -227,7 +228,7 @@ class Command implements \ArrayAccess
      * 2. verbose with flag -v,-vv or -vvv
      * 3. debug with flag --debug
      * if there is no default option set,
-     * then set default verbosity to normal,
+     * then set default verbosity to normal,.
      */
     protected function getDefaultVerbosity(): int
     {
@@ -239,16 +240,16 @@ class Command implements \ArrayAccess
             return self::VERBOSITY_QUIET;
         }
 
-        if ($this->hasOption('verbose') || $this->hasOption('v')) {
-            return self::VERBOSITY_VERBOSE;
+        if ($this->hasOption('debug') || $this->hasOption('vvv')) {
+            return self::VERBOSITY_DEBUG;
         }
 
         if ($this->hasOption('very-verbose') || $this->hasOption('vv')) {
             return self::VERBOSITY_VERY_VERBOSE;
         }
 
-        if ($this->hasOption('debug') || $this->hasOption('vvv')) {
-            return self::VERBOSITY_DEBUG;
+        if ($this->hasOption('verbose') || $this->hasOption('v')) {
+            return self::VERBOSITY_VERBOSE;
         }
 
         return self::VERBOSITY_NORMAL;
