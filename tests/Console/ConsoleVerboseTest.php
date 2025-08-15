@@ -85,4 +85,17 @@ class ConsoleVerboseTest extends TestCase
 
         $this->assertTrue($cli->isDebug());
     }
+
+    /** @test */
+    public function itCanGetAllVerboseIfRunInDebug()
+    {
+        $command = 'php cli test --vvv';
+        $argv    = explode(' ', $command);
+        $cli     = new Command($argv);
+
+        $this->assertTrue($cli->isNormal());
+        $this->assertTrue($cli->isVerbose());
+        $this->assertTrue($cli->isVeryVerbose());
+        $this->assertTrue($cli->isDebug());
+    }
 }
