@@ -26,7 +26,7 @@ class Command implements \ArrayAccess
     public const VERBOSITY_VERY_VERBOSE = 4;
     public const VERBOSITY_DEBUG        = 5;
 
-    protected static int $verbosity = self::VERBOSITY_NORMAL;
+    protected int $verbosity = self::VERBOSITY_NORMAL;
 
     /**
      * Commandline input.
@@ -97,7 +97,7 @@ class Command implements \ArrayAccess
             $this->option_mapper[$key] = $value;
         }
 
-        self::$verbosity     = $this->getDefaultVerbosity();
+        $this->verbosity     = $this->getDefaultVerbosity();
     }
 
     /**
@@ -261,42 +261,37 @@ class Command implements \ArrayAccess
             throw new \InvalidArgumentException('Verbosity level must be between ' . self::VERBOSITY_SILENT . ' and ' . self::VERBOSITY_DEBUG);
         }
 
-        self::$verbosity = $verbosity;
+        $this->verbosity = $verbosity;
     }
 
     public function getVerbosity(): int
     {
-        return self::$verbosity;
+        return $this->verbosity;
     }
 
     public function isSilent(): bool
     {
-        return self::$verbosity === self::VERBOSITY_SILENT;
+        return $this->verbosity === self::VERBOSITY_SILENT;
     }
 
     public function isQuiet(): bool
     {
-        return self::$verbosity === self::VERBOSITY_QUIET;
-    }
-
-    public function isNormal(): bool
-    {
-        return self::$verbosity >= self::VERBOSITY_NORMAL && self::$verbosity < self::VERBOSITY_VERBOSE;
+        return $this->verbosity === self::VERBOSITY_QUIET;
     }
 
     public function isVerbose(): bool
     {
-        return self::$verbosity >= self::VERBOSITY_VERBOSE;
+        return $this->verbosity >= self::VERBOSITY_VERBOSE;
     }
 
     public function isVeryVerbose(): bool
     {
-        return self::$verbosity >= self::VERBOSITY_VERY_VERBOSE;
+        return $this->verbosity >= self::VERBOSITY_VERY_VERBOSE;
     }
 
     public function isDebug(): bool
     {
-        return self::$verbosity >= self::VERBOSITY_DEBUG;
+        return $this->verbosity >= self::VERBOSITY_DEBUG;
     }
 
     /**
