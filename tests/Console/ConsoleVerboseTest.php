@@ -86,16 +86,107 @@ class ConsoleVerboseTest extends TestCase
         $this->assertTrue($cli->isDebug());
     }
 
-    /** @test */
-    public function itCanGetAllVerboseIfRunInDebug()
+    private function getVerbosityFlags(string $command): array
     {
-        $command = 'php cli test --vvv';
-        $argv    = explode(' ', $command);
-        $cli     = new Command($argv);
+        $argv = explode(' ', $command);
+        $cli  = new Command($argv);
 
-        $this->assertTrue($cli->isNormal());
-        $this->assertTrue($cli->isVerbose());
-        $this->assertTrue($cli->isVeryVerbose());
-        $this->assertTrue($cli->isDebug());
+        return [
+            'silent'       => $cli->isSilent(),
+            'quiet'        => $cli->isQuiet(),
+            'verbose'      => $cli->isVerbose(),
+            'very-verbose' => $cli->isVeryVerbose(),
+            'debug'        => $cli->isDebug(),
+        ];
+    }
+
+    /** @test */
+    public function silentLevelShouldOnlyEnableSilentFlag()
+    {
+        $this->assertEquals(
+            [
+                'silent'       => true,
+                'quiet'        => false,
+                'verbose'      => false,
+                'very-verbose' => false,
+                'debug'        => false,
+            ],
+            $this->getVerbosityFlags('php cli test --silent')
+        );
+    }
+
+    /** @test */
+    public function quietLevelShouldOnlyEnableQuietFlag()
+    {
+        $this->assertEquals(
+            [
+                'silent'       => false,
+                'quiet'        => true,
+                'verbose'      => false,
+                'very-verbose' => false,
+                'debug'        => false,
+            ],
+            $this->getVerbosityFlags('php cli test --quiet')
+        );
+    }
+
+    /** @test */
+    public function normalLevelShouldOnlyEnableNormalFlag()
+    {
+        $this->assertEquals(
+            [
+                'silent'       => false,
+                'quiet'        => false,
+                'verbose'      => false,
+                'very-verbose' => false,
+                'debug'        => false,
+            ],
+            $this->getVerbosityFlags('php cli test')
+        );
+    }
+
+    /** @test */
+    public function verboseLevelShouldEnableNormalAndVerboseFlags()
+    {
+        $this->assertEquals(
+            [
+                'silent'       => false,
+                'quiet'        => false,
+                'verbose'      => true,
+                'very-verbose' => false,
+                'debug'        => false,
+            ],
+            $this->getVerbosityFlags('php cli test -v')
+        );
+    }
+
+    /** @test */
+    public function veryVerboseLevelShouldEnableNormalVerboseAndVeryVerboseFlags()
+    {
+        $this->assertEquals(
+            [
+                'silent'       => false,
+                'quiet'        => false,
+                'verbose'      => true,
+                'very-verbose' => true,
+                'debug'        => false,
+            ],
+            $this->getVerbosityFlags('php cli test -vv')
+        );
+    }
+
+    /** @test */
+    public function debugLevelShouldEnableAllExceptSilentAndQuiet()
+    {
+        $this->assertEquals(
+            [
+                'silent'       => false,
+                'quiet'        => false,
+                'verbose'      => true,
+                'very-verbose' => true,
+                'debug'        => true,
+            ],
+            $this->getVerbosityFlags('php cli test -vvv')
+        );
     }
 }
