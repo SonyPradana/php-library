@@ -1,0 +1,89 @@
+<?php
+
+declare(strict_types=1);
+
+namespace System\Integrate\Http\Middleware;
+
+use System\Cache\RateLimiter;
+use System\Http\Request;
+use System\Http\Response;
+
+class ThrottleMiddleware
+{
+    public function __construct(protected RateLimiter $limiter)
+    {
+    }
+
+    public function handle(Request $request, \Closure $next): Response
+    {
+        $key = $this->resolveRequestKey($request);
+        if ($this->limiter->isThrottled($key, $maxAttempts = 60, $decayMinutes = 1)) {
+            return $this->rateLimitedRespose(
+                key: $key,
+                maxAttempts: $maxAttempts,
+                remaingAfter: $this->calculateRemainingAttempts(
+                    key: $key,
+                    maxAttempts: $maxAttempts,
+                    retryAfter: $this->limiter->getRemainingTime($key)
+                )
+            );
+        }
+
+        $this->limiter->recordAttempt($key, $decayMinutes);
+
+        /** @var Response */
+        $respone = $next($request);
+
+        $respone->headers->add(
+            $this->rateLimitedHeader(
+                maxAttempts: $maxAttempts,
+                remaingAfter: $this->calculateRemainingAttempts(
+                    key: $key,
+                    maxAttempts: $maxAttempts,
+                    retryAfter: null
+                )
+            )
+        );
+
+        return $respone;
+    }
+
+    protected function resolveRequestKey(Request $request): string
+    {
+        $key = $request->getMethod() . ':' . $request->getUri()->getPath();
+
+        if ($request->hasHeader('Authorization')) {
+            $key .= ':' . $request->getHeader('Authorization');
+        }
+
+        return $key;
+    }
+
+    protected function rateLimitedRespose(string $key, int $maxAttempts, int $remaingAfter, ?int $retryAfter = null): Response
+    {
+        return new Response('Too Many Requests', 429, $this->rateLimitedHeader($maxAttempts, $remaingAfter, $remaingAfter));
+    }
+
+    protected function rateLimitedHeader(int $maxAttempts, int $remaingAfter, ?int $retryAfter = null): array
+    {
+        $header = [
+            'X-RateLimit-Limit'     => (string) $maxAttempts,
+            'X-RateLimit-Remaining' => (string) $remaingAfter,
+        ];
+
+        if ($retryAfter !== null) {
+            $header['Retry-After'] = (string) $retryAfter;
+        }
+
+        return $header;
+    }
+
+    public function calculateRemainingAttempts(string $key, int $maxAttempts, ?int $retryAfter): int
+    {
+        if (null !== $retryAfter) {
+            return 0;
+        }
+
+        return $this->limiter->RecordAttemptLeft($key, $maxAttempts);
+    }
+}
