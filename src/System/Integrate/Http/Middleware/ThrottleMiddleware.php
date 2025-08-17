@@ -17,19 +17,19 @@ class ThrottleMiddleware
     public function handle(Request $request, \Closure $next): Response
     {
         $key = $this->resolveRequestKey($request);
-        if ($this->limiter->isThrottled($key, $maxAttempts = 60, $decayMinutes = 1)) {
+        if ($this->limiter->isBlocked($key, $maxAttempts = 60, $decayMinutes = 1)) {
             return $this->rateLimitedRespose(
                 key: $key,
                 maxAttempts: $maxAttempts,
                 remaingAfter: $this->calculateRemainingAttempts(
                     key: $key,
                     maxAttempts: $maxAttempts,
-                    retryAfter: $this->limiter->getRemainingTime($key)
+                    retryAfter: $this->limiter->getRetryAfter($key)
                 )
             );
         }
 
-        $this->limiter->recordAttempt($key, $decayMinutes);
+        $this->limiter->consume($key, $decayMinutes);
 
         /** @var Response */
         $respone = $next($request);
@@ -84,6 +84,6 @@ class ThrottleMiddleware
             return 0;
         }
 
-        return $this->limiter->RecordAttemptLeft($key, $maxAttempts);
+        return $this->limiter->remaining($key, $maxAttempts);
     }
 }
