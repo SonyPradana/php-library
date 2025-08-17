@@ -12,7 +12,7 @@ class RateLimiter
     {
     }
 
-    public function isBlocked(string $key, int $maxAttempts, int|\DateTime $decay): bool
+    public function isBlocked(string $key, int $maxAttempts, int|\DateInterval $decay): bool
     {
         $lockoutKey = $key . self::LOCKOUT_SUFFIX;
         $isLockout  = $this->cache->has($lockoutKey);
@@ -58,7 +58,7 @@ class RateLimiter
         return 0 === $attempts ? $maxAttempts : $maxAttempts - $attempts + 1;
     }
 
-    private function convertToSeconds(int|\DateTime $decay): int
+    private function convertToSeconds(int|\DateInterval $decay): int
     {
         if ($decay instanceof \DateInterval) {
             return (new \DateTime())->add($decay)->getTimestamp() - now()->timestamp;

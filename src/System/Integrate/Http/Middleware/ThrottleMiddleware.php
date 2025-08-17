@@ -50,13 +50,9 @@ class ThrottleMiddleware
 
     protected function resolveRequestKey(Request $request): string
     {
-        $key = $request->getMethod() . ':' . $request->getUri()->getPath();
+        $key = $request->getRemoteAddress();
 
-        if ($request->hasHeader('Authorization')) {
-            $key .= ':' . $request->getHeader('Authorization');
-        }
-
-        return $key;
+        return hash('sha256', $key);
     }
 
     protected function rateLimitedRespose(string $key, int $maxAttempts, int $remaingAfter, ?int $retryAfter = null): Response
@@ -64,6 +60,9 @@ class ThrottleMiddleware
         return new Response('Too Many Requests', 429, $this->rateLimitedHeader($maxAttempts, $remaingAfter, $remaingAfter));
     }
 
+    /**
+     * @return array<string, string>
+     */
     protected function rateLimitedHeader(int $maxAttempts, int $remaingAfter, ?int $retryAfter = null): array
     {
         $header = [
