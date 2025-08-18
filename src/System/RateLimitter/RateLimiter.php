@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
-namespace System\Cache;
+namespace System\RateLimitter;
 
-class RateLimiter implements Interfaces\RateLimiterInterface
+use System\Cache\CacheInterface;
+use System\RateLimitter\Interfaces\RateLimiterInterface;
+
+class RateLimiter implements RateLimiterInterface
 {
     private const LOCKOUT_SUFFIX = ':lockout';
 
