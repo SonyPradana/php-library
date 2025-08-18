@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Cache;
 
-class RateLimiter
+class RateLimiter implements Interfaces\RateLimiterInterface
 {
     private const LOCKOUT_SUFFIX = ':lockout';
 
@@ -56,6 +56,11 @@ class RateLimiter
         $attempts = $this->consume($key);
 
         return 0 === $attempts ? $maxAttempts : $maxAttempts - $attempts + 1;
+    }
+
+    public function reset(string $key): void
+    {
+        $this->cache->deleteMultiple([$key, $key . self::LOCKOUT_SUFFIX]);
     }
 
     private function convertToSeconds(int|\DateInterval $decay): int

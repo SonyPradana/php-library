@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace System\Integrate\Http\Middleware;
 
-use System\Cache\RateLimiter;
 use System\Http\Request;
 use System\Http\Response;
+use System\RateLimitter\Interfaces\RateLimiterInterface;
 
 class ThrottleMiddleware
 {
-    public function __construct(protected RateLimiter $limiter)
+    public function __construct(protected RateLimiterInterface $limiter)
     {
     }
 
