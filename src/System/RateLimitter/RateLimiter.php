@@ -4,74 +4,47 @@ declare(strict_types=1);
 
 namespace System\RateLimitter;
 
-use System\Cache\CacheInterface;
 use System\RateLimitter\Interfaces\RateLimiterInterface;
+use System\RateLimitter\Interfaces\RateLimiterPolicyInterface;
 
 class RateLimiter implements RateLimiterInterface
 {
-    private const LOCKOUT_SUFFIX = ':lockout';
-
-    public function __construct(private CacheInterface $cache)
+    public function __construct(private RateLimiterPolicyInterface $limitter)
     {
     }
 
     public function isBlocked(string $key, int $maxAttempts, int|\DateInterval $decay): bool
     {
-        $lockoutKey = $key . self::LOCKOUT_SUFFIX;
-        $isLockout  = $this->cache->has($lockoutKey);
-
-        if ($this->getCount($key) > $maxAttempts || $isLockout) {
-            if ($isLockout) {
-                return true;
-            }
-
-            $lockoutExpiry = now()->timestamp + $this->convertToSeconds($decay);
-            $this->cache->set($lockoutKey, $lockoutExpiry, $decay);
-        }
-
-        return false;
+        return $this->limitter->peek($key)->isBlocked();
     }
 
     public function consume(string $key, int $decayMinutes = 1): int
     {
-        $this->cache->remember($key, $decayMinutes, fn () => 0);
-
-        return $this->cache->increment($key, 1);
+        return $this->limitter->consume($key, 1)->getConsumed();
     }
 
     public function getCount(string $key): int
     {
-        return (int) $this->cache->get($key, 0);
+        return $this->limitter->peek($key)->getConsumed();
     }
 
     public function getRetryAfter(string $key): int
     {
-        $lockoutExpiry =$this->cache->get($key . self::LOCKOUT_SUFFIX);
-        if (null === $lockoutExpiry) {
+        $result = $this->limitter->peek($key);
+        if (null === $result->getRetryAfter()) {
             return 0;
         }
 
-        return max(0, (int) $lockoutExpiry - now()->timestamp);
+        return max(0, $result->getRetryAfter()->getTimestamp() - now()->timestamp);
     }
 
     public function remaining(string $key, int $maxAttempts): int
     {
-        $attempts = $this->consume($key);
-
-        return 0 === $attempts ? $maxAttempts : $maxAttempts - $attempts + 1;
+        return $this->limitter->peek($key)->getRemaining();
     }
 
     public function reset(string $key): void
     {
-        $this->cache->deleteMultiple([$key, $key . self::LOCKOUT_SUFFIX]);
-    }
-
-    private function convertToSeconds(int|\DateInterval $decay): int
-    {
-        if ($decay instanceof \DateInterval) {
-            return (new \DateTime())->add($decay)->getTimestamp() - now()->timestamp;
-        }
-
-        return $decay * 60;
+        $this->limitter->reset($key);
     }
 }

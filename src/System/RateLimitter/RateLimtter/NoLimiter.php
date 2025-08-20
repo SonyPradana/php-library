@@ -11,12 +11,12 @@ class NoLimiter implements RateLimiterPolicyInterface
 {
     public function consume(string $key, int $token = 1): RateLimit
     {
-        return new RateLimit($key, 0, 0, 0, false);
+        return new RateLimit($key, PHP_INT_MAX, 0, PHP_INT_MAX, false);
     }
 
     public function peek(string $key): RateLimit
     {
-        return new RateLimit($key, 0, 0, 0, false);
+        return new RateLimit($key, PHP_INT_MAX, 0, PHP_INT_MAX, false);
     }
 
     public function reset(string $key): void
