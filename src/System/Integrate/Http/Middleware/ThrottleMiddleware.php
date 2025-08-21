@@ -52,7 +52,7 @@ class ThrottleMiddleware
     {
         $key = $request->getRemoteAddress();
 
-        return hash('sha256', $key);
+        return sha1(, $key);
     }
 
     protected function rateLimitedRespose(string $key, int $maxAttempts, int $remaingAfter, ?int $retryAfter = null): Response
