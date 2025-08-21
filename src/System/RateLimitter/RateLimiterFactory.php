@@ -6,8 +6,8 @@ namespace System\RateLimitter;
 
 use System\Cache\CacheInterface;
 use System\RateLimitter\Interfaces\RateLimiterInterface;
-use System\RateLimitter\NoLimiter\FixedWindow;
-use System\RateLimitter\NoLimiter\NoLimiter;
+use System\RateLimitter\RateLimtter\FixedWindow;
+use System\RateLimitter\RateLimtter\NoLimitter;
 
 class RateLimiterFactory
 {
@@ -30,7 +30,7 @@ class RateLimiterFactory
     public function createNoLimitter(): RateLimiterInterface
     {
         return new RateLimiter(
-            new NoLimiter()
+            new NoLimitter()
         );
     }
 }

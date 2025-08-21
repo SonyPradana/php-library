@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\RateLimitter\NoLimiter;
+namespace System\RateLimitter\RateLimtter;
 
 use System\Cache\CacheInterface;
 use System\RateLimitter\Interfaces\RateLimiterPolicyInterface;
@@ -58,7 +58,7 @@ class FixedWindow implements RateLimiterPolicyInterface
             limit: $this->limit,
             consumed: $consumed,
             remaining: max(0, $this->limit - $consumed),
-            isBlocked: $consumed < $this->limit,
+            isBlocked: $consumed >= $this->limit,
             retryAfter: $this->getNextWindowStart(),
         );
     }
