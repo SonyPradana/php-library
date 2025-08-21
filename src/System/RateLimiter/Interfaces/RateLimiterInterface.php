@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\RateLimitter\Interfaces;
+namespace System\RateLimiter\Interfaces;
 
 interface RateLimiterInterface
 {

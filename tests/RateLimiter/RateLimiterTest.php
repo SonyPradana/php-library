@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Tests\System\RateLimitter;
+namespace Tests\System\RateLimiter;
 
 use PHPUnit\Framework\TestCase;
 use System\Cache\Storage\ArrayStorage;
-use System\RateLimitter\RateLimiter;
-use System\RateLimitter\RateLimtter\FixedWindow;
+use System\RateLimiter\RateLimiter;
+use System\RateLimiter\RateLimiter\FixedWindow;
 
-class RateLimitterTest extends TestCase
+class RateLimiterTest extends TestCase
 {
     private RateLimiter $rateLimiter;
 

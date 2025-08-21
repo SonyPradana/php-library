@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tests\System\RateLimitter\Policy;
+namespace Tests\System\RateLimiter\Policy;
 
 use PHPUnit\Framework\TestCase;
 use System\Cache\Storage\ArrayStorage;
-use System\RateLimitter\RateLimtter\FixedWindow;
+use System\RateLimiter\RateLimiter\FixedWindow;
 
 class FixedWindowTest extends TestCase
 {

@@ -2,35 +2,35 @@
 
 declare(strict_types=1);
 
-namespace System\RateLimitter;
+namespace System\RateLimiter;
 
-use System\RateLimitter\Interfaces\RateLimiterInterface;
-use System\RateLimitter\Interfaces\RateLimiterPolicyInterface;
+use System\RateLimiter\Interfaces\RateLimiterInterface;
+use System\RateLimiter\Interfaces\RateLimiterPolicyInterface;
 
 class RateLimiter implements RateLimiterInterface
 {
-    public function __construct(private RateLimiterPolicyInterface $limitter)
+    public function __construct(private RateLimiterPolicyInterface $Limiter)
     {
     }
 
     public function isBlocked(string $key, int $maxAttempts, int|\DateInterval $decay): bool
     {
-        return $this->limitter->peek($key)->isBlocked();
+        return $this->Limiter->peek($key)->isBlocked();
     }
 
     public function consume(string $key, int $decayMinutes = 1): int
     {
-        return $this->limitter->consume($key, 1)->getConsumed();
+        return $this->Limiter->consume($key, 1)->getConsumed();
     }
 
     public function getCount(string $key): int
     {
-        return $this->limitter->peek($key)->getConsumed();
+        return $this->Limiter->peek($key)->getConsumed();
     }
 
     public function getRetryAfter(string $key): int
     {
-        $result = $this->limitter->peek($key);
+        $result = $this->Limiter->peek($key);
         if (null === $result->getRetryAfter()) {
             return 0;
         }
@@ -40,11 +40,11 @@ class RateLimiter implements RateLimiterInterface
 
     public function remaining(string $key, int $maxAttempts): int
     {
-        return $this->limitter->peek($key)->getRemaining();
+        return $this->Limiter->peek($key)->getRemaining();
     }
 
     public function reset(string $key): void
     {
-        $this->limitter->reset($key);
+        $this->Limiter->reset($key);
     }
 }

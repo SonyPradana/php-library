@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace System\RateLimitter;
+namespace System\RateLimiter;
 
 use System\Cache\CacheInterface;
-use System\RateLimitter\Interfaces\RateLimiterInterface;
-use System\RateLimitter\RateLimtter\FixedWindow;
-use System\RateLimitter\RateLimtter\NoLimitter;
+use System\RateLimiter\Interfaces\RateLimiterInterface;
+use System\RateLimiter\RateLimiter\FixedWindow;
+use System\RateLimiter\RateLimiter\NoLimiter;
 
 class RateLimiterFactory
 {
@@ -27,10 +27,10 @@ class RateLimiterFactory
         );
     }
 
-    public function createNoLimitter(): RateLimiterInterface
+    public function createNoLimiter(): RateLimiterInterface
     {
         return new RateLimiter(
-            new NoLimitter()
+            new NoLimiter()
         );
     }
 }

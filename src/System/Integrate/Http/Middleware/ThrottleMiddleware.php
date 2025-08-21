@@ -6,7 +6,7 @@ namespace System\Integrate\Http\Middleware;
 
 use System\Http\Request;
 use System\Http\Response;
-use System\RateLimitter\Interfaces\RateLimiterInterface;
+use System\RateLimiter\Interfaces\RateLimiterInterface;
 
 class ThrottleMiddleware
 {

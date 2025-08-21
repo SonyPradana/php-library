@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace System\RateLimitter\RateLimtter;
+namespace System\RateLimiter\RateLimiter;
 
-use System\RateLimitter\Interfaces\RateLimiterPolicyInterface;
-use System\RateLimitter\RateLimit;
+use System\RateLimiter\Interfaces\RateLimiterPolicyInterface;
+use System\RateLimiter\RateLimit;
 
-class NoLimitter implements RateLimiterPolicyInterface
+class NoLimiter implements RateLimiterPolicyInterface
 {
     public function consume(string $key, int $token = 1): RateLimit
     {

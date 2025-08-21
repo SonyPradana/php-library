@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Tests\System\RateLimitter\Policy;
+namespace Tests\System\RateLimiter\Policy;
 
 use PHPUnit\Framework\TestCase;
-use System\RateLimitter\RateLimtter\NoLimitter;
+use System\RateLimiter\RateLimiter\NoLimiter;
 
-class NoLimitterTest extends TestCase
+class NoLimiterTest extends TestCase
 {
     /** @test */
     public function itCanConsumeTokensWithinTheLimit()
     {
-        $limiter   = new NoLimitter();
+        $limiter   = new NoLimiter();
         $rateLimit = $limiter->consume('test_key');
 
         $this->assertFalse($rateLimit->isBlocked());
@@ -23,7 +23,7 @@ class NoLimitterTest extends TestCase
     /** @test */
     public function itNeverBlocksWhenConsumingTokensExceedsTheLimit()
     {
-        $limiter = new NoLimitter();
+        $limiter = new NoLimiter();
 
         for ($i = 0; $i < 5; $i++) {
             $limiter->consume('test_key');
@@ -53,7 +53,7 @@ class NoLimitterTest extends TestCase
     /** @test */
     public function itCanResetTheRateLimit()
     {
-        $limiter = new NoLimitter();
+        $limiter = new NoLimiter();
 
         $limiter->consume('test_key');
         $limiter->reset('test_key');

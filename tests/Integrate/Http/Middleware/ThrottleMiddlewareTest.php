@@ -9,8 +9,8 @@ use System\Cache\Storage\ArrayStorage;
 use System\Http\Request;
 use System\Http\Response;
 use System\Integrate\Http\Middleware\ThrottleMiddleware;
-use System\RateLimitter\RateLimiter;
-use System\RateLimitter\RateLimtter\FixedWindow;
+use System\RateLimiter\RateLimiter;
+use System\RateLimiter\RateLimiter\FixedWindow;
 
 final class ThrottleMiddlewareTest extends TestCase
 {

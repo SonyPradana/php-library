@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace System\RateLimitter\RateLimtter;
+namespace System\RateLimiter\RateLimiter;
 
 use System\Cache\CacheInterface;
-use System\RateLimitter\Interfaces\RateLimiterPolicyInterface;
-use System\RateLimitter\RateLimit;
+use System\RateLimiter\Interfaces\RateLimiterPolicyInterface;
+use System\RateLimiter\RateLimit;
 
 class FixedWindow implements RateLimiterPolicyInterface
 {
