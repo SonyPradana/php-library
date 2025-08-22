@@ -16,13 +16,13 @@ class RateLimiterFactory
     ) {
     }
 
-    public function createFixedWindow(int $limit, int $windowsMinutes): RateLimiterInterface
+    public function createFixedWindow(int $limit, int $windowSeconds): RateLimiterInterface
     {
         return new RateLimiter(
             new FixedWindow(
                 cache: $this->cache,
                 limit: $limit,
-                windowsMinutes: $windowsMinutes,
+                windowSeconds: $windowSeconds,
             )
         );
     }

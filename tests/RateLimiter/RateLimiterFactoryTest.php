@@ -18,7 +18,7 @@ class RateLimiterFactoryTest extends TestCase
 
         $this->assertInstanceOf(
             RateLimiterInterface::class,
-            $factory->createFixedWindow(10, 1)
+            $factory->createFixedWindow(10, 60)
         );
 
         $this->assertInstanceOf(

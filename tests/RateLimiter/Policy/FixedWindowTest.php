@@ -27,7 +27,7 @@ class FixedWindowTest extends TestCase
     /** @test */
     public function itCanConsumeTokensWithinTheLimit()
     {
-        $limiter   = new FixedWindow($this->cache, 5, 1);
+        $limiter   = new FixedWindow($this->cache, 5, 60);
         $rateLimit = $limiter->consume('test_key');
 
         $this->assertFalse($rateLimit->isBlocked());
@@ -38,7 +38,7 @@ class FixedWindowTest extends TestCase
     /** @test */
     public function itBlocksWhenConsumingTokensExceedsTheLimit()
     {
-        $limiter = new FixedWindow($this->cache, 5, 1);
+        $limiter = new FixedWindow($this->cache, 5, 60);
 
         for ($i = 0; $i < 5; $i++) {
             $limiter->consume('test_key');
@@ -54,7 +54,7 @@ class FixedWindowTest extends TestCase
     /** @test */
     public function itCanPeekAtTheRateLimitStatus()
     {
-        $limiter = new FixedWindow($this->cache, 5, 1);
+        $limiter = new FixedWindow($this->cache, 5, 60);
 
         $this->cache->set('test_key:fw:' . floor(now()->timestamp / 60), 3);
 
@@ -68,7 +68,7 @@ class FixedWindowTest extends TestCase
     /** @test */
     public function itCanResetTheRateLimit()
     {
-        $limiter = new FixedWindow($this->cache, 5, 1);
+        $limiter = new FixedWindow($this->cache, 5, 60);
 
         $limiter->consume('test_key');
         $limiter->reset('test_key');

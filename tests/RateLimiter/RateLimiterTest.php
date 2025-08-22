@@ -20,7 +20,7 @@ class RateLimiterTest extends TestCase
             new FixedWindow(
                 cache: new ArrayStorage(),
                 limit: 1,
-                windowsMinutes: 1
+                windowSeconds: 60
             )
         );
     }

@@ -13,7 +13,7 @@ class FixedWindow implements RateLimiterPolicyInterface
     public function __construct(
         private CacheInterface $cache,
         private int $limit,
-        private int $windowsMinutes,
+        private int $windowSeconds,
     ) {
     }
 
@@ -35,7 +35,7 @@ class FixedWindow implements RateLimiterPolicyInterface
 
         $newConsumed = $this->cache->increment($windowKey, 1);
         if (1 === $newConsumed) {
-            $this->cache->set($windowKey, 1, $this->windowsMinutes);
+            $this->cache->set($windowKey, 1, $this->windowSeconds);
         }
 
         return new RateLimit(
@@ -70,16 +70,15 @@ class FixedWindow implements RateLimiterPolicyInterface
 
     private function getWindowKey(string $key): string
     {
-        $windowStart = floor(now()->timestamp / ($this->windowsMinutes * 60));
+        $windowStart = floor(now()->timestamp / $this->windowSeconds);
 
         return "{$key}:fw:{$windowStart}";
     }
 
     private function getNextWindowStart(): \DateTime
     {
-        $windowSeconds   = $this->windowsMinutes * 60;
-        $currentWindow   = floor(now()->timestamp / $windowSeconds);
-        $nextWindowStart = ($currentWindow + 1) * $windowSeconds;
+        $currentWindow   = floor(now()->timestamp / $this->windowSeconds);
+        $nextWindowStart = ($currentWindow + 1) * $this->windowSeconds;
 
         return new \DateTime("@{$nextWindowStart}");
     }
