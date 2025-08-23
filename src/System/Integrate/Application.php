@@ -126,6 +126,11 @@ final class Application extends Container
     private array $view_paths;
 
     /**
+     * Database path.
+     */
+    private string $database_path;
+
+    /**
      * Migration path.
      */
     private string $migraton_path;
@@ -266,6 +271,7 @@ final class Application extends Container
         $this->setCompiledViewPath($configs['COMPILED_VIEW_PATH']);
         $this->setMiddlewarePath($configs['MIDDLEWARE']);
         $this->setProviderPath($configs['SERVICE_PROVIDER']);
+        $this->setDatabasePath($configs['DATABASE_PATH']);
         $this->setMigrationPath($configs['MIGRATION_PATH']);
         $this->setPublicPath($configs['PUBLIC_PATH']);
         $this->setSeederPath($configs['SEEDER_PATH']);
@@ -311,6 +317,7 @@ final class Application extends Container
             'CACHE_PATH'            => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR,
             'CACHE_VIEW_PATH'       => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR,
             'PUBLIC_PATH'           => DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR,
+            'DATABASE_PATH'         => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR,
             'MIGRATION_PATH'        => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migration' . DIRECTORY_SEPARATOR,
             'SEEDER_PATH'           => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'seeders' . DIRECTORY_SEPARATOR,
 
@@ -319,10 +326,60 @@ final class Application extends Container
             ],
 
             // db config
-            'DB_HOST'               => 'localhost',
-            'DB_USER'               => 'root',
-            'DB_PASS'               => '',
-            'DB_NAME'               => '',
+            'db.default'     => 'mysql',
+            'db.connections' => [
+                'mysql' => [
+                    'driver'    => 'mysql',
+                    'host'      => 'localhost',
+                    'username'  => 'root',
+                    'password'  => '',
+                    'database'  => '',
+                    'port'      => 3306,
+                    'chartset'  => 'utf8mb4',
+                    'options'   => [
+                        \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
+                        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                        \PDO::ATTR_EMULATE_PREPARES   => false,
+                    ],
+                ],
+                'mariadb' => [
+                    'driver'    => 'mariadb',
+                    'host'      => 'localhost',
+                    'username'  => 'root',
+                    'password'  => '',
+                    'database'  => '',
+                    'port'      => 3306,
+                    'chartset'  => 'utf8mb4',
+                    'options'   => [
+                        \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
+                        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                        \PDO::ATTR_EMULATE_PREPARES   => false,
+                    ],
+                ],
+                'pgsql' => [
+                    'driver'   => 'pgsql',
+                    'host'     => 'localhost',
+                    'username' => 'root',
+                    'password' => '',
+                    'database' => '',
+                    'port'     => (int) 5432,
+                    'charset'  => 'utf8',
+                    'options'  => [
+                        \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
+                        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                        \PDO::ATTR_EMULATE_PREPARES   => false,
+                    ],
+                ],
+                'sqlite' => [
+                    'driver'   => 'sqlite',
+                    'database' => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'database.sqlite',
+                    'options'  => [
+                        \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
+                        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                        \PDO::ATTR_EMULATE_PREPARES   => false,
+                    ],
+                ],
+            ],
 
             // pusher
             'PUSHER_APP_ID'         => '',
@@ -593,6 +650,17 @@ final class Application extends Container
     }
 
     /**
+     * Set database path.
+     */
+    public function setDatabasePath(string $path): self
+    {
+        $this->database_path = $this->base_path . $path;
+        $this->set('path.database', $this->database_path);
+
+        return $this;
+    }
+
+    /**
      * Set migration path.
      */
     public function setMigrationPath(string $path): self
@@ -786,6 +854,14 @@ final class Application extends Container
     public function providerPath()
     {
         return $this->get('path.provider');
+    }
+
+    /**
+     * Get database path.
+     */
+    public function databasePath(): string
+    {
+        return $this->get('path.database');
     }
 
     /**

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Test\Integrate\Commands;
 
 use System\Database\MyPDO;
+use System\Database\MySchema;
 use System\Database\MySchema\Table\Create;
 use System\Integrate\Application;
 use System\Integrate\Console\MigrationCommand;
@@ -25,6 +26,7 @@ final class MigrationCommandsTest extends TestDatabase
         $this->app->setMigrationPath('/database/migration/');
         $this->app->set('environment', 'dev');
         $this->app->set(MyPDO::class, fn () => $this->pdo);
+        $this->app->set(MySchema\MyPDO::class, fn () => $this->pdo_schema);
         $this->app->set('MySchema', fn () => $this->schema);
         $this->app->set('dsn.sql', fn () => $this->env);
 

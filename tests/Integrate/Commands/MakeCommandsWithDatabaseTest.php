@@ -19,6 +19,7 @@ final class MakeCommandsWithDatabaseTest extends TestDatabase
     protected function setUp(): void
     {
         $this->createConnection();
+        $this->createUserSchema();
 
         $this->app = new Application(__DIR__);
         $this->app->set('environment', 'dev');
@@ -48,7 +49,6 @@ final class MakeCommandsWithDatabaseTest extends TestDatabase
      */
     public function itCanCallMakeCommandModelWithSuccess()
     {
-        $this->createUserSchema();
         $make_model = new MakeCommand(['cli', 'make:model', 'Client', '--table-name', 'users']);
         ob_start();
         $exit = $make_model->make_model();

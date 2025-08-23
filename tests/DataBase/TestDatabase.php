@@ -11,32 +11,27 @@ use System\Database\MySchema;
 
 abstract class TestDatabase extends TestCase
 {
-    protected $env;
+    /** @var array<string, string|int> */
+    protected array $env;
     protected MyPDO $pdo;
     protected MySchema\MyPDO $pdo_schema;
     protected MySchema $schema;
 
     protected function createConnection(): void
     {
-        $this->env = [
-            'host'           => '127.0.0.1',
-            'user'           => 'root',
-            'password'       => '',
-            'database_name'  => 'testing_db',
-        ];
-
+        $this->setupEnv($_ENV['DB_CONNECTION'] ?? 'mysql');
         $this->pdo_schema = new MySchema\MyPDO($this->env);
-        $this->schema     = new MySchema($this->pdo_schema);
+        $this->schema     = new MySchema($this->pdo_schema, $this->env['database']);
 
         // building the database
-        $this->schema->create()->database('testing_db')->ifNotExists()->execute();
+        $this->schema->create()->database($this->env['database'])->ifNotExists()->execute();
 
-        $this->pdo        = new MyPDO($this->env);
+        $this->pdo = new MyPDO($this->env);
     }
 
     protected function dropConnection(): void
     {
-        $this->schema->drop()->database('testing_db')->ifExists()->execute();
+        $this->schema->drop()->database($this->env['database'])->ifExists()->execute();
     }
 
     protected function createUserSchema(): bool
@@ -50,6 +45,21 @@ abstract class TestDatabase extends TestCase
                 PRIMARY KEY (user)
             )')
            ->execute();
+    }
+
+    protected function setupEnv(string $use_connection = 'mysql'): void
+    {
+        $this->env = match ($use_connection) {
+            'mysql', 'mariadb' => [
+                'driver'   => 'mysql',
+                'host'     => '127.0.0.1',
+                'username' => 'root',
+                'password' => '',
+                'database' => 'testing_db',
+                'port'     => 3306,
+                'chartset' => 'utf8mb4',
+            ],
+        };
     }
 
     /**
