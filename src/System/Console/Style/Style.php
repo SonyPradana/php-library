@@ -127,7 +127,7 @@ class Style
      *                            - decorate: bool, default true, if false will not decorate text
      */
     public function __construct(
-        private string|int $text = '',
+        private $text = '',
         array $options = [],
     ) {
         $this->length   = \strlen((string) $text);
