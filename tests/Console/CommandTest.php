@@ -9,6 +9,11 @@ use System\Console\Command;
 
 class CommandTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        $this->resetEnv();
+    }
+
     /** @test */
     public function itCanGetWidth()
     {
@@ -38,5 +43,59 @@ class CommandTest extends TestCase
 
         $width = $command->width();
         $this->assertEquals(100, $width);
+    }
+
+    private function resetEnv(): void
+    {
+        foreach (['NO_COLOR', 'TERM', 'TERM_PROGRAM', 'COLORTERM', 'ANSICON', 'ConEmuANSI', 'MSYSTEM'] as $var) {
+            putenv($var);
+        }
+    }
+
+    /** @test */
+    public function itDisablesWhenNoColor(): void
+    {
+        $cmd = new class([]) extends Command {
+            public function color($stream = STDOUT): bool
+            {
+                return $this->hasColorSupport($stream);
+            }
+        };
+
+        putenv('NO_COLOR=1');
+        $this->assertFalse($cmd->color());
+    }
+
+    /** @test */
+    public function itMatchesTermPattern(): void
+    {
+        if (!@stream_isatty(STDOUT)) {
+            $this->markTestSkipped('Not a TTY, TERM match pattern test skipped');
+        }
+
+        $cmd = new class([]) extends Command {
+            public function color($stream = STDOUT): bool
+            {
+                return $this->hasColorSupport($stream);
+            }
+        };
+
+        putenv('TERM=xterm-256color');
+        $this->assertTrue($cmd->color());
+    }
+
+    /** @test */
+    public function itDisablesWhenTermDumb(): void
+    {
+        $cmd = new class([]) extends Command {
+            public function color($stream = STDOUT): bool
+            {
+                return $this->hasColorSupport($stream);
+            }
+        };
+
+        putenv('TERM=dumb');
+        $fp = fopen('php://temp', 'w'); // not a TTY
+        $this->assertFalse($cmd->color($fp));
     }
 }

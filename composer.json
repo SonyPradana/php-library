@@ -41,6 +41,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "System\\Test\\Console\\": "tests/Console",
             "System\\Test\\Database\\": "tests/DataBase",
             "System\\Test\\Router\\Attribute\\": "tests/Router/Attribute"
         },
