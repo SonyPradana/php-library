@@ -19,6 +19,15 @@ class Command implements \ArrayAccess
 {
     use TerminalTrait;
 
+    public const VERBOSITY_SILENT       = 0;
+    public const VERBOSITY_QUIET        = 1;
+    public const VERBOSITY_NORMAL       = 2;
+    public const VERBOSITY_VERBOSE      = 3;
+    public const VERBOSITY_VERY_VERBOSE = 4;
+    public const VERBOSITY_DEBUG        = 5;
+
+    protected int $verbosity = self::VERBOSITY_NORMAL;
+
     /**
      * Commandline input.
      *
@@ -87,6 +96,8 @@ class Command implements \ArrayAccess
         foreach ($this->option_mapper($argv) as $key => $value) {
             $this->option_mapper[$key] = $value;
         }
+
+        $this->verbosity     = $this->getDefaultVerbosity();
     }
 
     /**
@@ -209,6 +220,78 @@ class Command implements \ArrayAccess
     protected function optionPosition()
     {
         return $this->option_mapper[''];
+    }
+
+    /**
+     * Inject default options without overwriting
+     * 1. quiet with flag --quite
+     * 2. verbose with flag -v,-vv or -vvv
+     * 3. debug with flag --debug
+     * if there is no default option set,
+     * then set default verbosity to normal,.
+     */
+    protected function getDefaultVerbosity(): int
+    {
+        if ($this->hasOption('silent')) {
+            return self::VERBOSITY_SILENT;
+        }
+
+        if ($this->hasOption('quiet')) {
+            return self::VERBOSITY_QUIET;
+        }
+
+        if ($this->hasOption('debug') || $this->hasOption('vvv')) {
+            return self::VERBOSITY_DEBUG;
+        }
+
+        if ($this->hasOption('very-verbose') || $this->hasOption('vv')) {
+            return self::VERBOSITY_VERY_VERBOSE;
+        }
+
+        if ($this->hasOption('verbose') || $this->hasOption('v')) {
+            return self::VERBOSITY_VERBOSE;
+        }
+
+        return self::VERBOSITY_NORMAL;
+    }
+
+    public function setVerbosity(int $verbosity): void
+    {
+        if ($verbosity < self::VERBOSITY_SILENT || $verbosity > self::VERBOSITY_DEBUG) {
+            throw new \InvalidArgumentException('Verbosity level must be between ' . self::VERBOSITY_SILENT . ' and ' . self::VERBOSITY_DEBUG);
+        }
+
+        $this->verbosity = $verbosity;
+    }
+
+    public function getVerbosity(): int
+    {
+        return $this->verbosity;
+    }
+
+    public function isSilent(): bool
+    {
+        return $this->verbosity === self::VERBOSITY_SILENT;
+    }
+
+    public function isQuiet(): bool
+    {
+        return $this->verbosity === self::VERBOSITY_QUIET;
+    }
+
+    public function isVerbose(): bool
+    {
+        return $this->verbosity >= self::VERBOSITY_VERBOSE;
+    }
+
+    public function isVeryVerbose(): bool
+    {
+        return $this->verbosity >= self::VERBOSITY_VERY_VERBOSE;
+    }
+
+    public function isDebug(): bool
+    {
+        return $this->verbosity >= self::VERBOSITY_DEBUG;
     }
 
     /**
