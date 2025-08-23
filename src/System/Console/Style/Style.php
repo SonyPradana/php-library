@@ -91,13 +91,6 @@ class Style
     private $decorate_rules = [];
 
     /**
-     * String to style.
-     *
-     * @var string
-     */
-    private $text;
-
-    /**
      * Lenght of text.
      *
      * @var int
@@ -114,12 +107,32 @@ class Style
     private ?OutputStream $output_stream = null;
 
     /**
-     * @param string|int $text set text to decorate
+     * Indecate color output.
      */
-    public function __construct($text = '')
-    {
-        $this->text   = $text;
-        $this->length = \strlen((string) $text);
+    private bool $colorize = true;
+
+    /**
+     * Indecate decorate is allowed.
+     */
+    private bool $decorate = true;
+
+    /**
+     * @param string|int $text Text to decorate
+     * @param array{
+     *  colorize?: bool,
+     *  decorate?: bool
+     * }                 $options
+     *                            Options for style:
+     *                            - colorize: bool, default true, if false will not colorize text
+     *                            - decorate: bool, default true, if false will not decorate text
+     */
+    public function __construct(
+        private string|int $text = '',
+        array $options = [],
+    ) {
+        $this->length   = \strlen((string) $text);
+        $this->colorize = $options['colorize'] ?? true;
+        $this->decorate = $options['decorate'] ?? true;
     }
 
     /**
@@ -205,29 +218,41 @@ class Style
         // flush
         $this->rules = [];
 
-        // font color
-        foreach ($this->text_color_rule as $text_color) {
-            $this->rules[] = $text_color;
-        }
+        if ($this->colorize) {
+            // font color
+            foreach ($this->text_color_rule as $text_color) {
+                $this->rules[] = $text_color;
+            }
 
-        // bg color
-        foreach ($this->bg_color_rule as $bg_color) {
-            $this->rules[] = $bg_color;
-        }
-
-        // decorate
-        foreach ($this->decorate_rules as $decorate) {
-            $this->rules[] = $decorate;
-        }
-
-        // raw
-        foreach ($this->raw_rules as $raws) {
-            foreach ($raws as $raw) {
-                $this->rules[] = $raw;
+            // bg color
+            foreach ($this->bg_color_rule as $bg_color) {
+                $this->rules[] = $bg_color;
             }
         }
 
-        return $ref . $this->rules($this->rules, $text, true, $this->reset_rules);
+        if ($this->decorate) {
+            // decorate
+            foreach ($this->decorate_rules as $decorate) {
+                $this->rules[] = $decorate;
+            }
+
+            // raw
+            foreach ($this->raw_rules as $raws) {
+                foreach ($raws as $raw) {
+                    $this->rules[] = $raw;
+                }
+            }
+        }
+
+        $reset_rule = false === $this->decorate && false === $this->colorize
+            ? []
+            : $this->reset_rules;
+
+        return $ref . $this->rules(
+            rule: $this->rules,
+            text: $text,
+            reset_rule: $reset_rule
+        );
     }
 
     /**
@@ -272,6 +297,7 @@ class Style
     {
         $ref        = $this->toString($this->text, $this->ref);
         $this->text = $text;
+
         $this->length += \strlen((string) $text);
 
         return $this->flush()->ref($ref);
