@@ -3,8 +3,9 @@
 $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__ . DIRECTORY_SEPARATOR . 'tests')
     ->in(__DIR__ . DIRECTORY_SEPARATOR . 'src')
+    ->in(__DIR__ . DIRECTORY_SEPARATOR . 'bin')
     ->exclude(__DIR__ . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'Template')
-    ->append(['.php-cs-fixer.php', 'rector.php', 'split-repo.php', './bin/split-repo.php']);
+    ->append(['.php-cs-fixer.php', 'rector.php', 'split-repo.php']);
 
 $rules = [
     '@Symfony'                => true,
