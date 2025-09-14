@@ -128,6 +128,9 @@ $command = new class($argv) extends Command {
         return $generator->__toString();
     }
 
+    /**
+     * @param string[] $methods
+     */
     private function generatorDocBlock(array $methods): string
     {
         $generator = new Generate('');
@@ -140,6 +143,8 @@ $command = new class($argv) extends Command {
 
     /**
      * Get all public method signatures of a class.
+     *
+     * @param ReflectionClass<object> $class
      *
      * @return string[] list of method signatures
      */
