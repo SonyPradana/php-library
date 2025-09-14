@@ -35,18 +35,17 @@ $command = new class($argv) extends Command {
         $className = ucfirst($className);
 
         // get class methods
+        $methods = [];
         if (class_exists($accessor)) {
             $reflection = new ReflectionClass($accessor);
             $methods    = $this->getMethodReflection($reflection);
-        } else {
-            $methods = [];
         }
-        $accessor_alias = $this->option('alias', $accessor);
+
+        $accessor_alias = $this->getAccessorAlias($accessor);
         $facade_class   = $this->generator($className, $accessor_alias, $methods);
+        $filename       = dirname(__DIR__) . "/src/System/Support/Facades/{$className}.php";
 
-        file_put_contents(dirname(__DIR__) . "/src/System/Support/Facades/{$className}.php", $facade_class);
-
-        return 0;
+        return false === file_put_contents($filename, $facade_class) ? 1 : 0;
     }
 
     /**
@@ -57,9 +56,11 @@ $command = new class($argv) extends Command {
     private function generator(string $class_name, string $accessor, array $methods = []): string
     {
         $generator = new Generate($class_name);
-        $generator->customizeTemplate("<?php\n\ndeclare(strict_types=1);\n{{before}}\n{{comment}}\n{{rule}}class\40{{head}}\n{\n{{body}}\n}{{end}}");
+        // $generator->customizeTemplate("<?php\n\ndeclare(strict_types=1);\n{{before}}\n{{comment}}\n{{rule}}class\40{{head}}\n{\n{{body}}\n}{{end}}");
+        $generator->setDeclareStrictTypes();
         $generator->tabIndent(' ');
         $generator->tabSize(4);
+        $generator->setEndWithNewLine();
 
         $generator->namespace('System\\Support\\Facades');
         $generator->extend('Facade');
@@ -70,8 +71,7 @@ $command = new class($argv) extends Command {
         $generator->addMethod('getAccessor')
             ->visibility(Method::PROTECTED_)
             ->isStatic()
-            ->body(["return '{$accessor}';"]);
-        $generator->setEndWithNewLine();
+            ->body(["return {$accessor};"]);
 
         return $generator->__toString();
     }
@@ -103,13 +103,26 @@ $command = new class($argv) extends Command {
                 $type = $method->getReturnType();
                 if ($type instanceof ReflectionNamedType) {
                     $returnType = $type->getName();
+
+                    // Add prefix if namespace starts with System\
+                    if (str_starts_with($returnType, 'System\\')) {
+                        $returnType = '\\' . $returnType;
+                    }
+
                     if ($type->allowsNull()) {
                         $returnType = '?' . $returnType;
                     }
                 } elseif ($type instanceof ReflectionUnionType) {
                     $types = [];
                     foreach ($type->getTypes() as $t) {
-                        $types[] = $t->getName();
+                        $typeName = $t->getName();
+
+                        // Add prefix if namespace starts with System\
+                        if (str_starts_with($typeName, 'System\\')) {
+                            $typeName = '\\' . $typeName;
+                        }
+
+                        $types[] = $typeName;
                     }
                     $returnType = implode('|', $types);
                 }
@@ -130,11 +143,23 @@ $command = new class($argv) extends Command {
                 if ($param->hasType()) {
                     $type = $param->getType();
                     if ($type instanceof ReflectionNamedType) {
-                        $param_string .= $type->getName() . ' ';
+                        $typeName = $type->getName();
+
+                        // Add prefix if namespace starts with System\
+                        if (str_starts_with($typeName, 'System\\')) {
+                            $typeName = '\\' . $typeName;
+                        }
+                        $param_string .= $typeName . ' ';
                     } elseif ($type instanceof ReflectionUnionType) {
                         $types = [];
                         foreach ($type->getTypes() as $t) {
-                            $types[] = $t->getName();
+                            $typeName = $t->getName();
+
+                            // Add prefix if namespace starts with System\
+                            if (str_starts_with($typeName, 'System\\')) {
+                                $typeName = '\\' . $typeName;
+                            }
+                            $types[] = $typeName;
                         }
                         $param_string .= implode('|', $types) . ' ';
                     }
@@ -183,9 +208,20 @@ $command = new class($argv) extends Command {
             $methods[] = "{$pad} {$item['name']}({$item['params']})";
         }
 
-        sort($methods);
-
         return $methods;
+    }
+
+    private function getAccessorAlias(string $accessor): string
+    {
+        if ($this->hasOption('alias')) {
+            return "'" . $this->option('alias') . "'";
+        }
+
+        if (class_exists($accessor)) {
+            return "\\{$accessor}::class";
+        }
+
+        return "'{$accessor}'";
     }
 };
 
