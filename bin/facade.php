@@ -111,8 +111,8 @@ $command = new class($argv) extends Command {
                 if ($type instanceof ReflectionNamedType) {
                     $returnType = $type->getName();
 
-                    // Add prefix if namespace starts with System\
-                    if (str_starts_with($returnType, 'System\\')) {
+                    // Add prefix for PHP built-in classes and System namespace classes
+                    if (str_starts_with($returnType, 'System\\') || class_exists($returnType, false)) {
                         $returnType = '\\' . $returnType;
                     }
 
@@ -124,8 +124,8 @@ $command = new class($argv) extends Command {
                     foreach ($type->getTypes() as $t) {
                         $typeName = $t->getName();
 
-                        // Add prefix if namespace starts with System\
-                        if (str_starts_with($typeName, 'System\\')) {
+                        // Add prefix for PHP built-in classes and System namespace classes
+                        if (str_starts_with($typeName, 'System\\') || class_exists($typeName, false)) {
                             $typeName = '\\' . $typeName;
                         }
 
@@ -152,8 +152,8 @@ $command = new class($argv) extends Command {
                     if ($type instanceof ReflectionNamedType) {
                         $typeName = $type->getName();
 
-                        // Add prefix if namespace starts with System\
-                        if (str_starts_with($typeName, 'System\\')) {
+                        // Add prefix for PHP built-in classes and System namespace classes
+                        if (str_starts_with($typeName, 'System\\') || class_exists($typeName, false)) {
                             $typeName = '\\' . $typeName;
                         }
 
@@ -166,8 +166,8 @@ $command = new class($argv) extends Command {
                         foreach ($type->getTypes() as $t) {
                             $typeName = $t->getName();
 
-                            // Add prefix if namespace starts with System\
-                            if (str_starts_with($typeName, 'System\\')) {
+                            // Add prefix for PHP built-in classes and System namespace classes
+                            if (str_starts_with($typeName, 'System\\') || class_exists($typeName, false)) {
                                 $typeName = '\\' . $typeName;
                             }
                             $types[] = $typeName;
