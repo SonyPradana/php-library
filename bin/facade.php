@@ -7,15 +7,22 @@ use System\Template\Generate;
 use System\Template\Method;
 
 use function System\Console\fail;
+use function System\Console\info;
 use function System\Console\warn;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $command = new class($argv) extends Command {
+    public string $facade_file_location = '/src/System/Support/Facades/';
+
     public function entry(): int
     {
         if ('facade:generate' === $this->CMD) {
             return $this->generate();
+        }
+
+        if ('facade:update' === $this->CMD) {
+            return $this->update();
         }
 
         warn('The command argument is required: facade:generate --accessor')->out();
@@ -43,9 +50,53 @@ $command = new class($argv) extends Command {
 
         $accessor_alias = $this->getAccessorAlias($accessor);
         $facade_class   = $this->generator($className, $accessor_alias, $methods);
-        $filename       = dirname(__DIR__) . "/src/System/Support/Facades/{$className}.php";
+        $filename       = dirname(__DIR__) . "{$this->facade_file_location}{$className}.php";
+
+        info("Generating new facade {$className}")->out();
 
         return false === file_put_contents($filename, $facade_class) ? 1 : 0;
+    }
+
+    public function update(): int
+    {
+        if (false === ($facade  = $this->option('facade', false))
+        || false === ($accessor = $this->option('accessor', false))
+        ) {
+            fail('The command argument is required: facade:update --facade --accessor')->out();
+
+            return 1;
+        }
+        $facade_namespace = 'System\\Support\\Facades\\' . $facade;
+        $methods          = [];
+        if (false === class_exists($facade_namespace)) {
+            fail("Facade class `{$facade}` is not exists, try generate new facade.")->out(false);
+
+            return 1;
+        }
+
+        if (false === class_exists($accessor)) {
+            fail("Facade accessor `{$accessor}` is not found.")->out(false);
+
+            return 1;
+        }
+
+        $reflection        = new ReflectionClass($accessor);
+        $methods           = $this->getMethodReflection($reflection);
+        $reflection_facade = new ReflectionClass($facade_namespace);
+
+        $filename = dirname(__DIR__) . "{$this->facade_file_location}{$facade}.php";
+        $file     = file_get_contents($filename);
+
+        info("Generating update facade {$facade}")->out();
+
+        return false === file_put_contents(
+            $filename,
+            str_replace(
+                search: $reflection_facade->getDocComment(),
+                replace: ltrim($this->generatorDocBlock($methods)),
+                subject: $file
+            )
+        ) ? 1 : 0;
     }
 
     /**
@@ -75,6 +126,16 @@ $command = new class($argv) extends Command {
             ->body(["return {$accessor};"]);
 
         return $generator->__toString();
+    }
+
+    private function generatorDocBlock(array $methods): string
+    {
+        $generator = new Generate('');
+        foreach ($methods as $doc_menthod) {
+            $generator->addComment("@method static {$doc_menthod}");
+        }
+
+        return $generator->generateComment(1, ' ');
     }
 
     /**
