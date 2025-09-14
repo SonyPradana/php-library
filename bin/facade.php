@@ -161,6 +161,7 @@ $command = new class($argv) extends Command {
             || $method->isDestructor()
             || \str_starts_with($method->getName(), '__')
             || \array_key_exists($method->getName(), $ignore_method)
+            || $method->isDeprecated()
             ) {
                 continue;
             }
