@@ -57,12 +57,13 @@ $command = new class($argv) extends Command {
     {
         $generator = new Generate($class_name);
         // $generator->customizeTemplate("<?php\n\ndeclare(strict_types=1);\n{{before}}\n{{comment}}\n{{rule}}class\40{{head}}\n{\n{{body}}\n}{{end}}");
-        $generator->setDeclareStrictTypes();
         $generator->tabIndent(' ');
         $generator->tabSize(4);
         $generator->setEndWithNewLine();
 
+        $generator->setDeclareStrictTypes();
         $generator->namespace('System\\Support\\Facades');
+        $generator->setFinal();
         $generator->extend('Facade');
         foreach ($methods as $doc_menthod) {
             $generator->addComment("@method static {$doc_menthod}");
@@ -86,13 +87,19 @@ $command = new class($argv) extends Command {
         $buffer              = [];
         $methods             = [];
         $maxReturnTypeLength = 0;
+        $ignore_method       = [
+            'offsetExists' => true,
+            'offsetGet'    => true,
+            'offsetSet'    => true,
+            'offsetUnset'  => true,
+        ];
 
         // get only public methods
         foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            if ($method->isStatic()
-            || $method->isConstructor()
+            if ($method->isConstructor()
             || $method->isDestructor()
             || str_starts_with($method->getName(), '__')
+            || array_key_exists($method->getName(), $ignore_method)
             ) {
                 continue;
             }
