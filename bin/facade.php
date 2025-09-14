@@ -156,6 +156,10 @@ $command = new class($argv) extends Command {
                         if (str_starts_with($typeName, 'System\\')) {
                             $typeName = '\\' . $typeName;
                         }
+
+                        if ($type->allowsNull() && $typeName !== 'mixed') {
+                            $typeName = '?' . $typeName;
+                        }
                         $param_string .= $typeName . ' ';
                     } elseif ($type instanceof ReflectionUnionType) {
                         $types = [];
@@ -188,15 +192,13 @@ $command = new class($argv) extends Command {
                 // default value
                 if ($param->isOptional() && $param->isDefaultValueAvailable()) {
                     $default_value = $param->getDefaultValue();
-                    if (is_array($default_value)) {
-                        $default_value = '[]';
-                    } elseif (is_bool($default_value)) {
-                        $default_value = $default_value ? 'true' : 'false';
-                    } elseif (is_string($default_value)) {
-                        $default_value = "'" . $default_value . "'";
-                    } elseif (is_null($default_value)) {
-                        $default_value = 'null';
-                    }
+                    $default_value = match(true) {
+                        is_array($default_value)  => '[]',
+                        is_bool($default_value)   => $default_value ? 'true' : 'false',
+                        is_string($default_value) => "'" . $default_value . "'",
+                        is_null($default_value)   => 'null',
+                        default                   => $default_value,
+                    };
                     $param_string .= ' = ' . $default_value;
                 }
 
