@@ -144,7 +144,7 @@ $command = new class($argv) extends Command {
                 $typeName = '\\' . $typeName;
             }
 
-            if ($type->allowsNull() && $typeName !== 'mixed') {
+            if ($type->allowsNull() && $typeName !== 'mixed' && $typeName !== 'null') {
                 $typeName = '?' . $typeName;
             }
 
