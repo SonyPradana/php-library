@@ -98,126 +98,107 @@ $command = new class($argv) extends Command {
         foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             if ($method->isConstructor()
             || $method->isDestructor()
-            || str_starts_with($method->getName(), '__')
-            || array_key_exists($method->getName(), $ignore_method)
+            || \str_starts_with($method->getName(), '__')
+            || \array_key_exists($method->getName(), $ignore_method)
             ) {
                 continue;
             }
 
             // Get return type as string
-            $returnType = '';
-            if ($method->hasReturnType()) {
-                $type = $method->getReturnType();
-                if ($type instanceof ReflectionNamedType) {
-                    $returnType = $type->getName();
+            $returnType = $method->hasReturnType()
+                ? $this->getTypeFromReflection($method->getReturnType())
+                : 'mixed';
 
-                    // Add prefix for PHP built-in classes and System namespace classes
-                    if (str_starts_with($returnType, 'System\\') || class_exists($returnType, false)) {
-                        $returnType = '\\' . $returnType;
-                    }
-
-                    if ($type->allowsNull()) {
-                        $returnType = '?' . $returnType;
-                    }
-                } elseif ($type instanceof ReflectionUnionType) {
-                    $types = [];
-                    foreach ($type->getTypes() as $t) {
-                        $typeName = $t->getName();
-
-                        // Add prefix for PHP built-in classes and System namespace classes
-                        if (str_starts_with($typeName, 'System\\') || class_exists($typeName, false)) {
-                            $typeName = '\\' . $typeName;
-                        }
-
-                        $types[] = $typeName;
-                    }
-                    $returnType = implode('|', $types);
-                }
-            } else {
-                $returnType = 'mixed';
-            }
-
-            if (strlen($returnType) > $maxReturnTypeLength) {
-                $maxReturnTypeLength = strlen($returnType);
+            if (\strlen($returnType) > $maxReturnTypeLength) {
+                $maxReturnTypeLength = \strlen($returnType);
             }
 
             // Build parameter string
             $params = [];
             foreach ($method->getParameters() as $param) {
-                $param_string = '';
-
-                // type
-                if ($param->hasType()) {
-                    $type = $param->getType();
-                    if ($type instanceof ReflectionNamedType) {
-                        $typeName = $type->getName();
-
-                        // Add prefix for PHP built-in classes and System namespace classes
-                        if (str_starts_with($typeName, 'System\\') || class_exists($typeName, false)) {
-                            $typeName = '\\' . $typeName;
-                        }
-
-                        if ($type->allowsNull() && $typeName !== 'mixed') {
-                            $typeName = '?' . $typeName;
-                        }
-                        $param_string .= $typeName . ' ';
-                    } elseif ($type instanceof ReflectionUnionType) {
-                        $types = [];
-                        foreach ($type->getTypes() as $t) {
-                            $typeName = $t->getName();
-
-                            // Add prefix for PHP built-in classes and System namespace classes
-                            if (str_starts_with($typeName, 'System\\') || class_exists($typeName, false)) {
-                                $typeName = '\\' . $typeName;
-                            }
-                            $types[] = $typeName;
-                        }
-                        $param_string .= implode('|', $types) . ' ';
-                    }
-                }
-
-                // reference
-                if ($param->isPassedByReference()) {
-                    $param_string .= '&';
-                }
-
-                // variadic
-                if ($param->isVariadic()) {
-                    $param_string .= '...';
-                }
-
-                // name
-                $param_string .= '$' . $param->getName();
-
-                // default value
-                if ($param->isOptional() && $param->isDefaultValueAvailable()) {
-                    $default_value = $param->getDefaultValue();
-                    $default_value = match(true) {
-                        is_array($default_value)  => '[]',
-                        is_bool($default_value)   => $default_value ? 'true' : 'false',
-                        is_string($default_value) => "'" . $default_value . "'",
-                        is_null($default_value)   => 'null',
-                        default                   => $default_value,
-                    };
-                    $param_string .= ' = ' . $default_value;
-                }
-
-                $params[] = $param_string;
+                $params[] = $this->getParameterString($param);
             }
 
             $buffer[] = [
                 'returnType' => $returnType,
                 'name'       => $method->getName(),
-                'params'     => implode(', ', $params),
+                'params'     => \implode(', ', $params),
             ];
         }
 
         foreach ($buffer as $item) {
-            $pad       = str_pad($item['returnType'], $maxReturnTypeLength, ' ', STR_PAD_RIGHT);
+            $pad       = \str_pad($item['returnType'], $maxReturnTypeLength, ' ', \STR_PAD_RIGHT);
             $methods[] = "{$pad} {$item['name']}({$item['params']})";
         }
 
         return $methods;
+    }
+
+    private function getTypeFromReflection(ReflectionType $type): string
+    {
+        if ($type instanceof ReflectionNamedType) {
+            $typeName = $type->getName();
+
+            // Add prefix for PHP built-in classes and System namespace classes
+            if (\str_starts_with($typeName, 'System\\') || \class_exists($typeName, false)) {
+                $typeName = '\\' . $typeName;
+            }
+
+            if ($type->allowsNull() && $typeName !== 'mixed') {
+                $typeName = '?' . $typeName;
+            }
+
+            return $typeName;
+        }
+
+        if ($type instanceof ReflectionUnionType) {
+            $types = [];
+            foreach ($type->getTypes() as $t) {
+                $types[] = $this->getTypeFromReflection($t);
+            }
+
+            return \implode('|', $types);
+        }
+
+        return 'mixed';
+    }
+
+    private function getParameterString(ReflectionParameter $param): string
+    {
+        $param_string = '';
+
+        // type
+        if ($param->hasType()) {
+            $param_string .= $this->getTypeFromReflection($param->getType()) . ' ';
+        }
+
+        // reference
+        if ($param->isPassedByReference()) {
+            $param_string .= '&';
+        }
+
+        // variadic
+        if ($param->isVariadic()) {
+            $param_string .= '...';
+        }
+
+        // name
+        $param_string .= '$' . $param->getName();
+
+        // default value
+        if ($param->isOptional() && $param->isDefaultValueAvailable()) {
+            $default_value = $param->getDefaultValue();
+            $default_value = match (true) {
+                \is_array($default_value)  => '[]',
+                \is_bool($default_value)   => $default_value ? 'true' : 'false',
+                \is_string($default_value) => "'" . $default_value . "'",
+                \is_null($default_value)   => 'null',
+                default                    => $default_value,
+            };
+            $param_string .= ' = ' . $default_value;
+        }
+
+        return $param_string;
     }
 
     private function getAccessorAlias(string $accessor): string
