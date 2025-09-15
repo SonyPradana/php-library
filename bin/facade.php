@@ -384,7 +384,7 @@ function groupMultilineBlocks(array $lines): array
 }
 
 /**
- * @retrun array{type: string, name: string}|null
+ * @return array{type: string, name: string}|null
  */
 function parseParamLine(string $line): ?array
 {
@@ -392,11 +392,11 @@ function parseParamLine(string $line): ?array
         return null;
     }
 
-    $content = ltrim(substr($line, 6)); // 6 = strlen("@param")
-
-    $type         = '';
-    $bracketDepth = 0;
-    $i            = 0;
+    $content          = ltrim(substr($line, 6)); // 6 = strlen("@param")
+    $remainingContent = '';
+    $type             = '';
+    $bracketDepth     = 0;
+    $i                = 0;
 
     while ($i < strlen($content)) {
         $char = $content[$i];
@@ -418,9 +418,9 @@ function parseParamLine(string $line): ?array
 
     if (strpos($remainingContent, '$') === 0) {
         $spacePos     = strpos($remainingContent, ' ');
-        $variableName = false !== $spacePos ?
-            substr($remainingContent, 0, $spacePos) :
-            $remainingContent;
+        $variableName = false !== $spacePos
+            ? substr($remainingContent, 0, $spacePos)
+            : $remainingContent;
 
         return [
             'type' => trim($type),
