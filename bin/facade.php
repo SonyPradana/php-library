@@ -192,9 +192,9 @@ $command = new class($argv) extends Command {
             }
 
             // Get return type as string
-            $returnType = $returnType ?? ($method->hasReturnType()
+            $returnType ??= $method->hasReturnType()
                 ? $this->getTypeFromReflection($method->getReturnType())
-                : 'mixed');
+                : 'mixed';
 
             if (\strlen($returnType) > $maxReturnTypeLength) {
                 $maxReturnTypeLength = \strlen($returnType);
