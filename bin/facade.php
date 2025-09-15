@@ -161,7 +161,6 @@ $command = new class($argv) extends Command {
             'offsetUnset'  => true,
         ];
 
-        // get only public methods
         foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             if ($method->isConstructor()
             || $method->isDestructor()
@@ -172,20 +171,27 @@ $command = new class($argv) extends Command {
                 continue;
             }
 
-            // doc block
+            // pre-require
+            $returnType = null;
+            $params     = [];
+
+            // doc block lexer
             $lines  = extractDocLines($method->getDocComment());
             $blocks = groupMultilineBlocks($lines);
 
-            // Get return type as string
-            $returnType = null;
             foreach ($blocks as $line) {
+                if (null !== ($param = parseParamLine($line))) {
+                    $params[$param['name']] = "{$param['type']} {$param['name']}";
+
+                    continue;
+                }
+
                 if (null !== ($returnResult = parseReturnLine($line))) {
                     $returnType = $returnResult;
-
-                    break;
                 }
             }
 
+            // Get return type as string
             $returnType = $returnType ?? ($method->hasReturnType()
                 ? $this->getTypeFromReflection($method->getReturnType())
                 : 'mixed');
@@ -195,25 +201,15 @@ $command = new class($argv) extends Command {
             }
 
             // Build parameter string
-            $params = [];
-            foreach ($blocks as $line) {
-                $param = parseParamLine($line);
-                if (null === $param) {
-                    continue;
-                }
-
-                $params[$param['name']] = "{$param['type']} {$param['name']}";
-            }
-
             foreach ($method->getParameters() as $param) {
                 $paramName = '$' . $param->getName();
-                if (array_key_exists($paramName, $params)) {
+                if (isset($params[$paramName])) {
                     $params[$paramName] = $params[$paramName] . $this->getParameterDefaultValueString($param);
 
                     continue;
                 }
 
-                $params['$' . $param->getName()] = $this->getParameterString($param);
+                $params[$paramName] = $this->getParameterString($param);
             }
 
             $buffer[] = [
