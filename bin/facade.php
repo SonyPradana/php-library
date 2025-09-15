@@ -171,10 +171,23 @@ $command = new class($argv) extends Command {
                 continue;
             }
 
+            // doc block
+            $lines  = extractDocLines($method->getDocComment());
+            $blocks = groupMultilineBlocks($lines);
+
             // Get return type as string
-            $returnType = $method->hasReturnType()
+            $returnType = null;
+            foreach ($blocks as $line) {
+                if (null !== ($returnResult = parseReturnLine($line))) {
+                    $returnType = $returnResult;
+
+                    break;
+                }
+            }
+
+            $returnType = $returnType ?? ($method->hasReturnType()
                 ? $this->getTypeFromReflection($method->getReturnType())
-                : 'mixed';
+                : 'mixed');
 
             if (\strlen($returnType) > $maxReturnTypeLength) {
                 $maxReturnTypeLength = \strlen($returnType);
@@ -182,8 +195,24 @@ $command = new class($argv) extends Command {
 
             // Build parameter string
             $params = [];
+            foreach ($blocks as $line) {
+                $param = parseParamLine($line);
+                if (null === $param) {
+                    continue;
+                }
+
+                $params[$param['name']] = "{$param['type']} {$param['name']}";
+            }
+
             foreach ($method->getParameters() as $param) {
-                $params[] = $this->getParameterString($param);
+                $paramName = '$' . $param->getName();
+                if (array_key_exists($paramName, $params)) {
+                    $params[$paramName] = $params[$paramName] . $this->getParameterDefaultValueString($param);
+
+                    continue;
+                }
+
+                $params['$' . $param->getName()] = $this->getParameterString($param);
             }
 
             $buffer[] = [
@@ -253,6 +282,16 @@ $command = new class($argv) extends Command {
         $param_string .= '$' . $param->getName();
 
         // default value
+        $param_string .= $this->getParameterDefaultValueString($param);
+
+        return $param_string;
+    }
+
+    private function getParameterDefaultValueString(ReflectionParameter $param): string
+    {
+        $param_string = '';
+
+        // default value
         if ($param->isOptional() && $param->isDefaultValueAvailable()) {
             $default_value = $param->getDefaultValue();
             $default_value = match (true) {
@@ -283,3 +322,142 @@ $command = new class($argv) extends Command {
 };
 
 exit($command->entry());
+
+// helper
+
+/**
+ * @return string[]
+ */
+function extractDocLines(string $docString): array
+{
+    $docString = trim($docString);
+    $docString = preg_replace('/^\/\*\*/', '', $docString);
+    $docString = preg_replace('/\*\/$/', '', $docString);
+
+    $lines = preg_split('/\r\n|\r|\n/', $docString);
+
+    $cleanLines = [];
+    foreach ($lines as $line) {
+        $line = trim($line);
+        $line = preg_replace('/^\*\s?/', '', $line);
+
+        if (false === empty($line)) {
+            $cleanLines[] = $line;
+        }
+    }
+
+    return $cleanLines;
+}
+
+/**
+ * @param string[] $lines
+ *
+ * @return string[]
+ */
+function groupMultilineBlocks(array $lines): array
+{
+    $grouped      = [];
+    $currentBlock = '';
+    $isInBlock    = false;
+
+    foreach ($lines as $line) {
+        if (preg_match('/^@\w+/', $line)) {
+            if (true === $isInBlock && false === empty($currentBlock)) {
+                $grouped[] = trim($currentBlock);
+            }
+
+            $currentBlock = $line;
+            $isInBlock    = true;
+        } elseif (true === $isInBlock) {
+            $currentBlock .= ' ' . $line;
+        } else {
+            $grouped[] = $line;
+        }
+    }
+
+    if (true === $isInBlock && false === empty($currentBlock)) {
+        $grouped[] = trim($currentBlock);
+    }
+
+    return $grouped;
+}
+
+/**
+ * @retrun array{type: string, name: string}|null
+ */
+function parseParamLine(string $line): ?array
+{
+    if (strpos($line, '@param') !== 0) {
+        return null;
+    }
+
+    $content = ltrim(substr($line, 6)); // 6 = strlen("@param")
+
+    $type         = '';
+    $bracketDepth = 0;
+    $i            = 0;
+
+    while ($i < strlen($content)) {
+        $char = $content[$i];
+
+        if ($char === '<') {
+            $bracketDepth++;
+            $type .= $char;
+        } elseif ($char === '>') {
+            $bracketDepth--;
+            $type .= $char;
+        } elseif ($char === ' ' && $bracketDepth === 0) {
+            $remainingContent = ltrim(substr($content, $i));
+            break;
+        } else {
+            $type .= $char;
+        }
+        $i++;
+    }
+
+    if (strpos($remainingContent, '$') === 0) {
+        $spacePos     = strpos($remainingContent, ' ');
+        $variableName = false !== $spacePos ?
+            substr($remainingContent, 0, $spacePos) :
+            $remainingContent;
+
+        return [
+            'type' => trim($type),
+            'name' => $variableName,
+        ];
+    }
+
+    return null;
+}
+
+function parseReturnLine(string $line): ?string
+{
+    if (strpos($line, '@return') !== 0) {
+        return null;
+    }
+
+    $content = ltrim(substr($line, 7)); // 7 = strlen("@return")
+
+    $type         = '';
+    $bracketDepth = 0;
+    $i            = 0;
+
+    while ($i < strlen($content)) {
+        $char = $content[$i];
+
+        if ($char === '<') {
+            $bracketDepth++;
+            $type .= $char;
+        } elseif ($char === '>') {
+            $bracketDepth--;
+            $type .= $char;
+        } elseif ($char === ' ' && $bracketDepth === 0) {
+            break;
+        } else {
+            $type .= $char;
+        }
+        $i++;
+    }
+
+    return trim($type);
+}
