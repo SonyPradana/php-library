@@ -13,7 +13,8 @@ use function System\Console\warn;
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $command = new class($argv) extends Command {
-    public string $facade_file_location = '/src/System/Support/Facades/';
+    private string $facade_file_location = '/src/System/Support/Facades/';
+    private string $facade_namespace     = 'System\\Support\\Facades';
 
     public function entry(): int
     {
@@ -66,7 +67,7 @@ $command = new class($argv) extends Command {
 
             return 1;
         }
-        $facade_namespace = 'System\\Support\\Facades\\' . $facade;
+        $facade_namespace = "{$this->facade_namespace}\\{$facade}";
         $methods          = [];
         if (false === class_exists($facade_namespace)) {
             fail("Facade class `{$facade}` is not exists, try generate new facade.")->out(false);
@@ -107,13 +108,13 @@ $command = new class($argv) extends Command {
     private function generator(string $class_name, string $accessor, array $methods = []): string
     {
         $generator = new Generate($class_name);
-        // $generator->customizeTemplate("<?php\n\ndeclare(strict_types=1);\n{{before}}\n{{comment}}\n{{rule}}class\40{{head}}\n{\n{{body}}\n}{{end}}");
+        $generator->customizeTemplate("<?php\n\ndeclare(strict_types=1);\n{{before}}\n{{comment}}\n{{rule}}class\40{{head}}\n{\n{{body}}\n}{{end}}");
         $generator->tabIndent(' ');
         $generator->tabSize(4);
         $generator->setEndWithNewLine();
 
-        $generator->setDeclareStrictTypes();
-        $generator->namespace('System\\Support\\Facades');
+        // $generator->setDeclareStrictTypes();
+        $generator->namespace($this->facade_namespace);
         $generator->setFinal();
         $generator->extend('Facade');
         foreach ($methods as $doc_menthod) {
