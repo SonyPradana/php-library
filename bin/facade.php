@@ -176,18 +176,20 @@ $command = new class($argv) extends Command {
             $params     = [];
 
             // doc block lexer
-            $lines  = extractDocLines($method->getDocComment());
-            $blocks = groupMultilineBlocks($lines);
+            if (false !== ($docCommnet =$method->getDocComment()))  {
+                $lines  = extractDocLines($docCommnet);
+                $blocks = groupMultilineBlocks($lines);
 
-            foreach ($blocks as $line) {
-                if (null !== ($param = parseParamLine($line))) {
-                    $params[$param['name']] = "{$param['type']} {$param['name']}";
+                foreach ($blocks as $line) {
+                    if (null !== ($param = parseParamLine($line))) {
+                        $params[$param['name']] = "{$param['type']} {$param['name']}";
 
-                    continue;
-                }
+                        continue;
+                    }
 
-                if (null !== ($returnResult = parseReturnLine($line))) {
-                    $returnType = $returnResult;
+                    if (null !== ($returnResult = parseReturnLine($line))) {
+                        $returnType = $returnResult;
+                    }
                 }
             }
 
@@ -391,7 +393,8 @@ function parseParamLine(string $line): ?array
     $content          = ltrim(substr($line, 6)); // 6 = strlen("@param")
     $remainingContent = '';
     $type             = '';
-    $bracketDepth     = 0;
+    $bracketDepth     = 0; // < and >
+    $braceDepth       = 0; // { and }
     $i                = 0;
 
     while ($i < strlen($content)) {
@@ -403,7 +406,13 @@ function parseParamLine(string $line): ?array
         } elseif ($char === '>') {
             $bracketDepth--;
             $type .= $char;
-        } elseif ($char === ' ' && $bracketDepth === 0) {
+        } elseif ($char === '{') {
+            $braceDepth++;
+            $type .= $char;
+        } elseif ($char === '}') {
+            $braceDepth--;
+            $type .= $char;
+        } elseif ($char === ' ' && $bracketDepth === 0 && $braceDepth === 0) {
             $remainingContent = ltrim(substr($content, $i));
             break;
         } else {
@@ -437,6 +446,7 @@ function parseReturnLine(string $line): ?string
 
     $type         = '';
     $bracketDepth = 0;
+    $braceDepth   = 0;
     $i            = 0;
 
     while ($i < strlen($content)) {
@@ -448,7 +458,13 @@ function parseReturnLine(string $line): ?string
         } elseif ($char === '>') {
             $bracketDepth--;
             $type .= $char;
-        } elseif ($char === ' ' && $bracketDepth === 0) {
+        } elseif ($char === '{') {
+            $braceDepth++;
+            $type .= $char;
+        } elseif ($char === '}') {
+            $braceDepth--;
+            $type .= $char;
+        } elseif ($char === ' ' && $bracketDepth === 0 && $braceDepth === 0) {
             break;
         } else {
             $type .= $char;
