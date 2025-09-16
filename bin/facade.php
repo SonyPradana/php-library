@@ -49,9 +49,8 @@ $command = new class($argv) extends Command {
             $methods    = $this->getMethodReflection($reflection);
         }
 
-        $accessor_alias = $this->getAccessorAlias($accessor);
-        $facade_class   = $this->generator($className, $accessor_alias, $methods);
-        $filename       = dirname(__DIR__) . "{$this->facade_file_location}{$className}.php";
+        $facade_class = $this->generator($className, $accessor, $methods);
+        $filename     = dirname(__DIR__) . "{$this->facade_file_location}{$className}.php";
 
         info("Generating new facade {$className}")->out();
 
@@ -120,11 +119,14 @@ $command = new class($argv) extends Command {
         foreach ($methods as $doc_menthod) {
             $generator->addComment("@method static {$doc_menthod}");
         }
+        $generator->addComment('');
+        $generator->addComment("@see {$accessor}");
 
+        $accessor_alias = $this->getAccessorAlias($accessor);
         $generator->addMethod('getAccessor')
             ->visibility(Method::PROTECTED_)
             ->isStatic()
-            ->body(["return {$accessor};"]);
+            ->body(["return {$accessor_alias};"]);
 
         return $generator->__toString();
     }
@@ -176,7 +178,7 @@ $command = new class($argv) extends Command {
             $params     = [];
 
             // doc block lexer
-            if (false !== ($docCommnet =$method->getDocComment()))  {
+            if (false !== ($docCommnet =$method->getDocComment())) {
                 $lines  = extractDocLines($docCommnet);
                 $blocks = groupMultilineBlocks($lines);
 
