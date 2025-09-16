@@ -8,6 +8,7 @@ use System\Template\Method;
 
 use function System\Console\fail;
 use function System\Console\info;
+use function System\Console\ok;
 use function System\Console\warn;
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -24,6 +25,18 @@ $command = new class($argv) extends Command {
 
         if ('facade:update' === $this->CMD) {
             return $this->update();
+        }
+
+        if ('facade:validate' === $this->CMD) {
+            $validate = $this->validate();
+            if (1 === $validate) {
+                fail('Doc block not updated.')->out();
+
+                return $validate;
+            }
+            ok('Docblock is updated.')->out();
+
+            return $validate;
         }
 
         warn('The command argument is required: facade:generate --accessor')->out();
@@ -97,6 +110,36 @@ $command = new class($argv) extends Command {
                 subject: $file
             )
         ) ? 1 : 0;
+    }
+
+    public function validate(): int
+    {
+        if (false === ($facade  = $this->option('facade', false))
+        || false === ($accessor = $this->option('accessor', false))
+        ) {
+            fail('The command argument is required: facade:validate --facade --accessor')->out();
+
+            return 1;
+        }
+        $facade_namespace = "{$this->facade_namespace}\\{$facade}";
+        $methods          = [];
+        if (false === class_exists($facade_namespace)) {
+            fail("Facade class `{$facade}` is not exists, try generate new facade.")->out(false);
+
+            return 1;
+        }
+
+        if (false === class_exists($accessor)) {
+            fail("Facade accessor `{$accessor}` is not found.")->out(false);
+
+            return 1;
+        }
+
+        $reflection        = new ReflectionClass($accessor);
+        $methods           = $this->getMethodReflection($reflection);
+        $reflection_facade = new ReflectionClass($facade_namespace);
+
+        return $reflection_facade->getDocComment() === ltrim($this->generatorDocBlock($accessor, $methods)) ? 0 : 1;
     }
 
     /**
