@@ -93,7 +93,7 @@ $command = new class($argv) extends Command {
             $filename,
             str_replace(
                 search: $reflection_facade->getDocComment(),
-                replace: ltrim($this->generatorDocBlock($methods)),
+                replace: ltrim($this->generatorDocBlock($accessor, $methods)),
                 subject: $file
             )
         ) ? 1 : 0;
@@ -134,12 +134,14 @@ $command = new class($argv) extends Command {
     /**
      * @param string[] $methods
      */
-    private function generatorDocBlock(array $methods): string
+    private function generatorDocBlock(string $accessor, array $methods): string
     {
         $generator = new Generate('');
         foreach ($methods as $doc_menthod) {
             $generator->addComment("@method static {$doc_menthod}");
         }
+        $generator->addComment('');
+        $generator->addComment("@see {$accessor}");
 
         return $generator->generateComment(1, ' ');
     }
