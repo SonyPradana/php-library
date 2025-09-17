@@ -1,7 +1,7 @@
 <?php
-/** 
+/**
  * A class with comment
- * 
+ *
  * @auth sonypradana@gmail.com
  */
 class NewClass
@@ -12,9 +12,9 @@ class NewClass
 	/** @var string String property */
 	private $_property;
 
-	/** 
+	/**
 	 * a funtion with commnet
-	 * 
+	 *
 	 * @var string sample
 	 * @param string $test Test
 	 * @return bool true if true
