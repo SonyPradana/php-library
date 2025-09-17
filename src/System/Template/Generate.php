@@ -263,7 +263,9 @@ class Generate
     }
 
     /**
-     * Three directives
+     * Generates PHP declare directives.
+     *
+     * Supported directives:
      * - ticks
      * - encoding
      * - strict_types
