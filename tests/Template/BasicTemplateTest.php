@@ -29,6 +29,7 @@ class BasicTemplateTest extends TestCase
         $class = new Generate('NewClass');
 
         $class
+            ->setDeclareStrictTypes()
             ->use(Generate::class)
             ->extend(TestCase::class)
             ->implement('testInterface')
