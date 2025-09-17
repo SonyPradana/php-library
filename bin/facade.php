@@ -192,7 +192,7 @@ $command = new class($argv) extends Command {
         foreach ($methods as $doc_menthod) {
             $generator->addComment("@method static {$doc_menthod}");
         }
-        $generator->addComment('');
+        $generator->addLineComment();
         $generator->addComment("@see {$accessor}");
 
         $accessor_alias = $this->getAccessorAlias($accessor);
@@ -213,7 +213,7 @@ $command = new class($argv) extends Command {
         foreach ($methods as $doc_menthod) {
             $generator->addComment("@method static {$doc_menthod}");
         }
-        $generator->addComment('');
+        $generator->addLineComment();
         $generator->addComment("@see {$accessor}");
 
         return $generator->generateComment(1, ' ');
