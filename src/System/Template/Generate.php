@@ -22,6 +22,8 @@ class Generate
 
     // builder property
     private ?string $name      = null;
+    /** @var string[] */
+    private array $declare     = [];
     private ?string $namespace = null;
     /** @var string[] */
     private $uses           = [];
@@ -85,8 +87,15 @@ class Generate
 
         // scope: before
         $before = [];
-        if ($this->namespace !== null || count($this->uses) > 0) {
+
+        if ($this->namespace !== null || count($this->uses) > 0 || count($this->declare) > 0) {
             $before[] = '';
+        }
+
+        if (count($this->declare) > 0) {
+            foreach ($this->declare as $declare => $value) {
+                $before[] = "declare({$declare}={$value});\n";
+            }
         }
 
         // generte namespace
@@ -251,6 +260,24 @@ class Generate
         $this->end_with_newline = $enable;
 
         return $this;
+    }
+
+    /**
+     * Three directives
+     * - ticks
+     * - encoding
+     * - str.
+     */
+    public function addDeclare(string $directive, string|int $value): self
+    {
+        $this->declare[$directive] = $value;
+
+        return $this;
+    }
+
+    public function setDeclareStrictTypes(int $level = 1): self
+    {
+        return $this->addDeclare('strict_types', $level);
     }
 
     // setter
