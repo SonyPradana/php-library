@@ -216,7 +216,7 @@ $command = new class($argv) extends Command {
         $generator->addLineComment();
         $generator->addComment("@see {$accessor}");
 
-        return $generator->generateComment(1, ' ');
+        return $generator->generateComment(tab_indent: ' ');
     }
 
     /**
