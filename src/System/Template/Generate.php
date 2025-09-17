@@ -266,7 +266,7 @@ class Generate
      * Three directives
      * - ticks
      * - encoding
-     * - strict_types.
+     * - strict_types
      */
     public function addDeclare(string $directive, string|int $value): self
     {
