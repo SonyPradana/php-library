@@ -2,9 +2,9 @@
 
 class NewClass
 {
-	/** 
+	/**
 	 * Test
-	 * 
+	 *
 	 * @var string
 	 */
 	private $test = "works";

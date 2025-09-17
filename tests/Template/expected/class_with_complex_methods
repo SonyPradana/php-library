@@ -2,9 +2,9 @@
 
 class NewClass
 {
-	/** 
+	/**
 	 * A method
-	 * 
+	 *
 	 * @return string $name Test
 	 */
 	function test(string $name = "test"): string
@@ -28,13 +28,13 @@ class NewClass
 	}
 
 	/** @return bool true if true */
-	final static public function someTest(string $case, int $number): bool
+	final public static function someTest(string $case, int $number): bool
 	{
 		$bool = true;
 		return $bool;
 	}
 
-	/** 
+	/**
 	 * @param string $param String param
 	 * @return string Same as param
 	 */
@@ -43,7 +43,7 @@ class NewClass
 		return $param;
 	}
 
-	/** 
+	/**
 	 * @param string $param String param
 	 * @return string Same as param
 	 */
