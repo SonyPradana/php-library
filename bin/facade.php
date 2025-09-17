@@ -29,6 +29,19 @@ $command = new class($argv) extends Command {
         }
 
         if ('facade:validate' === $this->CMD) {
+            if (false !== ($file = $this->option('from-file', false))
+                && file_exists(__DIR__ . $file)
+            ) {
+                $facades = require_once __DIR__ . $file;
+                foreach ($facades as $facade => $accessor) {
+                    if (1 === $this->validator($facade, $accessor)) {
+                        return 1;
+                    }
+                }
+
+                return 0;
+            }
+
             return $this->validate();
         }
 
@@ -114,6 +127,12 @@ $command = new class($argv) extends Command {
 
             return 1;
         }
+
+        return $this->validator($facade, $accessor);
+    }
+
+    public function validator(string $facade, string $accessor): int
+    {
         $facade_namespace = "{$this->facade_namespace}\\{$facade}";
         $methods          = [];
         if (false === class_exists($facade_namespace)) {
@@ -143,12 +162,12 @@ $command = new class($argv) extends Command {
         }
 
         if ($old_docblock === $new_docblock) {
-            ok('Docblock is updated.')->out();
+            ok("Docblock is updated `{$facade}`.")->out(false);
 
             return 0;
         }
 
-        fail('Docblock not updated.')->out();
+        fail("Docblock not updated `{$facade}`.")->out(false);
 
         return 1;
     }

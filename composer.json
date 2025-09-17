@@ -79,12 +79,14 @@
         "test:types": "phpstan analyse --ansi --memory-limit=-1 --debug",
         "test:unit": "phpunit --testdox --exclude-group database,not-for-mysql5.7",
         "test:release": "php ./bin/split-repo.php validate",
+        "test:facade:validate": "php ./bin/facade.php facade:validate --from-file /facade-generator.php",
         "test:dev": [
             "@test:refacto",
             "@test:lint",
             "@test:types",
             "@test:unit",
-            "@test:release"
+            "@test:release",
+            "test:facade:validate"
         ],
         "test": [
             "rector --dry-run",
