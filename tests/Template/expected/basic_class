@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use System\Template\Generate;
 
 class NewClass extends PHPUnit\Framework\TestCase implements testInterface

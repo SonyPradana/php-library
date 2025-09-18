@@ -64,9 +64,6 @@ class Method
         // final
         $pre[] = $this->is_final ? 'final' : '';
 
-        // static
-        $pre[] = $this->is_static ? 'static' : '';
-
         // visibility
         $pre[] = match ($this->visibility) {
             self::PUBLIC_    => 'public',
@@ -74,6 +71,9 @@ class Method
             self::PROTECTED_ => 'protected',
             default          => '',
         };
+
+        // static
+        $pre[] = $this->is_static ? 'static' : '';
 
         // {{final}}{{visibility}}{{static}}
         $pre    = array_filter($pre);
@@ -115,6 +115,9 @@ class Method
         return $this;
     }
 
+    /**
+     * @deprecated seen ver 0.40, use `setFinal` instead
+     */
     public function isFinal(bool $is_final = true): self
     {
         $this->is_final = $is_final;
@@ -122,7 +125,24 @@ class Method
         return $this;
     }
 
+    public function setFinal(bool $is_final = true): self
+    {
+        $this->is_final = $is_final;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated seen ver 0.40, use `setStatic` instead
+     */
     public function isStatic(bool $is_static = true): self
+    {
+        $this->is_static = $is_static;
+
+        return $this;
+    }
+
+    public function setStatic(bool $is_static = true): self
     {
         $this->is_static = $is_static;
 
