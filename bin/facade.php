@@ -180,12 +180,11 @@ $command = new class($argv) extends Command {
     private function generator(string $class_name, string $accessor, array $methods = []): string
     {
         $generator = new Generate($class_name);
-        $generator->customizeTemplate("<?php\n\ndeclare(strict_types=1);\n{{before}}\n{{comment}}\n{{rule}}class\40{{head}}\n{\n{{body}}\n}{{end}}");
         $generator->tabIndent(' ');
         $generator->tabSize(4);
         $generator->setEndWithNewLine();
 
-        // $generator->setDeclareStrictTypes();
+        $generator->setDeclareStrictTypes();
         $generator->namespace($this->facade_namespace);
         $generator->setFinal();
         $generator->extend('Facade');
@@ -198,7 +197,7 @@ $command = new class($argv) extends Command {
         $accessor_alias = $this->getAccessorAlias($accessor);
         $generator->addMethod('getAccessor')
             ->visibility(Method::PROTECTED_)
-            ->isStatic()
+            ->setStatic()
             ->body(["return {$accessor_alias};"]);
 
         return $generator->__toString();
