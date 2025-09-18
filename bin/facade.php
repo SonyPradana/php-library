@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use System\Console\Command;
+use System\Console\Style\Style;
 use System\Template\Generate;
 use System\Template\Method;
 
@@ -153,13 +154,9 @@ $command = new class($argv) extends Command {
         $old_docblock      = $reflection_facade->getDocComment();
         $new_docblock      = ltrim($this->generatorDocBlock($accessor, $methods));
 
-        if ($this->isVeryVerbose()) {
-            style('Original doc block:')->textYellow()->newLines()
-                ->push($old_docblock)->textDim()->newLines()
-                ->push('New docblock:')->textYellow()->newLines()
-                ->push($new_docblock)->textDim()
-                ->out();
-        }
+        $this
+            ->diff($new_docblock, $old_docblock)
+            ->outIf($this->isVeryVerbose(), false);
 
         if ($old_docblock === $new_docblock) {
             ok("Docblock is updated `{$facade}`.")->out(false);
@@ -393,6 +390,37 @@ $command = new class($argv) extends Command {
         }
 
         return "'{$accessor}'";
+    }
+
+    private function diff(string $new, string $old): Style
+    {
+        $oldLines = explode("\n", $old);
+        $newLines = explode("\n", $new);
+
+        $max = max(count($oldLines), count($newLines));
+        $out = new Style();
+
+        for ($i = 0; $i < $max; $i++) {
+            $oldLine = $oldLines[$i] ?? null;
+            $newLine = $newLines[$i] ?? null;
+
+            if ($oldLine === $newLine) {
+                // unchanged
+                $out->push("  " . ($oldLine ?? ''))->textDim()->newLines();
+            } elseif ($oldLine !== null && $newLine === null) {
+                // removed
+                $out->push("- " . $oldLine)->textRed()->newLines();
+            } elseif ($oldLine === null && $newLine !== null) {
+                // added
+                $out->push("+ " . $newLine)->textGreen()->newLines();
+            } else {
+                // changed
+                $out->push("- " . $oldLine)->textRed()->newLines();
+                $out->push("+ " . $newLine)->textGreen()->newLines();
+            }
+        }
+
+        return $out;
     }
 };
 
