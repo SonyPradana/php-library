@@ -10,7 +10,6 @@ use System\Template\Method;
 use function System\Console\fail;
 use function System\Console\info;
 use function System\Console\ok;
-use function System\Console\style;
 use function System\Console\warn;
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -109,13 +108,16 @@ $command = new class($argv) extends Command {
 
         info("Generating update facade {$facade}")->out();
 
+        $old_docblock = $reflection_facade->getDocComment();
+        $new_docblock = ltrim($this->generatorDocBlock($accessor, $methods));
+
+        $this
+            ->diff($new_docblock, $old_docblock)
+            ->outIf($this->isVeryVerbose(), false);
+
         return false === file_put_contents(
             $filename,
-            str_replace(
-                search: $reflection_facade->getDocComment(),
-                replace: ltrim($this->generatorDocBlock($accessor, $methods)),
-                subject: $file
-            )
+            str_replace(search: $old_docblock, replace: $new_docblock, subject: $file)
         ) ? 1 : 0;
     }
 
@@ -397,30 +399,98 @@ $command = new class($argv) extends Command {
         $oldLines = explode("\n", $old);
         $newLines = explode("\n", $new);
 
-        $max = max(count($oldLines), count($newLines));
+        $lcs     = $this->computeLCS($oldLines, $newLines);
+        $diffOps = $this->generateDiffOperations($oldLines, $newLines, $lcs);
+
+        // Build styled output
         $out = new Style();
-
-        for ($i = 0; $i < $max; $i++) {
-            $oldLine = $oldLines[$i] ?? null;
-            $newLine = $newLines[$i] ?? null;
-
-            if ($oldLine === $newLine) {
-                // unchanged
-                $out->push("  " . ($oldLine ?? ''))->textDim()->newLines();
-            } elseif ($oldLine !== null && $newLine === null) {
-                // removed
-                $out->push("- " . $oldLine)->textRed()->newLines();
-            } elseif ($oldLine === null && $newLine !== null) {
-                // added
-                $out->push("+ " . $newLine)->textGreen()->newLines();
-            } else {
-                // changed
-                $out->push("- " . $oldLine)->textRed()->newLines();
-                $out->push("+ " . $newLine)->textGreen()->newLines();
+        foreach ($diffOps as $op) {
+            switch ($op['type']) {
+                case 'unchanged':
+                    $out->push('  ' . $op['line'])->textDim()->newLines();
+                    break;
+                case 'removed':
+                    $out->push('- ' . $op['line'])->textRed()->newLines();
+                    break;
+                case 'added':
+                    $out->push('+ ' . $op['line'])->textGreen()->newLines();
+                    break;
             }
         }
 
         return $out;
+    }
+
+    /**
+     * Compute LCS table.
+     *
+     * @param string[] $oldLines
+     * @param string[] $newLines
+     *
+     * @return array<int, int[]>
+     */
+    private function computeLCS(array $oldLines, array $newLines): array
+    {
+        $oldCount = count($oldLines);
+        $newCount = count($newLines);
+
+        // Initialize LCS table
+        $lcs = array_fill(0, $oldCount + 1, array_fill(0, $newCount + 1, 0));
+
+        // Fill LCS table using dynamic programming
+        for ($i = 1; $i <= $oldCount; $i++) {
+            for ($j = 1; $j <= $newCount; $j++) {
+                if ($oldLines[$i - 1] === $newLines[$j - 1]) {
+                    $lcs[$i][$j] = $lcs[$i - 1][$j - 1] + 1;
+                } else {
+                    $lcs[$i][$j] = max($lcs[$i - 1][$j], $lcs[$i][$j - 1]);
+                }
+            }
+        }
+
+        return $lcs;
+    }
+
+    /**
+     * Generate diff based on LCS.
+     *
+     * @param string[]          $oldLines
+     * @param string[]          $newLines
+     * @param array<int, int[]> $lcs
+     *
+     * @return array<int, array{type: 'added'|'removed'|'unchanged', line: string}>
+     */
+    private function generateDiffOperations(array $oldLines, array $newLines, array $lcs): array
+    {
+        $operations = [];
+        $i          = count($oldLines);
+        $j          = count($newLines);
+
+        // Backtrack through LCS table to generate diff operations
+        while ($i > 0 || $j > 0) {
+            if ($i > 0 && $j > 0 && $oldLines[$i - 1] === $newLines[$j - 1]) {
+                array_unshift($operations, [
+                    'type' => 'unchanged',
+                    'line' =>  $oldLines[$i - 1],
+                ]);
+                $i--;
+                $j--;
+            } elseif ($j > 0 && ($i === 0 || $lcs[$i][$j - 1] >= $lcs[$i - 1][$j])) {
+                array_unshift($operations, [
+                    'type' => 'added',
+                    'line' =>  $newLines[$j - 1],
+                ]);
+                $j--;
+            } elseif ($i > 0 && ($j === 0 || $lcs[$i][$j - 1] < $lcs[$i - 1][$j])) {
+                array_unshift($operations, [
+                    'type' => 'removed',
+                    'line' =>  $oldLines[$i - 1],
+                ]);
+                $i--;
+            }
+        }
+
+        return $operations;
     }
 };
 
