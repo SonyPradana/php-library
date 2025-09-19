@@ -471,20 +471,20 @@ $command = new class($argv) extends Command {
             if ($i > 0 && $j > 0 && $oldLines[$i - 1] === $newLines[$j - 1]) {
                 array_unshift($operations, [
                     'type' => 'unchanged',
-                    'line' =>  $oldLines[$i - 1],
+                    'line' => $oldLines[$i - 1],
                 ]);
                 $i--;
                 $j--;
             } elseif ($j > 0 && ($i === 0 || $lcs[$i][$j - 1] >= $lcs[$i - 1][$j])) {
                 array_unshift($operations, [
                     'type' => 'added',
-                    'line' =>  $newLines[$j - 1],
+                    'line' => $newLines[$j - 1],
                 ]);
                 $j--;
             } elseif ($i > 0 && ($j === 0 || $lcs[$i][$j - 1] < $lcs[$i - 1][$j])) {
                 array_unshift($operations, [
                     'type' => 'removed',
-                    'line' =>  $oldLines[$i - 1],
+                    'line' => $oldLines[$i - 1],
                 ]);
                 $i--;
             }
