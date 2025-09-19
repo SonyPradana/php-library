@@ -74,8 +74,8 @@ $command = new class($argv) extends Command {
 
     public function generate(): int
     {
-        if (false === ($className = $this->option('class-name', false))) {
-            fail('The command argument is required: facade:generate --class-name')->outIf($this->canWrite());
+        if (false === ($className = $this->option('facade', false))) {
+            fail('The command argument is required: facade:generate --facade')->outIf($this->canWrite());
 
             return 1;
         }
