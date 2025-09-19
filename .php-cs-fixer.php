@@ -1,11 +1,12 @@
 <?php
 
 $finder = PhpCsFixer\Finder::create()
-    ->in(__DIR__ . DIRECTORY_SEPARATOR . 'tests')
-    ->in(__DIR__ . DIRECTORY_SEPARATOR . 'src')
     ->in(__DIR__ . DIRECTORY_SEPARATOR . 'bin')
+    ->in(__DIR__ . DIRECTORY_SEPARATOR . 'resources')
+    ->in(__DIR__ . DIRECTORY_SEPARATOR . 'src')
+    ->in(__DIR__ . DIRECTORY_SEPARATOR . 'tests')
     ->exclude(__DIR__ . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'Template')
-    ->append(['.php-cs-fixer.php', 'rector.php', 'split-repo.php', __DIR__ . DIRECTORY_SEPARATOR . 'facades.php']);
+    ->append(['.php-cs-fixer.php', 'rector.php', 'split-repo.php']);
 
 $rules = [
     '@Symfony'                => true,
