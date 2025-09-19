@@ -18,6 +18,11 @@ $command = new class($argv) extends Command {
     private string $facade_file_location = '/src/System/Support/Facades/';
     private string $facade_namespace     = 'System\\Support\\Facades';
 
+    private function canWrite(): bool
+    {
+        return $this->getVerbosity() > self::VERBOSITY_QUIET;
+    }
+
     public function entry(): int
     {
         if ('facade:generate' === $this->CMD) {
@@ -35,7 +40,7 @@ $command = new class($argv) extends Command {
                     }
                 }
                 $count = count($facades);
-                ok("Done {$count} `Facade` class has successfully updated.")->out();
+                ok("Done {$count} `Facade` class has successfully updated.")->outIf($this->canWrite());
 
                 return 0;
             }
@@ -54,7 +59,7 @@ $command = new class($argv) extends Command {
                     }
                 }
                 $count = count($facades);
-                ok("Done {$count} `Facade` class has successfully validated.")->out();
+                ok("Done {$count} `Facade` class has successfully validated.")->outIf($this->canWrite());
 
                 return 0;
             }
@@ -62,7 +67,7 @@ $command = new class($argv) extends Command {
             return $this->validate();
         }
 
-        warn('The command argument is required: facade:generate --accessor')->out();
+        warn('The command argument is required: facade:generate --accessor')->outIf($this->canWrite());
 
         return 1;
     }
@@ -70,7 +75,7 @@ $command = new class($argv) extends Command {
     public function generate(): int
     {
         if (false === ($className = $this->option('class-name', false))) {
-            fail('The command argument is required: facade:generate --class-name')->out();
+            fail('The command argument is required: facade:generate --class-name')->outIf($this->canWrite());
 
             return 1;
         }
@@ -88,7 +93,7 @@ $command = new class($argv) extends Command {
         $facade_class = $this->generator($className, $accessor, $methods);
         $filename     = dirname(__DIR__) . "{$this->facade_file_location}{$className}.php";
 
-        info("Generating new facade {$className}")->out();
+        info("Generating new facade {$className}")->outIf($this->canWrite());
 
         return false === file_put_contents($filename, $facade_class) ? 1 : 0;
     }
@@ -98,7 +103,7 @@ $command = new class($argv) extends Command {
         if (false === ($facade  = $this->option('facade', false))
         || false === ($accessor = $this->option('accessor', false))
         ) {
-            fail('The command argument is required: facade:update --facade --accessor')->out();
+            fail('The command argument is required: facade:update --facade --accessor')->outIf($this->canWrite());
 
             return 1;
         }
@@ -111,13 +116,13 @@ $command = new class($argv) extends Command {
         $facade_namespace = "{$this->facade_namespace}\\{$facade}";
         $methods          = [];
         if (false === class_exists($facade_namespace)) {
-            fail("Facade class `{$facade}` is not exists, try generate new facade.")->out(false);
+            fail("Facade class `{$facade}` is not exists, try generate new facade.")->outIf($this->canWrite(), false);
 
             return 1;
         }
 
         if (false === class_exists($accessor)) {
-            fail("Facade accessor `{$accessor}` is not found.")->out(false);
+            fail("Facade accessor `{$accessor}` is not found.")->outIf($this->canWrite(), false);
 
             return 1;
         }
@@ -129,7 +134,7 @@ $command = new class($argv) extends Command {
         $filename = dirname(__DIR__) . "{$this->facade_file_location}{$facade}.php";
         $file     = file_get_contents($filename);
 
-        info("Generating update facade {$facade}")->out();
+        info("Generating update facade {$facade}")->outIf($this->canWrite());
 
         $old_docblock = $reflection_facade->getDocComment();
         $new_docblock = ltrim($this->generatorDocBlock($accessor, $methods));
@@ -149,7 +154,7 @@ $command = new class($argv) extends Command {
         if (false === ($facade  = $this->option('facade', false))
         || false === ($accessor = $this->option('accessor', false))
         ) {
-            fail('The command argument is required: facade:validate --facade --accessor')->out();
+            fail('The command argument is required: facade:validate --facade --accessor')->outIf($this->canWrite());
 
             return 1;
         }
@@ -162,13 +167,13 @@ $command = new class($argv) extends Command {
         $facade_namespace = "{$this->facade_namespace}\\{$facade}";
         $methods          = [];
         if (false === class_exists($facade_namespace)) {
-            fail("Facade class `{$facade}` is not exists, try generate new facade.")->out(false);
+            fail("Facade class `{$facade}` is not exists, try generate new facade.")->outIf($this->canWrite(), false);
 
             return 1;
         }
 
         if (false === class_exists($accessor)) {
-            fail("Facade accessor `{$accessor}` is not found.")->out(false);
+            fail("Facade accessor `{$accessor}` is not found.")->outIf($this->canWrite(), false);
 
             return 1;
         }
@@ -184,12 +189,12 @@ $command = new class($argv) extends Command {
             ->outIf($this->isVeryVerbose(), false);
 
         if ($old_docblock === $new_docblock) {
-            ok("Docblock is updated `{$facade}`.")->out(false);
+            ok("Docblock is updated `{$facade}`.")->outIf($this->canWrite(), false);
 
             return 0;
         }
 
-        fail("Docblock not updated `{$facade}`.")->out(false);
+        fail("Docblock not updated `{$facade}`.")->outIf($this->canWrite(), false);
 
         return 1;
     }
