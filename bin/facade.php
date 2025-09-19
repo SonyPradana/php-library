@@ -25,6 +25,21 @@ $command = new class($argv) extends Command {
         }
 
         if ('facade:update' === $this->CMD) {
+            if (false !== ($file = $this->option('from-file', false))
+                && file_exists(dirname(__DIR__) . $file)
+            ) {
+                $facades = require_once dirname(__DIR__) . $file;
+                foreach ($facades as $facade => $accessor) {
+                    if (1 === $this->updater($facade, $accessor)) {
+                        return 1;
+                    }
+                }
+                $count = count($facades);
+                ok("Done {$count} `Facade` class has successfully updated.")->out();
+
+                return 0;
+            }
+
             return $this->update();
         }
 
@@ -38,6 +53,8 @@ $command = new class($argv) extends Command {
                         return 1;
                     }
                 }
+                $count = count($facades);
+                ok("Done {$count} `Facade` class has successfully validated.")->out();
 
                 return 0;
             }
@@ -85,6 +102,12 @@ $command = new class($argv) extends Command {
 
             return 1;
         }
+
+        return $this->updater($facade, $accessor);
+    }
+
+    public function updater(string $facade, string $accessor): int
+    {
         $facade_namespace = "{$this->facade_namespace}\\{$facade}";
         $methods          = [];
         if (false === class_exists($facade_namespace)) {
