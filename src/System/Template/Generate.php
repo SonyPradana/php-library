@@ -109,10 +109,13 @@ class Generate
             $before[] = '';
         }
 
-        $before = implode("\n", $before);
-
         // scope comment, generate commnet
-        $comment = $this->generateComment(0, $this->tab_indent);
+        if ('' !== ($comment = $this->generateComment(0, $this->tab_indent))) {
+            $before[] = '';
+        }
+
+        // built before
+        $before = implode("\n", $before);
 
         // genarete class rule
         $rule = $this->rule == 0
