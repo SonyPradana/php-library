@@ -30,9 +30,9 @@ $command = new class($argv) extends Command {
 
         if ('facade:validate' === $this->CMD) {
             if (false !== ($file = $this->option('from-file', false))
-                && file_exists(__DIR__ . $file)
+                && file_exists(dirname(__DIR__) . $file)
             ) {
-                $facades = require_once __DIR__ . $file;
+                $facades = require_once dirname(__DIR__) . $file;
                 foreach ($facades as $facade => $accessor) {
                     if (1 === $this->validator($facade, $accessor)) {
                         return 1;
