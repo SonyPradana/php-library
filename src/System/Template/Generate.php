@@ -88,10 +88,6 @@ class Generate
         // scope: before
         $before = [];
 
-        if ($this->namespace !== null || count($this->uses) > 0 || count($this->declare) > 0) {
-            $before[] = '';
-        }
-
         if (count($this->declare) > 0) {
             foreach ($this->declare as $declare => $value) {
                 $before[] = "declare({$declare}={$value});\n";
@@ -109,10 +105,18 @@ class Generate
             $before[] = '';
         }
 
-        $before = implode("\n", $before);
-
-        // scope comment, generate commnet
+        // scope comment, generate comment
         $comment = $this->generateComment(0, $this->tab_indent);
+
+        if ($this->namespace !== null
+        || count($this->uses) > 0
+        || count($this->declare) > 0
+        || '' === $comment
+        ) {
+            array_unshift($before, '');
+        }
+
+        $before = implode("\n", $before);
 
         // genarete class rule
         $rule = $this->rule == 0
