@@ -14,6 +14,8 @@ use System\Security\Hashing\HashManager;
  * @method static string                                 make(string $value, array $options = [])
  * @method static bool                                   verify(string $value, string $hashed_value, array $options = [])
  * @method static bool                                   isValidAlgorithm(string $hash)
+ *
+ * @see System\Security\Hashing\HashManager
  */
 final class Hash extends Facade
 {

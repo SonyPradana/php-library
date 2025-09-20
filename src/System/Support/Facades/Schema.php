@@ -11,6 +11,8 @@ namespace System\Support\Facades;
  * @method static \System\Database\MySchema\Table\Create   table(string $table_name, callable $blueprint)
  * @method static \System\Database\MySchema\Table\Alter    alter(string $table_name, callable $blueprint)
  * @method static \System\Database\MySchema\Table\Raw      raw(string $raw)
+ *
+ * @see System\Database\MySchema
  */
 final class Schema extends Facade
 {
