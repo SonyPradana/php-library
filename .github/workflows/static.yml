@@ -1,6 +1,6 @@
 name: Static Analysis
 
-on: 
+on:
   push:
     branches:
       - master
@@ -53,7 +53,7 @@ jobs:
 
     - name: Run PHPStan
       run: vendor/bin/phpstan analyse --no-progress --debug --ansi
-      
+
   refacto:
     runs-on: ubuntu-latest
     strategy:
@@ -78,7 +78,7 @@ jobs:
 
     - name: Run Rector
       run: vendor/bin/rector --dry-run
-      
+
   split-repo:
     runs-on: ubuntu-latest
     name: Split repo validation Check
@@ -98,3 +98,23 @@ jobs:
 
     - name: Validate split repo
       run: composer test:release
+
+  facade-validate:
+    runs-on: ubuntu-latest
+    name: Validation registered facades
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 8.0
+        tools: composer:v2
+
+    - name: Install Dependencies
+      run: composer update --no-interaction --no-progress --ansi
+
+    - name: Validate facade list
+      run: composer test:facade:validate
