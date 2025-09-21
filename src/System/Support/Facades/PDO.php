@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace System\Support\Facades;
 
 /**
- * @method static self                                                                                                                                                               instance()
+ * @method static \System\Database\MyPDO                                                                                                                                             instance()
  * @method static MyPDO                                                                                                                                                              conn(array<string, string> $configs)
  * @method static array{driver: string, host: ?string, database: ?string, port: ?int, chartset: ?string, username: ?string, password: ?string, options: array<int, string|int|bool>} configs()
  * @method static string                                                                                                                                                             getDsn(array{host: string, driver: 'mysql'|'mariadb'|'pgsql'|'sqlite', database: ?string, port: ?int, chartset: ?string} $configs)
- * @method static self                                                                                                                                                               query(string $query)
- * @method static self                                                                                                                                                               bind(int|string|bool|null $param, mixed $value, int|string|bool|null $type = null)
+ * @method static \System\Database\MyPDO                                                                                                                                             query(string $query)
+ * @method static \System\Database\MyPDO                                                                                                                                             bind(int|string|bool|null $param, mixed $value, int|string|bool|null $type = null)
  * @method static bool                                                                                                                                                               execute()
  * @method static mixed[]|false                                                                                                                                                      resultset()
  * @method static mixed                                                                                                                                                              single()
