@@ -185,4 +185,18 @@ final class CreateTest extends TestDatabaseQuery
             $schema->__toString()
         );
     }
+
+    /** @test */
+    public function itCanGenerateQueryWithComment(): void
+    {
+        $schema = new Create('testing_db', 'test', $this->pdo_schame);
+        $schema('PersonID')->int();
+        $schema('LastName')->varchar(255)->comment('The last name of the person associated with this ID');
+        $schema->primaryKey('PersonID');
+
+        $this->assertEquals(
+            'CREATE TABLE testing_db.test ( PersonID int, LastName varchar(255) COMMENT \'The last name of the person associated with this ID\', PRIMARY KEY (PersonID) )',
+            $schema->__toString()
+        );
+    }
 }
