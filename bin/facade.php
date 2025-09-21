@@ -257,6 +257,7 @@ $command = new class($argv) extends Command {
         $buffer              = [];
         $methods             = [];
         $maxReturnTypeLength = 0;
+        $full_class_name     = '\\' . $class->getName();
         $ignore_method       = [
             'offsetExists' => true,
             'offsetGet'    => true,
@@ -300,6 +301,10 @@ $command = new class($argv) extends Command {
             $returnType ??= $method->hasReturnType()
                 ? $this->getTypeFromReflection($method->getReturnType())
                 : 'mixed';
+
+            if ('self' === $returnType) {
+                $returnType = $full_class_name;
+            }
 
             if (\strlen($returnType) > $maxReturnTypeLength) {
                 $maxReturnTypeLength = \strlen($returnType);
