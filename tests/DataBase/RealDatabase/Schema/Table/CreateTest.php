@@ -107,4 +107,19 @@ final class CreateTest extends TestDatabase
 
         $this->assertTrue($schema->execute());
     }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanGenerateQueryWithComment(): void
+    {
+        $schema = new Create('testing_db', 'test', $this->pdo_schema);
+        $schema('PersonID')->int();
+        $schema('LastName')->varchar(255)->comment('The last name of the person associated with this ID');
+        $schema->primaryKey('PersonID');
+
+        $this->assertTrue($schema->execute());
+    }
 }
