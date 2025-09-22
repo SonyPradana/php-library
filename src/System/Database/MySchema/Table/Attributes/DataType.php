@@ -74,6 +74,21 @@ class DataType
         return $this->datatype = new Constraint("float($lenght)");
     }
 
+    public function decimal(int $precision = 10, int $scale = 2): Constraint
+    {
+        return $this->datatype = new Constraint("decimal($precision, $scale)");
+    }
+
+    public function double(int $precision = 10, int $scale = 2): Constraint
+    {
+        return $this->datatype = new Constraint("double($precision, $scale)");
+    }
+
+    public function boolean(): Constraint
+    {
+        return $this->datatype = new Constraint('boolean');
+    }
+
     // date
 
     public function time(int $lenght = 0): Constraint
@@ -99,7 +114,22 @@ class DataType
         return $this->datatype = new Constraint('date');
     }
 
+    public function datetime(): Constraint
+    {
+        return $this->datatype = new Constraint('datetime');
+    }
+
+    public function year(): Constraint
+    {
+        return $this->datatype = new Constraint('year');
+    }
+
     // text
+
+    public function char(int $lenght = 255): Constraint
+    {
+        return $this->datatype = new Constraint("char($lenght)");
+    }
 
     public function varchar(int $lenght = 0): Constraint
     {
@@ -126,6 +156,11 @@ class DataType
         }
 
         return $this->datatype = new Constraint("blob($lenght)");
+    }
+
+    public function json(): Constraint
+    {
+        return $this->datatype = new Constraint('json');
     }
 
     /**
