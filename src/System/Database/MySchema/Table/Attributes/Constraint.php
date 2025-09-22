@@ -114,10 +114,20 @@ class Constraint
     /**
      * Adds a comment to the column when creating it.
      * Note: Comments are not supported for PRIMARY KEY, FOREIGN KEY, or UNIQUE constraints.
+     *
+     * @throws \InvalidArgumentException
      */
     public function comment(string $comment): self
     {
-        $this->comment = "COMMENT '{$comment}'";
+        if ('' === trim($comment)) {
+            return $this;
+        }
+
+        if (strlen($comment) > 1024) {
+            throw new \InvalidArgumentException('Comment too long (max 1024 chracters).');
+        }
+
+        $this->comment = "COMMENT '" . str_replace("'", "''", $comment) . "'";
 
         return $this;
     }
