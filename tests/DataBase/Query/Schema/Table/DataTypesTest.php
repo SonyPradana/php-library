@@ -59,12 +59,12 @@ final class DataTypesTest extends TestDatabaseQuery
         $schema('col_time')->time();
         $schema('col_time_len')->time(4);
         $schema('col_timestamp')->timestamp()->default('CURRENT_TIMESTAMP', false);
-        $schema('col_timestamp_len')->timestamp(6)->default('CURRENT_TIMESTAMP', false);
+        $schema('col_timestamp_len')->timestamp(6)->defaultNull();
         $schema('col_date')->date();
         $schema('col_datetime')->datetime();
         $schema('col_year')->year();
 
-        $expected = 'CREATE TABLE testing_db.test_datetime ( col_time time, col_time_len time(4), col_timestamp timestamp DEFAULT CURRENT_TIMESTAMP, col_timestamp_len timestamp(6) DEFAULT CURRENT_TIMESTAMP, col_date date, col_datetime datetime, col_year year )';
+        $expected = 'CREATE TABLE testing_db.test_datetime ( col_time time, col_time_len time(4), col_timestamp timestamp DEFAULT CURRENT_TIMESTAMP, col_timestamp_len timestamp(6) DEFAULT NULL, col_date date, col_datetime datetime, col_year year )';
         $this->assertEquals($expected, $schema->__toString());
     }
 }
