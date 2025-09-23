@@ -72,8 +72,8 @@ final class DataTypesTest extends TestDatabase
 
         $schema('col_time')->time();
         $schema('col_time_len')->time(4);
-        $schema('col_timestamp')->timestamp();
-        $schema('col_timestamp_len')->timestamp(6);
+        $schema('col_timestamp')->timestamp()->default('CURRENT_TIMESTAMP');
+        $schema('col_timestamp_len')->timestamp(6)->default('CURRENT_TIMESTAMP');
         $schema('col_date')->date();
         $schema('col_datetime')->datetime();
         $schema('col_year')->year();
