@@ -20,6 +20,7 @@ class Constraint
     protected $unsigned;
     /** @var string */
     protected $raw;
+    protected string $comment;
 
     public function __construct(string $data_type)
     {
@@ -30,6 +31,7 @@ class Constraint
         $this->raw            = '';
         $this->order          = '';
         $this->unsigned       = '';
+        $this->comment        = '';
     }
 
     public function __toString()
@@ -47,6 +49,7 @@ class Constraint
             $this->auto_increment,
             $this->raw,
             $this->order,
+            $this->comment,
         ];
 
         return implode(' ', array_filter($collumn, fn ($item) => $item !== ''));
@@ -104,6 +107,27 @@ class Constraint
             throw new \Exception('Cant use UNSIGNED not integer datatype.');
         }
         $this->unsigned = 'UNSIGNED';
+
+        return $this;
+    }
+
+    /**
+     * Adds a comment to the column when creating it.
+     * Note: Comments are not supported for PRIMARY KEY, FOREIGN KEY, or UNIQUE constraints.
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function comment(string $comment): self
+    {
+        if ('' === trim($comment)) {
+            return $this;
+        }
+
+        if (strlen($comment) > 1024) {
+            throw new \InvalidArgumentException('Comment too long (max 1024 chracters).');
+        }
+
+        $this->comment = "COMMENT '" . str_replace("'", "''", $comment) . "'";
 
         return $this;
     }
