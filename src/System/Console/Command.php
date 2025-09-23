@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace System\Console;
 
 use System\Console\Traits\TerminalTrait;
-use System\Text\Str;
 
 /**
  * Add costumize terminal style by adding trits:
@@ -115,8 +114,8 @@ class Command implements \ArrayAccess
         $alias        = [];
 
         foreach ($argv as $key => $option) {
-            if ($this->isCommmadParam($option)) {
-                $key_value = explode('=', $option);
+            if ($this->isCommandParam($option)) {
+                $key_value = explode('=', $option, 2);
                 $name      = preg_replace('/^(-{1,2})/', '', $key_value[0]);
 
                 // alias check
@@ -140,8 +139,8 @@ class Command implements \ArrayAccess
                     continue;
                 }
 
-                $next           = $argv[$next_key];
-                if ($this->isCommmadParam($next)) {
+                $next = $argv[$next_key];
+                if ($this->isCommandParam($next)) {
                     $options[$name] = true;
                 }
 
@@ -149,7 +148,21 @@ class Command implements \ArrayAccess
                 continue;
             }
 
-            $options[$last_option][] = $this->removeQuote($option);
+            if (null !== $last_option) {
+                if (false === isset($options[$last_option])) {
+                    $options[$last_option] = [];
+                } elseif (false === is_array($options[$last_option])) {
+                    $options[$last_option] = [$options[$last_option]];
+                }
+
+                $options[$last_option][] = $this->removeQuote($option);
+            } else {
+                if (false === isset($options[''])) {
+                    $options[''] = [];
+                }
+
+                $options[''][] = $this->removeQuote($option);
+            }
         }
 
         // re-group alias
@@ -171,9 +184,9 @@ class Command implements \ArrayAccess
     /**
      * Detect string is command or value.
      */
-    private function isCommmadParam(string $command): bool
+    private function isCommandParam(string $command): bool
     {
-        return Str::startsWith($command, '-') || Str::startsWith($command, '--');
+        return str_starts_with($command, '-');
     }
 
     /**
@@ -181,7 +194,21 @@ class Command implements \ArrayAccess
      */
     private function removeQuote(string $value): string
     {
-        return Str::match($value, '/(["\'])(.*?)\1/')[2] ?? $value;
+        $len = strlen($value);
+
+        if ($len < 2) {
+            return $value;
+        }
+
+        $first = $value[0];
+        $last  = $value[$len - 1];
+
+        // Only remove matching quotes at both ends
+        if (($first === '"' && $last === '"') || ($first === "'" && $last === "'")) {
+            return substr($value, 1, -1);
+        }
+
+        return $value;
     }
 
     /**
