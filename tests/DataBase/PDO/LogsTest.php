@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Test\Database\RealDatabase;
+namespace System\Test\Database\PDO;
 
 use System\Test\Database\Asserts\UserTrait;
 use System\Test\Database\TestDatabase;

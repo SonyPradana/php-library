@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace System\Test\Database;
+namespace System\Test\Database\PDO;
 
-final class MyPdoTest extends TestDatabase
+use System\Test\Database\TestDatabase;
+
+final class ConfigsTest extends TestDatabase
 {
     protected function setUp(): void
     {
