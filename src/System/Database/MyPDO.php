@@ -266,7 +266,6 @@ class MyPDO
     {
         $start    = microtime(true);
         $execute  = $this->stmt->execute();
-
         $this->addLog($this->query, $start, microtime(true));
 
         return $execute;
@@ -375,7 +374,7 @@ class MyPDO
             'query'      => $query,
             'time_start' => $start_time,
             'time_end'   => $end_time,
-            'time'       => $elapsed  = round(($end_time - $start_time) * 1000, 2),
+            'time'       => null,
         ];
     }
 
@@ -394,6 +393,12 @@ class MyPDO
      */
     public function getLogs(): array
     {
-        return $this->logs;
+        $logs = [];
+        foreach ($this->logs as $log) {
+            $log['time'] ??= round(($log['time_end'] - $log['time_start']) * 1000, 2);
+            $logs[] = $log;
+        }
+
+        return $logs;
     }
 }
