@@ -371,10 +371,10 @@ class MyPDO
     protected function addLog(string $query, float $start_time, float $end_time): void
     {
         $this->logs[] = [
-            'query'      => $query,
-            'time_start' => $start_time,
-            'time_end'   => $end_time,
-            'time'       => null,
+            'query'    => $query,
+            'started'  => $start_time,
+            'ended'    => $end_time,
+            'duration' => null,
         ];
     }
 
@@ -389,16 +389,15 @@ class MyPDO
     /**
      * Get logs query.
      *
-     * @return array<int, array<string, mixed>>
+     * @return array<int, array<string, float|string|null>>
      */
     public function getLogs(): array
     {
-        $logs = [];
-        foreach ($this->logs as $log) {
-            $log['time'] ??= round(($log['time_end'] - $log['time_start']) * 1000, 2);
-            $logs[] = $log;
+        foreach ($this->logs as &$log) {
+            $log['duration'] ??= round(($log['ended'] - $log['started']) * 1000, 2);
         }
+        unset($log);
 
-        return $logs;
+        return $this->logs;
     }
 }

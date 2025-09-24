@@ -74,13 +74,13 @@ final class LogsTest extends TestDatabase
 
         // before calculate
         foreach ($get_logs as $key => $log) {
-            $this->assertNull($log['time']);
+            $this->assertNull($log['duration']);
         }
 
         // after calculate
         foreach ($this->pdo->getLogs() as $key => $log) {
             $this->assertEquals($log['query'], $logs[$key]);
-            $this->assertNotNull($log['time']);
+            $this->assertNotNull($log['duration']);
         }
     }
 
@@ -94,9 +94,9 @@ final class LogsTest extends TestDatabase
         $this->assertNotEmpty($this->pdo->getLogs());
         foreach ($this->pdo->getLogs() as $key => $log) {
             $this->assertArrayHasKey('query', $log);
-            $this->assertArrayHasKey('time_start', $log);
-            $this->assertArrayHasKey('time_end', $log);
-            $this->assertArrayHasKey('time', $log);
+            $this->assertArrayHasKey('started', $log);
+            $this->assertArrayHasKey('ended', $log);
+            $this->assertArrayHasKey('duration', $log);
         }
     }
 
@@ -110,5 +110,34 @@ final class LogsTest extends TestDatabase
         $this->assertNotEmpty($this->pdo->getLogs());
         $this->pdo->flushLogs();
         $this->assertEmpty($this->pdo->getLogs());
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanEmptyLogsGetLogs()
+    {
+        $this->pdo->flushLogs();
+        $this->assertEmpty($this->pdo->getLogs()); // Should not throw error
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanGetMultipleGetLogsCalls()
+    {
+        $this->pdo->flushLogs();
+        $this->pdo->query('SELECT 1')->execute();
+
+        $firstCall  = $this->pdo->getLogs();
+        $secondCall = $this->pdo->getLogs();
+        $thirdCall  = $this->pdo->getLogs();
+
+        $this->assertEquals($firstCall, $secondCall);
+        $this->assertEquals($secondCall, $thirdCall);
     }
 }
