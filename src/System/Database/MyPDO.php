@@ -18,7 +18,7 @@ class MyPDO
     /**
      * Connection configuration.
      *
-     * @var array{driver: string, host: ?string, database: ?string, port: ?int, chartset: ?string, username: ?string, password: ?string, options: array<int, string|int|bool>}
+     * @var array{driver: string, host: ?string, database: ?string, port: ?int, charset: ?string, username: ?string, password: ?string, options: array<int, string|int|bool>}
      */
     protected array $configs;
 
@@ -111,7 +111,7 @@ class MyPDO
     /**
      * Get connection configuration.
      *
-     * @return array{driver: string, host: ?string, database: ?string, port: ?int, chartset: ?string, username: ?string, password: ?string, options: array<int, string|int|bool>}
+     * @return array{driver: string, host: ?string, database: ?string, port: ?int, charset: ?string, username: ?string, password: ?string, options: array<int, string|int|bool>}
      */
     public function configs()
     {
@@ -121,7 +121,7 @@ class MyPDO
     /**
      * @param array<string, string|int|array<int, int|bool>|null> $configs
      *
-     * @return array{driver: string, host: ?string, database: ?string, port: ?int, chartset: ?string, username: ?string, password: ?string, options: array<int, string|int|bool>}
+     * @return array{driver: string, host: ?string, database: ?string, port: ?int, charset: ?string, username: ?string, password: ?string, options: array<int, string|int|bool>}
      */
     protected function setConfigs(array $configs): array
     {
@@ -130,7 +130,7 @@ class MyPDO
             'host'     => $configs['host'] ?? null,
             'database' => $configs['database_name'] ?? $configs['database'] ?? null,
             'port'     => $configs['port'] ?? null,
-            'chartset' => $configs['chartset'] ?? null,
+            'charset'  => $configs['charset'] ?? null,
             'username' => $configs['user'] ?? $configs['username'] ?? null,
             'password' => $configs['password'] ?? null,
             'options'  => $configs['options'] ?? $this->option,
@@ -138,7 +138,7 @@ class MyPDO
     }
 
     /**
-     * @param array{host: string, driver: 'mysql'|'mariadb'|'pgsql'|'sqlite', database: ?string, port: ?int, chartset: ?string} $configs
+     * @param array{host: string, driver: 'mysql'|'mariadb'|'pgsql'|'sqlite', database: ?string, port: ?int, charset: ?string} $configs
      */
     public function getDsn(array $configs): string
     {
@@ -161,16 +161,19 @@ class MyPDO
             throw new \InvalidArgumentException('mysql driver require `host`.');
         }
 
-        $port     = $config['port'] ?? 3306;
-        $chartset = $config['chartset'] ?? 'utf8mb4';
+        $dsn['host'] = "host={$config['host']}";
 
-        $dsn['host']     = "host={$config['host']}";
-        $dsn['dbname']   = isset($config['database']) ? "dbname={$config['database']}" : '';
-        $dsn['port']     = "port={$port}";
-        $dsn['chartset'] = "chartset={$chartset}";
-        $build           = implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
+        if (isset($config['port']) && 3306 !== $config['port']) {
+            $dsn['port'] = "port={$config['port']}";
+        }
 
-        return "mysql:{$build}";
+        if (isset($config['database'])) {
+            $dsn['dbname'] = "dbname={$config['database']}";
+        }
+
+        $dsn['charset'] = 'charset=' . ($config['charset'] ?? 'utf8mb4');
+
+        return 'mysql:' . implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
     }
 
     /**
@@ -185,16 +188,19 @@ class MyPDO
             throw new \InvalidArgumentException('pgsql driver require `host` and `dbname`.');
         }
 
-        $port     = $config['port'] ?? 5432;
-        $chartset = $config['chartset'] ?? 'utf8';
+        $dsn['host'] = "host={$config['host']}";
 
-        $dsn['host']     = "host={$config['host']}";
-        $dsn['dbname']   = isset($config['database']) ? "dbname={$config['database']}" : '';
-        $dsn['port']     = "port={$port}";
-        $dsn['encoding'] = "client_encoding={$chartset}";
-        $build           = implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
+        if (isset($config['port']) && 5432 !== $config['port']) {
+            $dsn['port'] = "port={$config['port']}";
+        }
 
-        return "pgsql:{$build}";
+        if (isset($config['database'])) {
+            $dsn['dbname'] = "dbname={$config['database']}";
+        }
+
+        $dsn['encoding'] = 'client_encoding=' . ($config['charset'] ?? 'utf8');
+
+        return 'pgsql:' . implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
     }
 
     /**
