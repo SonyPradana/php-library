@@ -9,18 +9,35 @@ final class MyPdoTest extends TestDatabase
     protected function setUp(): void
     {
         $this->createConnection();
-        $this->createUserSchema();
-        $this->createUser([
-            [
-                'user'     => 'taylor',
-                'password' => password_hash('password', PASSWORD_DEFAULT),
-                'stat'     => 100,
-            ],
-        ]);
     }
 
     protected function tearDown(): void
     {
         $this->dropConnection();
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanGetConfig()
+    {
+        $config = $this->pdo->configs();
+        unset($config['options']);
+        $this->assertEquals($this->env, $config);
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanGetDSN()
+    {
+        $this->assertEquals(
+            'mysql:host=127.0.0.1;dbname=testing_db;port=3306;chartset=utf8mb4',
+            $this->pdo->getDsn($this->env)
+        );
     }
 }
