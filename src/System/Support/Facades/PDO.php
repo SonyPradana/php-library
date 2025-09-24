@@ -21,7 +21,7 @@ namespace System\Support\Facades;
  * @method static bool                                                                                                                                                               endTransaction()
  * @method static bool                                                                                                                                                               cancelTransaction()
  * @method static void                                                                                                                                                               flushLogs()
- * @method static array<int, array<string, mixed>>                                                                                                                                   getLogs()
+ * @method static array<int, array<string, float|string|null>>                                                                                                                       getLogs()
  *
  * @see System\Database\MyPDO
  */
