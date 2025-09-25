@@ -91,9 +91,72 @@ class MyPDO
         try {
             return new \PDO($dsn, $username, $password, $options);
         } catch (\PDOException $e) {
-            // TODO: retry connection if nessary
+            if (true === $this->causedByLostConnection($e)) {
+                return new \PDO($dsn, $username, $password, $options);
+            }
+
             throw $e;
         }
+    }
+
+    /**
+     * @see https://github.com/laravel/framework/blob/9.x/src/Illuminate/Database/DetectsLostConnections.php
+     */
+    protected function causedByLostConnection(\Throwable $e): bool
+    {
+        static $errors = [
+            'server has gone away',
+            'no connection to the server',
+            'Lost connection',
+            'is dead or not enabled',
+            'Error while sending',
+            'decryption failed or bad record mac',
+            'server closed the connection unexpectedly',
+            'SSL connection has been closed unexpectedly',
+            'Error writing data to the connection',
+            'Resource deadlock avoided',
+            'Transaction() on null',
+            'child connection forced to terminate due to client_idle_limit',
+            'query_wait_timeout',
+            'reset by peer',
+            'Physical connection is not usable',
+            'TCP Provider: Error code 0x68',
+            'ORA-03114',
+            'Packets out of order. Expected',
+            'Adaptive Server connection failed',
+            'Communication link failure',
+            'connection is no longer usable',
+            'Login timeout expired',
+            'SQLSTATE[HY000] [2002] Connection refused',
+            'running with the --read-only option',
+            'The connection is broken and recovery is not possible',
+            'php_network_getaddresses: getaddrinfo failed',
+            'SQLSTATE[HY000]: General error: 7 SSL SYSCALL error',
+            'Connection timed out',
+            'SSL: Connection timed out',
+            'General error: 1105 The last transaction was aborted',
+            'Temporary failure in name resolution',
+            'SSL: Broken pipe',
+            'SQLSTATE[08S01]: Communication link failure',
+            'could not connect to server: Connection refused',
+            'No route to host',
+            'The client was disconnected by the server because of inactivity',
+            'could not translate host name',
+            'TCP Provider: Error code 0x274C',
+            'No such file or directory',
+            'SSL: Operation timed out',
+            'Server is in script upgrade mode',
+        ];
+
+        $message = $e->getMessage();
+
+        foreach ($errors as $error) {
+            if (false === str_contains($message, $error)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
