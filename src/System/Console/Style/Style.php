@@ -626,4 +626,9 @@ class Style
     {
         return $this->repeat("\t", $repeat);
     }
+
+    public function pad(string $text, int $length, string $pad_string = '', int $pad_type = STR_PAD_RIGHT): self
+    {
+        return $this->push(str_pad($text, $length, $pad_string, $pad_type));
+    }
 }

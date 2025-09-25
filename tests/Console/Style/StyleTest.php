@@ -484,4 +484,14 @@ final class StyleTest extends TestCase
             $text
         );
     }
+
+    /** @test */
+    public function itCanRenderTextPad()
+    {
+        $cmd  = new Style('');
+        $text = $cmd->pad('red', 10, '*', STR_PAD_BOTH)
+        ;
+
+        $this->assertEquals(sprintf('%s[39;49m***red****%s[0m', chr(27), chr(27)), (string) $text);
+    }
 }
