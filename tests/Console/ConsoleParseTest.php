@@ -42,6 +42,16 @@ class ConsoleParseTest extends TestCase
     }
 
     /** @test */
+    public function itCanParseCommandWithJson(): void
+    {
+        $command = 'php cli test --config=\'{"db":"mysql","port":3306}\'';
+        $argv    = explode(' ', $command);
+        $cli     = new Command($argv, ['default' => true]);
+
+        $this->assertEquals('{"db":"mysql","port":3306}', $cli->config);
+    }
+
+    /** @test */
     public function itCanParseNormalCommandWithSpace()
     {
         $command = 'php cli test --n jhoni -t -s --who-is children';
