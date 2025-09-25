@@ -93,9 +93,77 @@ class MyPDO
         try {
             return new \PDO($dsn, $username, $password, $options);
         } catch (\PDOException $e) {
-            // TODO: retry connection if nessary
+            if (true === $this->causedByLostConnection($e)) {
+                return new \PDO($dsn, $username, $password, $options);
+            }
+
             throw $e;
         }
+    }
+
+    /**
+     * This code ispired by Laravel Framework.
+     *
+     * @see https://github.com/laravel/framework/blob/9.x/src/Illuminate/Database/DetectsLostConnections.php
+     */
+    protected function causedByLostConnection(\Throwable $e): bool
+    {
+        $errors = [
+            // MySQL/MariaDB
+            'child connection forced to terminate due to client_idle_limit',
+            'SQLSTATE[HY000] [2002] Operation in progress',
+            'Error writing data to the connection',
+            'running with the --read-only option',
+            'Server is in script upgrade mode',
+            'Packets out of order. Expected',
+            'Resource deadlock avoided',
+            'is dead or not enabled',
+            'server has gone away',
+            'Error while sending',
+            'query_wait_timeout',
+            'Lost connection',
+            // PostgreSQL
+            'could not connect to server: Connection refused',
+            'server closed the connection unexpectedly',
+            'connection is no longer usable',
+            'no connection to the server',
+            // SQLite
+            'No such file or directory',
+            'Transaction() on null',
+            // SSL
+            'SQLSTATE[HY000]: General error: 7 SSL SYSCALL error',
+            'SSL connection has been closed unexpectedly',
+            'decryption failed or bad record mac',
+            'SSL: Connection timed out',
+            'SSL: Operation timed out',
+            'SSL: Broken pipe',
+            // Network error
+            'The connection is broken and recovery is not possible',
+            'Physical connection is not usable',
+            'Communication link failure',
+            'No route to host',
+            'reset by peer',
+            // Network timeout
+            'Connection timed out',
+            'Login timeout expired',
+            // General error
+            'SQLSTATE[HY000] [2002] Connection refused',
+            'SQLSTATE[08S01]: Communication link failure',
+            'php_network_getaddresses: getaddrinfo failed',
+            'The client was disconnected by the server because of inactivity',
+            'Temporary failure in name resolution',
+            'could not translate host name',
+        ];
+
+        $message = $e->getMessage();
+
+        foreach ($errors as $error) {
+            if (false !== stripos($message, $error)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
