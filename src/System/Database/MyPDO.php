@@ -151,7 +151,7 @@ class MyPDO
         $message = $e->getMessage();
 
         foreach ($errors as $error) {
-            if (false === str_contains($message, $error)) {
+            if (true === str_contains($message, $error)) {
                 return true;
             }
         }
