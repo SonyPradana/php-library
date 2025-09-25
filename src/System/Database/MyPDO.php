@@ -266,9 +266,7 @@ class MyPDO
     {
         $start    = microtime(true);
         $execute  = $this->stmt->execute();
-        $elapsed  = round((microtime(true) - $start) * 1000, 2);
-
-        $this->addLog($this->query, $elapsed);
+        $this->addLog($this->query, $start, microtime(true));
 
         return $execute;
     }
@@ -370,11 +368,13 @@ class MyPDO
         return $this->dbh->rollBack();
     }
 
-    protected function addLog(string $query, float $elapsed_time): void
+    protected function addLog(string $query, float $start_time, float $end_time): void
     {
         $this->logs[] = [
-            'query' => $query,
-            'time'  => $elapsed_time,
+            'query'    => $query,
+            'started'  => $start_time,
+            'ended'    => $end_time,
+            'duration' => null,
         ];
     }
 
@@ -389,10 +389,15 @@ class MyPDO
     /**
      * Get logs query.
      *
-     * @return array<int, array<string, mixed>>
+     * @return array<int, array<string, float|string|null>> the return of started, ended and duration in milisocond
      */
     public function getLogs(): array
     {
+        foreach ($this->logs as &$log) {
+            $log['duration'] ??= round(($log['ended'] - $log['started']) * 1000, 2);
+        }
+        unset($log);
+
         return $this->logs;
     }
 }
