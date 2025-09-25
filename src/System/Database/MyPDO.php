@@ -389,7 +389,7 @@ class MyPDO
     /**
      * Get logs query.
      *
-     * @return array<int, array<string, float|string|null>>
+     * @return array<int, array<string, float|string|null>> the return of started, ended and duration in milisocond
      */
     public function getLogs(): array
     {
