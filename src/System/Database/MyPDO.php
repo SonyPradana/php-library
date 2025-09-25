@@ -162,13 +162,9 @@ class MyPDO
         if (false === array_key_exists('host', $config)) {
             throw new InvalidConfigurationException('mysql driver require `host`.');
         }
-        // initial
-        $port     = $config['port'] ?? 3306;
-
-        // build
         $dsn['host']    = "host={$config['host']}";
         $dsn['dbname']  = isset($config['database']) ? "dbname={$config['database']}" : '';
-        $dsn['port']    = "port={$port}";
+        $dsn['port']    = 'port=' . ($config['port'] ?? 3306);
         $dsn['charset'] = 'charset=' . ($config['charset'] ?? 'utf8mb4');
 
         $build = implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
@@ -188,13 +184,9 @@ class MyPDO
             throw new InvalidConfigurationException('pgsql driver require `host`.');
         }
 
-        // initial
-        $port     = $config['port'] ?? 5432;
-
-        // build
         $dsn['host']     = "host={$config['host']}";
         $dsn['dbname']   = isset($config['database']) ? "dbname={$config['database']}" : '';
-        $dsn['port']     = "port={$port}";
+        $dsn['port']     = 'port=' . ($config['port'] ?? 5432);
         $dsn['encoding'] = 'client_encoding=' . ($config['charset'] ?? 'utf8');
 
         $build = implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
