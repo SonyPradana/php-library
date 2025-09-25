@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace System\Database;
 
+use System\Database\Exceptions\InvalidConfigurationException;
+
 class MyPDO
 {
     protected \PDO $dbh;
@@ -152,13 +154,13 @@ class MyPDO
     /**
      * @param array<string, string|int|array<int, string|bool>> $config
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidConfigurationException
      */
     private function makeMysqlDsn(array $config): string
     {
         // required
         if (false === array_key_exists('host', $config)) {
-            throw new \InvalidArgumentException('mysql driver require `host`.');
+            throw new InvalidConfigurationException('mysql driver require `host`.');
         }
         // initial
         $port     = $config['port'] ?? 3306;
@@ -177,13 +179,13 @@ class MyPDO
     /**
      * @param array<string, string|int|array<int, string|bool>> $config
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidConfigurationException
      */
     private function makePgsqlDsn(array $config): string
     {
         // required
         if (false === array_key_exists('host', $config)) {
-            throw new \InvalidArgumentException('pgsql driver require `host` and `dbname`.');
+            throw new InvalidConfigurationException('pgsql driver require `host`.');
         }
 
         // initial
@@ -203,12 +205,12 @@ class MyPDO
     /**
      * @param array<string, string|int|array<int, string|bool>> $config
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidConfigurationException
      */
     private function makeSqliteDsn(array $config): string
     {
         if (false === array_key_exists('database', $config)) {
-            throw new \InvalidArgumentException('sqlite driver require `database`.');
+            throw new InvalidConfigurationException('sqlite driver require `database`.');
         }
         $path = $config['database'];
 
@@ -220,7 +222,7 @@ class MyPDO
         }
 
         if (false === ($path = realpath($path))) {
-            throw new \InvalidArgumentException('sqlite driver require `database` with absolute path.');
+            throw new InvalidConfigurationException('sqlite driver require `database` with absolute path.');
         }
 
         return "sqlite:{$path}";

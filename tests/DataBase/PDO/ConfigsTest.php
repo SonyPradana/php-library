@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Test\Database\PDO;
 
+use System\Database\Exceptions\InvalidConfigurationException;
 use System\Test\Database\TestDatabase;
 
 final class ConfigsTest extends TestDatabase
@@ -130,7 +131,7 @@ final class ConfigsTest extends TestDatabase
             'database' => 'test_db',
         ];
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('mysql driver require `host`.');
         $this->pdo->getDsn($config);
     }
@@ -168,7 +169,7 @@ final class ConfigsTest extends TestDatabase
             'database' => 'test_db',
         ];
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('mysql driver require `host`.');
         $this->pdo->getDsn($config);
     }
@@ -277,8 +278,8 @@ final class ConfigsTest extends TestDatabase
             'port'     => 5432,
         ];
 
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('pgsql driver require `host` and `dbname`.');
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('pgsql driver require `host`.');
         $this->pdo->getDsn($config);
     }
 
@@ -344,7 +345,7 @@ final class ConfigsTest extends TestDatabase
             'host'   => 'localhost',
         ];
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('sqlite driver require `database`.');
         $this->pdo->getDsn($config);
     }
@@ -361,7 +362,7 @@ final class ConfigsTest extends TestDatabase
             'database' => '/non/existent/path/database.sqlite',
         ];
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('sqlite driver require `database` with absolute path.');
         $this->pdo->getDsn($config);
     }
