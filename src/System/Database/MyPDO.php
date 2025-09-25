@@ -160,20 +160,18 @@ class MyPDO
         if (false === array_key_exists('host', $config)) {
             throw new \InvalidArgumentException('mysql driver require `host`.');
         }
+        // initial
+        $port     = $config['port'] ?? 3306;
 
-        $dsn['host'] = "host={$config['host']}";
-
-        if (isset($config['port']) && 3306 !== $config['port']) {
-            $dsn['port'] = "port={$config['port']}";
-        }
-
-        if (isset($config['database'])) {
-            $dsn['dbname'] = "dbname={$config['database']}";
-        }
-
+        // build
+        $dsn['host']    = "host={$config['host']}";
+        $dsn['dbname']  = isset($config['database']) ? "dbname={$config['database']}" : '';
+        $dsn['port']    = "port={$port}";
         $dsn['charset'] = 'charset=' . ($config['charset'] ?? 'utf8mb4');
 
-        return 'mysql:' . implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
+        $build = implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
+
+        return "mysql:{$build}";
     }
 
     /**
@@ -188,19 +186,18 @@ class MyPDO
             throw new \InvalidArgumentException('pgsql driver require `host` and `dbname`.');
         }
 
-        $dsn['host'] = "host={$config['host']}";
+        // initial
+        $port     = $config['port'] ?? 5432;
 
-        if (isset($config['port']) && 5432 !== $config['port']) {
-            $dsn['port'] = "port={$config['port']}";
-        }
-
-        if (isset($config['database'])) {
-            $dsn['dbname'] = "dbname={$config['database']}";
-        }
-
+        // build
+        $dsn['host']     = "host={$config['host']}";
+        $dsn['dbname']   = isset($config['database']) ? "dbname={$config['database']}" : '';
+        $dsn['port']     = "port={$port}";
         $dsn['encoding'] = 'client_encoding=' . ($config['charset'] ?? 'utf8');
 
-        return 'pgsql:' . implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
+        $build = implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
+
+        return "pgsql:{$build}";
     }
 
     /**

@@ -57,7 +57,7 @@ abstract class TestDatabase extends TestCase
                 'password' => '',
                 'database' => 'testing_db',
                 'port'     => 3306,
-                'chartset' => 'utf8mb4',
+                'charset'  => 'utf8mb4',
             ],
         };
     }
