@@ -36,7 +36,7 @@ class MyPDO extends BasePDO
             'host'     => $configs['host'] ?? null,
             'database' => null,
             'port'     => $configs['port'] ?? null,
-            'chartset' => $configs['chartset'] ?? null,
+            'charset'  => $configs['charset'] ?? null,
             'username' => $configs['user'] ?? $configs['username'] ?? null,
             'password' => $configs['password'] ?? null,
             'options'  => $configs['options'] ?? $this->option,

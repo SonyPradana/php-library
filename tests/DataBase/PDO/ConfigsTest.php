@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Test\Database\PDO;
 
+use System\Database\Exceptions\InvalidConfigurationException;
 use System\Test\Database\TestDatabase;
 
 final class ConfigsTest extends TestDatabase
@@ -42,10 +43,10 @@ final class ConfigsTest extends TestDatabase
             'host'     => '127.0.0.1',
             'database' => 'test_db',
             'port'     => 3306,
-            'chartset' => 'utf8mb4',
+            'charset'  => 'utf8mb4',
         ];
 
-        $expected = 'mysql:host=127.0.0.1;dbname=test_db;port=3306;chartset=utf8mb4';
+        $expected = 'mysql:host=127.0.0.1;dbname=test_db;port=3306;charset=utf8mb4';
         $this->assertEquals($expected, $this->pdo->getDsn($config));
     }
 
@@ -61,7 +62,7 @@ final class ConfigsTest extends TestDatabase
             'host'   => 'localhost',
         ];
 
-        $expected = 'mysql:host=localhost;port=3306;chartset=utf8mb4';
+        $expected = 'mysql:host=localhost;port=3306;charset=utf8mb4';
         $this->assertEquals($expected, $this->pdo->getDsn($config));
     }
 
@@ -79,7 +80,7 @@ final class ConfigsTest extends TestDatabase
             'port'     => 3307,
         ];
 
-        $expected = 'mysql:host=192.168.1.100;dbname=custom_db;port=3307;chartset=utf8mb4';
+        $expected = 'mysql:host=192.168.1.100;dbname=custom_db;port=3307;charset=utf8mb4';
         $this->assertEquals($expected, $this->pdo->getDsn($config));
     }
 
@@ -94,10 +95,10 @@ final class ConfigsTest extends TestDatabase
             'driver'   => 'mysql',
             'host'     => 'db.example.com',
             'database' => 'legacy_db',
-            'chartset' => 'latin1',
+            'charset'  => 'latin1',
         ];
 
-        $expected = 'mysql:host=db.example.com;dbname=legacy_db;port=3306;chartset=latin1';
+        $expected = 'mysql:host=db.example.com;dbname=legacy_db;port=3306;charset=latin1';
         $this->assertEquals($expected, $this->pdo->getDsn($config));
     }
 
@@ -114,7 +115,7 @@ final class ConfigsTest extends TestDatabase
             'port'   => 3308,
         ];
 
-        $expected = 'mysql:host=mysql.server.com;port=3308;chartset=utf8mb4';
+        $expected = 'mysql:host=mysql.server.com;port=3308;charset=utf8mb4';
         $this->assertEquals($expected, $this->pdo->getDsn($config));
     }
 
@@ -130,7 +131,7 @@ final class ConfigsTest extends TestDatabase
             'database' => 'test_db',
         ];
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('mysql driver require `host`.');
         $this->pdo->getDsn($config);
     }
@@ -149,10 +150,10 @@ final class ConfigsTest extends TestDatabase
             'host'     => 'mariadb.example.com',
             'database' => 'maria_db',
             'port'     => 3306,
-            'chartset' => 'utf8',
+            'charset'  => 'utf8',
         ];
 
-        $expected = 'mysql:host=mariadb.example.com;dbname=maria_db;port=3306;chartset=utf8';
+        $expected = 'mysql:host=mariadb.example.com;dbname=maria_db;port=3306;charset=utf8';
         $this->assertEquals($expected, $this->pdo->getDsn($config));
     }
 
@@ -168,7 +169,7 @@ final class ConfigsTest extends TestDatabase
             'database' => 'test_db',
         ];
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('mysql driver require `host`.');
         $this->pdo->getDsn($config);
     }
@@ -187,7 +188,7 @@ final class ConfigsTest extends TestDatabase
             'host'     => 'localhost',
             'database' => 'postgres_db',
             'port'     => 5432,
-            'chartset' => 'utf8',
+            'charset'  => 'utf8',
         ];
 
         $expected = 'pgsql:host=localhost;dbname=postgres_db;port=5432;client_encoding=utf8';
@@ -239,7 +240,7 @@ final class ConfigsTest extends TestDatabase
             'driver'   => 'pgsql',
             'host'     => 'postgres.example.com',
             'database' => 'international_db',
-            'chartset' => 'latin1',
+            'charset'  => 'latin1',
         ];
 
         $expected = 'pgsql:host=postgres.example.com;dbname=international_db;port=5432;client_encoding=latin1';
@@ -257,7 +258,7 @@ final class ConfigsTest extends TestDatabase
             'driver'   => 'pgsql',
             'host'     => 'pg-cluster.local',
             'port'     => 5434,
-            'chartset' => 'utf8mb4',
+            'charset'  => 'utf8mb4',
         ];
 
         $expected = 'pgsql:host=pg-cluster.local;port=5434;client_encoding=utf8mb4';
@@ -277,8 +278,8 @@ final class ConfigsTest extends TestDatabase
             'port'     => 5432,
         ];
 
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('pgsql driver require `host` and `dbname`.');
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('pgsql driver require `host`.');
         $this->pdo->getDsn($config);
     }
 
@@ -344,7 +345,7 @@ final class ConfigsTest extends TestDatabase
             'host'   => 'localhost',
         ];
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('sqlite driver require `database`.');
         $this->pdo->getDsn($config);
     }
@@ -361,7 +362,7 @@ final class ConfigsTest extends TestDatabase
             'database' => '/non/existent/path/database.sqlite',
         ];
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('sqlite driver require `database` with absolute path.');
         $this->pdo->getDsn($config);
     }
@@ -398,7 +399,7 @@ final class ConfigsTest extends TestDatabase
             'port'   => 0,
         ];
 
-        $expected = 'mysql:host=localhost;port=0;chartset=utf8mb4';
+        $expected = 'mysql:host=localhost;port=0;charset=utf8mb4';
         $this->assertEquals($expected, $this->pdo->getDsn($config));
     }
 
@@ -431,10 +432,10 @@ final class ConfigsTest extends TestDatabase
             'host'     => 'localhost',
             'database' => null,
             'port'     => null,
-            'chartset' => null,
+            'charset'  => null,
         ];
 
-        $expected = 'mysql:host=localhost;port=3306;chartset=utf8mb4';
+        $expected = 'mysql:host=localhost;port=3306;charset=utf8mb4';
         $this->assertEquals($expected, $this->pdo->getDsn($config));
     }
 
@@ -450,7 +451,7 @@ final class ConfigsTest extends TestDatabase
             'host'     => 'localhost',
             'database' => null,
             'port'     => null,
-            'chartset' => null,
+            'charset'  => null,
         ];
 
         $expected = 'pgsql:host=localhost;port=5432;client_encoding=utf8';

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace System\Database;
 
+use System\Database\Exceptions\InvalidConfigurationException;
+
 class MyPDO
 {
     protected \PDO $dbh;
@@ -18,7 +20,7 @@ class MyPDO
     /**
      * Connection configuration.
      *
-     * @var array{driver: string, host: ?string, database: ?string, port: ?int, chartset: ?string, username: ?string, password: ?string, options: array<int, string|int|bool>}
+     * @var array{driver: string, host: ?string, database: ?string, port: ?int, charset: ?string, username: ?string, password: ?string, options: array<int, string|int|bool>}
      */
     protected array $configs;
 
@@ -111,7 +113,7 @@ class MyPDO
     /**
      * Get connection configuration.
      *
-     * @return array{driver: string, host: ?string, database: ?string, port: ?int, chartset: ?string, username: ?string, password: ?string, options: array<int, string|int|bool>}
+     * @return array{driver: string, host: ?string, database: ?string, port: ?int, charset: ?string, username: ?string, password: ?string, options: array<int, string|int|bool>}
      */
     public function configs()
     {
@@ -121,7 +123,7 @@ class MyPDO
     /**
      * @param array<string, string|int|array<int, int|bool>|null> $configs
      *
-     * @return array{driver: string, host: ?string, database: ?string, port: ?int, chartset: ?string, username: ?string, password: ?string, options: array<int, string|int|bool>}
+     * @return array{driver: string, host: ?string, database: ?string, port: ?int, charset: ?string, username: ?string, password: ?string, options: array<int, string|int|bool>}
      */
     protected function setConfigs(array $configs): array
     {
@@ -130,7 +132,7 @@ class MyPDO
             'host'     => $configs['host'] ?? null,
             'database' => $configs['database_name'] ?? $configs['database'] ?? null,
             'port'     => $configs['port'] ?? null,
-            'chartset' => $configs['chartset'] ?? null,
+            'charset'  => $configs['charset'] ?? null,
             'username' => $configs['user'] ?? $configs['username'] ?? null,
             'password' => $configs['password'] ?? null,
             'options'  => $configs['options'] ?? $this->option,
@@ -138,7 +140,7 @@ class MyPDO
     }
 
     /**
-     * @param array{host: string, driver: 'mysql'|'mariadb'|'pgsql'|'sqlite', database: ?string, port: ?int, chartset: ?string} $configs
+     * @param array{host: string, driver: 'mysql'|'mariadb'|'pgsql'|'sqlite', database: ?string, port: ?int, charset: ?string} $configs
      */
     public function getDsn(array $configs): string
     {
@@ -152,23 +154,20 @@ class MyPDO
     /**
      * @param array<string, string|int|array<int, string|bool>> $config
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidConfigurationException
      */
     private function makeMysqlDsn(array $config): string
     {
         // required
         if (false === array_key_exists('host', $config)) {
-            throw new \InvalidArgumentException('mysql driver require `host`.');
+            throw new InvalidConfigurationException('mysql driver require `host`.');
         }
+        $dsn['host']    = "host={$config['host']}";
+        $dsn['dbname']  = isset($config['database']) ? "dbname={$config['database']}" : '';
+        $dsn['port']    = 'port=' . ($config['port'] ?? 3306);
+        $dsn['charset'] = 'charset=' . ($config['charset'] ?? 'utf8mb4');
 
-        $port     = $config['port'] ?? 3306;
-        $chartset = $config['chartset'] ?? 'utf8mb4';
-
-        $dsn['host']     = "host={$config['host']}";
-        $dsn['dbname']   = isset($config['database']) ? "dbname={$config['database']}" : '';
-        $dsn['port']     = "port={$port}";
-        $dsn['chartset'] = "chartset={$chartset}";
-        $build           = implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
+        $build = implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
 
         return "mysql:{$build}";
     }
@@ -176,23 +175,21 @@ class MyPDO
     /**
      * @param array<string, string|int|array<int, string|bool>> $config
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidConfigurationException
      */
     private function makePgsqlDsn(array $config): string
     {
         // required
         if (false === array_key_exists('host', $config)) {
-            throw new \InvalidArgumentException('pgsql driver require `host` and `dbname`.');
+            throw new InvalidConfigurationException('pgsql driver require `host`.');
         }
-
-        $port     = $config['port'] ?? 5432;
-        $chartset = $config['chartset'] ?? 'utf8';
 
         $dsn['host']     = "host={$config['host']}";
         $dsn['dbname']   = isset($config['database']) ? "dbname={$config['database']}" : '';
-        $dsn['port']     = "port={$port}";
-        $dsn['encoding'] = "client_encoding={$chartset}";
-        $build           = implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
+        $dsn['port']     = 'port=' . ($config['port'] ?? 5432);
+        $dsn['encoding'] = 'client_encoding=' . ($config['charset'] ?? 'utf8');
+
+        $build = implode(';', array_filter($dsn, fn (string $item): bool => '' !== $item));
 
         return "pgsql:{$build}";
     }
@@ -200,12 +197,12 @@ class MyPDO
     /**
      * @param array<string, string|int|array<int, string|bool>> $config
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidConfigurationException
      */
     private function makeSqliteDsn(array $config): string
     {
         if (false === array_key_exists('database', $config)) {
-            throw new \InvalidArgumentException('sqlite driver require `database`.');
+            throw new InvalidConfigurationException('sqlite driver require `database`.');
         }
         $path = $config['database'];
 
@@ -217,7 +214,7 @@ class MyPDO
         }
 
         if (false === ($path = realpath($path))) {
-            throw new \InvalidArgumentException('sqlite driver require `database` with absolute path.');
+            throw new InvalidConfigurationException('sqlite driver require `database` with absolute path.');
         }
 
         return "sqlite:{$path}";
