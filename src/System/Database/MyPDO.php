@@ -381,7 +381,7 @@ class MyPDO
     }
 
     /**
-     * @param callable(): bool $callable
+     * @param callable(): bool|callable(static): bool $callable
      *
      * @return bool Transaction status
      */
@@ -392,7 +392,7 @@ class MyPDO
                 return false;
             }
 
-            $return_call =  call_user_func($callable);
+            $return_call =  call_user_func($callable, $this);
             if (true !== $return_call) {
                 $this->cancelTransaction();
 
