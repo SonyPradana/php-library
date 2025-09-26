@@ -18,11 +18,9 @@ class Command implements \ArrayAccess
 {
     use TerminalTrait;
 
-    public const SUCCESS     = 0;
-    public const FAILURE     = 1;
-    public const INVALID     = 2;
-    public const NOT_EXECUTE = 126;
-    public const NOT_FOUND   = 127;
+    public const SUCCESS = 0;
+    public const FAILURE = 1;
+    public const INVALID = 2;
 
     public const VERBOSITY_SILENT       = 0;
     public const VERBOSITY_QUIET        = 1;
