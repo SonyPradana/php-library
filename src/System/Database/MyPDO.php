@@ -381,20 +381,28 @@ class MyPDO
     }
 
     /**
+     * @param callable(): bool $callable
+     *
      * @return bool Transaction status
      */
-    public function transaction(callable $callable)
+    public function transaction(callable $callable): bool
     {
-        if (false === $this->beginTransaction()) {
+        try {
+            if (false === $this->beginTransaction()) {
+                return false;
+            }
+
+            $return_call =  call_user_func($callable);
+            if (false === $return_call) {
+                return $this->cancelTransaction();
+            }
+
+            return $this->endTransaction();
+        } catch (\Throwable $th) {
+            $this->cancelTransaction();
+
             return false;
         }
-
-        $return_call =  call_user_func($callable);
-        if (false === $return_call) {
-            return $this->cancelTransaction();
-        }
-
-        return $this->endTransaction();
     }
 
     /**
