@@ -393,8 +393,10 @@ class MyPDO
             }
 
             $return_call =  call_user_func($callable);
-            if (false === $return_call) {
-                return $this->cancelTransaction();
+            if (true !== $return_call) {
+                $this->cancelTransaction();
+
+                return false;
             }
 
             return $this->endTransaction();
