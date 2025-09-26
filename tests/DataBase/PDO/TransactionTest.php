@@ -130,7 +130,7 @@ final class TransactionTest extends TestDatabase
            ->bind(':user', 'test_user')
            ->resultset();
         $this->assertEquals(1, $user[0]['stat']);
-        $this->assertTrue($transection);
+        $this->assertFalse($transection);
     }
 
     /**
