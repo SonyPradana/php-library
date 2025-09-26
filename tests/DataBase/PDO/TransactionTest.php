@@ -72,7 +72,7 @@ final class TransactionTest extends TestDatabase
      *
      * @group database
      */
-    public function itCanCommitTransactionUsingCloser(): void
+    public function itCanCommitTransactionUsingClosure(): void
     {
         $this->pdo->query('INSERT INTO users (user, password, stat) VALUES (:user, :password, :stat)')
            ->bind(':user', 'test_user')
@@ -89,13 +89,44 @@ final class TransactionTest extends TestDatabase
             return true;
         };
 
-        $transection = $this->pdo->transaction($test);
+        $transaction = $this->pdo->transaction($test);
 
         $user = $this->pdo->query('SELECT * FROM users WHERE user = :user')
            ->bind(':user', 'test_user')
            ->resultset();
         $this->assertEquals(0, $user[0]['stat']);
-        $this->assertTrue($transection);
+        $this->assertTrue($transaction);
+    }
+
+    /**
+     * @test
+     *
+     * @group database
+     */
+    public function itCanCommitTransactionUsingClosureParameter(): void
+    {
+        $this->pdo->query('INSERT INTO users (user, password, stat) VALUES (:user, :password, :stat)')
+           ->bind(':user', 'test_user')
+           ->bind(':password', 'test_password')
+           ->bind(':stat', 1)
+           ->execute();
+
+        $test = function ($pdo): bool {
+            $pdo->query('UPDATE users SET stat = :stat WHERE user = :user')
+               ->bind(':stat', 0)
+               ->bind(':user', 'test_user')
+               ->execute();
+
+            return true;
+        };
+
+        $transaction = $this->pdo->transaction($test);
+
+        $user = $this->pdo->query('SELECT * FROM users WHERE user = :user')
+           ->bind(':user', 'test_user')
+           ->resultset();
+        $this->assertEquals(0, $user[0]['stat']);
+        $this->assertTrue($transaction);
     }
 
     /**
@@ -124,13 +155,13 @@ final class TransactionTest extends TestDatabase
             return false;
         };
 
-        $transection = $this->pdo->transaction($test);
+        $transaction = $this->pdo->transaction($test);
 
         $user = $this->pdo->query('SELECT * FROM users WHERE user = :user')
            ->bind(':user', 'test_user')
            ->resultset();
         $this->assertEquals(1, $user[0]['stat']);
-        $this->assertFalse($transection);
+        $this->assertFalse($transaction);
     }
 
     /**
@@ -157,12 +188,12 @@ final class TransactionTest extends TestDatabase
             return true;
         };
 
-        $transection =  $this->pdo->transaction($test);
+        $transaction =  $this->pdo->transaction($test);
 
         $user = $this->pdo->query('SELECT * FROM users WHERE user = :user')
            ->bind(':user', 'test_user')
            ->resultset();
         $this->assertEquals(1, $user[0]['stat']);
-        $this->assertFalse($transection);
+        $this->assertFalse($transaction);
     }
 }
