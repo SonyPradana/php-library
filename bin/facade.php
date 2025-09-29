@@ -34,8 +34,9 @@ $command = new class($argv) extends Command {
                 && file_exists(dirname(__DIR__) . $file)
             ) {
                 $facades = require_once dirname(__DIR__) . $file;
-                foreach ($facades as $facade => $accessor) {
-                    if (1 === $this->updater($facade, $accessor)) {
+                foreach ($facades as $facade => $options) {
+                    $options = \is_string($options) ? ['accessor' => $options] : $options;
+                    if (1 === $this->updater($facade, $options)) {
                         return 1;
                     }
                 }
@@ -53,8 +54,9 @@ $command = new class($argv) extends Command {
                 && file_exists(dirname(__DIR__) . $file)
             ) {
                 $facades = require_once dirname(__DIR__) . $file;
-                foreach ($facades as $facade => $accessor) {
-                    if (1 === $this->validator($facade, $accessor)) {
+                foreach ($facades as $facade => $options) {
+                    $options = \is_string($options) ? ['accessor' => $options] : $options;
+                    if (1 === $this->validator($facade, $options)) {
                         return 1;
                     }
                 }
@@ -108,11 +110,15 @@ $command = new class($argv) extends Command {
             return 1;
         }
 
-        return $this->updater($facade, $accessor);
+        return $this->updater($facade, ['accessor' => $accessor]);
     }
 
-    public function updater(string $facade, string $accessor): int
+    /**
+     * @param array{excludes?: array<string, bool>, replaces?: array<string, string>, methods?: array<string, array{replace?: array<string, string>}>} $options
+     */
+    public function updater(string $facade, array $options = []): int
     {
+        $accessor         = $options['accessor'];
         $facade_namespace = "{$this->facade_namespace}\\{$facade}";
         $methods          = [];
         if (false === class_exists($facade_namespace)) {
@@ -128,7 +134,7 @@ $command = new class($argv) extends Command {
         }
 
         $reflection        = new ReflectionClass($accessor);
-        $methods           = $this->getMethodReflection($reflection);
+        $methods           = $this->getMethodReflection($reflection, $options);
         $reflection_facade = new ReflectionClass($facade_namespace);
 
         $filename = dirname(__DIR__) . "{$this->facade_file_location}{$facade}.php";
@@ -159,11 +165,15 @@ $command = new class($argv) extends Command {
             return 1;
         }
 
-        return $this->validator($facade, $accessor);
+        return $this->validator($facade, ['accessor' => $accessor]);
     }
 
-    public function validator(string $facade, string $accessor): int
+    /**
+     * @param array{excludes?: array<string, bool>, replaces?: array<string, string>, methods?: array<string, array{replace?: array<string, string>}>} $options
+     */
+    public function validator(string $facade, array $options = []): int
     {
+        $accessor         = $options['accessor'];
         $facade_namespace = "{$this->facade_namespace}\\{$facade}";
         $methods          = [];
         if (false === class_exists($facade_namespace)) {
@@ -179,7 +189,7 @@ $command = new class($argv) extends Command {
         }
 
         $reflection        = new ReflectionClass($accessor);
-        $methods           = $this->getMethodReflection($reflection);
+        $methods           = $this->getMethodReflection($reflection, $options);
         $reflection_facade = new ReflectionClass($facade_namespace);
         $old_docblock      = $reflection_facade->getDocComment();
         $new_docblock      = ltrim($this->generatorDocBlock($accessor, $methods));
@@ -248,11 +258,12 @@ $command = new class($argv) extends Command {
     /**
      * Get all public method signatures of a class.
      *
-     * @param ReflectionClass<object> $class
+     * @param ReflectionClass<object>                                                                                                                  $class
+     * @param array{excludes?: array<string, bool>, replaces?: array<string, string>, methods?: array<string, array{replace?: array<string, string>}>} $options
      *
      * @return string[] list of method signatures
      */
-    private function getMethodReflection(ReflectionClass $class): array
+    private function getMethodReflection(ReflectionClass $class, array $options = []): array
     {
         $buffer              = [];
         $methods             = [];
@@ -264,13 +275,18 @@ $command = new class($argv) extends Command {
             'offsetSet'    => true,
             'offsetUnset'  => true,
         ];
+        // options
+        $opt_exludes  = $options['excludes'] ?? [];
+        $opt_replaces = $options['replaces'] ?? [];
+        $opt_methods  = $options['methods'] ?? [];
 
         foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             if ($method->isConstructor()
             || $method->isDestructor()
+            || $method->isDeprecated()
             || \str_starts_with($method->getName(), '__')
             || \array_key_exists($method->getName(), $ignore_method)
-            || $method->isDeprecated()
+            || \array_key_exists($method->getName(), $opt_exludes)
             ) {
                 continue;
             }
@@ -288,11 +304,22 @@ $command = new class($argv) extends Command {
                     if (null !== ($param = parseParamLine($line))) {
                         $params[$param['name']] = "{$param['type']} {$param['name']}";
 
+                        if (isset($opt_replaces[$param['type']])) { // replace from options
+                            $params[$param['name']] = "{$opt_replaces[$param['type']]} {$param['name']}";
+                        }
+                        if (isset($opt_methods[$method->getName()]['replaces'][$param['type']])) { // replace from options
+                            $params[$param['name']] = "{$opt_methods[$method->getName()]['replaces'][$param['type']]} {$param['name']}";
+                        }
+
                         continue;
                     }
 
                     if (null !== ($returnResult = parseReturnLine($line))) {
                         $returnType = $returnResult;
+
+                        if (isset($opt_replaces[$returnType])) { // replace from options
+                            $returnType = $opt_replaces[$returnType];
+                        }
                     }
                 }
             }
@@ -314,7 +341,8 @@ $command = new class($argv) extends Command {
             foreach ($method->getParameters() as $param) {
                 $paramName = '$' . $param->getName();
                 if (isset($params[$paramName])) {
-                    $params[$paramName] = $params[$paramName] . $this->getParameterDefaultValueString($param);
+                    $default_value      = $this->getParameterDefaultValueString($param);
+                    $params[$paramName] = $params[$paramName] . $default_value;
 
                     continue;
                 }
