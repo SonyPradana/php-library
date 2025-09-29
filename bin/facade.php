@@ -34,44 +34,33 @@ $command = new class($argv) extends Command {
                 && file_exists(dirname(__DIR__) . $file)
             ) {
                 $facades = require_once dirname(__DIR__) . $file;
+                $fail    = 0;
                 foreach ($facades as $facade => $options) {
                     $options = \is_string($options) ? ['accessor' => $options] : $options;
                     if (1 === $this->updater($facade, $options)) {
-                        return 1;
+                        if (false === $this->hasOption('dry-run')) {
+                            return Command::FAILURE;
+                        }
+                        $fail++;
                     }
                 }
                 $count = count($facades);
-                ok("Done {$count} `Facade` class has successfully updated.")->outIf($this->canWrite());
+                if ($fail > 0) {
+                    fail("{$fail} of {$count} facades " . ($this->hasOption('dry-run') ? 'failed validation' : 'could not be updated'))->outIf($this->canWrite());
 
-                return 0;
+                    return Command::FAILURE;
+                }
+                ok('Successfully ' . ($this->hasOption('dry-run') ? 'validated' : 'updated') . " {$count} " . ($count === 1 ? 'facade' : 'facades'))->outIf($this->canWrite());
+
+                return Command::SUCCESS;
             }
 
             return $this->update();
         }
 
-        if ('facade:validate' === $this->CMD) {
-            if (false !== ($file = $this->option('from-file', false))
-                && file_exists(dirname(__DIR__) . $file)
-            ) {
-                $facades = require_once dirname(__DIR__) . $file;
-                foreach ($facades as $facade => $options) {
-                    $options = \is_string($options) ? ['accessor' => $options] : $options;
-                    if (1 === $this->validator($facade, $options)) {
-                        return 1;
-                    }
-                }
-                $count = count($facades);
-                ok("Done {$count} `Facade` class has successfully validated.")->outIf($this->canWrite());
-
-                return 0;
-            }
-
-            return $this->validate();
-        }
-
         warn('The command argument is required: facade:generate --accessor')->outIf($this->canWrite());
 
-        return 1;
+        return Command::FAILURE;
     }
 
     public function generate(): int
@@ -79,7 +68,7 @@ $command = new class($argv) extends Command {
         if (false === ($className = $this->option('facade', false))) {
             fail('The command argument is required: facade:generate --facade')->outIf($this->canWrite());
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $accessor  = $this->option('accessor', $className);
@@ -107,7 +96,7 @@ $command = new class($argv) extends Command {
         ) {
             fail('The command argument is required: facade:update --facade --accessor')->outIf($this->canWrite());
 
-            return 1;
+            return Command::FAILURE;
         }
 
         return $this->updater($facade, ['accessor' => $accessor]);
@@ -124,13 +113,13 @@ $command = new class($argv) extends Command {
         if (false === class_exists($facade_namespace)) {
             fail("Facade class `{$facade}` is not exists, try generate new facade.")->outIf($this->canWrite(), false);
 
-            return 1;
+            return Command::INVALID;
         }
 
         if (false === class_exists($accessor)) {
             fail("Facade accessor `{$accessor}` is not found.")->outIf($this->canWrite(), false);
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $reflection        = new ReflectionClass($accessor);
@@ -140,73 +129,32 @@ $command = new class($argv) extends Command {
         $filename = dirname(__DIR__) . "{$this->facade_file_location}{$facade}.php";
         $file     = file_get_contents($filename);
 
-        info("Generating update facade {$facade}")->outIf($this->canWrite());
-
         $old_docblock = $reflection_facade->getDocComment();
         $new_docblock = ltrim($this->generatorDocBlock($accessor, $methods));
 
+        info("Updating facade `{$facade}`...")
+            ->outIf(false === $this->hasOption('dry-run') && $this->canWrite(), false);
+
         $this
             ->diff($new_docblock, $old_docblock)
-            ->outIf($this->isVeryVerbose(), false);
+            ->outIf($this->isVeryVerbose());
+
+        if ($this->hasOption('dry-run')) {
+            if ($old_docblock === $new_docblock) {
+                ok("Facade `{$facade}` is up to date")->outIf($this->canWrite(), false);
+
+                return Command::SUCCESS;
+            }
+
+            fail("Facade `{$facade}` needs to be updated")->outIf($this->canWrite(), false);
+
+            return Command::FAILURE;
+        }
 
         return false === file_put_contents(
             $filename,
             str_replace(search: $old_docblock, replace: $new_docblock, subject: $file)
         ) ? 1 : 0;
-    }
-
-    public function validate(): int
-    {
-        if (false === ($facade  = $this->option('facade', false))
-        || false === ($accessor = $this->option('accessor', false))
-        ) {
-            fail('The command argument is required: facade:validate --facade --accessor')->outIf($this->canWrite());
-
-            return 1;
-        }
-
-        return $this->validator($facade, ['accessor' => $accessor]);
-    }
-
-    /**
-     * @param array{excludes?: array<string, bool>, replaces?: array<string, string>, methods?: array<string, array{replace?: array<string, string>}>} $options
-     */
-    public function validator(string $facade, array $options = []): int
-    {
-        $accessor         = $options['accessor'];
-        $facade_namespace = "{$this->facade_namespace}\\{$facade}";
-        $methods          = [];
-        if (false === class_exists($facade_namespace)) {
-            fail("Facade class `{$facade}` is not exists, try generate new facade.")->outIf($this->canWrite(), false);
-
-            return 1;
-        }
-
-        if (false === class_exists($accessor)) {
-            fail("Facade accessor `{$accessor}` is not found.")->outIf($this->canWrite(), false);
-
-            return 1;
-        }
-
-        $reflection        = new ReflectionClass($accessor);
-        $methods           = $this->getMethodReflection($reflection, $options);
-        $reflection_facade = new ReflectionClass($facade_namespace);
-        $old_docblock      = $reflection_facade->getDocComment();
-        $new_docblock      = ltrim($this->generatorDocBlock($accessor, $methods));
-
-        $this
-            ->diff($new_docblock, $old_docblock)
-            ->outIf($this->isVeryVerbose(), false);
-
-        if ($old_docblock === $new_docblock) {
-            ok("Docblock is updated `{$facade}`.")->outIf($this->canWrite(), false);
-
-            return 0;
-        }
-
-        fail("Docblock not updated `{$facade}`.")->outIf($this->canWrite(), false);
-
-        return 1;
     }
 
     /**
