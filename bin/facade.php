@@ -103,7 +103,7 @@ $command = new class($argv) extends Command {
     }
 
     /**
-     * @param array{excludes?: array<string, bool>, replaces?: array<string, string>, methods?: array<string, array{replace?: array<string, string>}>} $options
+     * @param array{accessor?: string, excludes?: array<string, bool>, replaces?: array<string, string>, methods?: array<string, array{replaces?: array<string, string>}>} $options
      */
     public function updater(string $facade, array $options = []): int
     {
@@ -206,8 +206,8 @@ $command = new class($argv) extends Command {
     /**
      * Get all public method signatures of a class.
      *
-     * @param ReflectionClass<object>                                                                                                                  $class
-     * @param array{excludes?: array<string, bool>, replaces?: array<string, string>, methods?: array<string, array{replace?: array<string, string>}>} $options
+     * @param ReflectionClass<object>                                                                                                                                      $class
+     * @param array{accessor?: string, excludes?: array<string, bool>, replaces?: array<string, string>, methods?: array<string, array{replaces?: array<string, string>}>} $options
      *
      * @return string[] list of method signatures
      */

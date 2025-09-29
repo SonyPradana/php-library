@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 /**
  * @var array<string, string|array{
+ *      accessor?: string,
  *      excludes?: array<string, bool>,
  *      replaces?: array<string, string>,
  *      methods?: array<string, array{
