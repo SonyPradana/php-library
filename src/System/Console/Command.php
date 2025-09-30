@@ -267,6 +267,7 @@ class Command implements \ArrayAccess
     {
         $output = new Style(options: [
             'colorize' => $options['colorize'] ?? $this->hasColorSupport(),
+            'decorate' => $options['decorate'] ?? null,
         ]);
         $output->setOutputStream($output_stream);
 
