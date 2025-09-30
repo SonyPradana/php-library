@@ -400,6 +400,18 @@ class Style
     }
 
     /**
+     * Write stream out.
+     */
+    public function writeIf(bool $condition, bool $new_line = true): void
+    {
+        $out = $this . ($new_line ? PHP_EOL : null);
+
+        if ($this->output_stream && true === $condition) {
+            $this->output_stream->write($out);
+        }
+    }
+
+    /**
      * Clear curent line (original text is keep).
      */
     public function clear(int $line = -1): void
