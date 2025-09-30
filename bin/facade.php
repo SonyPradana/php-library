@@ -37,13 +37,11 @@ $command = new class($argv) extends Command {
                 $fail    = 0;
                 foreach ($facades as $facade => $options) {
                     $options = \is_string($options) ? ['accessor' => $options] : $options;
-                    if (1 === $this->updater($facade, $options)) {
-                        if (false === $this->hasOption('dry-run')) {
-                            return Command::FAILURE;
-                        }
+                    if ($this->updater($facade, $options) > 0) {
                         $fail++;
                     }
                 }
+
                 $count = count($facades);
                 if ($fail > 0) {
                     fail("{$fail} of {$count} facades " . ($this->hasOption('dry-run') ? 'failed validation' : 'could not be updated'))->outIf($this->canWrite());
@@ -60,7 +58,7 @@ $command = new class($argv) extends Command {
 
         warn('The command argument is required: facade:generate --accessor')->outIf($this->canWrite());
 
-        return Command::FAILURE;
+        return Command::INVALID;
     }
 
     public function generate(): int
@@ -68,7 +66,7 @@ $command = new class($argv) extends Command {
         if (false === ($className = $this->option('facade', false))) {
             fail('The command argument is required: facade:generate --facade')->outIf($this->canWrite());
 
-            return Command::FAILURE;
+            return Command::INVALID;
         }
 
         $accessor  = $this->option('accessor', $className);
@@ -96,7 +94,7 @@ $command = new class($argv) extends Command {
         ) {
             fail('The command argument is required: facade:update --facade --accessor')->outIf($this->canWrite());
 
-            return Command::FAILURE;
+            return Command::INVALID;
         }
 
         return $this->updater($facade, ['accessor' => $accessor]);
