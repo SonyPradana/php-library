@@ -6,10 +6,7 @@ declare(strict_types=1);
  * @var array<string, string|array{
  *      accessor?: string,
  *      excludes?: array<string, bool>,
- *      replaces?: array<string, string>,
- *      methods?: array<string, array{
- *          replace?: array<string, string>
- *      }>
+ *      replaces?: array<string, string>
  * }>
  */
 return [

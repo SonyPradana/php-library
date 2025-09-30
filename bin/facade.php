@@ -101,7 +101,7 @@ $command = new class($argv) extends Command {
     }
 
     /**
-     * @param array{accessor?: string, excludes?: array<string, bool>, replaces?: array<string, string>, methods?: array<string, array{replaces?: array<string, string>}>} $options
+     * @param array{accessor?: string, excludes?: array<string, bool>, replaces?: array<string, string>} $options
      */
     public function updater(string $facade, array $options = []): int
     {
@@ -204,8 +204,8 @@ $command = new class($argv) extends Command {
     /**
      * Get all public method signatures of a class.
      *
-     * @param ReflectionClass<object>                                                                                                                                      $class
-     * @param array{accessor?: string, excludes?: array<string, bool>, replaces?: array<string, string>, methods?: array<string, array{replaces?: array<string, string>}>} $options
+     * @param ReflectionClass<object>                                                                    $class
+     * @param array{accessor?: string, excludes?: array<string, bool>, replaces?: array<string, string>} $options
      *
      * @return string[] list of method signatures
      */
@@ -224,7 +224,6 @@ $command = new class($argv) extends Command {
         // options
         $opt_exludes  = $options['excludes'] ?? [];
         $opt_replaces = $options['replaces'] ?? [];
-        $opt_methods  = $options['methods'] ?? [];
 
         foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             if ($method->isConstructor()
@@ -232,7 +231,7 @@ $command = new class($argv) extends Command {
             || $method->isDeprecated()
             || \str_starts_with($method->getName(), '__')
             || \array_key_exists($method->getName(), $ignore_method)
-            || \array_key_exists($method->getName(), $opt_exludes)
+            || \array_key_exists($method->getName(), $opt_exludes) // exclude from options
             ) {
                 continue;
             }
@@ -252,9 +251,6 @@ $command = new class($argv) extends Command {
 
                         if (isset($opt_replaces[$param['type']])) { // replace from options
                             $params[$param['name']] = "{$opt_replaces[$param['type']]} {$param['name']}";
-                        }
-                        if (isset($opt_methods[$method->getName()]['replaces'][$param['type']])) { // replace from options
-                            $params[$param['name']] = "{$opt_methods[$method->getName()]['replaces'][$param['type']]} {$param['name']}";
                         }
 
                         continue;
