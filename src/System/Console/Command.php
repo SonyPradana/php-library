@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace System\Console;
 
+use System\Console\Interfaces\OutputStream;
+use System\Console\Style\Style;
 use System\Console\Traits\TerminalTrait;
 
 /**
@@ -80,6 +82,8 @@ class Command implements \ArrayAccess
      */
     protected $command_relation = [];
 
+    protected OutputStream $output_stream;
+
     /**
      * Parse commandline.
      *
@@ -100,7 +104,7 @@ class Command implements \ArrayAccess
             $this->option_mapper[$key] = $value;
         }
 
-        $this->verbosity     = $this->getDefaultVerbosity();
+        $this->verbosity = $this->getDefaultVerbosity();
     }
 
     /**
@@ -251,6 +255,23 @@ class Command implements \ArrayAccess
     protected function optionPosition()
     {
         return $this->option_mapper[''];
+    }
+
+    /**
+     * @param array{
+     *  colorize?: bool,
+     *  decorate?: bool
+     * } $options
+     */
+    protected function output(OutputStream $output_stream, array $options = []): Style
+    {
+        $output = new Style(options: [
+            'colorize' => $options['colorize'] ?? $this->hasColorSupport(),
+            'decorate' => $options['decorate'] ?? null,
+        ]);
+        $output->setOutputStream($output_stream);
+
+        return $output;
     }
 
     /**

@@ -6,6 +6,8 @@ namespace System\Test\Console;
 
 use PHPUnit\Framework\TestCase;
 use System\Console\Command;
+use System\Console\Interfaces\OutputStream;
+use System\Console\IO\ResourceOutputStream;
 
 class CommandTest extends TestCase
 {
@@ -97,5 +99,36 @@ class CommandTest extends TestCase
         putenv('TERM=dumb');
         $fp = fopen('php://temp', 'w'); // not a TTY
         $this->assertFalse($cmd->color($fp));
+    }
+
+    /**
+     * Test constructing the ResourceOutputStream with valid stream.
+     */
+    public function testPrintOutputUsingResource(): void
+    {
+        $stream       = fopen('php://memory', 'w+');
+        $outputStream = new ResourceOutputStream($stream);
+
+        $command = new class($outputStream) extends Command {
+            public function __construct(OutputStream $output)
+            {
+                parent::__construct([]);
+                $this->output_stream = $output;
+            }
+
+            public function printTest(): void
+            {
+                $this->output($this->output_stream, [
+                    'colorize' => false,
+                    'decorate' => false,
+                ])->push('Hello, World!')->write(false);
+            }
+        };
+
+        $command->printTest();
+        rewind($stream);
+        $this->assertEquals('Hello, World!', stream_get_contents($stream));
+
+        fclose($stream);
     }
 }
