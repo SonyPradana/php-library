@@ -404,7 +404,6 @@ class Style
      */
     public function writeIf(bool $condition, bool $new_line = true): void
     {
-
         if ($this->output_stream && true === $condition) {
             $out = $this . ($new_line ? PHP_EOL : null);
             $this->output_stream->write($out);
