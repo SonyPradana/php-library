@@ -247,21 +247,14 @@ $command = new class($argv) extends Command {
 
                 foreach ($blocks as $line) {
                     if (null !== ($param = parseParamLine($line))) {
-                        $params[$param['name']] = "{$param['type']} {$param['name']}";
-
-                        if (isset($opt_replaces[$param['type']])) { // replace from options
-                            $params[$param['name']] = "{$opt_replaces[$param['type']]} {$param['name']}";
-                        }
+                        $type                   = replaceUnionTypes($param['type'], $opt_replaces);
+                        $params[$param['name']] = "{$type} {$param['name']}";
 
                         continue;
                     }
 
                     if (null !== ($returnResult = parseReturnLine($line))) {
-                        $returnType = $returnResult;
-
-                        if (isset($opt_replaces[$returnType])) { // replace from options
-                            $returnType = $opt_replaces[$returnType];
-                        }
+                        $returnType = replaceUnionTypes($returnResult, $opt_replaces);
                     }
                 }
             }
@@ -650,4 +643,57 @@ function parseReturnLine(string $line): ?string
     }
 
     return trim($type);
+}
+
+/**
+ * Replace types in a union type string.
+ * This not part of parse doc, its helper for
+ * replace types.
+ *
+ * @param array<string, string> $replaces
+ */
+function replaceUnionTypes(string $typeString, array $replaces): string
+{
+    if (isset($replaces[$typeString])) {
+        return $replaces[$typeString];
+    }
+
+    $result       = '';
+    $currentToken = '';
+    $bracketDepth = 0;
+    $braceDepth   = 0;
+
+    for ($i = 0; $i < strlen($typeString); $i++) {
+        $char = $typeString[$i];
+
+        if (in_array($char, ['<', '>', '{', '}', ',', ' ', ':', '|', '[', ']'])) {
+            if (false === empty($currentToken) && isset($replaces[$currentToken])) {
+                $result .= $replaces[$currentToken];
+            } else {
+                $result .= $currentToken;
+            }
+            $currentToken = '';
+
+            match ($char) {
+                '<'     => $bracketDepth++,
+                '>'     => $bracketDepth--,
+                '{'     => $braceDepth++,
+                '}'     => $braceDepth--,
+                default => null,
+            };
+
+            $result .= $char;
+        } else {
+            $currentToken .= $char;
+        }
+    }
+
+    // Last token
+    if (false === empty($currentToken) && isset($replaces[$currentToken])) {
+        $result .= $replaces[$currentToken];
+    } else {
+        $result .= $currentToken;
+    }
+
+    return $result;
 }
