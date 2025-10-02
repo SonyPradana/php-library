@@ -10,17 +10,19 @@ declare(strict_types=1);
  * }>
  */
 return [
-    'Cache'    => 'System\Cache\CacheManager',
-    'Config'   => 'System\Integrate\ConfigRepository',
-    'DB'       => 'System\Database\MyQuery',
-    'Hash'     => 'System\Security\Hashing\HashManager',
-    'PDO'      => 'System\Database\MyPDO',
+    'Cache'    => 'System\\Cache\\CacheManager',
+    'Config'   => 'System\\Integrate\\ConfigRepository',
+    'DB'       => 'System\\Database\\MyQuery',
+    'Hash'     => 'System\\Security\\Hashing\\HashManager',
+    'PDO'      => 'System\\Database\\MyPDO',
     'Schedule' => [
-        'accessor' => 'System\Cron\Schedule',
+        'accessor' => 'System\\Cron\\Schedule',
         'replaces' => [
-            'ScheduleTime'   => '\System\Cron\ScheduleTime',
-            'ScheduleTime[]' => '\System\Cron\ScheduleTime[]',
+            'ScheduleTime'   => '\\System\\Cron\\ScheduleTime',
+            'ScheduleTime[]' => '\\System\\Cron\\ScheduleTime[]',
         ],
     ],
-    'Schema'   => 'System\Database\MySchema',
+    'Schema'   => 'System\\Database\\MySchema',
+    'View'     => 'System\\View\\Templator',
+    'Vite'     => 'System\\Integrate\\Vite',
 ];
