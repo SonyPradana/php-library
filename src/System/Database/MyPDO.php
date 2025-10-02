@@ -366,9 +366,7 @@ class MyPDO implements ConnectionInterface
     }
 
     /**
-     * @param callable(): bool|callable(static): bool $callable
-     *
-     * @return bool Transaction status
+     * {@inheritdoc}
      */
     public function transaction(callable $callable): bool
     {
@@ -393,11 +391,7 @@ class MyPDO implements ConnectionInterface
     }
 
     /**
-     * Initiates a transaction.
-     *
-     * @return bool True if success
-     *
-     * @throws \PDOException
+     * {@inheritdoc}
      */
     public function beginTransaction(): bool
     {
@@ -405,11 +399,7 @@ class MyPDO implements ConnectionInterface
     }
 
     /**
-     * Commits a transaction.
-     *
-     * @return bool True if success
-     *
-     * @throws \PDOException
+     * {@inheritdoc}
      */
     public function endTransaction(): bool
     {
@@ -417,11 +407,7 @@ class MyPDO implements ConnectionInterface
     }
 
     /**
-     * Rolls back a transaction.
-     *
-     * @return bool True if success
-     *
-     * @throws \PDOException
+     * {@inheritdoc}
      */
     public function cancelTransaction(): bool
     {

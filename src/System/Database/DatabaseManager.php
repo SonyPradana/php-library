@@ -102,6 +102,38 @@ class DatabaseManager implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
+    public function transaction(callable $callable): bool
+    {
+        return $this->connection->transaction($callable);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function beginTransaction(): bool
+    {
+        return $this->connection->beginTransaction();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function endTransaction(): bool
+    {
+        return $this->connection->endTransaction();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function cancelTransaction(): bool
+    {
+        return $this->connection->cancelTransaction();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function lastInsertId(): string|false
     {
         return $this->connection->lastInsertId();

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Database\Interfaces;
 
-interface ConnectionInterface
+interface ConnectionInterface extends LoggerInterface, TransactionInterface
 {
     /**
      * Preparing a statement in the query.
@@ -44,16 +44,4 @@ interface ConnectionInterface
      * ID from the last saved data.
      */
     public function lastInsertId(): string|false;
-
-    /**
-     * Flush logs query.
-     */
-    public function flushLogs(): void;
-
-    /**
-     * Get logs query.
-     *
-     * @return array<int, array<string, float|string|null>> the return of started, ended and duration in milisocond
-     */
-    public function getLogs(): array;
 }
