@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Database;
 
+use System\Database\Exceptions\InvalidConfigurationException;
 use System\Database\Interfaces\ConnectionInterface;
 
 class DatabaseManager implements ConnectionInterface
@@ -25,11 +26,14 @@ class DatabaseManager implements ConnectionInterface
         $this->connections = [];
     }
 
+    /**
+     * @throws InvalidConfigurationException
+     */
     public function connection(string $name): ConnectionInterface
     {
         if (false === isset($this->connections[$name])) {
             if (false === isset($this->configs[$name])) {
-                throw new \InvalidArgumentException("Database connection [{$name}] not configured.");
+                throw new InvalidConfigurationException("Database connection [{$name}] not configured.");
             }
 
             $config = $this->configs[$name];

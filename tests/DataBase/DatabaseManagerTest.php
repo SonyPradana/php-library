@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Test\Database;
 
 use System\Database\DatabaseManager;
+use System\Database\Exceptions\InvalidConfigurationException;
 
 final class DatabaseManagerTest extends TestDatabase
 {
@@ -56,7 +57,7 @@ final class DatabaseManagerTest extends TestDatabase
         $db = new DatabaseManager([
             'invalid' => null,
         ]);
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage('Database connection [invalid] not configured.');
 
         $this->assertTrue($db->connection('invalid')->query('SELECT * FROM users')->execute());
