@@ -15,7 +15,17 @@ return [
     'Config'   => 'System\\Integrate\\ConfigRepository',
     'DB'       => 'System\\Database\\MyQuery',
     'Hash'     => 'System\\Security\\Hashing\\HashManager',
-    'PDO'      => 'System\\Database\\MyPDO',
+    'PDO'      => [
+        'accessor' => 'System\\Database\\MyPDO',
+        'with'     => [
+            'resultset' => [
+                'return' => 'mixed[]|false',
+            ],
+            'getLogs' => [
+                'return' => 'array<int, array<string, float|string|null>>',
+            ],
+        ],
+    ],
     'Schedule' => [
         'accessor' => 'System\\Cron\\Schedule',
         'replaces' => [

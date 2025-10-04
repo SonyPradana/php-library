@@ -302,7 +302,7 @@ class MyPDO implements ConnectionInterface
     /**
      * {@inheritdoc}
      */
-    public function bind(int|string|bool|null $param, mixed $value, int|string|bool|null $type = null): self
+    public function bind(string|int|bool|null $param, mixed $value, string|int|bool|null $type = null): self
     {
         if (is_null($type)) {
             $type = match (true) {
