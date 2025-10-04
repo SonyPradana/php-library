@@ -1,0 +1,19 @@
+{
+    "name": "sonypradana/ratelimiter",
+    "description": "part of php-library, ratelimiter",
+    "authors": [
+        {
+            "name": "Angger Pradana",
+            "email": "sonypradana@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "sonypradana/cache": "^0.39.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "System\\RateLimiter\\": ""
+        }
+    }
+}

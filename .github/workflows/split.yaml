@@ -47,6 +47,9 @@ jobs:
                         local_path: 'Macroable'
                         split_repository: 'macroable'
                     -
+                        local_path: 'RateLimiter'
+                        split_repository: 'ratelimiter'
+                    -
                         local_path: 'Router'
                         split_repository: 'router'
                     -

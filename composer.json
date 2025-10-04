@@ -58,6 +58,7 @@
         "sonypradana/database": "self.version",
         "sonypradana/file": "self.version",
         "sonypradana/http": "self.version",
+        "sonypradana/ratelimiter": "self.version",
         "sonypradana/router": "self.version",
         "sonypradana/security": "self.version",
         "sonypradana/support": "self.version",
