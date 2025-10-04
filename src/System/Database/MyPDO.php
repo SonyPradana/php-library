@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace System\Database;
 
 use System\Database\Exceptions\InvalidConfigurationException;
+use System\Database\Interfaces\ConnectionInterface;
 
-class MyPDO
+class MyPDO implements ConnectionInterface
 {
     protected \PDO $dbh;
     private \PDOStatement $stmt;
@@ -289,7 +290,7 @@ class MyPDO
     }
 
     /**
-     *  mempersiapkan statement pada query.
+     * {@inheritdoc}
      */
     public function query(string $query): self
     {
@@ -299,13 +300,9 @@ class MyPDO
     }
 
     /**
-     * Menggantikan paramater input dari user dengan sebuah placeholder.
-     *
-     * @param int|string|bool|null $param
-     * @param mixed                $value
-     * @param int|string|bool|null $type
+     * {@inheritdoc}
      */
-    public function bind($param, $value, $type = null): self
+    public function bind(string|int|bool|null $param, mixed $value, string|int|bool|null $type = null): self
     {
         if (is_null($type)) {
             $type = match (true) {
@@ -321,13 +318,9 @@ class MyPDO
     }
 
     /**
-     * Menjalankan atau mengeksekusi query.
-     *
-     * @return bool True if success
-     *
-     * @throws \PDOException
+     * {@inheritdoc}
      */
-    public function execute()
+    public function execute(): bool
     {
         $start    = microtime(true);
         $execute  = $this->stmt->execute();
@@ -337,11 +330,9 @@ class MyPDO
     }
 
     /**
-     * mengembalikan hasil dari query yang dijalankan berupa array.
-     *
-     * @return mixed[]|false
+     * {@inheritdoc}
      */
-    public function resultset()
+    public function resultset(): array|false
     {
         $this->execute();
 
@@ -349,11 +340,9 @@ class MyPDO
     }
 
     /**
-     * Mengembalikan hasil dari query, ditampilkan hanya satu baris data saja.
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function single()
+    public function single(): mixed
     {
         $this->execute();
 
@@ -361,29 +350,23 @@ class MyPDO
     }
 
     /**
-     * menampilkan jumlah data yang berhasil di simpan, di ubah maupun dihapus.
-     *
-     * @return int the number of rows
+     * {@inheritdoc}
      */
-    public function rowCount()
+    public function rowCount(): int
     {
         return $this->stmt->rowCount();
     }
 
     /**
-     * id dari data yang terakhir disimpan.
-     *
-     * @return string|false last id
+     * {@inheritdoc}
      */
-    public function lastInsertId()
+    public function lastInsertId(): string|false
     {
         return $this->dbh->lastInsertId();
     }
 
     /**
-     * @param callable(): bool|callable(static): bool $callable
-     *
-     * @return bool Transaction status
+     * {@inheritdoc}
      */
     public function transaction(callable $callable): bool
     {
@@ -408,11 +391,7 @@ class MyPDO
     }
 
     /**
-     * Initiates a transaction.
-     *
-     * @return bool True if success
-     *
-     * @throws \PDOException
+     * {@inheritdoc}
      */
     public function beginTransaction(): bool
     {
@@ -420,11 +399,7 @@ class MyPDO
     }
 
     /**
-     * Commits a transaction.
-     *
-     * @return bool True if success
-     *
-     * @throws \PDOException
+     * {@inheritdoc}
      */
     public function endTransaction(): bool
     {
@@ -432,11 +407,7 @@ class MyPDO
     }
 
     /**
-     * Rolls back a transaction.
-     *
-     * @return bool True if success
-     *
-     * @throws \PDOException
+     * {@inheritdoc}
      */
     public function cancelTransaction(): bool
     {
@@ -454,7 +425,7 @@ class MyPDO
     }
 
     /**
-     * Flush logs query.
+     * {@inheritdoc}
      */
     public function flushLogs(): void
     {
@@ -462,9 +433,7 @@ class MyPDO
     }
 
     /**
-     * Get logs query.
-     *
-     * @return array<int, array<string, float|string|null>> the return of started, ended and duration in milisocond
+     * {@inheritdoc}
      */
     public function getLogs(): array
     {
