@@ -16,13 +16,13 @@
     "require": {
         "php": "^8.0",
         "ext-mbstring": "*",
-        "php-di/php-di": "^7.0",
+        "php-di/php-di": "^7.1",
         "sonypradana/validator": "^0.8"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.6",
         "mockery/mockery": "^1.6",
-        "friendsofphp/php-cs-fixer": "^3.65",
+        "friendsofphp/php-cs-fixer": "^3.88",
         "phpstan/phpstan": "^1.12",
         "rector/rector": "^1.2"
     },
