@@ -9,7 +9,6 @@ use System\Console\Command;
 use System\Console\Prompt;
 use System\Console\Style\Style;
 use System\Console\Traits\PrintHelpTrait;
-use System\Database\MyQuery;
 use System\Database\MySchema\MyPDO;
 use System\Database\MySchema\Table\Create;
 use System\Support\Facades\DB;
@@ -497,8 +496,7 @@ class MigrationCommand extends Command
         $width   = $this->getWidth(40, 60);
         info('showing database')->out(false);
 
-        $tables = PDO::instance()
-            ->query('SHOW DATABASES')
+        $tables = PDO::query('SHOW DATABASES')
             ->query('
                 SELECT table_name, create_time, ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024) AS `size`
                 FROM information_schema.tables
@@ -531,7 +529,7 @@ class MigrationCommand extends Command
 
     public function tableShow(string $table): int
     {
-        $table = (new MyQuery(PDO::instance()))->table($table)->info();
+        $table = DB::table($table)->info();
         $print = new Style("\n");
         $width = $this->getWidth(40, 60);
 
@@ -611,7 +609,7 @@ class MigrationCommand extends Command
      */
     private function hasMigrationTable(): bool
     {
-        $result = PDO::instance()->query(
+        $result = PDO::query(
             "SELECT COUNT(table_name) as total
             FROM information_schema.tables
             WHERE table_schema = DATABASE()
