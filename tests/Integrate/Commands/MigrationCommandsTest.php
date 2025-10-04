@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Test\Integrate\Commands;
 
+use System\Database\DatabaseManager;
 use System\Database\MyPDO;
 use System\Database\MySchema;
 use System\Database\MySchema\Table\Create;
@@ -29,6 +30,7 @@ final class MigrationCommandsTest extends TestDatabase
         $this->app->set(MySchema\MyPDO::class, fn () => $this->pdo_schema);
         $this->app->set('MySchema', fn () => $this->schema);
         $this->app->set('dsn.sql', fn () => $this->env);
+        $this->app->set(DatabaseManager::class, fn () => $this->db);
 
         Facade::setFacadeBase($this->app);
         Schema::table('migration', function (Create $column) {
