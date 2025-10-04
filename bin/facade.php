@@ -224,6 +224,7 @@ $command = new class($argv) extends Command {
         // options
         $opt_exludes  = $options['excludes'] ?? [];
         $opt_replaces = $options['replaces'] ?? [];
+        $opt_with     = $options['with'] ?? [];
 
         foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             if ($method->isConstructor()
@@ -279,10 +280,19 @@ $command = new class($argv) extends Command {
                     $default_value      = $this->getParameterDefaultValueString($param);
                     $params[$paramName] = $params[$paramName] . $default_value;
 
+                    if (isset($opt_with[$method->getName()]['param'][$param->getName()])) {
+                        $params[$paramName] = $opt_with[$method->getName()]['param'][$param->getName()] . $default_value;
+                    }
+
                     continue;
                 }
 
                 $params[$paramName] = $this->getParameterString($param);
+            }
+
+            // always offeriding parameter and return
+            if (isset($opt_with[$method->getName()]['return'])) {
+                $returnType = $opt_with[$method->getName()]['return'];
             }
 
             $buffer[] = [
