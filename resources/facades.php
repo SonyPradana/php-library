@@ -7,6 +7,7 @@ declare(strict_types=1);
  *      accessor?: string,
  *      excludes?: array<string, bool>,
  *      replaces?: array<string, string>
+ *      with?: array<string, array{param?: string[], return?: string}>
  * }>
  */
 return [
