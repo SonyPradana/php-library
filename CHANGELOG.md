@@ -6,16 +6,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.40.0] - 2025-10-06
+### Added
+- Added Connection using raw DNS ([#441](https://github.com/sonypradana/php-library/pull/441)).
+- Added Vite tag generator (html script) for asset builder ([#449](https://github.com/sonypradana/php-library/pull/449)).
+- Added Console Style with costume color output mode ([#452](https://github.com/sonypradana/php-library/pull/452)).
+- Added Console output stream for costumize terminal output ([#453](https://github.com/sonypradana/php-library/pull/453)).
+- Added Console terminal color support ([#454](https://github.com/sonypradana/php-library/pull/454)).
+- Added Console Command with verbose level check ([#455](https://github.com/sonypradana/php-library/pull/455)).
+- Added RateLimitter and Throttle Middleware ([#456](https://github.com/sonypradana/php-library/pull/456)).
+- Added Facade generator with simple configuration ([#459](https://github.com/sonypradana/php-library/pull/459)).
+- Added Schema database builder with table comment ([#464](https://github.com/sonypradana/php-library/pull/464)).
+- Added Console Style `pad` ([#470](https://github.com/sonypradana/php-library/pull/470)).
+- Added try to reconect once after lost connection detect in connection exception ([#469](https://github.com/sonypradana/php-library/pull/469)).
+- Added Console Command exit status ([#471](https://github.com/sonypradana/php-library/pull/471)).
+- Added Console Command with output stream to use Style directly ([#474](https://github.com/sonypradana/php-library/pull/474)).
+- Added two facade `Vite` and `View` a.k.a `Templator` ([#476](https://github.com/sonypradana/php-library/pull/476)).
+- Added `DatabaseManager` for centralized PDO connection handling ([#477](https://github.com/sonypradana/php-library/issues/477)).
+
+### Changed
+- Changed Kernel Middleware now is reversoble ([#443](https://github.com/sonypradana/php-library/pull/443)).
+- Changed Templator each templer with consiten term ([#450](https://github.com/sonypradana/php-library/pull/450)).
+- Changed Route Redirect now support named parameters ([#451](https://github.com/sonypradana/php-library/pull/451)).
+- Changed template generator with adding new before docblock ([#461](https://github.com/sonypradana/php-library/pull/461)).
+- Changed MyPDO/ConnectionInterface logging query with start duration and end duration ([#467](https://github.com/sonypradana/php-library/pull/467)).
+- Changed MyPDO when transaction got failed will immediately rollback transaction ([#477](https://github.com/sonypradana/php-library/pull/477)).
+
+### Fixed
+- Fixed template generator to follow php-cs-fixer rule ([#460](https://github.com/sonypradana/php-library/pull/460)).
+- Fixed Command argument parse without triming/removing usefull quote ([#466](https://github.com/sonypradana/php-library/pull/466)).
+- Fixed Typo Dsn configuration for `charset` ([#468](https://github.com/sonypradana/php-library/pull/468)).
+
 ## [0.39.2] - 2025-07-28
-### Fix
+### Fixed
 - Fixed route name overwrited (#448).
 
 ## [0.39.1] - 2025-07-23
-### Fix
+### Fixed
 - Fixed migration rollback command does not deletion migration table on success (#446).
 
 ## [0.39.0] - 2025-06-12
-### Feat
+### Added
 - Added `NameTemplator` support handle unescaped variables (#430).
 - Added support router with named parameters with types (#433).
 - Added request parameters handling in `Karnel`(#434).
