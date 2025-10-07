@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Test\Database;
 
 use PHPUnit\Framework\TestCase;
+use System\Database\DatabaseManager;
 use System\Database\MyPDO;
 use System\Database\MyQuery\Insert;
 use System\Database\MySchema;
@@ -16,6 +17,7 @@ abstract class TestDatabase extends TestCase
     protected MyPDO $pdo;
     protected MySchema\MyPDO $pdo_schema;
     protected MySchema $schema;
+    protected DatabaseManager $db;
 
     protected function createConnection(): void
     {
@@ -27,6 +29,8 @@ abstract class TestDatabase extends TestCase
         $this->schema->create()->database($this->env['database'])->ifNotExists()->execute();
 
         $this->pdo = new MyPDO($this->env);
+        $this->db  = new DatabaseManager($this->getConfiguration());
+        $this->db->setDefaultConnection($this->pdo);
     }
 
     protected function dropConnection(): void
@@ -47,10 +51,13 @@ abstract class TestDatabase extends TestCase
            ->execute();
     }
 
-    protected function setupEnv(string $use_connection = 'mysql'): void
+    /**
+     * @return array<string, array<string, string|int>>
+     */
+    protected function getConfiguration(): array
     {
-        $this->env = match ($use_connection) {
-            'mysql', 'mariadb' => [
+        return [
+            'mysql' => [
                 'driver'   => 'mysql',
                 'host'     => '127.0.0.1',
                 'username' => 'root',
@@ -59,6 +66,20 @@ abstract class TestDatabase extends TestCase
                 'port'     => 3306,
                 'charset'  => 'utf8mb4',
             ],
+            'sqlite' => [
+                'driver'   => 'sqlite',
+                'database' => ':memory:',
+                'prefix'   => '',
+            ],
+        ];
+    }
+
+    protected function setupEnv(string $use_connection = 'mysql'): void
+    {
+        $configuration = $this->getConfiguration();
+        $this->env     = match ($use_connection) {
+            'mysql', 'mariadb' => $configuration['mysql'],
+            'sqlite' => $configuration['sqlite'],
         };
     }
 

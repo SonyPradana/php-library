@@ -16,7 +16,7 @@ return [
     'DB'       => 'System\\Database\\MyQuery',
     'Hash'     => 'System\\Security\\Hashing\\HashManager',
     'PDO'      => [
-        'accessor' => 'System\\Database\\MyPDO',
+        'accessor' => 'System\\Database\\DatabaseManager',
         'with'     => [
             'resultset' => [
                 'return' => 'mixed[]|false',
