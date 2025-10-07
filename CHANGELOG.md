@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.40.1] - 2025-10-07
+### Changed
+- Changed facade accessor for `PDO` from `MyPDO` to `DatabaseManager` with sama interface ([#480](https://github.com/sonypradana/php-library/pull/480)).
+
 ## [0.40.0] - 2025-10-06
 ### Added
 - Added Connection using raw DNS ([#441](https://github.com/sonypradana/php-library/pull/441)).
