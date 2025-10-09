@@ -185,7 +185,7 @@ class FileStorage implements CacheInterface
         return $this->increment($key, $value * -1);
     }
 
-    public function remember(string $key, int|\DateInterval|null $ttl = null, \Closure $callback): mixed
+    public function remember(string $key, int|\DateInterval|null $ttl, \Closure $callback): mixed
     {
         $value = $this->get($key);
 
