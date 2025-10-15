@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace System\Database\MyQuery;
 
-use System\Database\MyPDO;
+use System\Database\Interfaces\ConnectionInterface;
 
 abstract class Query
 {
-    /** @var MyPDO PDO property */
-    protected $PDO;
+    protected ConnectionInterface $PDO;
 
     /** @var string Main query */
     protected $_query;

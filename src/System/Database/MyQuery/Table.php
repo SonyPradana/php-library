@@ -4,16 +4,11 @@ declare(strict_types=1);
 
 namespace System\Database\MyQuery;
 
-use System\Database\MyPDO;
+use System\Database\Interfaces\ConnectionInterface;
 
 class Table
 {
-    /**
-     * MyPDO instance.
-     *
-     * @var MyPDO
-     */
-    protected $PDO;
+    protected ConnectionInterface $PDO;
 
     /**
      * Table name.
@@ -22,10 +17,7 @@ class Table
      */
     protected $table_name;
 
-    /**
-     * @param string|InnerQuery $table_name Table name
-     */
-    public function __construct($table_name, MyPDO $PDO)
+    public function __construct(string|InnerQuery $table_name, ConnectionInterface $PDO)
     {
         $this->table_name = $table_name;
         $this->PDO        = $PDO;

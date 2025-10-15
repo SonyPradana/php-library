@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Database\MyQuery;
 
-use System\Database\MyPDO;
+use System\Database\Interfaces\ConnectionInterface;
 use System\Database\MyQuery;
 use System\Database\MyQuery\Join\AbstractJoin;
 use System\Database\MyQuery\Traits\ConditionTrait;
@@ -18,12 +18,11 @@ final class Select extends Fetch
     /**
      * @param string|InnerQuery $table_name   Table name
      * @param string[]          $columns_name Selected cloumn
-     * @param MyPDO             $PDO          MyPDO class
      * @param string[]          $options      Add costume option (eg: query)
      *
      * @return void
      */
-    public function __construct($table_name, array $columns_name, MyPDO $PDO, ?array $options = null)
+    public function __construct($table_name, array $columns_name, ConnectionInterface $PDO, ?array $options = null)
     {
         $this->_sub_query = $table_name instanceof InnerQuery ? $table_name : new InnerQuery(table: $table_name);
         $this->_column    = $columns_name;
@@ -48,11 +47,10 @@ final class Select extends Fetch
      *
      * @param string   $table_name  Table name
      * @param string[] $column_name Selected column
-     * @param MyPDO    $PDO         MyPdo
      *
      * @return Select
      */
-    public static function from(string $table_name, array $column_name, MyPDO $PDO)
+    public static function from(string $table_name, array $column_name, ConnectionInterface $PDO)
     {
         return new static($table_name, $column_name, $PDO);
     }

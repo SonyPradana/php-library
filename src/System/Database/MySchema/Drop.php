@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace System\Database\MySchema;
 
+use System\Database\Interfaces\Schema;
+
 /** Proxy for drop database and table */
 class Drop
 {
     public function __construct(
-        private MyPDO $pdo,
+        private Schema\ConnectionInterface $pdo,
         private ?string $database_name = null,
     ) {
     }

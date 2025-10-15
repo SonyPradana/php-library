@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace System\Database;
 
+use System\Database\Interfaces\Schema;
+
 class MySchema
 {
     public function __construct(
-        private MySchema\MyPDO $pdo,
+        private Schema\ConnectionInterface $pdo,
         private ?string $database_name = null,
     ) {
         $this->database_name ??= $this->pdo->getDatabase();

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Database;
 
+use System\Database\Interfaces\ConnectionInterface;
 use System\Database\MyQuery\Join\AbstractJoin;
 use System\Database\MyQuery\Select;
 
@@ -61,8 +62,7 @@ abstract class MyModel
     public const ORDER_ASC  = 0;
     public const ORDER_DESC = 1;
 
-    /** @var MyPDO */
-    protected $PDO;
+    protected ConnectionInterface $PDO;
 
     // setter
 
@@ -413,10 +413,8 @@ abstract class MyModel
 
     /**
      * Create new instance from static.
-     *
-     * @param MyPDO $pdo PDO DI
      */
-    public static function call(?MyPDO $pdo = null): self
+    public static function call(?ConnectionInterface $pdo = null): self
     {
         /* @phpstan-ignore-next-line */
         return new static($pdo);

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace System\Database\Seeder;
 
-use System\Database\MyPDO;
+use System\Database\Interfaces\ConnectionInterface;
 use System\Database\MyQuery\Insert;
 
 abstract class Seeder
 {
-    protected MyPDO $pdo;
+    protected ConnectionInterface $pdo;
 
-    public function __construct(MyPDO $pdo)
+    public function __construct(ConnectionInterface $pdo)
     {
         $this->pdo =  $pdo;
     }

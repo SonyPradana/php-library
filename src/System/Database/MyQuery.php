@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Database;
 
+use System\Database\Interfaces\ConnectionInterface;
 use System\Database\MyQuery\InnerQuery;
 use System\Database\MyQuery\Table;
 
@@ -17,10 +18,8 @@ class MyQuery
 
     /**
      * Create new Builder.
-     *
-     * @param MyPDO $PDO the PDO connection
      */
-    public function __construct(protected MyPDO $PDO)
+    public function __construct(protected ConnectionInterface $PDO)
     {
     }
 
@@ -43,7 +42,7 @@ class MyQuery
     /**
      * Create Builder using static function.
      */
-    public static function from(string|InnerQuery $table_name, MyPDO $PDO): Table
+    public static function from(string|InnerQuery $table_name, ConnectionInterface $PDO): Table
     {
         $conn = new MyQuery($PDO);
 

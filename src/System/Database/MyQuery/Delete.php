@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Database\MyQuery;
 
-use System\Database\MyPDO;
+use System\Database\Interfaces\ConnectionInterface;
 use System\Database\MyQuery\Join\AbstractJoin;
 use System\Database\MyQuery\Traits\ConditionTrait;
 use System\Database\MyQuery\Traits\SubQueryTrait;
@@ -16,7 +16,7 @@ class Delete extends Execute
 
     protected ?string $alias = null;
 
-    public function __construct(string $table_name, MyPDO $PDO)
+    public function __construct(string $table_name, ConnectionInterface $PDO)
     {
         $this->_table = $table_name;
         $this->PDO    = $PDO;

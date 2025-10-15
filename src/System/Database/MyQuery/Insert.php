@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Database\MyQuery;
 
-use System\Database\MyPDO;
+use System\Database\Interfaces\ConnectionInterface;
 
 class Insert extends Execute
 {
@@ -13,7 +13,7 @@ class Insert extends Execute
      */
     private ?array $duplicate_key = null;
 
-    public function __construct(string $table_name, MyPDO $PDO)
+    public function __construct(string $table_name, ConnectionInterface $PDO)
     {
         $this->_table = $table_name;
         $this->PDO    = $PDO;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Database\MySchema\DB;
 
-use System\Database\MySchema\MyPDO;
+use System\Database\Interfaces\Schema;
 use System\Database\MySchema\Query;
 use System\Database\MySchema\Traits\ConditionTrait;
 
@@ -15,7 +15,7 @@ class Create extends Query
     /** @var string */
     private $database_name;
 
-    public function __construct(string $database_name, MyPDO $pdo)
+    public function __construct(string $database_name, Schema\ConnectionInterface $pdo)
     {
         $this->database_name = $database_name;
         $this->pdo           = $pdo;

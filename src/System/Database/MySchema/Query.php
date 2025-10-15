@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace System\Database\MySchema;
 
+use System\Database\Interfaces\Schema;
+
 abstract class Query
 {
-    /** @var MyPDO PDO property */
-    protected $pdo;
+    protected Schema\ConnectionInterface $pdo;
 
     public function __toString()
     {

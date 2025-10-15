@@ -6,12 +6,12 @@ namespace System\Database;
 
 use System\Collection\Collection;
 use System\Collection\CollectionImmutable;
+use System\Database\Interfaces\ConnectionInterface;
 use System\Database\MyQuery\Join\InnerJoin;
 
 abstract class MyCRUD
 {
-    /** @var MyPDO */
-    protected $PDO;
+    protected ConnectionInterface $PDO;
 
     /** @var string */
     protected $TABLE_NAME;

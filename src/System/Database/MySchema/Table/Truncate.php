@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Database\MySchema\Table;
 
-use System\Database\MySchema\MyPDO;
+use System\Database\Interfaces\Schema;
 use System\Database\MySchema\Query;
 use System\Database\MySchema\Traits\ConditionTrait;
 
@@ -15,7 +15,7 @@ class Truncate extends Query
     /** @var string */
     private $table_name;
 
-    public function __construct(string $database_name, string $table_name, MyPDO $pdo)
+    public function __construct(string $database_name, string $table_name, Schema\ConnectionInterface $pdo)
     {
         $this->table_name    = $database_name . '.' . $table_name;
         $this->pdo           = $pdo;

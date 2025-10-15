@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace System\Database\MySchema;
 
+use System\Database\Interfaces\Schema;
 use System\Database\MyPDO as BasePDO;
 
-class MyPDO extends BasePDO
+class MyPDO extends BasePDO implements Schema\ConnectionInterface
 {
     private string $database;
 
