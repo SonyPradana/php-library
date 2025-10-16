@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace System\Support\Facades;
 
-use System\Database\MyQuery;
 use System\Database\MyQuery\InnerQuery;
 use System\Database\MyQuery\Table;
-use System\Database\MySchema\MyPDO;
 
 /**
  * @method static void                                            clearConnections()
@@ -42,15 +40,5 @@ final class DB extends Facade
     public static function table(string|InnerQuery $table_name): Table
     {
         return new Table($table_name, PDO::instance());
-    }
-
-    /**
-     * Create Builder using static function.
-     */
-    public static function from(string|InnerQuery $table_name, MyPDO $PDO): Table
-    {
-        $conn = new MyQuery($PDO);
-
-        return $conn->table($table_name);
     }
 }
