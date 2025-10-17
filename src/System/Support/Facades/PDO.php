@@ -29,6 +29,6 @@ final class PDO extends Facade
 {
     protected static function getAccessor()
     {
-        return \System\Database\DatabaseManager::class;
+        return \System\Database\MyPDO::class;
     }
 }
