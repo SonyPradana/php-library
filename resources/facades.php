@@ -13,9 +13,7 @@ declare(strict_types=1);
 return [
     'Cache'    => 'System\\Cache\\CacheManager',
     'Config'   => 'System\\Integrate\\ConfigRepository',
-    'DB'       => 'System\\Database\\MyQuery',
-    'Hash'     => 'System\\Security\\Hashing\\HashManager',
-    'PDO'      => [
+    'DB'       => [
         'accessor' => 'System\\Database\\DatabaseManager',
         'with'     => [
             'resultset' => [
@@ -26,6 +24,8 @@ return [
             ],
         ],
     ],
+    'Hash'     => 'System\\Security\\Hashing\\HashManager',
+    'PDO'      => 'System\\Database\\MyPDO',
     'Schedule' => [
         'accessor' => 'System\\Cron\\Schedule',
         'replaces' => [
