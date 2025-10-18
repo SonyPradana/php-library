@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Support\Facades;
 
+use System\Database\MyPDO;
 use System\Database\MyQuery\InnerQuery;
 use System\Database\MyQuery\Table;
 
@@ -36,9 +37,21 @@ final class DB extends Facade
 
     /**
      * Create builder and set table name.
+     *
+     * @deprecated since v0.40.3
      */
     public static function table(string|InnerQuery $table_name): Table
     {
         return new Table($table_name, PDO::instance());
+    }
+
+    /**
+     * Create Builder using static function.
+     *
+     * @deprecated since v0.40.3
+     */
+    public static function from(string|InnerQuery $table_name, MyPDO $pdo): Table
+    {
+        return new Table($table_name, $pdo);
     }
 }
