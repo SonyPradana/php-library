@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.40.3] - 2025-10-18
+### Fixed
+- Reverted facade accessor for `PDO` from `DatabaseManager`to `MyPDO` ([#482](https://github.com/sonypradana/php-library/pull/482)).
+
+
 ## [0.40.2] - 2025-10-09
 ### Fixed
 - Fixed optional parameter declared before required parameter.
