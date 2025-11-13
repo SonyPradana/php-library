@@ -346,19 +346,16 @@ class Router
      */
     private static function resolveRouteAttribute(string $class_name, array $attributes = [], array $attributes_methods = []): array
     {
-        $prefix_uri  = '';
-        $prefix_name = '';
-        $middlewares = [];
-        $name        = '';
-        $pattern     = [];
-        $classes     = [];
-        $http_method = '';
-        $uri         = '';
+        $prefix_uri       = '';
+        $prefix_name      = '';
+        $root_middlewares = [];
+        $classes          = [];
 
         foreach ($attributes as $class_attribute) {
             $instance = $class_attribute->newInstance();
+
             if ($instance instanceof Middleware) {
-                $middlewares = $instance->middlware;
+                $root_middlewares = $instance->middlware;
             }
             if ($instance instanceof Name) {
                 $prefix_name = $instance->name;
@@ -369,7 +366,13 @@ class Router
         }
 
         foreach ($attributes_methods as $method) {
-            $found = false;
+            $middlewares = $root_middlewares;
+            $name        = '';
+            $pattern     = [];
+            $uri         = '';
+            $http_method = '';
+            $found       = false;
+
             foreach ($method->getAttributes() as $attribute) {
                 $instance = $attribute->newInstance();
 
@@ -396,6 +399,7 @@ class Router
                     $found = true;
                 }
             }
+
             if (true === $found) {
                 $classes[] = [
                     'method'     => $http_method,
