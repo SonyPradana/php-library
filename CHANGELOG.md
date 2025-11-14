@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.40.4] - 2025-11-14
+### Fixed
+- Fixed Router Middleware Attribute register even not register in other method in same class  ([#483](https://github.com/sonypradana/php-library/pull/483)).
+
 ## [0.40.3] - 2025-10-18
 ### Fixed
 - Reverted facade accessor for `PDO` from `DatabaseManager`to `MyPDO` ([#482](https://github.com/sonypradana/php-library/pull/482)).
