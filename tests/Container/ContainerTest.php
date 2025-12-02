@@ -51,12 +51,12 @@ class ContainerTest extends TestCase
         $container->has('framework');
 
         $this->assertNotEmpty((fn () => $this->{'aliases'})->call($container));
-        $this->assertNotEmpty((fn () => $this->{'resolvedEntries'})->call($container));
+        $this->assertNotEmpty((fn () => $this->{'instances'})->call($container));
 
         $container->flush();
 
         $this->assertEmpty((fn () => $this->{'aliases'})->call($container));
-        $this->assertEmpty((fn () => $this->{'resolvedEntries'})->call($container));
-        $this->assertEmpty((fn () => $this->{'entriesBeingResolved'})->call($container));
+        $this->assertEmpty((fn () => $this->{'instances'})->call($container));
+        $this->assertEmpty((fn () => $this->{'buildStack'})->call($container));
     }
 }

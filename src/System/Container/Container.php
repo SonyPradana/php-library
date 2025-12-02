@@ -90,15 +90,17 @@ class Container implements \ArrayAccess
     {
         $name = $this->getAlias($name);
 
-        // If value is already an instance, store it directly
-        if (is_object($value) && false === $value instanceof \Closure) {
-            $this->instances[$name] = $value;
+        // Store the value directly as a shared instance.
+        $this->instances[$name] = $value;
 
-            return;
-        }
-
-        // Otherwise, bind it as shared (singleton)
-        $this->bind($name, $value, true);
+        // Register a binding that, when resolved, just returns this already stored instance.
+        // This ensures 'bound' and 'get' will find it without trying to 'bind' the mixed value directly.
+        $this->bindings[$name] = [
+            'concrete' => function () use ($name) {
+                return $this->instances[$name];
+            },
+            'shared' => true,
+        ];
     }
 
     /**
@@ -636,6 +638,17 @@ class Container implements \ArrayAccess
      */
     public function offsetUnset($offset): void
     {
-        unset($this->resolvedEntries[$offset]);
+        $offset = $this->getAlias($offset); // Ensure we're unsetting the canonical name
+
+        unset($this->instances[$offset]);
+        unset($this->bindings[$offset]);
+        // Also remove from aliases if it was an alias itself, or an alias pointing to it
+        foreach ($this->aliases as $alias => $abstract) {
+            if ($abstract === $offset || $alias === $offset) {
+                unset($this->aliases[$alias]);
+            }
+        }
+        unset($this->reflectionCache[$offset]);
+        unset($this->constructorCache[$offset]);
     }
 }
