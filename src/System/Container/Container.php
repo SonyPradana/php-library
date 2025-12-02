@@ -102,18 +102,21 @@ class Container implements \ArrayAccess
      */
     public function set(string $name, mixed $value): void
     {
+        // If the value is a Closure, it's a factory for a shared instance.
+        if ($value instanceof \Closure) {
+            $this->bind($name, $value, true);
+
+            return;
+        }
+
         $name = $this->getAlias($name);
 
-        // Store the value directly as a shared instance.
+        // Otherwise, store the value directly as a resolved, shared instance.
         $this->instances[$name] = $value;
-
-        // Register a binding that, when resolved, just returns this already stored instance.
-        // This ensures 'bound' and 'get' will find it without trying to 'bind' the mixed value directly.
+        // And ensure that any 'make' calls also return this specific instance.
         $this->bindings[$name] = [
-            'concrete' => function () use ($name) {
-                return $this->instances[$name];
-            },
-            'shared' => true,
+            'concrete' => fn () => $this->instances[$name],
+            'shared'   => true,
         ];
     }
 
@@ -200,7 +203,7 @@ class Container implements \ArrayAccess
 
         // If we have a Closure as concrete, execute it
         if ($concrete instanceof \Closure) {
-            $object = $concrete($this, $this->getLastParameterOverride());
+            $object = $this->call($concrete, $this->getLastParameterOverride());
         } else {
             $object = $this->build($concrete, $this->getLastParameterOverride());
         }
@@ -432,13 +435,13 @@ class Container implements \ArrayAccess
      */
     public function call(callable|array|string $callable, array $parameters = []): mixed
     {
-        if (false === is_callable($callable)) {
-            throw new \InvalidArgumentException('Callback is not callable.');
-        }
-
         // Handle array callable [object, method] or [class, method]
         if (is_array($callable)) {
             return $this->callMethod($callable[0], $callable[1], $parameters);
+        }
+
+        if (false === is_callable($callable)) {
+            throw new \InvalidArgumentException('Callback is not callable.');
         }
 
         // Handle closure or function
