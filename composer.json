@@ -16,7 +16,6 @@
     "require": {
         "php": "^8.0",
         "ext-mbstring": "*",
-        "php-di/php-di": "^7.1",
         "sonypradana/validator": "^0.8"
     },
     "require-dev": {
