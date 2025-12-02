@@ -12,11 +12,15 @@ class Container implements \ArrayAccess
 {
     /**
      * The container's bindings.
+     *
+     * @var array<string, array{concrete: \Closure, shared: bool}>
      */
     protected array $bindings = [];
 
     /**
      * The container's shared instances (singleton cache).
+     *
+     * @var array<string, mixed>
      */
     protected array $instances = [];
 
@@ -29,21 +33,29 @@ class Container implements \ArrayAccess
 
     /**
      * The stack of concretions currently being built.
+     *
+     * @var string[]
      */
     protected array $buildStack = [];
 
     /**
      * The parameter override stack.
+     *
+     * @var list<array<mixed>>
      */
     protected array $with = [];
 
     /**
      * The cached reflection data.
+     *
+     * @var array<string, \ReflectionClass>
      */
     protected array $reflectionCache = [];
 
     /**
      * The cached constructor data.
+     *
+     * @var array<string, array<\ReflectionParameter>|null>
      */
     protected array $constructorCache = [];
 
@@ -71,6 +83,8 @@ class Container implements \ArrayAccess
 
     /**
      * Get the Closure to be used when building a type.
+     *
+     * @return \Closure(self, array<mixed>):mixed
      */
     protected function getClosure(string $abstract, string $concrete): \Closure
     {
@@ -152,7 +166,8 @@ class Container implements \ArrayAccess
      *
      * @template T
      *
-     * @param string|class-string<T> $name
+     * @param string|class-string<T>   $name
+     * @param array<int|string, mixed> $parameters
      *
      * @return mixed|T
      *
@@ -165,6 +180,8 @@ class Container implements \ArrayAccess
 
     /**
      * Resolve the given type from the container.
+     *
+     * @param array<int|string, mixed> $parameters
      *
      * @throws Exception\BindingResolutionException
      */
@@ -221,6 +238,8 @@ class Container implements \ArrayAccess
 
     /**
      * Instantiate a concrete instance of the given type.
+     *
+     * @param array<int|string, mixed> $parameters
      *
      * @throws Exception\BindingResolutionException
      */
@@ -284,6 +303,8 @@ class Container implements \ArrayAccess
 
     /**
      * Get constructor parameters for a class (with caching).
+     *
+     * @return array<\ReflectionParameter>|null
      */
     protected function getConstructorParameters(string $class): ?array
     {
@@ -306,7 +327,10 @@ class Container implements \ArrayAccess
     /**
      * Resolve all of the dependencies from the ReflectionParameters.
      *
-     * @return array
+     * @param \ReflectionParameter[]   $dependencies
+     * @param array<int|string, mixed> $parameters
+     *
+     * @return array<mixed>
      */
     protected function resolveDependencies(array $dependencies, array $parameters = [])
     {
@@ -393,6 +417,8 @@ class Container implements \ArrayAccess
 
     /**
      * Get the last parameter override.
+     *
+     * @return array<mixed>
      */
     protected function getLastParameterOverride(): array
     {
@@ -401,6 +427,8 @@ class Container implements \ArrayAccess
 
     /**
      * Call the given callable and inject its dependencies.
+     *
+     * @param array<int|string, mixed> $parameters
      */
     public function call(callable|array|string $callable, array $parameters = []): mixed
     {
@@ -422,6 +450,8 @@ class Container implements \ArrayAccess
 
     /**
      * Call a method and inject its dependencies.
+     *
+     * @param array<int|string, mixed> $parameters
      */
     protected function callMethod(object|string $instance, string $method, array $parameters = []): mixed
     {
@@ -438,6 +468,10 @@ class Container implements \ArrayAccess
 
     /**
      * Resolve function dependencies.
+     *
+     * @param array<int|string, mixed> $parameters
+     *
+     * @return array<mixed>
      */
     protected function resolveFunctionDependencies(\ReflectionFunctionAbstract $reflection, array $parameters = []): array
     {
