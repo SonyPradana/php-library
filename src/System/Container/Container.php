@@ -8,6 +8,9 @@ use Closure;
 use System\Container\Exceptions\BindingResolutionException;
 use System\Container\Exceptions\EntryNotFoundException;
 
+/**
+ * @implements \ArrayAccess<string|class-string<mixed>, mixed>
+ */
 class Container implements \ArrayAccess
 {
     /**
@@ -48,7 +51,7 @@ class Container implements \ArrayAccess
     /**
      * The cached reflection data.
      *
-     * @var array<string, \ReflectionClass>
+     * @var array<string, \ReflectionClass<object>>
      */
     protected array $reflectionCache = [];
 
@@ -71,7 +74,7 @@ class Container implements \ArrayAccess
     {
         $abstract = $this->getAlias($abstract);
 
-        $concrete = $concrete ?? $abstract;
+        $concrete ??= $abstract;
 
         // If the concrete is not a Closure, we will make it one.
         if (false === $concrete instanceof \Closure) {
@@ -82,19 +85,34 @@ class Container implements \ArrayAccess
     }
 
     /**
-     * Get the Closure to be used when building a type.
+     * Resolve and return an entry from the container (singleton behavior - PHP-DI compatible).
      *
-     * @return \Closure(self, array<mixed>):mixed
+     * @throws EntryNotFoundException
+     * @throws BindingResolutionException
      */
-    protected function getClosure(string $abstract, string $concrete): \Closure
+    public function get(string $name): mixed
     {
-        return function ($container, $parameters = []) use ($abstract, $concrete) {
-            if ($abstract == $concrete) {
-                return $container->build($concrete, $parameters);
+        if (false === $this->has($name)) {
+            // Check if it's a valid class before throwing EntryNotFoundException
+            if (false === class_exists($name) && false === interface_exists($name)) {
+                throw new EntryNotFoundException("No entry was found for '{$name}' identifier.");
             }
+        }
 
-            return $container->resolve($concrete, $parameters, false);
-        };
+        return $this->resolve($name, [], true);
+    }
+
+    /**
+     * Resolve a new instance from the container (always fresh - PHP-DI compatible).
+     *
+     * @param string|class-string      $name
+     * @param array<int|string, mixed> $parameters
+     *
+     * @throws BindingResolutionException
+     */
+    public function make(string $name, array $parameters = []): mixed
+    {
+        return $this->resolve($name, $parameters, false);
     }
 
     /**
@@ -121,6 +139,14 @@ class Container implements \ArrayAccess
     }
 
     /**
+     * Determine if a given identifier has a value or binding (PSR-11).
+     */
+    public function has(string $id): bool
+    {
+        return $this->bound($id) || class_exists($id) || interface_exists($id);
+    }
+
+    /**
      * Alias a type to a different name.
      */
     public function alias(string $abstract, string $alias): void
@@ -143,42 +169,19 @@ class Container implements \ArrayAccess
     }
 
     /**
-     * Resolve and return an entry from the container (singleton behavior - PHP-DI compatible).
+     * Get the Closure to be used when building a type.
      *
-     * @template T
-     *
-     * @return mixed|T
-     *
-     * @throws Exception\EntryNotFoundException
-     * @throws Exception\BindingResolutionException
+     * @return \Closure(self, array<mixed>):mixed
      */
-    public function get(string $name): mixed
+    protected function getClosure(string $abstract, string $concrete): \Closure
     {
-        if (false === $this->has($name)) {
-            // Check if it's a valid class before throwing EntryNotFoundException
-            if (false === class_exists($name) && false === interface_exists($name)) {
-                throw new EntryNotFoundException("No entry was found for '{$name}' identifier.");
+        return function ($container, $parameters = []) use ($abstract, $concrete) {
+            if ($abstract == $concrete) {
+                return $container->build($concrete, $parameters);
             }
-        }
 
-        return $this->resolve($name, [], true);
-    }
-
-    /**
-     * Resolve a new instance from the container (always fresh - PHP-DI compatible).
-     *
-     * @template T
-     *
-     * @param string|class-string<T>   $name
-     * @param array<int|string, mixed> $parameters
-     *
-     * @return mixed|T
-     *
-     * @throws Exception\BindingResolutionException
-     */
-    public function make(string $name, array $parameters = []): mixed
-    {
-        return $this->resolve($name, $parameters, false);
+            return $container->resolve($concrete, $parameters, false);
+        };
     }
 
     /**
@@ -186,7 +189,7 @@ class Container implements \ArrayAccess
      *
      * @param array<int|string, mixed> $parameters
      *
-     * @throws Exception\BindingResolutionException
+     * @throws BindingResolutionException
      */
     protected function resolve(string $abstract, array $parameters = [], bool $useCache = true): mixed
     {
@@ -244,9 +247,9 @@ class Container implements \ArrayAccess
      *
      * @param array<int|string, mixed> $parameters
      *
-     * @throws Exception\BindingResolutionException
+     * @throws BindingResolutionException
      */
-    public function build(string $concrete, array $parameters = []): mixed
+    public function build(string|\Closure $concrete, array $parameters = []): mixed
     {
         // If the concrete is actually a Closure, just execute it and return the result.
         if ($concrete instanceof \Closure) {
@@ -281,6 +284,8 @@ class Container implements \ArrayAccess
 
     /**
      * Get a reflection class instance for the given class.
+     *
+     * @return \ReflectionClass<object>
      *
      * @throws \ReflectionException
      */
@@ -373,19 +378,23 @@ class Container implements \ArrayAccess
      *
      * @return mixed
      *
-     * @throws Exception\BindingResolutionException
+     * @throws BindingResolutionException
      */
     protected function resolveParameterDependency(\ReflectionParameter $parameter)
     {
         $type = $parameter->getType();
 
         // If the parameter has no type, we'll check if it has a default value.
-        if (false === $type) {
+        if (null === $type) {
             if ($parameter->isDefaultValueAvailable()) {
                 return $parameter->getDefaultValue();
             }
 
             throw new BindingResolutionException("Unresolvable dependency resolving [$parameter] in class {$parameter->getDeclaringClass()->getName()}");
+        }
+
+        if (!$type instanceof \ReflectionNamedType) {
+            throw new BindingResolutionException("Unresolvable dependency resolving [$parameter] in class {$parameter->getDeclaringClass()->getName()}: unsupported parameter type");
         }
 
         $typeName = $type->getName();
@@ -431,7 +440,8 @@ class Container implements \ArrayAccess
     /**
      * Call the given callable and inject its dependencies.
      *
-     * @param array<int|string, mixed> $parameters
+     * @param callable|array{0: object|string, 1: string}|string $callable
+     * @param array<int|string<string, string>, mixed>           $parameters
      */
     public function call(callable|array|string $callable, array $parameters = []): mixed
     {
@@ -497,7 +507,7 @@ class Container implements \ArrayAccess
             }
 
             // Try to resolve from container if type-hinted
-            if ($parameter->getType() && false === $parameter->getType()->isBuiltin()) {
+            if ($parameter->getType() instanceof \ReflectionNamedType && false === $parameter->getType()->isBuiltin()) {
                 $dependencies[] = $this->get($parameter->getType()->getName());
                 continue;
             }
@@ -523,16 +533,12 @@ class Container implements \ArrayAccess
     /**
      * Inject dependencies on an existing instance.
      *
-     * @template T
-     *
-     * @param object|T $instance Object to perform injection upon
-     *
-     * @return object|T $instance Returns the same instance
+     * @param object $instance Object to perform injection upon
      */
     public function injectOn(object $instance): object
     {
         // Get all public methods
-        $class     = get_class($instance);
+        $class     = $instance::class;
         $reflector = $this->getReflectionClass($class);
 
         // Look for methods with @Inject annotation or specific naming pattern
@@ -550,7 +556,7 @@ class Container implements \ArrayAccess
                 $canInject = true;
                 foreach ($parameters as $param) {
                     $type = $param->getType();
-                    if (false === $type || $type->isBuiltin()) {
+                    if (!$type || ($type instanceof \ReflectionNamedType && $type->isBuiltin())) {
                         $canInject = false;
                         break;
                     }
@@ -584,14 +590,6 @@ class Container implements \ArrayAccess
     }
 
     /**
-     * Determine if a given identifier has a value or binding (PSR-11).
-     */
-    public function has(string $id): bool
-    {
-        return $this->bound($id) || class_exists($id) || interface_exists($id);
-    }
-
-    /**
      * Enable or disable the reflection cache.
      */
     public function enableCache(bool $enabled = true): self
@@ -614,6 +612,8 @@ class Container implements \ArrayAccess
 
     /**
      * Get all of the container's bindings.
+     *
+     * @return array<string, array{concrete: \Closure, shared: bool}>
      */
     public function getBindings(): array
     {
