@@ -163,9 +163,16 @@ class Container implements \ArrayAccess
      */
     public function getAlias(string $abstract): string
     {
-        return isset($this->aliases[$abstract])
-            ? $this->getAlias($this->aliases[$abstract])
-            : $abstract;
+        $resolving = [];
+        while (isset($this->aliases[$abstract])) {
+            if (isset($resolving[$abstract])) {
+                throw new \Exception("Circular alias reference detected for {$abstract}");
+            }
+            $resolving[$abstract] = true;
+            $abstract             = $this->aliases[$abstract];
+        }
+
+        return $abstract;
     }
 
     /**
@@ -509,6 +516,12 @@ class Container implements \ArrayAccess
             // Try to resolve from container if type-hinted
             if ($parameter->getType() instanceof \ReflectionNamedType && false === $parameter->getType()->isBuiltin()) {
                 $dependencies[] = $this->get($parameter->getType()->getName());
+                continue;
+            }
+
+            // This is a special case for the container itself.
+            if ($parameter->getName() === 'container' && $parameter->getType() === null) {
+                $dependencies[] = $this;
                 continue;
             }
 

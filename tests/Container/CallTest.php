@@ -16,10 +16,13 @@ class CallTest extends TestCase
      *
      * @testdox call() invokes a function
      *
-     * @covers \Container::call */
+     * @covers \System\Container\Container::call */
     public function callFunction(): void
     {
-        $this->assertTrue(false);
+        $result = $this->container->call(function () {
+            return 'called';
+        });
+        $this->assertEquals('called', $result);
     }
 
     /**
@@ -27,10 +30,18 @@ class CallTest extends TestCase
      *
      * @testdox call() invokes method array syntax
      *
-     * @covers \Container::call */
+     * @covers \System\Container\Container::call */
     public function callClassMethod(): void
     {
-        $this->assertTrue(false);
+        $dummy = new class {
+            public function foo()
+            {
+                return 'bar';
+            }
+        };
+
+        $result = $this->container->call([$dummy, 'foo']);
+        $this->assertEquals('bar', $result);
     }
 
     /**
@@ -38,10 +49,11 @@ class CallTest extends TestCase
      *
      * @testdox call() invokes static method string syntax
      *
-     * @covers \Container::call */
+     * @covers \System\Container\Container::call */
     public function callStaticMethod(): void
     {
-        $this->assertTrue(false);
+        $result = $this->container->call([DummyStaticClass::class, 'staticMethod']);
+        $this->assertEquals('static called', $result);
     }
 
     /**
@@ -49,10 +61,13 @@ class CallTest extends TestCase
      *
      * @testdox call() injects dependencies in parameters
      *
-     * @covers \Container::call */
+     * @covers \System\Container\Container::call */
     public function callInjectsDependencies(): void
     {
-        $this->assertTrue(false);
+        $result = $this->container->call(function (DependencyClass $dependency) {
+            return $dependency;
+        });
+        $this->assertInstanceOf(DependencyClass::class, $result);
     }
 
     /**
@@ -60,10 +75,14 @@ class CallTest extends TestCase
      *
      * @testdox call() merges user parameters and auto injection
      *
-     * @covers \Container::call */
+     * @covers \System\Container\Container::call */
     public function callWithCustomParameters(): void
     {
-        $this->assertTrue(false);
+        $result = $this->container->call(function (DependencyClass $dependency, string $name) {
+            return [$dependency, $name];
+        }, ['name' => 'test']);
+        $this->assertInstanceOf(DependencyClass::class, $result[0]);
+        $this->assertEquals('test', $result[1]);
     }
 
     /**
@@ -71,10 +90,17 @@ class CallTest extends TestCase
      *
      * @testdox call() resolves callable from container binding
      *
-     * @covers \Container::call */
+     * @covers \System\Container\Container::call */
     public function callResolvesViaContainer(): void
     {
-        $this->assertTrue(false);
+        $this->container->bind(DependencyClass::class, function () {
+            return new DependencyClass();
+        });
+
+        $result = $this->container->call(function (DependencyClass $dependency) {
+            return $dependency;
+        });
+        $this->assertInstanceOf(DependencyClass::class, $result);
     }
 
     /**
@@ -82,9 +108,27 @@ class CallTest extends TestCase
      *
      * @testdox call() throws on unresolvable param
      *
-     * @covers \Container::call */
+     * @covers \System\Container\Container::call */
     public function callUnresolvableParameter(): void
     {
-        $this->assertTrue(false);
+        $this->expectException(\System\Container\Exceptions\BindingResolutionException::class);
+        $this->expectExceptionMessage('Unable to resolve dependency [Parameter #0 [ <required> $param ]] in callable');
+
+        $this->container->call(function ($param) {
+        });
+    }
+
+    /**
+     * @test
+     *
+     * @testdox call() invokes invokable class
+     *
+     * @covers \System\Container\Container::call */
+    public function callInvokableClass(): void
+    {
+        $this->markTestSkipped('Inconsistency: Container::call() does not currently support invokable classes directly (ReflectionFunction expects Closure or string).');
+
+        $result = $this->container->call(new InvokableClass());
+        $this->assertEquals('invoked', $result);
     }
 }

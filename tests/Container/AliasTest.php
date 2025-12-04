@@ -18,7 +18,11 @@ class AliasTest extends TestCase
      * */
     public function aliasBasic(): void
     {
-        $this->assertTrue(false);
+        $container = $this->container;
+        $container->bind(self::class . 'Foo', fn () => 'foo');
+        $container->alias(self::class . 'Foo', 'foo-alias');
+
+        $this->assertEquals('foo', $container->get('foo-alias'));
     }
 
     /** @test
@@ -28,7 +32,12 @@ class AliasTest extends TestCase
      * */
     public function aliasRecursiveResolution(): void
     {
-        $this->assertTrue(false);
+        $container = $this->container;
+        $container->bind('foo', fn () => 'bar');
+        $container->alias('foo', 'alias1');
+        $container->alias('alias1', 'alias2');
+
+        $this->assertEquals('bar', $container->get('alias2'));
     }
 
     /** @test
@@ -38,7 +47,13 @@ class AliasTest extends TestCase
      * */
     public function aliasShadow(): void
     {
-        $this->assertTrue(false);
+        $container = $this->container;
+        $container->bind('foo', fn () => 'foo-instance');
+        $container->bind('bar', fn () => 'bar-instance');
+        $container->alias('foo', 'shadow');
+        $container->alias('bar', 'shadow');
+
+        $this->assertEquals('bar-instance', $container->get('shadow'));
     }
 
     /** @test
@@ -48,7 +63,10 @@ class AliasTest extends TestCase
      * */
     public function aliasGetAlias(): void
     {
-        $this->assertTrue(false);
+        $container = $this->container;
+        $container->alias('foo', 'bar');
+
+        $this->assertEquals('foo', $container->getAlias('bar'));
     }
 
     /** @test
@@ -58,7 +76,11 @@ class AliasTest extends TestCase
      * */
     public function aliasUsedInBind(): void
     {
-        $this->assertTrue(false);
+        $container = $this->container;
+        $container->alias('foo', 'bar');
+        $container->bind('bar', fn () => 'baz');
+
+        $this->assertEquals('baz', $container->get('foo'));
     }
 
     /** @test
@@ -68,6 +90,28 @@ class AliasTest extends TestCase
      * */
     public function aliasPreventsLoop(): void
     {
-        $this->assertTrue(false);
+        $this->expectException(\Exception::class);
+
+        $container = $this->container;
+        $container->alias('foo', 'bar');
+        $container->alias('bar', 'foo');
+
+        $container->get('foo');
+    }
+
+    /** @test
+     * @testdox Alias and shared binding return same instance
+     *
+     * @covers \Container::alias
+     * */
+    public function aliasSharedBinding(): void
+    {
+        $this->container->bind(DummyClass::class, null, true); // Bind as shared (singleton)
+        $this->container->alias(DummyClass::class, 'dummy_alias');
+
+        $instance1 = $this->container->get(DummyClass::class);
+        $instance2 = $this->container->get('dummy_alias');
+
+        $this->assertSame($instance1, $instance2);
     }
 }
