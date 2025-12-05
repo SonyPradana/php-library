@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Test\Container;
 
+use System\Test\Container\Dummys\DummyClass;
 use System\Test\Container\TestContainer as TestCase;
 
 /**
@@ -164,8 +165,4 @@ class CacheTest extends TestCase
         $this->assertArrayHasKey(DummyClass::class, $constructorCache->getValue($this->container));
         $this->assertArrayNotHasKey('dummy_alias', $constructorCache->getValue($this->container));
     }
-}
-
-class DummyClass
-{
 }

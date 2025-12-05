@@ -4,6 +4,16 @@ declare(strict_types=1);
 
 namespace System\Test\Container;
 
+use System\Test\Container\Dummys\Dependant;
+use System\Test\Container\Dummys\Dependency;
+use System\Test\Container\Dummys\DependencyClass;
+use System\Test\Container\Dummys\MultipleSetterClass;
+use System\Test\Container\Dummys\NestedDependencyClass;
+use System\Test\Container\Dummys\NonSetterClass;
+use System\Test\Container\Dummys\ScalarSetterClass;
+use System\Test\Container\Dummys\SetterInjectionClass;
+use System\Test\Container\Dummys\StaticSetterClass;
+use System\Test\Container\Dummys\UnresolvableSetterClass;
 use System\Test\Container\TestContainer as TestCase;
 
 /**
@@ -19,7 +29,10 @@ class InjectOnTest extends TestCase
      * @covers \Container::injectOn */
     public function injectCallsSetters(): void
     {
-        $this->assertTrue(false);
+        $instance = new SetterInjectionClass();
+        $this->container->injectOn($instance);
+
+        $this->assertInstanceOf(DependencyClass::class, $instance->dependency);
     }
 
     /**
@@ -30,7 +43,10 @@ class InjectOnTest extends TestCase
      * @covers \Container::injectOn */
     public function injectSkipsNonSetters(): void
     {
-        $this->assertTrue(false);
+        $instance = new NonSetterClass();
+        $this->container->injectOn($instance);
+
+        $this->assertFalse($instance->called);
     }
 
     /**
@@ -41,7 +57,10 @@ class InjectOnTest extends TestCase
      * @covers \Container::injectOn */
     public function injectOnlyClassTypes(): void
     {
-        $this->assertTrue(false);
+        $instance = new ScalarSetterClass();
+        $this->container->injectOn($instance);
+
+        $this->assertEquals('default', $instance->name);
     }
 
     /**
@@ -52,7 +71,10 @@ class InjectOnTest extends TestCase
      * @covers \Container::injectOn */
     public function injectIgnoresUnresolvable(): void
     {
-        $this->assertTrue(false);
+        $instance = new UnresolvableSetterClass();
+        $this->container->injectOn($instance);
+
+        $this->assertNull($instance->dependency);
     }
 
     /**
@@ -63,7 +85,14 @@ class InjectOnTest extends TestCase
      * @covers \Container::injectOn */
     public function injectSkipsStatic(): void
     {
-        $this->assertTrue(false);
+        StaticSetterClass::$called = false; // Reset static property
+        $instance                  = new class { // Create a dummy object to inject on
+            // This object has no setters, so injectOn won't modify it,
+            // but we want to ensure it doesn't accidentally trigger static setters
+        };
+        $this->container->injectOn($instance);
+
+        $this->assertFalse(StaticSetterClass::$called);
     }
 
     /**
@@ -74,7 +103,11 @@ class InjectOnTest extends TestCase
      * @covers \Container::injectOn */
     public function injectMultipleSetters(): void
     {
-        $this->assertTrue(false);
+        $instance = new MultipleSetterClass();
+        $this->container->injectOn($instance);
+
+        $this->assertInstanceOf(DependencyClass::class, $instance->dependency1);
+        $this->assertInstanceOf(Dummys\AnotherService::class, $instance->dependency2);
     }
 
     /**
@@ -85,7 +118,12 @@ class InjectOnTest extends TestCase
      * @covers \Container::injectOn */
     public function injectResolvesNested(): void
     {
-        $this->assertTrue(false);
+        $instance = new NestedDependencyClass();
+        $this->container->injectOn($instance);
+
+        $this->assertInstanceOf(NestedDependencyClass::class, $instance);
+        $this->assertInstanceOf(Dependant::class, $instance->dependant);
+        $this->assertInstanceOf(Dependency::class, $instance->dependant->dep);
     }
 
     /**
@@ -96,6 +134,9 @@ class InjectOnTest extends TestCase
      * @covers \Container::injectOn */
     public function injectReturnsOriginal(): void
     {
-        $this->assertTrue(false);
+        $instance         = new \stdClass();
+        $returnedInstance = $this->container->injectOn($instance);
+
+        $this->assertSame($instance, $returnedInstance);
     }
 }

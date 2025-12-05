@@ -4,22 +4,11 @@ declare(strict_types=1);
 
 namespace System\Test\Container;
 
+use System\Test\Container\Dummys\AnotherService;
+use System\Test\Container\Dummys\ConcreteService;
+use System\Test\Container\Dummys\DependencyClass;
+use System\Test\Container\Dummys\ServiceInterface;
 use System\Test\Container\TestContainer as TestCase;
-
-// Added
-// Added
-
-interface ServiceInterface
-{
-}
-class ConcreteService implements ServiceInterface
-{
-}
-// class DummyService implements ServiceInterface {}
-
-class AnotherService
-{
-}
 
 /**
  * @covers \Container::bind
@@ -231,5 +220,122 @@ class BindingTest extends TestCase
         $instance = $this->container->get(ServiceInterface::class);
 
         $this->assertInstanceOf(AnotherService::class, $instance);
+    }
+
+    /**
+     * @test
+     *
+     * @testdox has() returns true when binding exists
+     *
+     * @covers \Container::has */
+    public function hasReturnsTrueForExistingBinding(): void
+    {
+        $this->container->bind('foo', \stdClass::class);
+
+        $this->assertTrue($this->container->has('foo'));
+    }
+
+    /**
+     * @test
+     *
+     * @testdox has() returns false when binding missing
+     *
+     * @covers \Container::has */
+    public function hasReturnsFalseForMissingBinding(): void
+    {
+        $this->assertFalse($this->container->has('non-existent-binding'));
+    }
+
+    /**
+     * @test
+     *
+     * @testdox bound() mirrors has() behavior
+     *
+     * @covers \Container::bound */
+    public function boundMirrorsHasBehavior(): void
+    {
+        $this->container->bind('foo', \stdClass::class);
+
+        $this->assertTrue($this->container->bound('foo'));
+        $this->assertFalse($this->container->bound('non-existent'));
+    }
+
+    /**
+     * @test
+     *
+     * @testdox bound() respects alias resolution
+     *
+     * @covers \Container::bound */
+    public function boundRespectsAliasResolution(): void
+    {
+        $this->container->bind(ServiceInterface::class, ConcreteService::class);
+        $this->container->alias(ServiceInterface::class, 'my_service_alias');
+
+        $this->assertTrue($this->container->bound('my_service_alias'));
+        $this->assertTrue($this->container->has('my_service_alias')); // Should also be true for consistency
+    }
+
+    /**
+     * @test
+     *
+     * @testdox getBindings() returns all current bindings
+     *
+     * @covers \Container::getBindings */
+    public function getBindingsReturnsAllCurrentBindings(): void
+    {
+        $this->container->bind('foo', \stdClass::class, false); // Explicitly non-shared
+        $this->container->bind('bar', ConcreteService::class, true); // Explicitly shared
+
+        $bindings = $this->container->getBindings();
+
+        $this->assertArrayHasKey('foo', $bindings);
+        $this->assertArrayHasKey('bar', $bindings);
+
+        // Assert that concrete is always a Closure
+        $this->assertInstanceOf(\Closure::class, $bindings['foo']['concrete']);
+        $this->assertInstanceOf(\Closure::class, $bindings['bar']['concrete']);
+
+        // Assert shared status
+        $this->assertFalse($bindings['foo']['shared']);
+        $this->assertTrue($bindings['bar']['shared']);
+    }
+
+    /**
+     * @test
+     *
+     * @testdox getBindings() updated after override
+     *
+     * @covers \Container::getBindings
+     * @covers \Container::bind */
+    public function getBindingsUpdatedAfterOverride(): void
+    {
+        $this->container->bind('foo', \stdClass::class);
+        $this->container->bind('foo', ConcreteService::class); // Override
+
+        $bindings = $this->container->getBindings();
+
+        $this->assertArrayHasKey('foo', $bindings);
+        $this->assertInstanceOf(\Closure::class, $bindings['foo']['concrete']);
+
+        // To further verify, resolve 'foo' and check its type
+        $instance = $this->container->get('foo');
+        $this->assertInstanceOf(ConcreteService::class, $instance);
+    }
+
+    /**
+     * @test
+     *
+     * @testdox getBindings() empty after flush()
+     *
+     * @covers \Container::getBindings
+     * @covers \Container::flush */
+    public function getBindingsEmptyAfterFlush(): void
+    {
+        $this->container->bind('foo', \stdClass::class);
+        $this->container->flush();
+
+        $bindings = $this->container->getBindings();
+
+        $this->assertEmpty($bindings);
     }
 }

@@ -4,63 +4,16 @@ declare(strict_types=1);
 
 namespace System\Test\Container;
 
+use System\Test\Container\Dummys\CircularA;
+use System\Test\Container\Dummys\ClassWithMissingDependency;
+use System\Test\Container\Dummys\Dependant;
+use System\Test\Container\Dummys\Dependency;
+use System\Test\Container\Dummys\DependencyClass;
+use System\Test\Container\Dummys\PrivateConstructorClass;
+use System\Test\Container\Dummys\ScalarConstructorClass;
+use System\Test\Container\Dummys\Service;
+use System\Test\Container\Dummys\TypedConstructorClass;
 use System\Test\Container\TestContainer as TestCase;
-use System\Test\Container\DependencyClass;
-use System\Test\Container\AnotherService; // Added
-
-class Dependency
-{
-}
-class Dependant
-{
-    public function __construct(public Dependency $dep)
-    {
-    }
-}
-
-class CircularA
-{
-    public function __construct(CircularB $b)
-    {
-    }
-}
-class CircularB
-{
-    public function __construct(CircularA $a)
-    {
-    }
-}
-
-interface UnresolvableInterface
-{
-}
-class ClassWithMissingDependency
-{
-    public function __construct(UnresolvableInterface $dep)
-    {
-    }
-}
-
-class Service
-{
-    public function __construct(public $value = 'default')
-    {
-    }
-}
-
-class TypedConstructorClass
-{
-    public function __construct(public DependencyClass $dep)
-    {
-    }
-}
-
-class UnionTypeConstructorClass
-{
-    public function __construct(public DependencyClass|AnotherService $dep)
-    {
-    }
-}
 
 /**
  * @covers \Container::build
@@ -177,5 +130,31 @@ class BuildTest extends TestCase
     {
         $this->markTestSkipped('Current Container implementation does not support resolving union types in constructor parameters.');
         $this->assertTrue(false);
+    }
+
+    /**
+     * @test
+     *
+     * @testdox build() with scalar param throws exception
+     *
+     * @covers \Container::build */
+    public function buildWithScalarParamThrows(): void
+    {
+        $this->expectException(\System\Container\Exceptions\BindingResolutionException::class);
+
+        $this->container->build(ScalarConstructorClass::class);
+    }
+
+    /**
+     * @test
+     *
+     * @testdox private constructor → BindingResolutionException
+     *
+     * @covers \Container::build */
+    public function buildPrivateConstructorThrowsException(): void
+    {
+        $this->expectException(\System\Container\Exceptions\BindingResolutionException::class);
+
+        $this->container->build(PrivateConstructorClass::class);
     }
 }

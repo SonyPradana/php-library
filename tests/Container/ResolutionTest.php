@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace System\Test\Container;
 
+use System\Container\Exceptions\BindingResolutionException;
+use System\Container\Exceptions\EntryNotFoundException;
+use System\Test\Container\Dummys\DeepA;
+use System\Test\Container\Dummys\DeepB;
+use System\Test\Container\Dummys\DeepC;
+use System\Test\Container\Dummys\DependencyClass;
+use System\Test\Container\Dummys\Service;
+use System\Test\Container\Dummys\UnresolvableClass;
 use System\Test\Container\TestContainer as TestCase;
 
 /**
@@ -20,7 +28,12 @@ class ResolutionTest extends TestCase
      *  @covers \Container::get */
     public function getResolvesShared(): void
     {
-        $this->assertTrue(false);
+        $this->container->bind(DependencyClass::class, null, true);
+
+        $instance1 = $this->container->get(DependencyClass::class);
+        $instance2 = $this->container->get(DependencyClass::class);
+
+        $this->assertSame($instance1, $instance2);
     }
 
     /**
@@ -31,7 +44,9 @@ class ResolutionTest extends TestCase
      *  @covers \Container::get */
     public function getNotFound(): void
     {
-        $this->assertTrue(false);
+        $this->expectException(EntryNotFoundException::class);
+
+        $this->container->get('non-existent-class');
     }
 
     /**
@@ -42,7 +57,10 @@ class ResolutionTest extends TestCase
      *  @covers \Container::make */
     public function makeFreshInstance(): void
     {
-        $this->assertTrue(false);
+        $instance1 = $this->container->make(\stdClass::class);
+        $instance2 = $this->container->make(\stdClass::class);
+
+        $this->assertNotSame($instance1, $instance2);
     }
 
     /**
@@ -53,7 +71,10 @@ class ResolutionTest extends TestCase
      *  @covers \Container::make */
     public function makeWithParameters(): void
     {
-        $this->assertTrue(false);
+        $instance = $this->container->make(Service::class, ['value' => 'custom']);
+
+        $this->assertInstanceOf(Service::class, $instance);
+        $this->assertEquals('custom', $instance->value);
     }
 
     /**
@@ -64,7 +85,12 @@ class ResolutionTest extends TestCase
      *  @covers \Container::get */
     public function getClosure(): void
     {
-        $this->assertTrue(false);
+        $this->container->bind('test-closure', function ($container) {
+            return 'resolved from closure';
+        });
+
+        $result = $this->container->get('test-closure');
+        $this->assertEquals('resolved from closure', $result);
     }
 
     /**
@@ -75,7 +101,12 @@ class ResolutionTest extends TestCase
      *  @covers \Container::make */
     public function makeClosure(): void
     {
-        $this->assertTrue(false);
+        $this->container->bind('test-closure', function ($container) {
+            return 'resolved from closure';
+        });
+
+        $result = $this->container->make('test-closure');
+        $this->assertEquals('resolved from closure', $result);
     }
 
     /**
@@ -86,7 +117,13 @@ class ResolutionTest extends TestCase
      *  @covers \Container::get */
     public function getViaAlias(): void
     {
-        $this->assertTrue(false);
+        $this->container->bind('dependency', DependencyClass::class);
+        $this->container->alias('dependency', 'alias');
+
+        $this->assertInstanceOf(
+            DependencyClass::class,
+            $this->container->get('alias')
+        );
     }
 
     /**
@@ -97,7 +134,11 @@ class ResolutionTest extends TestCase
      *  @covers \Container::make */
     public function makeViaAlias(): void
     {
-        $this->assertTrue(false);
+        $this->container->bind(DependencyClass::class, null, false); // Make sure it's non-shared
+        $this->container->alias(DependencyClass::class, 'dependency_alias');
+
+        $instance = $this->container->make('dependency_alias');
+        $this->assertInstanceOf(DependencyClass::class, $instance);
     }
 
     /**
@@ -108,7 +149,18 @@ class ResolutionTest extends TestCase
      *  @covers \Container::get */
     public function getSingletonCached(): void
     {
-        $this->assertTrue(false);
+        $counter = 0;
+
+        $this->container->bind(DependencyClass::class, function () use (&$counter) {
+            $counter++;
+
+            return new DependencyClass();
+        }, true);
+
+        $this->container->get(DependencyClass::class);
+        $this->container->get(DependencyClass::class);
+
+        $this->assertEquals(1, $counter);
     }
 
     /**
@@ -119,7 +171,11 @@ class ResolutionTest extends TestCase
      *  @covers \Container::get */
     public function getResolvesRecursiveDependencies(): void
     {
-        $this->assertTrue(false);
+        $instance = $this->container->get(DeepA::class);
+
+        $this->assertInstanceOf(DeepA::class, $instance);
+        $this->assertInstanceOf(DeepB::class, $instance->b);
+        $this->assertInstanceOf(DeepC::class, $instance->b->c);
     }
 
     /**
@@ -130,7 +186,11 @@ class ResolutionTest extends TestCase
      *  @covers \Container::make */
     public function makeResolvesRecursiveDependencies(): void
     {
-        $this->assertTrue(false);
+        $instance = $this->container->make(DeepA::class);
+
+        $this->assertInstanceOf(DeepA::class, $instance);
+        $this->assertInstanceOf(DeepB::class, $instance->b);
+        $this->assertInstanceOf(DeepC::class, $instance->b->c);
     }
 
     /**
@@ -141,6 +201,8 @@ class ResolutionTest extends TestCase
      *  @covers \Container::make */
     public function makeUnresolvableDependency(): void
     {
-        $this->assertTrue(false);
+        $this->expectException(BindingResolutionException::class);
+
+        $this->container->make(UnresolvableClass::class);
     }
 }
