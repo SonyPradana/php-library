@@ -270,6 +270,11 @@ class Container implements \ArrayAccess
             throw new BindingResolutionException("Target [$concrete] is not instantiable.");
         }
 
+        // Detect circular dependencies
+        if (in_array($concrete, $this->buildStack, true)) {
+            throw new BindingResolutionException("Circular dependency detected while trying to build [{$concrete}]. Stack: [" . implode(' -> ', array_merge($this->buildStack, [$concrete])) . '].');
+        }
+
         $this->buildStack[] = $concrete;
 
         $dependencies = $this->getConstructorParameters($concrete);

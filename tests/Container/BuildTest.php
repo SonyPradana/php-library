@@ -99,7 +99,6 @@ class BuildTest extends TestCase
      * @covers \Container::build */
     public function buildCircularDependency(): void
     {
-        $this->markTestSkipped('Circular dedependency make memory limit exceed.');
         $this->expectException(\System\Container\Exceptions\BindingResolutionException::class);
 
         $container = $this->container;
