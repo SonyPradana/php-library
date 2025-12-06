@@ -163,16 +163,25 @@ class Container implements \ArrayAccess
      */
     public function getAlias(string $abstract): string
     {
-        $resolving = [];
-        while (isset($this->aliases[$abstract])) {
-            if (isset($resolving[$abstract])) {
-                throw new \Exception("Circular alias reference detected for {$abstract}");
-            }
-            $resolving[$abstract] = true;
-            $abstract             = $this->aliases[$abstract];
+        return $this->resolveAlias($abstract, []);
+    }
+
+    /**
+     * @param array<string, true> $resolving
+     */
+    private function resolveAlias(string $abstract, array $resolving): string
+    {
+        if (false === isset($this->aliases[$abstract])) {
+            return $abstract;
         }
 
-        return $abstract;
+        if (isset($resolving[$abstract])) {
+            throw new \Exception("Circular alias reference detected for {$abstract}");
+        }
+
+        $resolving[$abstract] = true;
+
+        return $this->resolveAlias($this->aliases[$abstract], $resolving);
     }
 
     /**
