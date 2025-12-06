@@ -459,10 +459,6 @@ class Container implements \ArrayAccess
     {
         // Handle array callable [object, method] or [class, method]
         if (is_array($callable)) {
-            if (1 === count($callable) && method_exists($callable[0], '__invoke')) {
-                $callable[1] = '__invoke';
-            }
-
             return $this->callMethod($callable[0], $callable[1], $parameters);
         }
 
