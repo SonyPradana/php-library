@@ -452,13 +452,17 @@ class Container implements \ArrayAccess
     /**
      * Call the given callable and inject its dependencies.
      *
-     * @param callable|array{0: object|string, 1: string}|string $callable
-     * @param array<int|string<string, string>, mixed>           $parameters
+     * @param callable|array<int, object|string>|string $callable
+     * @param array<int|string<string, string>, mixed>  $parameters
      */
     public function call(callable|array|string $callable, array $parameters = []): mixed
     {
         // Handle array callable [object, method] or [class, method]
         if (is_array($callable)) {
+            if (1 === count($callable) && method_exists($callable[0], '__invoke')) {
+                $callable[1] = '__invoke';
+            }
+
             return $this->callMethod($callable[0], $callable[1], $parameters);
         }
 
