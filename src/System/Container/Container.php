@@ -352,7 +352,7 @@ class Container implements \ArrayAccess
      *
      * @return array<mixed>
      */
-    protected function resolveDependencies(array $dependencies, array $parameters = [])
+    protected function resolveDependencies(array $dependencies, array $parameters = []): array
     {
         $results = [];
 
@@ -392,7 +392,7 @@ class Container implements \ArrayAccess
      *
      * @throws BindingResolutionException
      */
-    protected function resolveParameterDependency(\ReflectionParameter $parameter)
+    protected function resolveParameterDependency(\ReflectionParameter $parameter): mixed
     {
         $type = $parameter->getType();
 
