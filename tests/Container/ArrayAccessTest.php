@@ -38,10 +38,8 @@ class ArrayAccessTest extends TestCase
      * @covers \Container::offsetGet */
     public function arrayGet(): void
     {
-        $container          = $this->container;
-
+        $container        = $this->container;
         $container['foo'] = 'bar';
-
         $this->assertEquals('bar', $container['foo']);
     }
 
@@ -84,7 +82,7 @@ class ArrayAccessTest extends TestCase
     /**
      * @test
      *
-     * @testdox offsetGet() returns a new instance each time (like make())
+     * @testdox offsetGet() returns a new instance each time (like get())
      *
      * @covers \System\Container\Container::offsetGet */
     public function arrayGetReturnsNewInstance(): void
@@ -94,10 +92,9 @@ class ArrayAccessTest extends TestCase
         $container['foo'] = fn () => new \stdClass();
 
         $instance1 = $container['foo'];
-
         $instance2 = $container['foo'];
 
-        $this->assertNotSame($instance1, $instance2);
+        $this->assertSame($instance1, $instance2);
     }
 
     /**
@@ -125,8 +122,6 @@ class ArrayAccessTest extends TestCase
      * @covers \System\Container\Container::offsetSet */
     public function offsetSetStoresSharedBinding(): void
     {
-        $this->markTestSkipped('Inconsistency: offsetSet() creates shared bindings, but offsetGet() (which calls make()) returns a new instance.');
-
         $container = $this->container;
 
         $container['foo'] = fn () => new \stdClass();

@@ -740,7 +740,7 @@ class Container implements \ArrayAccess
     #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
-        return $this->make($offset);
+        return $this->get($offset);
     }
 
     /**
