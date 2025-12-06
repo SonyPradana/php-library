@@ -37,7 +37,7 @@ class Container implements \ArrayAccess
     /**
      * The stack of concretions currently being built.
      *
-     * @var string[]
+     * @var array<string, bool>
      */
     protected array $buildStack = [];
 
@@ -271,17 +271,17 @@ class Container implements \ArrayAccess
         }
 
         // Detect circular dependencies
-        if (in_array($concrete, $this->buildStack, true)) {
+        if (isset($this->buildStack[$concrete])) {
             throw new BindingResolutionException("Circular dependency detected while trying to build [{$concrete}]. Stack: [" . implode(' -> ', array_merge($this->buildStack, [$concrete])) . '].');
         }
 
-        $this->buildStack[] = $concrete;
+        $this->buildStack[$concrete] = true;
 
         $dependencies = $this->getConstructorParameters($concrete);
 
         // If there are no constructors, that means there are no dependencies
         if (is_null($dependencies)) {
-            array_pop($this->buildStack);
+            unset($this->buildStack[$concrete]);
 
             return new $concrete();
         }
@@ -289,7 +289,7 @@ class Container implements \ArrayAccess
         // Merge provided parameters with constructor dependencies
         $instances = $this->resolveDependencies($dependencies, $parameters);
 
-        array_pop($this->buildStack);
+        unset($this->buildStack[$concrete]);
 
         return $reflector->newInstanceArgs($instances);
     }
@@ -452,8 +452,8 @@ class Container implements \ArrayAccess
     /**
      * Call the given callable and inject its dependencies.
      *
-     * @param callable|array<int, object|string>|string $callable
-     * @param array<int|string<string, string>, mixed>  $parameters
+     * @param callable|array<string>|string            $callable
+     * @param array<int|string<string, string>, mixed> $parameters
      */
     public function call(callable|array|string $callable, array $parameters = []): mixed
     {
