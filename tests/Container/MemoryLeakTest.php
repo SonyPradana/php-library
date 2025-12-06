@@ -51,56 +51,6 @@ class MemoryLeakTest extends TestCase
     /**
      * @test
      *
-     * @testdox Container does not infinitely grow alias map */
-    public function leakAliasMap(): void
-    {
-        $this->markTestSkipped('Comprehensive memory leak testing for internal data structures is complex and requires specialized tools beyond standard PHPUnit assertions.');
-        $this->assertTrue(false);
-    }
-
-    /**
-     * @test
-     *
-     * @testdox Container does not increase reflection cache unbounded */
-    public function leakReflectionCache(): void
-    {
-        $this->markTestSkipped('Comprehensive memory leak testing for internal data structures is complex and requires specialized tools beyond standard PHPUnit assertions.');
-        $this->assertTrue(false);
-    }
-
-    /**
-     * @test
-     *
-     * @testdox Container does not accumulate built instances when non-shared */
-    public function leakNonShared(): void
-    {
-        $this->markTestSkipped('This test is redundant, as specific memory stability for non-shared instances is covered by leakRepeatedMakeNonShared.');
-        $this->assertTrue(false);
-    }
-
-    /**
-     * @test
-     *
-     * @testdox Container resolved cache does not grow when disabled */
-    public function leakCacheDisabled(): void
-    {
-        $this->markTestSkipped('Comprehensive memory leak testing for internal data structures is complex and requires specialized tools beyond standard PHPUnit assertions.');
-        $this->assertTrue(false);
-    }
-
-    /**
-     * @test
-     *
-     * @testdox Container resolution cycle detection prevents infinite recursion */
-    public function leakPreventRecursiveLoop(): void
-    {
-        $this->markTestSkipped('Comprehensive memory leak testing for internal data structures is complex and requires specialized tools beyond standard PHPUnit assertions.');
-        $this->assertTrue(false);
-    }
-
-    /**
-     * @test
-     *
      * @testdox call() does not store excessive metadata (no leak) */
     public function leakCallMetadata(): void
     {
