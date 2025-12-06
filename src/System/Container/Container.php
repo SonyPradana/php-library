@@ -452,11 +452,12 @@ class Container implements \ArrayAccess
     /**
      * Call the given callable and inject its dependencies.
      *
+     * @param callable|object|array<string>|string     $callable   $callable
      * @param array<int|string<string, string>, mixed> $parameters
      *
      * @throws BindingResolutionException
      */
-    public function call(callable|array|string $callable, array $parameters = []): mixed
+    public function call(callable|object|array|string $callable, array $parameters = []): mixed
     {
         // Handle array callable [object, method] or [class, method]
         if (is_array($callable)) {
@@ -591,18 +592,21 @@ class Container implements \ArrayAccess
 
             if (array_key_exists($name, $parameters)) {
                 $dependencies[] = $parameters[$name];
+
                 continue;
             }
 
             if ($type = $parameter->getType()) {
-                if ($type && !$type->isBuiltin()) {
+                if ($type instanceof \ReflectionNamedType && $type->isBuiltin()) {
                     $dependencies[] = $this->get($type->getName());
+
                     continue;
                 }
             }
 
             if ($parameter->isDefaultValueAvailable()) {
                 $dependencies[] = $parameter->getDefaultValue();
+
                 continue;
             }
 
