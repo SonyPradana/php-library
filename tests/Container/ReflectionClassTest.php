@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace System\Test\Container;
 
-use System\Test\Container\Dummys\ChildClass;
-use System\Test\Container\Dummys\ClassWithAttributes;
-use System\Test\Container\Dummys\ClassWithMethods;
-use System\Test\Container\Dummys\ClassWithProperties;
-use System\Test\Container\Dummys\MyClassAttribute;
-use System\Test\Container\Dummys\MyMethodAttribute;
-use System\Test\Container\Dummys\MyPropertyAttribute;
-use System\Test\Container\Dummys\Service;
+use System\Test\Container\Fixtures\ChildClass;
+use System\Test\Container\Fixtures\ClassWithAttributes;
+use System\Test\Container\Fixtures\ClassWithMethods;
+use System\Test\Container\Fixtures\ClassWithProperties;
+use System\Test\Container\Fixtures\MyClassAttribute;
+use System\Test\Container\Fixtures\MyMethodAttribute;
+use System\Test\Container\Fixtures\MyPropertyAttribute;
+use System\Test\Container\Fixtures\Service;
 use System\Test\Container\TestContainer as TestCase;
 
 /**
@@ -190,6 +190,6 @@ class ReflectionClassTest extends TestCase
         // Ensure parent class is correctly identified
         $parentClassReflector = $reflector->getParentClass();
         $this->assertNotNull($parentClassReflector);
-        $this->assertEquals(Dummys\ParentClass::class, $parentClassReflector->getName());
+        $this->assertEquals(Fixtures\ParentClass::class, $parentClassReflector->getName());
     }
 }

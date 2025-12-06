@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace System\Test\Container;
 
-use System\Test\Container\Dummys\AnotherService;
-use System\Test\Container\Dummys\ConcreteService;
-use System\Test\Container\Dummys\DependencyClass;
-use System\Test\Container\Dummys\ServiceInterface;
+use System\Test\Container\Fixtures\AnotherService;
+use System\Test\Container\Fixtures\ConcreteService;
+use System\Test\Container\Fixtures\DependencyClass;
+use System\Test\Container\Fixtures\ServiceInterface;
 use System\Test\Container\TestContainer as TestCase;
 
 /**

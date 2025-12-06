@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace System\Test\Container;
 
-use System\Test\Container\Dummys\DependencyClass;
-use System\Test\Container\Dummys\DummyClass;
-use System\Test\Container\Dummys\DummyStaticClass;
-use System\Test\Container\Dummys\InvokableClass;
+use System\Test\Container\Fixtures\DependencyClass;
+use System\Test\Container\Fixtures\DummyClass;
+use System\Test\Container\Fixtures\DummyStaticClass;
+use System\Test\Container\Fixtures\InvokableClass;
 use System\Test\Container\TestContainer as TestCase;
 
 /**

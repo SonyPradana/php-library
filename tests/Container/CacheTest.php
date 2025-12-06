@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Test\Container;
 
-use System\Test\Container\Dummys\DummyClass;
+use System\Test\Container\Fixtures\DummyClass;
 use System\Test\Container\TestContainer as TestCase;
 
 /**

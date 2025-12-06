@@ -2,7 +2,7 @@
 
 namespace System\Test\Container;
 
-use System\Test\Container\Dummys\DependencyClass;
+use System\Test\Container\Fixtures\DependencyClass;
 use System\Test\Container\TestContainer as TestCase;
 
 /**

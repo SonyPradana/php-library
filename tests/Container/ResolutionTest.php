@@ -6,12 +6,12 @@ namespace System\Test\Container;
 
 use System\Container\Exceptions\BindingResolutionException;
 use System\Container\Exceptions\EntryNotFoundException;
-use System\Test\Container\Dummys\DeepA;
-use System\Test\Container\Dummys\DeepB;
-use System\Test\Container\Dummys\DeepC;
-use System\Test\Container\Dummys\DependencyClass;
-use System\Test\Container\Dummys\Service;
-use System\Test\Container\Dummys\UnresolvableClass;
+use System\Test\Container\Fixtures\DeepA;
+use System\Test\Container\Fixtures\DeepB;
+use System\Test\Container\Fixtures\DeepC;
+use System\Test\Container\Fixtures\DependencyClass;
+use System\Test\Container\Fixtures\Service;
+use System\Test\Container\Fixtures\UnresolvableClass;
 use System\Test\Container\TestContainer as TestCase;
 
 /**

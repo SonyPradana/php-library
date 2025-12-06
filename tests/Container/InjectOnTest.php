@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace System\Test\Container;
 
-use System\Test\Container\Dummys\Dependant;
-use System\Test\Container\Dummys\Dependency;
-use System\Test\Container\Dummys\DependencyClass;
-use System\Test\Container\Dummys\MultipleSetterClass;
-use System\Test\Container\Dummys\NestedDependencyClass;
-use System\Test\Container\Dummys\NonSetterClass;
-use System\Test\Container\Dummys\ScalarSetterClass;
-use System\Test\Container\Dummys\SetterInjectionClass;
-use System\Test\Container\Dummys\StaticSetterClass;
-use System\Test\Container\Dummys\UnresolvableSetterClass;
+use System\Test\Container\Fixtures\Dependant;
+use System\Test\Container\Fixtures\Dependency;
+use System\Test\Container\Fixtures\DependencyClass;
+use System\Test\Container\Fixtures\MultipleSetterClass;
+use System\Test\Container\Fixtures\NestedDependencyClass;
+use System\Test\Container\Fixtures\NonSetterClass;
+use System\Test\Container\Fixtures\ScalarSetterClass;
+use System\Test\Container\Fixtures\SetterInjectionClass;
+use System\Test\Container\Fixtures\StaticSetterClass;
+use System\Test\Container\Fixtures\UnresolvableSetterClass;
 use System\Test\Container\TestContainer as TestCase;
 
 /**
@@ -107,7 +107,7 @@ class InjectOnTest extends TestCase
         $this->container->injectOn($instance);
 
         $this->assertInstanceOf(DependencyClass::class, $instance->dependency1);
-        $this->assertInstanceOf(Dummys\AnotherService::class, $instance->dependency2);
+        $this->assertInstanceOf(Fixtures\AnotherService::class, $instance->dependency2);
     }
 
     /**

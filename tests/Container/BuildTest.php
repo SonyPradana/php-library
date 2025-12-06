@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace System\Test\Container;
 
-use System\Test\Container\Dummys\CircularA;
-use System\Test\Container\Dummys\ClassWithMissingDependency;
-use System\Test\Container\Dummys\Dependant;
-use System\Test\Container\Dummys\Dependency;
-use System\Test\Container\Dummys\DependencyClass;
-use System\Test\Container\Dummys\PrivateConstructorClass;
-use System\Test\Container\Dummys\ScalarConstructorClass;
-use System\Test\Container\Dummys\Service;
-use System\Test\Container\Dummys\TypedConstructorClass;
+use System\Test\Container\Fixtures\CircularA;
+use System\Test\Container\Fixtures\ClassWithMissingDependency;
+use System\Test\Container\Fixtures\Dependant;
+use System\Test\Container\Fixtures\Dependency;
+use System\Test\Container\Fixtures\DependencyClass;
+use System\Test\Container\Fixtures\PrivateConstructorClass;
+use System\Test\Container\Fixtures\ScalarConstructorClass;
+use System\Test\Container\Fixtures\Service;
+use System\Test\Container\Fixtures\TypedConstructorClass;
 use System\Test\Container\TestContainer as TestCase;
 
 /**
