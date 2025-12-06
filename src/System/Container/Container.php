@@ -452,8 +452,9 @@ class Container implements \ArrayAccess
     /**
      * Call the given callable and inject its dependencies.
      *
-     * @param callable|array<string>|string            $callable
      * @param array<int|string<string, string>, mixed> $parameters
+     *
+     * @throws BindingResolutionException
      */
     public function call(callable|array|string $callable, array $parameters = []): mixed
     {
@@ -462,15 +463,37 @@ class Container implements \ArrayAccess
             return $this->callMethod($callable[0], $callable[1], $parameters);
         }
 
-        if (false === is_callable($callable)) {
-            throw new \InvalidArgumentException('Callback is not callable.');
+        // Handle string ClassName::class (invokable)
+        if (is_string($callable) && class_exists($callable)) {
+            $reflectionClass = new \ReflectionClass($callable);
+            if (false === $reflectionClass->hasMethod('__invoke')) {
+                throw new BindingResolutionException("Class {$callable} does not have an __invoke() method. Cannot be used as invokable.");
+            }
+
+            $instance     = $this->get($callable);
+            $invokeMethod = $reflectionClass->getMethod('__invoke');
+            $dependencies = $this->resolveMethodDependencies($invokeMethod, $instance, $parameters);
+
+            return $invokeMethod->invokeArgs($instance, $dependencies);
         }
 
-        // Handle closure or function
-        $reflector    = new \ReflectionFunction($callable);
-        $dependencies = $this->resolveFunctionDependencies($reflector, $parameters);
+        // Handle closure / function
+        if (is_callable($callable) && !is_string($callable)) {
+            $reflector    = new \ReflectionFunction($callable);
+            $dependencies = $this->resolveFunctionDependencies($reflector, $parameters);
 
-        return call_user_func_array($callable, $dependencies);
+            return call_user_func_array($callable, $dependencies);
+        }
+
+        // Handle object (invokable object)
+        if (is_object($callable) && method_exists($callable, '__invoke')) {
+            $reflectionMethod = new \ReflectionMethod($callable, '__invoke');
+            $dependencies     = $this->resolveMethodDependencies($reflectionMethod, $callable, $parameters);
+
+            return $reflectionMethod->invokeArgs($callable, $dependencies);
+        }
+
+        throw new BindingResolutionException('Unable to call the given callable. Unsupported type.');
     }
 
     /**
@@ -497,6 +520,8 @@ class Container implements \ArrayAccess
      * @param array<int|string, mixed> $parameters
      *
      * @return array<mixed>
+     *
+     * @throws BindingResolutionException
      */
     protected function resolveFunctionDependencies(\ReflectionFunctionAbstract $reflection, array $parameters = []): array
     {
@@ -546,6 +571,45 @@ class Container implements \ArrayAccess
         }
 
         return array_merge($dependencies, array_values($parameters));
+    }
+
+    /**
+     * Resolve function dependencies.
+     *
+     * @param array<int|string, mixed> $parameters
+     *
+     * @return array<mixed>
+     *
+     * @throws BindingResolutionException
+     */
+    private function resolveMethodDependencies(\ReflectionMethod $method, object $instance, array $parameters = []): array
+    {
+        $dependencies = [];
+
+        foreach ($method->getParameters() as $parameter) {
+            $name = $parameter->getName();
+
+            if (array_key_exists($name, $parameters)) {
+                $dependencies[] = $parameters[$name];
+                continue;
+            }
+
+            if ($type = $parameter->getType()) {
+                if ($type && !$type->isBuiltin()) {
+                    $dependencies[] = $this->get($type->getName());
+                    continue;
+                }
+            }
+
+            if ($parameter->isDefaultValueAvailable()) {
+                $dependencies[] = $parameter->getDefaultValue();
+                continue;
+            }
+
+            throw new BindingResolutionException("Cannot resolve parameter \${$name} in " . get_class($instance) . '::__invoke()');
+        }
+
+        return $dependencies;
     }
 
     /**
