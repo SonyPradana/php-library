@@ -6,6 +6,8 @@ namespace System\Test\Container;
 
 use System\Test\Container\Fixtures\CircularA;
 use System\Test\Container\Fixtures\ClassWithMissingDependency;
+use System\Test\Container\Fixtures\ClassWithNullableUnionTypeConstructor;
+use System\Test\Container\Fixtures\ClassWithUnionTypeConstructor;
 use System\Test\Container\Fixtures\Dependant;
 use System\Test\Container\Fixtures\Dependency;
 use System\Test\Container\Fixtures\DependencyClass;
@@ -13,6 +15,8 @@ use System\Test\Container\Fixtures\PrivateConstructorClass;
 use System\Test\Container\Fixtures\ScalarConstructorClass;
 use System\Test\Container\Fixtures\Service;
 use System\Test\Container\Fixtures\TypedConstructorClass;
+use System\Test\Container\Fixtures\UnionDependencyOne;
+use System\Test\Container\Fixtures\UnionDependencyTwo;
 use System\Test\Container\TestContainer as TestCase;
 
 /**
@@ -20,6 +24,12 @@ use System\Test\Container\TestContainer as TestCase;
  */
 class BuildTest extends TestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->container->flush();
+    }
+
     /**
      * @test
      *
@@ -122,13 +132,48 @@ class BuildTest extends TestCase
     /**
      * @test
      *
-     * @testdox Build resolves union types or throws
-     *
-     * @covers \Container::build */
-    public function buildUnionTypeConstructor(): void
+     * @testdox build resolves the first dependency in a union type
+     */
+    public function buildResolvesFirstUnionType(): void
     {
-        $this->markTestSkipped('Current Container implementation does not support resolving union types in constructor parameters.');
-        $this->assertTrue(false);
+        $this->container->bind(UnionDependencyOne::class, fn () => new UnionDependencyOne());
+        $instance = $this->container->build(ClassWithUnionTypeConstructor::class);
+        $this->assertInstanceOf(UnionDependencyOne::class, $instance->dependency);
+    }
+
+    /**
+     * @test
+     *
+     * @testdox build resolves the second dependency in a union type
+     */
+    public function buildResolvesSecondUnionType(): void
+    {
+        $this->container->bind(UnionDependencyTwo::class, fn () => new UnionDependencyTwo());
+        $instance = $this->container->build(ClassWithUnionTypeConstructor::class);
+        $this->assertInstanceOf(UnionDependencyTwo::class, $instance->dependency);
+    }
+
+    /**
+     * @test
+     *
+     * @testdox build throws when no union type dependency is bound
+     */
+    public function buildThrowsWhenNoUnionTypeIsBound(): void
+    {
+        $this->expectException(\System\Container\Exceptions\BindingResolutionException::class);
+        $this->container->build(ClassWithUnionTypeConstructor::class);
+    }
+
+    /**
+     * @test
+     *
+     * @testdox build resolves nullable union types to null
+     */
+    public function buildNullableUnionTypeConstructor(): void
+    {
+        // Resolve to null when no type is bound and the parameter is nullable
+        $instance = $this->container->build(ClassWithNullableUnionTypeConstructor::class);
+        $this->assertNull($instance->dependency);
     }
 
     /**

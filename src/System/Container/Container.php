@@ -388,15 +388,14 @@ class Container implements \ArrayAccess
     /**
      * Resolve a single parameter dependency.
      *
-     * @return mixed
-     *
      * @throws BindingResolutionException
      */
     protected function resolveParameterDependency(\ReflectionParameter $parameter): mixed
     {
         $type = $parameter->getType();
 
-        // If the parameter has no type, we'll check if it has a default value.
+        // If the parameter has no type,
+        // we'll check if it has a default value.
         if (null === $type) {
             if ($parameter->isDefaultValueAvailable()) {
                 return $parameter->getDefaultValue();
@@ -405,30 +404,49 @@ class Container implements \ArrayAccess
             throw new BindingResolutionException("Unresolvable dependency resolving [$parameter] in class {$parameter->getDeclaringClass()->getName()}");
         }
 
-        if (!$type instanceof \ReflectionNamedType) {
-            throw new BindingResolutionException("Unresolvable dependency resolving [$parameter] in class {$parameter->getDeclaringClass()->getName()}: unsupported parameter type");
+        if ($type instanceof \ReflectionIntersectionType) {
+            throw new BindingResolutionException("Intersection types are not supported for dependency resolution of [$parameter] in class {$parameter->getDeclaringClass()->getName()}");
         }
 
-        $typeName = $type->getName();
+        $isUnion    = $type instanceof \ReflectionUnionType;
+        $types      = $isUnion ? $type->getTypes() : [$type];
+        $classTypes = array_filter($types, fn ($t) => $t instanceof \ReflectionNamedType && false === $t->isBuiltin());
 
-        // If the type is a primitive, we can't resolve it automatically.
-        if ($this->isPrimitiveType($typeName)) {
-            if ($parameter->isDefaultValueAvailable()) {
-                return $parameter->getDefaultValue();
+        // First, iterate and check for explicitly bound types.
+        // This is safe for both union and single types.
+        foreach ($classTypes as $classType) {
+            $name = $classType->getName();
+            if ($this->bound($name)) {
+                return $this->get($name);
             }
-
-            throw new BindingResolutionException("Unresolvable dependency resolving [$parameter] in class {$parameter->getDeclaringClass()->getName()}: primitive type with no default value");
         }
 
-        try {
-            return $this->get($typeName);
-        } catch (EntryNotFoundException $e) {
-            if ($parameter->isDefaultValueAvailable()) {
-                return $parameter->getDefaultValue();
+        if (false === $isUnion && false === empty($classTypes)) {
+            try {
+                $firstClass = array_values($classTypes)[0];
+
+                return $this->get($firstClass->getName());
+            } catch (BindingResolutionException $e) {
+                // It failed to autowire.
+                //  We'll fall through to the default/nullable check.
             }
-
-            throw new BindingResolutionException("Unresolvable dependency resolving [$parameter] in class {$parameter->getDeclaringClass()->getName()}: {$e->getMessage()}");
         }
+
+        if ($parameter->isDefaultValueAvailable()) {
+            return $parameter->getDefaultValue();
+        }
+
+        if ($type->allowsNull()) {
+            return null;
+        }
+
+        $class     = $parameter->getDeclaringClass();
+        $className = $class ? $class->getName() : 'unknown';
+        $message   = $isUnion
+            ? 'none of the types in the union are bound in the container'
+            : 'the dependency is not bound and cannot be autowired';
+
+        throw new BindingResolutionException("Unresolvable dependency resolving [$parameter] in class {$className}: {$message}");
     }
 
     /**
