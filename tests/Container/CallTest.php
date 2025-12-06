@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace System\Test\Container;
 
 use System\Test\Container\Fixtures\DependencyClass;
-use System\Test\Container\Fixtures\DummyClass;
 use System\Test\Container\Fixtures\DummyStaticClass;
 use System\Test\Container\Fixtures\InvokableClass;
 use System\Test\Container\TestContainer as TestCase;
@@ -58,19 +57,6 @@ class CallTest extends TestCase
     {
         $result = $this->container->call([DummyStaticClass::class, 'staticMethod']);
         $this->assertEquals('static called', $result);
-    }
-
-    /**
-     * @test
-     *
-     * @testdox call() invokes "Class@method" string syntax
-     *
-     * @covers \System\Container\Container::call */
-    public function callClassMethodStringSyntax(): void
-    {
-        $this->markTestSkipped('Container::call() does not currently support "Class@method" string syntax directly.');
-        $result = $this->container->call(DummyClass::class . '@foo');
-        $this->assertEquals('bar', $result);
     }
 
     /**
