@@ -637,7 +637,7 @@ class Container implements \ArrayAccess
                 continue;
             }
 
-            throw new BindingResolutionException("Cannot resolve parameter \${$name} in " . get_class($instance) . '::__invoke()');
+            throw new BindingResolutionException("Cannot resolve parameter \${$name} in " . $instance::class . '::__invoke()');
         }
 
         return $dependencies;
