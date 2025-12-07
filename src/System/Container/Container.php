@@ -120,7 +120,8 @@ class Container implements \ArrayAccess
      */
     public function set(string $name, mixed $value): void
     {
-        // If the value is a Closure, it's a factory for a shared instance.
+        // If the value is a Closure,
+        // it's a factory for a shared instance.
         if ($value instanceof \Closure) {
             $this->bind($name, $value, true);
 
@@ -129,17 +130,16 @@ class Container implements \ArrayAccess
 
         $name = $this->getAlias($name);
 
-        // Otherwise, store the value directly as a resolved, shared instance.
+        // Store the value directly as a resolved.
         $this->instances[$name] = $value;
-        // And ensure that any 'make' calls also return this specific instance.
-        $this->bindings[$name] = [
+        $this->bindings[$name]  = [
             'concrete' => fn () => $this->instances[$name],
             'shared'   => true,
         ];
     }
 
     /**
-     * Determine if a given identifier has a value or binding (PSR-11).
+     * Determine if a given identifier has a value or binding.
      */
     public function has(string $id): bool
     {
@@ -211,7 +211,6 @@ class Container implements \ArrayAccess
     {
         $abstract = $this->getAlias($abstract);
 
-        // If using cache and instance exists, return it (singleton behavior)
         if ($useCache && isset($this->instances[$abstract])) {
             return $this->instances[$abstract];
         }
@@ -220,14 +219,12 @@ class Container implements \ArrayAccess
 
         $concrete = $this->getConcrete($abstract);
 
-        // If we have a Closure as concrete, execute it
         if ($concrete instanceof \Closure) {
             $object = $this->call($concrete, $this->getLastParameterOverride());
         } else {
             $object = $this->build($concrete, $this->getLastParameterOverride());
         }
 
-        // Store instance if using cache or if binding is marked as shared
         if ($useCache || $this->isShared($abstract)) {
             $this->instances[$abstract] = $object;
         }
@@ -243,7 +240,7 @@ class Container implements \ArrayAccess
     protected function isShared(string $abstract): bool
     {
         return isset($this->bindings[$abstract]['shared'])
-               && $this->bindings[$abstract]['shared'] === true;
+               && true === $this->bindings[$abstract]['shared'];
     }
 
     /**
@@ -267,14 +264,16 @@ class Container implements \ArrayAccess
      */
     public function build(string|\Closure $concrete, array $parameters = []): mixed
     {
-        // If the concrete is actually a Closure, just execute it and return the result.
+        // If the concrete is actually a Closure,
+        // just execute it and return the result.
         if ($concrete instanceof \Closure) {
             return $concrete($this, $parameters);
         }
 
         $reflector = $this->getReflectionClass($concrete);
 
-        // If the type is not instantiable, we'll throw an exception.
+        // If the type is not instantiable,
+        // we'll throw an exception.
         if (false === $reflector->isInstantiable()) {
             throw new BindingResolutionException("Target [$concrete] is not instantiable.");
         }
@@ -288,7 +287,8 @@ class Container implements \ArrayAccess
 
         $dependencies = $this->getConstructorParameters($concrete);
 
-        // If there are no constructors, that means there are no dependencies
+        // If there are no constructors,
+        // that means there are no dependencies
         if (is_null($dependencies)) {
             unset($this->buildStack[$concrete]);
 
@@ -368,26 +368,22 @@ class Container implements \ArrayAccess
         foreach ($dependencies as $dependency) {
             $name = $dependency->name;
 
-            // Check if parameter is provided by name
             if (array_key_exists($name, $parameters)) {
                 $results[] = $parameters[$name];
                 continue;
             }
 
-            // Check if parameter is provided by position
             if (array_key_exists($dependency->getPosition(), $parameters)) {
                 $results[] = $parameters[$dependency->getPosition()];
                 continue;
             }
 
-            // Check override stack
             $override = $this->getLastParameterOverride();
             if (array_key_exists($name, $override)) {
                 $results[] = $override[$name];
                 continue;
             }
 
-            // Try to resolve the dependency from the container
             $results[] = $this->resolveParameterDependency($dependency);
         }
 
@@ -410,16 +406,16 @@ class Container implements \ArrayAccess
                 return $parameter->getDefaultValue();
             }
 
-            throw new BindingResolutionException("Unresolvable dependency resolving [$parameter] in class {$parameter->getDeclaringClass()->getName()}");
+            throw new BindingResolutionException("Unresolvable dependency resolving [{$parameter}] in class {$parameter->getDeclaringClass()->getName()}");
         }
 
         if ($type instanceof \ReflectionIntersectionType) {
-            throw new BindingResolutionException("Intersection types are not supported for dependency resolution of [$parameter] in class {$parameter->getDeclaringClass()->getName()}");
+            throw new BindingResolutionException("Intersection types are not supported for dependency resolution of [{$parameter}] in class {$parameter->getDeclaringClass()->getName()}");
         }
 
         $isUnion    = $type instanceof \ReflectionUnionType;
         $types      = $isUnion ? $type->getTypes() : [$type];
-        $classTypes = array_filter($types, fn ($t) => $t instanceof \ReflectionNamedType && false === $t->isBuiltin());
+        $classTypes = array_filter($types, static fn ($t): bool => $t instanceof \ReflectionNamedType && false === $t->isBuiltin());
 
         // First, iterate and check for explicitly bound types.
         // This is safe for both union and single types.
@@ -455,7 +451,7 @@ class Container implements \ArrayAccess
             ? 'none of the types in the union are bound in the container'
             : 'the dependency is not bound and cannot be autowired';
 
-        throw new BindingResolutionException("Unresolvable dependency resolving [$parameter] in class {$className}: {$message}");
+        throw new BindingResolutionException("Unresolvable dependency resolving [{$parameter}] in class {$className}: {$message}");
     }
 
     /**
@@ -463,7 +459,9 @@ class Container implements \ArrayAccess
      */
     protected function isPrimitiveType(string $type): bool
     {
-        return in_array($type, ['int', 'float', 'string', 'bool', 'array', 'object', 'callable', 'iterable', 'resource']);
+        static $types = ['int'=> true, 'float'=> true, 'string'=> true, 'bool'=> true, 'array'=> true, 'object'=> true, 'callable'=> true, 'iterable'=> true, 'resource'=> true];
+
+        return isset($types[$type]);
     }
 
     /**
@@ -488,7 +486,7 @@ class Container implements \ArrayAccess
     {
         // Handle array callable [object, method] or [class, method]
         if (is_array($callable)) {
-            return $this->callMethod($callable[0], $callable[1], $parameters);
+            return $this->callMethod(instance: $callable[0], method: $callable[1], parameters: $parameters);
         }
 
         // Handle string ClassName::class (invokable)
@@ -531,7 +529,7 @@ class Container implements \ArrayAccess
      */
     protected function callMethod(object|string $instance, string $method, array $parameters = []): mixed
     {
-        // If instance is a class name, resolve it first
+        // resolve class name
         if (is_string($instance)) {
             $instance = $this->get($instance);
         }
@@ -558,38 +556,32 @@ class Container implements \ArrayAccess
         foreach ($reflection->getParameters() as $parameter) {
             $name = $parameter->getName();
 
-            // Check if provided by name
             if (array_key_exists($name, $parameters)) {
                 $dependencies[] = $parameters[$name];
                 unset($parameters[$name]);
                 continue;
             }
 
-            // Check if provided by position
             if (array_key_exists($parameter->getPosition(), $parameters)) {
                 $dependencies[] = $parameters[$parameter->getPosition()];
                 continue;
             }
 
-            // Try to resolve from container if type-hinted
             if ($parameter->getType() instanceof \ReflectionNamedType && false === $parameter->getType()->isBuiltin()) {
                 $dependencies[] = $this->get($parameter->getType()->getName());
                 continue;
             }
 
-            // This is a special case for the container itself.
             if ($parameter->getName() === 'container' && $parameter->getType() === null) {
                 $dependencies[] = $this;
                 continue;
             }
 
-            // Use default value if available
             if ($parameter->isDefaultValueAvailable()) {
                 $dependencies[] = $parameter->getDefaultValue();
                 continue;
             }
 
-            // Use remaining indexed parameters
             if (count($parameters)) {
                 $dependencies[] = array_shift($parameters);
                 continue;
@@ -650,19 +642,18 @@ class Container implements \ArrayAccess
      */
     public function injectOn(object $instance): object
     {
-        // Get all public methods
         $class     = $instance::class;
         $reflector = $this->getReflectionClass($class);
 
         // Look for methods with @Inject annotation or specific naming pattern
         foreach ($reflector->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-            // Skip constructor and static methods
             if ($method->isConstructor() || $method->isStatic()) {
                 continue;
             }
 
-            // Check if method name starts with 'set' (setter injection pattern)
-            if (strpos($method->getName(), 'set') === 0 && $method->getNumberOfParameters() > 0) {
+            // Check if method name starts with 'set'
+            if (str_starts_with($method->getName(), 'set')
+            && $method->getNumberOfParameters() > 0) {
                 $parameters = $method->getParameters();
 
                 // Only inject if all parameters are type-hinted with classes
@@ -680,7 +671,6 @@ class Container implements \ArrayAccess
                         $dependencies = $this->resolveDependencies($parameters);
                         $method->invokeArgs($instance, $dependencies);
                     } catch (BindingResolutionException $e) {
-                        // Skip if can't resolve
                         continue;
                     }
                 }
