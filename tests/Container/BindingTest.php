@@ -149,19 +149,6 @@ class BindingTest extends TestCase
     /**
      * @test
      *
-     * @testdox Bind using same abstract but different concrete raises no exception
-     *
-     * @covers \Container::bind
-     */
-    public function bindRebindingSafe(): void
-    {
-        $this->markTestSkipped('This behavior is implicitly covered by bindOverridePrevious, which confirms no exception is thrown during rebinding.');
-        // $this->assertTrue(false); // Original placeholder
-    }
-
-    /**
-     * @test
-     *
      * @testdox Bind closure returning scalar should still resolve
      *
      * @covers \System\Container\Container::bind
@@ -190,19 +177,6 @@ class BindingTest extends TestCase
 
         $result = $this->container->get('with_param');
         $this->assertInstanceOf(DependencyClass::class, $result);
-    }
-
-    /**
-     * @test
-     *
-     * @testdox Bind ensures stored closure is callable
-     *
-     * @covers \System\Container\Container::bind
-     */
-    public function bindStoresClosureAsCallable(): void
-    {
-        $this->markTestSkipped('Functionality implicitly covered by bindClosure and bindClosureWithParameter tests, which confirm bound closures are callable and resolvable.');
-        // $this->assertTrue(false); // Original placeholder
     }
 
     /**

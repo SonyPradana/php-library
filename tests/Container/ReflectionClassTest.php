@@ -11,6 +11,7 @@ use System\Test\Container\Fixtures\ClassWithProperties;
 use System\Test\Container\Fixtures\MyClassAttribute;
 use System\Test\Container\Fixtures\MyMethodAttribute;
 use System\Test\Container\Fixtures\MyPropertyAttribute;
+use System\Test\Container\Fixtures\MyService;
 use System\Test\Container\Fixtures\Service;
 use System\Test\Container\TestContainer as TestCase;
 
@@ -39,11 +40,24 @@ class ReflectionClassTest extends TestCase
      * @testdox reflectionMethod cached once per method
      *
      * @covers \Container::callMethod
-     * @covers \Container::injectOn */
+     * @covers \Container::injectOn
+     * @covers \Container::getReflectionMethod
+     */
     public function reflectionMethodCached(): void
     {
-        $this->markTestSkipped('Container does not explicitly cache ReflectionMethod instances beyond constructor parameters.');
-        $this->assertTrue(false);
+        $this->container->enableCache(true);
+
+        // Call the method multiple times to ensure it's processed and cached
+        $this->container->call([MyService::class, 'myMethod'], ['service' => new Service()]);
+        $this->container->call([MyService::class, 'myMethod'], ['service' => new Service()]);
+
+        // Get the ReflectionMethod instances directly from the internal cache
+        // Assuming getProtectedProperty method exists in TestCase
+        $reflector1 = $this->getProtectedProperty('reflectionMethodCache')[MyService::class]['myMethod'];
+        $reflector2 = $this->getProtectedProperty('reflectionMethodCache')[MyService::class]['myMethod'];
+
+        // Assert that the same instance is returned due to caching
+        $this->assertSame($reflector1, $reflector2);
     }
 
     /**

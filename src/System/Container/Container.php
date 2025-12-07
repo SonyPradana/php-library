@@ -64,6 +64,13 @@ class Container implements \ArrayAccess
     protected array $constructorCache = [];
 
     /**
+     * The cached reflection method data.
+     *
+     * @var array<string, array<string, \ReflectionMethod>>
+     */
+    protected array $reflectionMethodCache = [];
+
+    /**
      * Whether the reflection cache is enabled.
      */
     protected bool $cacheEnabled = true;
@@ -331,6 +338,28 @@ class Container implements \ArrayAccess
     }
 
     /**
+     * Get a reflection method instance for the given class and method.
+     *
+     * @throws \ReflectionException
+     */
+    protected function getReflectionMethod(string|object $class, string $method): \ReflectionMethod
+    {
+        $className = is_object($class) ? $class::class : $class;
+
+        if ($this->cacheEnabled && isset($this->reflectionMethodCache[$className][$method])) {
+            return $this->reflectionMethodCache[$className][$method];
+        }
+
+        $reflector = new \ReflectionMethod($class, $method);
+
+        if ($this->cacheEnabled) {
+            $this->reflectionMethodCache[$className][$method] = $reflector;
+        }
+
+        return $reflector;
+    }
+
+    /**
      * Get constructor parameters for a class (with caching).
      *
      * @return array<\ReflectionParameter>|null
@@ -497,7 +526,7 @@ class Container implements \ArrayAccess
             }
 
             $instance     = $this->get($callable);
-            $invokeMethod = $reflectionClass->getMethod('__invoke');
+            $invokeMethod = $this->getReflectionMethod($callable, '__invoke');
             $dependencies = $this->resolveMethodDependencies($invokeMethod, $instance, $parameters);
 
             return $invokeMethod->invokeArgs($instance, $dependencies);
@@ -513,7 +542,7 @@ class Container implements \ArrayAccess
 
         // Handle object (invokable object)
         if (is_object($callable) && method_exists($callable, '__invoke')) {
-            $reflectionMethod = new \ReflectionMethod($callable, '__invoke');
+            $reflectionMethod = $this->getReflectionMethod($callable, '__invoke');
             $dependencies     = $this->resolveMethodDependencies($reflectionMethod, $callable, $parameters);
 
             return $reflectionMethod->invokeArgs($callable, $dependencies);
@@ -534,7 +563,7 @@ class Container implements \ArrayAccess
             $instance = $this->get($instance);
         }
 
-        $reflector    = new \ReflectionMethod($instance, $method);
+        $reflector    = $this->getReflectionMethod($instance, $method);
         $dependencies = $this->resolveFunctionDependencies($reflector, $parameters);
 
         return $reflector->invokeArgs($instance, $dependencies);
@@ -707,8 +736,9 @@ class Container implements \ArrayAccess
      */
     public function clearCache(): self
     {
-        $this->reflectionCache  = [];
-        $this->constructorCache = [];
+        $this->reflectionCache       = [];
+        $this->constructorCache      = [];
+        $this->reflectionMethodCache = [];
 
         return $this;
     }
@@ -728,13 +758,14 @@ class Container implements \ArrayAccess
      */
     public function flush(): void
     {
-        $this->bindings         = [];
-        $this->instances        = [];
-        $this->aliases          = [];
-        $this->buildStack       = [];
-        $this->with             = [];
-        $this->reflectionCache  = [];
-        $this->constructorCache = [];
+        $this->bindings              = [];
+        $this->instances             = [];
+        $this->aliases               = [];
+        $this->buildStack            = [];
+        $this->with                  = [];
+        $this->reflectionCache       = [];
+        $this->constructorCache      = [];
+        $this->reflectionMethodCache = [];
     }
 
     /**
