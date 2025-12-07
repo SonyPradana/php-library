@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace System\Test\Container;
 
+use System\Container\Exceptions\AliasException;
+use System\Container\Exceptions\CircularAliasException;
 use System\Test\Container\Fixtures\DummyClass;
 use System\Test\Container\TestContainer as TestCase;
 
@@ -85,18 +87,29 @@ class AliasTest extends TestCase
     }
 
     /** @test
-     * @testdox Alias chain loops should not infinite loop
+     * @testdox Alias throws AliasException on self-aliasing
      *
      * @covers \Container::alias
-     * */
-    public function aliasPreventsLoop(): void
+     * @covers \System\Container\Exceptions\AliasException
+     */
+    public function aliasThrowsAliasExceptionOnSelfAlias(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(AliasException::class);
+        $this->container->alias('foo', 'foo');
+    }
 
+    /** @test
+     * @testdox Alias throws CircularAliasException on circular reference
+     *
+     * @covers \Container::alias
+     * @covers \System\Container\Exceptions\CircularAliasException
+     */
+    public function aliasThrowsCircularAliasExceptionOnCircularReference(): void
+    {
+        $this->expectException(CircularAliasException::class);
         $container = $this->container;
         $container->alias('foo', 'bar');
         $container->alias('bar', 'foo');
-
         $container->get('foo');
     }
 

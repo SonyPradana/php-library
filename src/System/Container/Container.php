@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace System\Container;
 
-use Closure;
+use System\Container\Exceptions\AliasException;
 use System\Container\Exceptions\BindingResolutionException;
+use System\Container\Exceptions\CircularAliasException;
 use System\Container\Exceptions\EntryNotFoundException;
 
 /**
@@ -93,9 +94,8 @@ class Container implements \ArrayAccess
     public function get(string $name): mixed
     {
         if (false === $this->has($name)) {
-            // Check if it's a valid class before throwing EntryNotFoundException
             if (false === class_exists($name) && false === interface_exists($name)) {
-                throw new EntryNotFoundException("No entry was found for '{$name}' identifier.");
+                throw new EntryNotFoundException($name);
             }
         }
 
@@ -152,7 +152,7 @@ class Container implements \ArrayAccess
     public function alias(string $abstract, string $alias): void
     {
         if ($abstract === $alias) {
-            throw new \Exception("{$abstract} is aliased to itself.");
+            throw new AliasException($abstract);
         }
 
         $this->aliases[$alias] = $abstract;
@@ -176,7 +176,7 @@ class Container implements \ArrayAccess
         }
 
         if (isset($resolving[$abstract])) {
-            throw new \Exception("Circular alias reference detected for {$abstract}");
+            throw new CircularAliasException($abstract);
         }
 
         $resolving[$abstract] = true;
