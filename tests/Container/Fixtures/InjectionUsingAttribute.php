@@ -4,12 +4,12 @@ namespace System\Test\Container\Fixtures;
 
 use System\Container\Attribute\Inject;
 
-class SetterInjectionClass
+class InjectionUsingAttribute
 {
     public $dependency;
 
-    #[Inject]
-    public function setDependency(DependencyClass $dependency)
+    #[Inject(['dependency' => 'foo'])]
+    public function setDependency(string $dependency)
     {
         $this->dependency = $dependency;
     }

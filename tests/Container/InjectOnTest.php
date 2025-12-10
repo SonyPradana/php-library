@@ -7,6 +7,9 @@ namespace System\Test\Container;
 use System\Test\Container\Fixtures\Dependant;
 use System\Test\Container\Fixtures\Dependency;
 use System\Test\Container\Fixtures\DependencyClass;
+use System\Test\Container\Fixtures\InjectionUsingAttribute;
+use System\Test\Container\Fixtures\InjectionUsingAttributeOnParameter;
+use System\Test\Container\Fixtures\InjectionUsingAttributeOnProperty;
 use System\Test\Container\Fixtures\MultipleSetterClass;
 use System\Test\Container\Fixtures\NestedDependencyClass;
 use System\Test\Container\Fixtures\NonSetterClass;
@@ -138,5 +141,57 @@ class InjectOnTest extends TestCase
         $returnedInstance = $this->container->injectOn($instance);
 
         $this->assertSame($instance, $returnedInstance);
+    }
+
+    /**
+     * @test
+     *
+     * @testdox injectOn() returns the same instance
+     *
+     * @covers \Container::injectOn */
+    public function injectUsingInjectAttribute(): void
+    {
+        $instance         = new InjectionUsingAttribute();
+        /** @var InjectionUsingAttribute */
+        $returnedInstance = $this->container->injectOn($instance);
+
+        $this->assertSame($instance, $returnedInstance);
+        $this->assertEquals('foo', $returnedInstance->dependency);
+    }
+
+    /**
+     * @test
+     *
+     * @testdox #[Inject] can be used at the parameter level to specify what to inject.
+     *
+     * @covers \Container::injectOn
+     */
+    public function injectUsingInjectAttributeOnParameter(): void
+    {
+        $this->container->set('db.host', 'localhost');
+        $instance = new InjectionUsingAttributeOnParameter();
+        /** @var InjectionUsingAttributeOnParameter */
+        $returnedInstance = $this->container->injectOn($instance);
+
+        $this->assertSame($instance, $returnedInstance);
+        $this->assertEquals('localhost', $returnedInstance->dependency);
+    }
+
+    /**
+     * @test
+     *
+     * @testdox #[Inject] can be used at the parameter level to specify what to inject.
+     *
+     * @covers \Container::injectOn
+     */
+    public function injectUsingInjectAttributeOnProperty(): void
+    {
+        $this->container->set('db.host', 'localhost');
+        $instance = new InjectionUsingAttributeOnProperty();
+        /** @var InjectionUsingAttributeOnProperty */
+        $returnedInstance = $this->container->injectOn($instance);
+
+        $this->assertSame($instance, $returnedInstance);
+        $this->assertEquals('localhost', $returnedInstance->dependency);
     }
 }

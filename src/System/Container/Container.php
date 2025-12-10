@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Container;
 
+use System\Container\Attribute\Inject;
 use System\Container\Exceptions\AliasException;
 use System\Container\Exceptions\BindingResolutionException;
 use System\Container\Exceptions\CircularAliasException;
@@ -488,7 +489,7 @@ class Container implements \ArrayAccess
      */
     protected function isPrimitiveType(string $type): bool
     {
-        static $types = ['int'=> true, 'float'=> true, 'string'=> true, 'bool'=> true, 'array'=> true, 'object'=> true, 'callable'=> true, 'iterable'=> true, 'resource'=> true];
+        static $types = ['int' => true, 'float' => true, 'string' => true, 'bool' => true, 'array' => true, 'object' => true, 'callable' => true, 'iterable' => true, 'resource' => true];
 
         return isset($types[$type]);
     }
@@ -674,20 +675,40 @@ class Container implements \ArrayAccess
         $class     = $instance::class;
         $reflector = $this->getReflectionClass($class);
 
-        // Look for methods with @Inject annotation or specific naming pattern
+        // Look for method with #[Inject] attribute
         foreach ($reflector->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
             if ($method->isConstructor() || $method->isStatic()) {
                 continue;
             }
 
-            // Check if method name starts with 'set'
-            if (str_starts_with($method->getName(), 'set')
-            && $method->getNumberOfParameters() > 0) {
+            $injects    = [];
+            $attributes = $method->getAttributes(Inject::class);
+            if (0 === count($attributes)) {
+                continue;
+            }
+
+            $method_injects = $attributes[0]->newInstance()->getName();
+            if (is_array($method_injects)) {
+                $injects = $method_injects;
+            }
+
+            if ($method->getNumberOfParameters() > 0) {
                 $parameters = $method->getParameters();
 
                 // Only inject if all parameters are type-hinted with classes
                 $canInject = true;
                 foreach ($parameters as $param) {
+                    // Check for #[Inject] on the parameter itself
+                    $paramAttributes = $param->getAttributes(Inject::class);
+                    if (false === empty($paramAttributes)) {
+                        continue;
+                    }
+
+                    if (isset($injects[$param->name])) {
+                        // An explicit binding is provided via the Inject attribute
+                        continue;
+                    }
+
                     $type = $param->getType();
                     if (!$type || ($type instanceof \ReflectionNamedType && $type->isBuiltin())) {
                         $canInject = false;
@@ -697,12 +718,58 @@ class Container implements \ArrayAccess
 
                 if ($canInject) {
                     try {
-                        $dependencies = $this->resolveDependencies($parameters);
+                        $dependencies = [];
+                        foreach ($parameters as $param) {
+                            $paramName = $param->getName();
+
+                            $paramAttributes = $param->getAttributes(Inject::class);
+                            if (false === empty($paramAttributes)) {
+                                $paramInject    = $paramAttributes[0]->newInstance();
+                                $abstract       = $paramInject->getName();
+                                $dependencies[] = $this->get($abstract);
+                                continue;
+                            }
+
+                            if (array_key_exists($paramName, $injects)) {
+                                $dependencies[] = $injects[$paramName];
+                                continue;
+                            }
+
+                            // Only resolve if not provided in the inject attribute.
+                            $dependencies[] = $this->resolveParameterDependency($param);
+                        }
+
                         $method->invokeArgs($instance, $dependencies);
                     } catch (BindingResolutionException $e) {
+                        // Suppress exception if injection fails,
+                        // allowing other injections to proceed.
                         continue;
                     }
                 }
+            }
+        }
+
+        // Look for property with #[Inject] attribute
+        foreach ($reflector->getProperties(\ReflectionMethod::IS_PUBLIC) as $method) {
+            $attributes = $method->getAttributes(Inject::class);
+            if (0 === count($attributes)) {
+                continue;
+            }
+
+            $property_inject = $attributes[0]->newInstance();
+            $abstract        = $property_inject->getName();
+
+            try {
+                if (is_array($abstract)) {
+                    continue;
+                }
+
+                $dependency = $this->get($abstract);
+                $method->setValue($instance, $dependency);
+            } catch (BindingResolutionException $e) {
+                // Suppress exception if injection fails,
+                // allowing other injections to proceed.
+                continue;
             }
         }
 
