@@ -217,17 +217,14 @@ class Container implements \ArrayAccess
             if ($method->getNumberOfParameters() > 0) {
                 $parameters = $method->getParameters();
 
-                // Only inject if all parameters are type-hinted with classes
                 $canInject = true;
                 foreach ($parameters as $param) {
                     // Check for #[Inject] on the parameter itself
                     $paramAttributes = $param->getAttributes(Inject::class);
-                    if (false === empty($paramAttributes)) {
-                        continue;
-                    }
+                    $hasParamInject  = false === empty($paramAttributes);
+                    $hasMethodInject = isset($injects[$param->name]);
 
-                    if (isset($injects[$param->name])) {
-                        // An explicit binding is provided via the Inject attribute
+                    if ($hasParamInject || $hasMethodInject) {
                         continue;
                     }
 
