@@ -25,7 +25,8 @@ class ResolutionTest extends TestCase
      *
      * @testdox get() resolves shared instance
      *
-     *  @covers \Container::get */
+     *  @covers \Container::get
+     */
     public function getResolvesShared(): void
     {
         $this->container->bind(DependencyClass::class, null, true);
@@ -41,7 +42,8 @@ class ResolutionTest extends TestCase
      *
      * @testdox get() throws when entry not found
      *
-     *  @covers \Container::get */
+     *  @covers \Container::get
+     */
     public function getNotFound(): void
     {
         $this->expectException(EntryNotFoundException::class);
@@ -54,7 +56,8 @@ class ResolutionTest extends TestCase
      *
      * @testdox make() always returns new instance
      *
-     *  @covers \Container::make */
+     *  @covers \Container::make
+     */
     public function makeFreshInstance(): void
     {
         $instance1 = $this->container->make(\stdClass::class);
@@ -68,7 +71,8 @@ class ResolutionTest extends TestCase
      *
      * @testdox make() accepts parameters
      *
-     *  @covers \Container::make */
+     *  @covers \Container::make
+     */
     public function makeWithParameters(): void
     {
         $instance = $this->container->make(Service::class, ['value' => 'custom']);
@@ -82,7 +86,8 @@ class ResolutionTest extends TestCase
      *
      * @testdox get() resolves via closure binding
      *
-     *  @covers \Container::get */
+     *  @covers \Container::get
+     */
     public function getClosure(): void
     {
         $this->container->bind('test-closure', function ($container) {
@@ -98,7 +103,8 @@ class ResolutionTest extends TestCase
      *
      * @testdox make() resolves via closure
      *
-     *  @covers \Container::make */
+     *  @covers \Container::make
+     */
     public function makeClosure(): void
     {
         $this->container->bind('test-closure', function ($container) {
@@ -114,7 +120,8 @@ class ResolutionTest extends TestCase
      *
      * @testdox get() respects alias resolution
      *
-     *  @covers \Container::get */
+     *  @covers \Container::get
+     */
     public function getViaAlias(): void
     {
         $this->container->bind('dependency', DependencyClass::class);
@@ -131,7 +138,8 @@ class ResolutionTest extends TestCase
      *
      * @testdox make() respects alias resolution
      *
-     *  @covers \Container::make */
+     *  @covers \Container::make
+     */
     public function makeViaAlias(): void
     {
         $this->container->bind(DependencyClass::class, null, false); // Make sure it's non-shared
@@ -146,7 +154,8 @@ class ResolutionTest extends TestCase
      *
      * @testdox get() caches resolved singleton
      *
-     *  @covers \Container::get */
+     *  @covers \Container::get
+     */
     public function getSingletonCached(): void
     {
         $counter = 0;
@@ -168,7 +177,8 @@ class ResolutionTest extends TestCase
      *
      * @testdox get() resolves deep dependencies
      *
-     *  @covers \Container::get */
+     *  @covers \Container::get
+     */
     public function getResolvesRecursiveDependencies(): void
     {
         $instance = $this->container->get(DeepA::class);
@@ -183,7 +193,8 @@ class ResolutionTest extends TestCase
      *
      * @testdox make() resolves deep dependencies
      *
-     *  @covers \Container::make */
+     *  @covers \Container::make
+     */
     public function makeResolvesRecursiveDependencies(): void
     {
         $instance = $this->container->make(DeepA::class);
@@ -198,7 +209,8 @@ class ResolutionTest extends TestCase
      *
      * @testdox make() throws on unresolvable dependency
      *
-     *  @covers \Container::make */
+     *  @covers \Container::make
+     */
     public function makeUnresolvableDependency(): void
     {
         $this->expectException(BindingResolutionException::class);

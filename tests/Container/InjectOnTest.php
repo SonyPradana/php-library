@@ -21,6 +21,7 @@ use System\Test\Container\TestContainer as TestCase;
 
 /**
  * @covers \Container::injectOn
+ * @covers \Injector::inject
  */
 class InjectOnTest extends TestCase
 {
@@ -29,7 +30,9 @@ class InjectOnTest extends TestCase
      *
      * @testdox injectOn() calls setter injection
      *
-     * @covers \Container::injectOn */
+     * @covers \Container::injectOn
+     * @covers \Injector::inject
+     */
     public function injectCallsSetters(): void
     {
         $instance = new SetterInjectionClass();
@@ -43,7 +46,9 @@ class InjectOnTest extends TestCase
      *
      * @testdox injectOn() skips methods without setters
      *
-     * @covers \Container::injectOn */
+     * @covers \Container::injectOn
+     * @covers \Injector::inject
+     */
     public function injectSkipsNonSetters(): void
     {
         $instance = new NonSetterClass();
@@ -57,7 +62,9 @@ class InjectOnTest extends TestCase
      *
      * @testdox injectOn() injects only class-typed arguments
      *
-     * @covers \Container::injectOn */
+     * @covers \Container::injectOn
+     * @covers \Injector::inject
+     */
     public function injectOnlyClassTypes(): void
     {
         $instance = new ScalarSetterClass();
@@ -71,7 +78,9 @@ class InjectOnTest extends TestCase
      *
      * @testdox injectOn() ignores unresolvable dependencies
      *
-     * @covers \Container::injectOn */
+     * @covers \Container::injectOn
+     * @covers \Injector::inject
+     */
     public function injectIgnoresUnresolvable(): void
     {
         $instance = new UnresolvableSetterClass();
@@ -85,7 +94,9 @@ class InjectOnTest extends TestCase
      *
      * @testdox injectOn() does not inject static methods
      *
-     * @covers \Container::injectOn */
+     * @covers \Container::injectOn
+     * @covers \Injector::inject
+     */
     public function injectSkipsStatic(): void
     {
         StaticSetterClass::$called = false; // Reset static property
@@ -103,7 +114,9 @@ class InjectOnTest extends TestCase
      *
      * @testdox injectOn() resolves multiple setter methods
      *
-     * @covers \Container::injectOn */
+     * @covers \Container::injectOn
+     * @covers \Injector::inject
+     */
     public function injectMultipleSetters(): void
     {
         $instance = new MultipleSetterClass();
@@ -118,7 +131,9 @@ class InjectOnTest extends TestCase
      *
      * @testdox injectOn() supports deeper dependency resolution
      *
-     * @covers \Container::injectOn */
+     * @covers \Container::injectOn
+     * @covers \Injector::inject
+     */
     public function injectResolvesNested(): void
     {
         $instance = new NestedDependencyClass();
@@ -134,7 +149,9 @@ class InjectOnTest extends TestCase
      *
      * @testdox injectOn() returns the same instance
      *
-     * @covers \Container::injectOn */
+     * @covers \Container::injectOn
+     * @covers \Injector::inject
+     */
     public function injectReturnsOriginal(): void
     {
         $instance         = new \stdClass();
@@ -148,7 +165,9 @@ class InjectOnTest extends TestCase
      *
      * @testdox injectOn() returns the same instance
      *
-     * @covers \Container::injectOn */
+     * @covers \Container::injectOn
+     * @covers \Injector::inject
+     */
     public function injectUsingInjectAttribute(): void
     {
         $instance         = new InjectionUsingAttribute();

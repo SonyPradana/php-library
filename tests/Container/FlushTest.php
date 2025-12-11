@@ -16,7 +16,8 @@ class FlushTest extends TestCase
      *
      * @testdox flush() removes all bindings
      *
-     * @covers \System\Container\Container::flush */
+     * @covers \System\Container\Container::flush
+     */
     public function flushRemovesBindings(): void
     {
         $this->container->bind('foo', function () {
@@ -35,7 +36,8 @@ class FlushTest extends TestCase
      *
      * @testdox flush() clears singleton cache
      *
-     * @covers \System\Container\Container::flush */
+     * @covers \System\Container\Container::flush
+     */
     public function flushClearsCache(): void
     {
         $this->container->bind('foo', fn () => new \stdClass(), true);
@@ -57,7 +59,8 @@ class FlushTest extends TestCase
      *
      * @testdox flush() clears alias map
      *
-     * @covers \System\Container\Container::flush */
+     * @covers \System\Container\Container::flush
+     */
     public function flushClearsAlias(): void
     {
         $this->container->bind(\stdClass::class);
@@ -75,7 +78,8 @@ class FlushTest extends TestCase
      *
      * @testdox flush() produces empty clean container
      *
-     * @covers \System\Container\Container::flush */
+     * @covers \System\Container\Container::flush
+     */
     public function flushResetsContainer(): void
     {
         // Setup the container with bindings, instances, and aliases

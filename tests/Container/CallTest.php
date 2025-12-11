@@ -10,8 +10,7 @@ use System\Test\Container\Fixtures\InvokableClass;
 use System\Test\Container\TestContainer as TestCase;
 
 /**
- * @covers \Container::call
- */
+ * @covers \Container::call*/
 class CallTest extends TestCase
 {
     /**
@@ -19,7 +18,8 @@ class CallTest extends TestCase
      *
      * @testdox call() invokes a function
      *
-     * @covers \System\Container\Container::call */
+     * @covers \System\Container\Container::call
+     */
     public function callFunction(): void
     {
         $result = $this->container->call(function () {
@@ -33,7 +33,8 @@ class CallTest extends TestCase
      *
      * @testdox call() invokes method array syntax
      *
-     * @covers \System\Container\Container::call */
+     * @covers \System\Container\Container::call
+     */
     public function callClassMethod(): void
     {
         $dummy = new class {
@@ -52,7 +53,8 @@ class CallTest extends TestCase
      *
      * @testdox call() invokes static method string syntax
      *
-     * @covers \System\Container\Container::call */
+     * @covers \System\Container\Container::call
+     */
     public function callStaticMethod(): void
     {
         $result = $this->container->call([DummyStaticClass::class, 'staticMethod']);
@@ -64,7 +66,8 @@ class CallTest extends TestCase
      *
      * @testdox call() injects dependencies in parameters
      *
-     * @covers \System\Container\Container::call */
+     * @covers \System\Container\Container::call
+     */
     public function callInjectsDependencies(): void
     {
         $result = $this->container->call(function (DependencyClass $dependency) {
@@ -78,7 +81,8 @@ class CallTest extends TestCase
      *
      * @testdox call() merges user parameters and auto injection
      *
-     * @covers \System\Container\Container::call */
+     * @covers \System\Container\Container::call
+     */
     public function callWithCustomParameters(): void
     {
         $result = $this->container->call(function (DependencyClass $dependency, string $name) {
@@ -93,7 +97,8 @@ class CallTest extends TestCase
      *
      * @testdox call() resolves callable from container binding
      *
-     * @covers \System\Container\Container::call */
+     * @covers \System\Container\Container::call
+     */
     public function callResolvesViaContainer(): void
     {
         $this->container->bind(DependencyClass::class, function () {
@@ -111,7 +116,8 @@ class CallTest extends TestCase
      *
      * @testdox call() throws on unresolvable param
      *
-     * @covers \System\Container\Container::call */
+     * @covers \System\Container\Container::call
+     */
     public function callUnresolvableParameter(): void
     {
         $this->expectException(\System\Container\Exceptions\BindingResolutionException::class);
@@ -126,7 +132,8 @@ class CallTest extends TestCase
      *
      * @testdox call() invokes invokable class
      *
-     * @covers \System\Container\Container::call */
+     * @covers \System\Container\Container::call
+     */
     public function callInvokableClass(): void
     {
         $result = $this->container->call(InvokableClass::class);

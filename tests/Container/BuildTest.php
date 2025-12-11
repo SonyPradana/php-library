@@ -35,7 +35,8 @@ class BuildTest extends TestCase
      *
      * @testdox Build can construct class via reflection
      *
-     * @covers \Container::build */
+     * @covers \Container::build
+     */
     public function buildConstructsClass(): void
     {
         $container = $this->container;
@@ -49,7 +50,8 @@ class BuildTest extends TestCase
      *
      * @testdox Build resolves constructor dependencies
      *
-     * @covers \Container::build */
+     * @covers \Container::build
+     */
     public function buildWithDependencies(): void
     {
         $container = $this->container;
@@ -64,7 +66,8 @@ class BuildTest extends TestCase
      *
      * @testdox Build with parameters overrides constructor defaults
      *
-     * @covers \Container::build */
+     * @covers \Container::build
+     */
     public function buildWithCustomParameters(): void
     {
         $container = $this->container;
@@ -78,7 +81,8 @@ class BuildTest extends TestCase
      *
      * @testdox Build from closure returns result
      *
-     * @covers \Container::build */
+     * @covers \Container::build
+     */
     public function buildFromClosure(): void
     {
         $container = $this->container;
@@ -92,7 +96,8 @@ class BuildTest extends TestCase
      *
      * @testdox Build fails on missing dependency
      *
-     * @covers \Container::build */
+     * @covers \Container::build
+     */
     public function buildMissingDependency(): void
     {
         $this->expectException(\System\Container\Exceptions\BindingResolutionException::class);
@@ -106,7 +111,8 @@ class BuildTest extends TestCase
      *
      * @testdox Build handles circular dependency error
      *
-     * @covers \Container::build */
+     * @covers \Container::build
+     */
     public function buildCircularDependency(): void
     {
         $this->expectException(\System\Container\Exceptions\BindingResolutionException::class);
@@ -120,7 +126,8 @@ class BuildTest extends TestCase
      *
      * @testdox Build resolves typed constructor params
      *
-     * @covers \Container::build */
+     * @covers \Container::build
+     */
     public function buildTypedConstructor(): void
     {
         $instance = $this->container->build(TypedConstructorClass::class);
@@ -181,7 +188,8 @@ class BuildTest extends TestCase
      *
      * @testdox build() with scalar param throws exception
      *
-     * @covers \Container::build */
+     * @covers \Container::build
+     */
     public function buildWithScalarParamThrows(): void
     {
         $this->expectException(\System\Container\Exceptions\BindingResolutionException::class);
@@ -194,7 +202,8 @@ class BuildTest extends TestCase
      *
      * @testdox private constructor → BindingResolutionException
      *
-     * @covers \Container::build */
+     * @covers \Container::build
+     */
     public function buildPrivateConstructorThrowsException(): void
     {
         $this->expectException(\System\Container\Exceptions\BindingResolutionException::class);

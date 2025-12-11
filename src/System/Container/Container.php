@@ -52,6 +52,11 @@ class Container implements \ArrayAccess
     private ?ReflectionCache $reflectionCache = null;
 
     /**
+     * The dependency injector instance.
+     */
+    private ?Injector $injector = null;
+
+    /**
      * The parameter override stack.
      *
      * @var list<array<mixed>>
@@ -206,105 +211,7 @@ class Container implements \ArrayAccess
      */
     public function injectOn(object $instance): object
     {
-        $class     = $instance::class;
-        $reflector = $this->getReflectionClass($class);
-
-        // Look for method with #[Inject] attribute
-        foreach ($reflector->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-            if ($method->isConstructor() || $method->isStatic()) {
-                continue;
-            }
-
-            $injects    = [];
-            $attributes = $method->getAttributes(Inject::class);
-            if (0 === count($attributes)) {
-                continue;
-            }
-
-            $method_injects = $attributes[0]->newInstance()->getName();
-            if (is_array($method_injects)) {
-                $injects = $method_injects;
-            }
-
-            if ($method->getNumberOfParameters() > 0) {
-                $parameters = $method->getParameters();
-
-                $canInject = true;
-                foreach ($parameters as $param) {
-                    // Check for #[Inject] on the parameter itself
-                    $paramAttributes = $param->getAttributes(Inject::class);
-                    $hasParamInject  = false === empty($paramAttributes);
-                    $hasMethodInject = isset($injects[$param->name]);
-
-                    if ($hasParamInject || $hasMethodInject) {
-                        continue;
-                    }
-
-                    $type = $param->getType();
-                    if (!$type || ($type instanceof \ReflectionNamedType && $type->isBuiltin())) {
-                        $canInject = false;
-                        break;
-                    }
-                }
-
-                if ($canInject) {
-                    try {
-                        $dependencies = [];
-                        foreach ($parameters as $param) {
-                            $paramName = $param->getName();
-
-                            $paramAttributes = $param->getAttributes(Inject::class);
-                            if (false === empty($paramAttributes)) {
-                                $paramInject    = $paramAttributes[0]->newInstance();
-                                $abstract       = $paramInject->getName();
-                                $dependencies[] = $this->get($abstract);
-                                continue;
-                            }
-
-                            if (array_key_exists($paramName, $injects)) {
-                                $dependencies[] = $injects[$paramName];
-                                continue;
-                            }
-
-                            // Only resolve if not provided in the inject attribute.
-                            $dependencies[] = $this->getResolver()->resolveParameterDependency($param);
-                        }
-
-                        $method->invokeArgs($instance, $dependencies);
-                    } catch (BindingResolutionException $e) {
-                        // Suppress exception if injection fails,
-                        // allowing other injections to proceed.
-                        continue;
-                    }
-                }
-            }
-        }
-
-        // Look for property with #[Inject] attribute
-        foreach ($reflector->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
-            $attributes = $property->getAttributes(Inject::class);
-            if (0 === count($attributes)) {
-                continue;
-            }
-
-            $property_inject = $attributes[0]->newInstance();
-            $abstract        = $property_inject->getName();
-
-            try {
-                if (is_array($abstract)) {
-                    continue;
-                }
-
-                $dependency = $this->get($abstract);
-                $property->setValue($instance, $dependency);
-            } catch (BindingResolutionException $e) {
-                // Suppress exception if injection fails,
-                // allowing other injections to proceed.
-                continue;
-            }
-        }
-
-        return $instance;
+        return $this->getInjector()->inject($instance);
     }
 
     /**
@@ -569,5 +476,14 @@ class Container implements \ArrayAccess
         }
 
         return $this->reflectionCache;
+    }
+
+    private function getInjector(): Injector
+    {
+        if (null === $this->injector) {
+            $this->injector = new Injector($this);
+        }
+
+        return $this->injector;
     }
 }

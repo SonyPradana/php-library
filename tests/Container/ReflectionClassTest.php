@@ -25,7 +25,8 @@ class ReflectionClassTest extends TestCase
      *
      * @testdox getReflectionClass() caches ReflectionClass
      *
-     * @covers \Container::getReflectionClass */
+     * @covers \Container::getReflectionClass
+     */
     public function reflectionCached(): void
     {
         $reflector1 = $this->callProtected('getReflectionClass', [\stdClass::class]);
@@ -57,7 +58,8 @@ class ReflectionClassTest extends TestCase
      *
      * @testdox parameter resolution cached (if implemented)
      *
-     * @covers \Container::getConstructorParameters */
+     * @covers \Container::getConstructorParameters
+     */
     public function parameterResolutionCached(): void
     {
         // Trigger resolution for a class with constructor parameters
@@ -74,7 +76,8 @@ class ReflectionClassTest extends TestCase
      *
      * @testdox getReflectionClass() accepts string classname
      *
-     * @covers \Container::getReflectionClass */
+     * @covers \Container::getReflectionClass
+     */
     public function reflectionString(): void
     {
         $reflector = $this->callProtected('getReflectionClass', [\stdClass::class]);
@@ -87,7 +90,8 @@ class ReflectionClassTest extends TestCase
      *
      * @testdox getReflectionClass() throws on invalid class
      *
-     * @covers \Container::getReflectionClass */
+     * @covers \Container::getReflectionClass
+     */
     public function reflectionInvalidClass(): void
     {
         $this->expectException(\ReflectionException::class);
@@ -101,7 +105,8 @@ class ReflectionClassTest extends TestCase
      *
      * @testdox getReflectionClass() reflects public properties
      *
-     * @covers \Container::getReflectionClass */
+     * @covers \Container::getReflectionClass
+     */
     public function reflectionProperties(): void
     {
         $reflector = $this->callProtected('getReflectionClass', [ClassWithProperties::class]);
@@ -126,7 +131,8 @@ class ReflectionClassTest extends TestCase
      *
      * @testdox getReflectionClass() reflects public methods
      *
-     * @covers \Container::getReflectionClass */
+     * @covers \Container::getReflectionClass
+     */
     public function reflectionMethods(): void
     {
         $reflector = $this->callProtected('getReflectionClass', [ClassWithMethods::class]);
@@ -151,7 +157,8 @@ class ReflectionClassTest extends TestCase
      *
      * @testdox getReflectionClass() supports attributes
      *
-     * @covers \Container::getReflectionClass */
+     * @covers \Container::getReflectionClass
+     */
     public function reflectionSupportsAttributes(): void
     {
         $reflector = $this->callProtected('getReflectionClass', [ClassWithAttributes::class]);
@@ -176,7 +183,8 @@ class ReflectionClassTest extends TestCase
      *
      * @testdox getReflectionClass() distinguishes parent inheritance
      *
-     * @covers \Container::getReflectionClass */
+     * @covers \Container::getReflectionClass
+     */
     public function reflectionInheritance(): void
     {
         $reflector = $this->callProtected('getReflectionClass', [ChildClass::class]);

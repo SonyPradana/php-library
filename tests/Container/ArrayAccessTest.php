@@ -20,7 +20,8 @@ class ArrayAccessTest extends TestCase
      *
      * @testdox offsetSet() stores value
      *
-     * @covers \Container::offsetSet */
+     * @covers \Container::offsetSet
+     */
     public function arraySet(): void
     {
         $container          = $this->container;
@@ -35,7 +36,8 @@ class ArrayAccessTest extends TestCase
      *
      * @testdox offsetGet() retrieves stored value
      *
-     * @covers \Container::offsetGet */
+     * @covers \Container::offsetGet
+     */
     public function arrayGet(): void
     {
         $container        = $this->container;
@@ -48,7 +50,8 @@ class ArrayAccessTest extends TestCase
      *
      * @testdox offsetExists() detects key presence
      *
-     * @covers \Container::offsetExists */
+     * @covers \Container::offsetExists
+     */
     public function arrayExists(): void
     {
         $container          = $this->container;
@@ -65,7 +68,8 @@ class ArrayAccessTest extends TestCase
      *
      * @testdox offsetUnset() removes value
      *
-     * @covers \Container::offsetUnset */
+     * @covers \Container::offsetUnset
+     */
     public function arrayUnset(): void
     {
         $container          = $this->container;
@@ -84,7 +88,8 @@ class ArrayAccessTest extends TestCase
      *
      * @testdox offsetGet() returns a new instance each time (like get())
      *
-     * @covers \System\Container\Container::offsetGet */
+     * @covers \System\Container\Container::offsetGet
+     */
     public function arrayGetReturnsNewInstance(): void
     {
         $container = $this->container;
@@ -102,7 +107,8 @@ class ArrayAccessTest extends TestCase
      *
      * @testdox ArrayAccess key resolves make() from container
      *
-     * @covers \System\Container\Container::offsetGet */
+     * @covers \System\Container\Container::offsetGet
+     */
     public function arrayGetResolvesContainer(): void
     {
         $container = $this->container;
@@ -119,7 +125,8 @@ class ArrayAccessTest extends TestCase
      *
      * @testdox offsetSet() stores binding as shared (singleton) by default
      *
-     * @covers \System\Container\Container::offsetSet */
+     * @covers \System\Container\Container::offsetSet
+     */
     public function offsetSetStoresSharedBinding(): void
     {
         $container = $this->container;
@@ -138,7 +145,8 @@ class ArrayAccessTest extends TestCase
      *
      * @testdox using array syntax still respects alias()
      *
-     * @covers \System\Container\Container::offsetGet */
+     * @covers \System\Container\Container::offsetGet
+     */
     public function arrayAccessRespectsAlias(): void
     {
         $this->container->alias(DummyClass::class, 'dummy_alias');

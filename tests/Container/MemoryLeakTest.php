@@ -15,7 +15,8 @@ class MemoryLeakTest extends TestCase
      *
      * @testdox repeated make() does not grow internal array sizes
      *
-     * @covers \Container::make */
+     * @covers \Container::make
+     */
     public function leakRepeatedMakeNonShared(): void
     {
         $initialBindingsCount  = count($this->getProtectedProperty('bindings'));
@@ -40,7 +41,8 @@ class MemoryLeakTest extends TestCase
     /**
      * @test
      *
-     * @testdox call() does not store excessive metadata (no leak) */
+     * @testdox call() does not store excessive metadata (no leak)
+     */
     public function leakCallMetadata(): void
     {
         $callable = function (DependencyClass $dep) {
@@ -59,7 +61,8 @@ class MemoryLeakTest extends TestCase
     /**
      * @test
      *
-     * @testdox injectOn() no memory leak on repeated injection */
+     * @testdox injectOn() no memory leak on repeated injection
+     */
     public function leakInjectOn(): void
     {
         // Define a simple class with a setter to be injected

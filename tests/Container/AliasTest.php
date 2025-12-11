@@ -18,7 +18,7 @@ class AliasTest extends TestCase
      * @testdox Alias creates alternate name for abstract
      *
      * @covers \Container::alias
-     * */
+     */
     public function aliasBasic(): void
     {
         $container = $this->container;
@@ -32,7 +32,7 @@ class AliasTest extends TestCase
      * @testdox Alias resolves recursively
      *
      * @covers \Container::alias
-     * */
+     */
     public function aliasRecursiveResolution(): void
     {
         $container = $this->container;
@@ -47,7 +47,7 @@ class AliasTest extends TestCase
      * @testdox Alias shadowing previous alias works
      *
      * @covers \Container::alias
-     * */
+     */
     public function aliasShadow(): void
     {
         $container = $this->container;
@@ -63,7 +63,7 @@ class AliasTest extends TestCase
      * @testdox Alias returns original via getAlias()
      *
      * @covers \Container::getAlias
-     * */
+     */
     public function aliasGetAlias(): void
     {
         $container = $this->container;
@@ -76,7 +76,7 @@ class AliasTest extends TestCase
      * @testdox Alias used in bind resolves correctly
      *
      * @covers \Container::alias
-     * */
+     */
     public function aliasUsedInBind(): void
     {
         $container = $this->container;
@@ -117,7 +117,7 @@ class AliasTest extends TestCase
      * @testdox Alias and shared binding return same instance
      *
      * @covers \Container::alias
-     * */
+     */
     public function aliasSharedBinding(): void
     {
         $this->container->bind(DummyClass::class, null, true); // Bind as shared (singleton)
