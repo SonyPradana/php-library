@@ -18,34 +18,23 @@ class MemoryLeakTest extends TestCase
      * @covers \Container::make */
     public function leakRepeatedMakeNonShared(): void
     {
-        $initialBindingsCount         = count($this->getProtectedProperty('bindings'));
-        $initialInstancesCount        = count($this->getProtectedProperty('instances'));
-        $initialAliasesCount          = count($this->getProtectedProperty('aliases'));
-        $initialReflectionCacheCount  = count($this->getProtectedProperty('reflectionCache'));
-        $initialConstructorCacheCount = count($this->getProtectedProperty('constructorCache'));
-
-        $this->container->enableCache(true); // Ensure caching is enabled
+        $initialBindingsCount  = count($this->getProtectedProperty('bindings'));
+        $initialInstancesCount = count($this->getProtectedProperty('instances'));
+        $initialAliasesCount   = count($this->getProtectedProperty('aliases'));
 
         // Make many non-shared instances of a simple class that is not bound
         for ($i = 0; $i < 10000; $i++) {
             $this->container->make(\stdClass::class);
         }
 
-        $finalBindingsCount         = count($this->getProtectedProperty('bindings'));
-        $finalInstancesCount        = count($this->getProtectedProperty('instances'));
-        $finalAliasesCount          = count($this->getProtectedProperty('aliases'));
-        $finalReflectionCacheCount  = count($this->getProtectedProperty('reflectionCache'));
-        $finalConstructorCacheCount = count($this->getProtectedProperty('constructorCache'));
+        $finalBindingsCount  = count($this->getProtectedProperty('bindings'));
+        $finalInstancesCount = count($this->getProtectedProperty('instances'));
+        $finalAliasesCount   = count($this->getProtectedProperty('aliases'));
 
         // Assert that bindings, instances, and aliases do not grow
         $this->assertEquals($initialBindingsCount, $finalBindingsCount);
         $this->assertEquals($initialInstancesCount, $finalInstancesCount);
         $this->assertEquals($initialAliasesCount, $finalAliasesCount);
-
-        // Reflection caches should grow by at most 1 for the \stdClass::class
-        // It should be 1 if it wasn't already cached. If it was, then 0.
-        $this->assertLessThanOrEqual($initialReflectionCacheCount + 1, $finalReflectionCacheCount);
-        $this->assertLessThanOrEqual($initialConstructorCacheCount + 1, $finalConstructorCacheCount);
     }
 
     /**

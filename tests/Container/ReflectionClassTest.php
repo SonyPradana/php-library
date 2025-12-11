@@ -45,16 +45,8 @@ class ReflectionClassTest extends TestCase
      */
     public function reflectionMethodCached(): void
     {
-        $this->container->enableCache(true);
-
-        // Call the method multiple times to ensure it's processed and cached
-        $this->container->call([MyService::class, 'myMethod'], ['service' => new Service()]);
-        $this->container->call([MyService::class, 'myMethod'], ['service' => new Service()]);
-
-        // Get the ReflectionMethod instances directly from the internal cache
-        // Assuming getProtectedProperty method exists in TestCase
-        $reflector1 = $this->getProtectedProperty('reflectionMethodCache')[MyService::class]['myMethod'];
-        $reflector2 = $this->getProtectedProperty('reflectionMethodCache')[MyService::class]['myMethod'];
+        $reflector1 = $this->container->getReflectionMethod(MyService::class, 'myMethod');
+        $reflector2 = $this->container->getReflectionMethod(MyService::class, 'myMethod');
 
         // Assert that the same instance is returned due to caching
         $this->assertSame($reflector1, $reflector2);
@@ -68,17 +60,13 @@ class ReflectionClassTest extends TestCase
      * @covers \Container::getConstructorParameters */
     public function parameterResolutionCached(): void
     {
-        $this->container->enableCache(true); // Ensure caching is enabled
-
         // Trigger resolution for a class with constructor parameters
-        $this->container->get(Service::class);
+        $params1 = $this->container->getConstructorParameters(Service::class);
+        $params2 = $this->container->getConstructorParameters(Service::class);
 
-        // Directly access the protected constructorCache property
-        $constructorCache = $this->getProtectedProperty('constructorCache');
-
-        $this->assertArrayHasKey(Service::class, $constructorCache);
-        $this->assertIsArray($constructorCache[Service::class]);
-        $this->assertContainsOnlyInstancesOf(\ReflectionParameter::class, $constructorCache[Service::class]);
+        $this->assertIsArray($params1);
+        $this->assertContainsOnlyInstancesOf(\ReflectionParameter::class, $params1);
+        $this->assertSame($params1, $params2);
     }
 
     /**

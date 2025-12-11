@@ -37,11 +37,19 @@ class Container implements \ArrayAccess
     protected array $aliases = [];
 
     /**
-     * The stack of concretions currently being built.
-     *
-     * @var array<string, bool>
+     * The dependency resolver instance.
      */
-    protected array $buildStack = [];
+    protected ?Resolver $resolver = null;
+
+    /**
+     * The callable invoker instance.
+     */
+    protected ?Invoker $invoker = null;
+
+    /**
+     * The reflection cache instance.
+     */
+    protected ?ReflectionCache $reflectionCache = null;
 
     /**
      * The parameter override stack.
@@ -49,32 +57,6 @@ class Container implements \ArrayAccess
      * @var list<array<mixed>>
      */
     protected array $with = [];
-
-    /**
-     * The cached reflection data.
-     *
-     * @var array<string, \ReflectionClass<object>>
-     */
-    protected array $reflectionCache = [];
-
-    /**
-     * The cached constructor data.
-     *
-     * @var array<string, array<\ReflectionParameter>|null>
-     */
-    protected array $constructorCache = [];
-
-    /**
-     * The cached reflection method data.
-     *
-     * @var array<string, array<string, \ReflectionMethod>>
-     */
-    protected array $reflectionMethodCache = [];
-
-    /**
-     * Whether the reflection cache is enabled.
-     */
-    protected bool $cacheEnabled = true;
 
     /**
      * Register a binding with the container.
@@ -278,210 +260,65 @@ class Container implements \ArrayAccess
             return $concrete($this, $parameters);
         }
 
-        $reflector = $this->getReflectionClass($concrete);
-
-        // If the type is not instantiable,
-        // we'll throw an exception.
-        if (false === $reflector->isInstantiable()) {
-            throw new BindingResolutionException("Target [$concrete] is not instantiable.");
-        }
-
-        // Detect circular dependencies
-        if (isset($this->buildStack[$concrete])) {
-            throw new BindingResolutionException("Circular dependency detected while trying to build [{$concrete}]. Stack: [" . implode(' -> ', array_merge($this->buildStack, [$concrete])) . '].');
-        }
-
-        $this->buildStack[$concrete] = true;
-
-        $dependencies = $this->getConstructorParameters($concrete);
-
-        // If there are no constructors,
-        // that means there are no dependencies
-        if (is_null($dependencies)) {
-            unset($this->buildStack[$concrete]);
-
-            return new $concrete();
-        }
-
-        // Merge provided parameters with constructor dependencies
-        $instances = $this->resolveDependencies($dependencies, $parameters);
-
-        unset($this->buildStack[$concrete]);
-
-        return $reflector->newInstanceArgs($instances);
+        return $this->getResolver()->resolveClass($concrete, $parameters);
     }
 
     /**
-     * Get a reflection class instance for the given class.
-     *
-     * @return \ReflectionClass<object>
-     *
-     * @throws \ReflectionException
+     * Lazy load the resolver instance.
      */
-    protected function getReflectionClass(string $class): \ReflectionClass
+    private function getResolver(): Resolver
     {
-        if ($this->cacheEnabled && isset($this->reflectionCache[$class])) {
-            return $this->reflectionCache[$class];
+        if (null === $this->resolver) {
+            $this->resolver = new Resolver($this);
         }
 
-        // Check if class exists first to avoid reflection exception
-        if (false === class_exists($class) && false === interface_exists($class)) {
-            throw new \ReflectionException("Class {$class} does not exist");
-        }
-
-        $reflector = new \ReflectionClass($class);
-
-        if ($this->cacheEnabled) {
-            $this->reflectionCache[$class] = $reflector;
-        }
-
-        return $reflector;
+        return $this->resolver;
     }
 
     /**
-     * Get a reflection method instance for the given class and method.
-     *
-     * @throws \ReflectionException
+     * @internal
      */
-    protected function getReflectionMethod(string|object $class, string $method): \ReflectionMethod
+    public function getReflectionClass(string $class): \ReflectionClass
+    {
+        return $this->getReflectionCache()->getReflectionClass($class, function () use ($class) {
+            if (false === class_exists($class) && false === interface_exists($class)) {
+                throw new \ReflectionException("Class {$class} does not exist");
+            }
+
+            return new \ReflectionClass($class);
+        });
+    }
+
+    /**
+     * @internal
+     */
+    public function getReflectionMethod(string|object $class, string $method): \ReflectionMethod
     {
         $className = is_object($class) ? $class::class : $class;
 
-        if ($this->cacheEnabled && isset($this->reflectionMethodCache[$className][$method])) {
-            return $this->reflectionMethodCache[$className][$method];
-        }
-
-        $reflector = new \ReflectionMethod($class, $method);
-
-        if ($this->cacheEnabled) {
-            $this->reflectionMethodCache[$className][$method] = $reflector;
-        }
-
-        return $reflector;
+        return $this->getReflectionCache()->getReflectionMethod($className, $method, fn () => new \ReflectionMethod($class, $method));
     }
 
     /**
-     * Get constructor parameters for a class (with caching).
-     *
-     * @return array<\ReflectionParameter>|null
+     * @internal
      */
-    protected function getConstructorParameters(string $class): ?array
+    public function getConstructorParameters(string $class): ?array
     {
-        if ($this->cacheEnabled && isset($this->constructorCache[$class])) {
-            return $this->constructorCache[$class];
-        }
+        return $this->getReflectionCache()->getConstructorParameters($class, function () use ($class) {
+            $reflector   = $this->getReflectionClass($class);
+            $constructor = $reflector->getConstructor();
 
-        $reflector   = $this->getReflectionClass($class);
-        $constructor = $reflector->getConstructor();
-
-        $parameters = $constructor ? $constructor->getParameters() : null;
-
-        if ($this->cacheEnabled) {
-            $this->constructorCache[$class] = $parameters;
-        }
-
-        return $parameters;
+            return $constructor ? $constructor->getParameters() : null;
+        });
     }
 
-    /**
-     * Resolve all of the dependencies from the ReflectionParameters.
-     *
-     * @param \ReflectionParameter[]   $dependencies
-     * @param array<int|string, mixed> $parameters
-     *
-     * @return array<mixed>
-     */
-    protected function resolveDependencies(array $dependencies, array $parameters = []): array
+    private function getReflectionCache(): ReflectionCache
     {
-        $results = [];
-
-        foreach ($dependencies as $dependency) {
-            $name = $dependency->name;
-
-            if (array_key_exists($name, $parameters)) {
-                $results[] = $parameters[$name];
-                continue;
-            }
-
-            if (array_key_exists($dependency->getPosition(), $parameters)) {
-                $results[] = $parameters[$dependency->getPosition()];
-                continue;
-            }
-
-            $override = $this->getLastParameterOverride();
-            if (array_key_exists($name, $override)) {
-                $results[] = $override[$name];
-                continue;
-            }
-
-            $results[] = $this->resolveParameterDependency($dependency);
+        if (null === $this->reflectionCache) {
+            $this->reflectionCache = new ReflectionCache();
         }
 
-        return $results;
-    }
-
-    /**
-     * Resolve a single parameter dependency.
-     *
-     * @throws BindingResolutionException
-     */
-    protected function resolveParameterDependency(\ReflectionParameter $parameter): mixed
-    {
-        $type = $parameter->getType();
-
-        // If the parameter has no type,
-        // we'll check if it has a default value.
-        if (null === $type) {
-            if ($parameter->isDefaultValueAvailable()) {
-                return $parameter->getDefaultValue();
-            }
-
-            throw new BindingResolutionException("Unresolvable dependency resolving [{$parameter}] in class {$parameter->getDeclaringClass()->getName()}");
-        }
-
-        if ($type instanceof \ReflectionIntersectionType) {
-            throw new BindingResolutionException("Intersection types are not supported for dependency resolution of [{$parameter}] in class {$parameter->getDeclaringClass()->getName()}");
-        }
-
-        $isUnion    = $type instanceof \ReflectionUnionType;
-        $types      = $isUnion ? $type->getTypes() : [$type];
-        $classTypes = array_filter($types, static fn ($t): bool => $t instanceof \ReflectionNamedType && false === $t->isBuiltin());
-
-        // First, iterate and check for explicitly bound types.
-        // This is safe for both union and single types.
-        foreach ($classTypes as $classType) {
-            $name = $classType->getName();
-            if ($this->bound($name)) {
-                return $this->get($name);
-            }
-        }
-
-        if (false === $isUnion && false === empty($classTypes)) {
-            try {
-                $firstClass = array_values($classTypes)[0];
-
-                return $this->get($firstClass->getName());
-            } catch (BindingResolutionException $e) {
-                // It failed to autowire.
-                //  We'll fall through to the default/nullable check.
-            }
-        }
-
-        if ($parameter->isDefaultValueAvailable()) {
-            return $parameter->getDefaultValue();
-        }
-
-        if ($type->allowsNull()) {
-            return null;
-        }
-
-        $class     = $parameter->getDeclaringClass();
-        $className = $class ? $class->getName() : 'unknown';
-        $message   = $isUnion
-            ? 'none of the types in the union are bound in the container'
-            : 'the dependency is not bound and cannot be autowired';
-
-        throw new BindingResolutionException("Unresolvable dependency resolving [{$parameter}] in class {$className}: {$message}");
+        return $this->reflectionCache;
     }
 
     /**
@@ -498,8 +335,10 @@ class Container implements \ArrayAccess
      * Get the last parameter override.
      *
      * @return array<mixed>
+     *
+     * @internal
      */
-    protected function getLastParameterOverride(): array
+    public function getLastParameterOverride(): array
     {
         return count($this->with) ? end($this->with) : [];
     }
@@ -514,155 +353,16 @@ class Container implements \ArrayAccess
      */
     public function call(callable|object|array|string $callable, array $parameters = []): mixed
     {
-        // Handle array callable [object, method] or [class, method]
-        if (is_array($callable)) {
-            return $this->callMethod(instance: $callable[0], method: $callable[1], parameters: $parameters);
-        }
-
-        // Handle string ClassName::class (invokable)
-        if (is_string($callable) && class_exists($callable)) {
-            $reflectionClass = new \ReflectionClass($callable);
-            if (false === $reflectionClass->hasMethod('__invoke')) {
-                throw new BindingResolutionException("Class {$callable} does not have an __invoke() method. Cannot be used as invokable.");
-            }
-
-            $instance     = $this->get($callable);
-            $invokeMethod = $this->getReflectionMethod($callable, '__invoke');
-            $dependencies = $this->resolveMethodDependencies($invokeMethod, $instance, $parameters);
-
-            return $invokeMethod->invokeArgs($instance, $dependencies);
-        }
-
-        // Handle closure / function
-        if (is_callable($callable) && !is_string($callable)) {
-            $reflector    = new \ReflectionFunction($callable);
-            $dependencies = $this->resolveFunctionDependencies($reflector, $parameters);
-
-            return call_user_func_array($callable, $dependencies);
-        }
-
-        // Handle object (invokable object)
-        if (is_object($callable) && method_exists($callable, '__invoke')) {
-            $reflectionMethod = $this->getReflectionMethod($callable, '__invoke');
-            $dependencies     = $this->resolveMethodDependencies($reflectionMethod, $callable, $parameters);
-
-            return $reflectionMethod->invokeArgs($callable, $dependencies);
-        }
-
-        throw new BindingResolutionException('Unable to call the given callable. Unsupported type.');
+        return $this->getInvoker()->call($callable, $parameters);
     }
 
-    /**
-     * Call a method and inject its dependencies.
-     *
-     * @param array<int|string, mixed> $parameters
-     */
-    protected function callMethod(object|string $instance, string $method, array $parameters = []): mixed
+    private function getInvoker(): Invoker
     {
-        // resolve class name
-        if (is_string($instance)) {
-            $instance = $this->get($instance);
+        if (null === $this->invoker) {
+            $this->invoker = new Invoker($this);
         }
 
-        $reflector    = $this->getReflectionMethod($instance, $method);
-        $dependencies = $this->resolveFunctionDependencies($reflector, $parameters);
-
-        return $reflector->invokeArgs($instance, $dependencies);
-    }
-
-    /**
-     * Resolve function dependencies.
-     *
-     * @param array<int|string, mixed> $parameters
-     *
-     * @return array<mixed>
-     *
-     * @throws BindingResolutionException
-     */
-    protected function resolveFunctionDependencies(\ReflectionFunctionAbstract $reflection, array $parameters = []): array
-    {
-        $dependencies = [];
-
-        foreach ($reflection->getParameters() as $parameter) {
-            $name = $parameter->getName();
-
-            if (array_key_exists($name, $parameters)) {
-                $dependencies[] = $parameters[$name];
-                unset($parameters[$name]);
-                continue;
-            }
-
-            if (array_key_exists($parameter->getPosition(), $parameters)) {
-                $dependencies[] = $parameters[$parameter->getPosition()];
-                continue;
-            }
-
-            if ($parameter->getType() instanceof \ReflectionNamedType && false === $parameter->getType()->isBuiltin()) {
-                $dependencies[] = $this->get($parameter->getType()->getName());
-                continue;
-            }
-
-            if ($parameter->getName() === 'container' && $parameter->getType() === null) {
-                $dependencies[] = $this;
-                continue;
-            }
-
-            if ($parameter->isDefaultValueAvailable()) {
-                $dependencies[] = $parameter->getDefaultValue();
-                continue;
-            }
-
-            if (count($parameters)) {
-                $dependencies[] = array_shift($parameters);
-                continue;
-            }
-
-            throw new BindingResolutionException("Unable to resolve dependency [{$parameter}] in callable");
-        }
-
-        return array_merge($dependencies, array_values($parameters));
-    }
-
-    /**
-     * Resolve function dependencies.
-     *
-     * @param array<int|string, mixed> $parameters
-     *
-     * @return array<mixed>
-     *
-     * @throws BindingResolutionException
-     */
-    private function resolveMethodDependencies(\ReflectionMethod $method, object $instance, array $parameters = []): array
-    {
-        $dependencies = [];
-
-        foreach ($method->getParameters() as $parameter) {
-            $name = $parameter->getName();
-
-            if (array_key_exists($name, $parameters)) {
-                $dependencies[] = $parameters[$name];
-
-                continue;
-            }
-
-            if ($type = $parameter->getType()) {
-                if ($type instanceof \ReflectionNamedType && $type->isBuiltin()) {
-                    $dependencies[] = $this->get($type->getName());
-
-                    continue;
-                }
-            }
-
-            if ($parameter->isDefaultValueAvailable()) {
-                $dependencies[] = $parameter->getDefaultValue();
-
-                continue;
-            }
-
-            throw new BindingResolutionException("Cannot resolve parameter \${$name} in " . $instance::class . '::__invoke()');
-        }
-
-        return $dependencies;
+        return $this->invoker;
     }
 
     /**
@@ -736,7 +436,7 @@ class Container implements \ArrayAccess
                             }
 
                             // Only resolve if not provided in the inject attribute.
-                            $dependencies[] = $this->resolveParameterDependency($param);
+                            $dependencies[] = $this->getResolver()->resolveParameterDependency($param);
                         }
 
                         $method->invokeArgs($instance, $dependencies);
@@ -791,21 +491,9 @@ class Container implements \ArrayAccess
     /**
      * Enable or disable the reflection cache.
      */
-    public function enableCache(bool $enabled = true): self
-    {
-        $this->cacheEnabled = $enabled;
-
-        return $this;
-    }
-
-    /**
-     * Clear the reflection cache.
-     */
     public function clearCache(): self
     {
-        $this->reflectionCache       = [];
-        $this->constructorCache      = [];
-        $this->reflectionMethodCache = [];
+        $this->getReflectionCache()->clear();
 
         return $this;
     }
@@ -825,14 +513,14 @@ class Container implements \ArrayAccess
      */
     public function flush(): void
     {
-        $this->bindings              = [];
-        $this->instances             = [];
-        $this->aliases               = [];
-        $this->buildStack            = [];
-        $this->with                  = [];
-        $this->reflectionCache       = [];
-        $this->constructorCache      = [];
-        $this->reflectionMethodCache = [];
+        $this->bindings  = [];
+        $this->instances = [];
+        $this->aliases   = [];
+        $this->with      = [];
+
+        $this->resolver        = null;
+        $this->invoker         = null;
+        $this->reflectionCache = null;
     }
 
     /**
