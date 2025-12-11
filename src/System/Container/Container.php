@@ -137,6 +137,18 @@ class Container implements \ArrayAccess
     }
 
     /**
+     * Determine if the given abstract type has been bound.
+     */
+    public function bound(string $abstract): bool
+    {
+        $abstract = $this->getAlias($abstract);
+
+        return isset($this->bindings[$abstract])
+               || isset($this->instances[$abstract])
+               || isset($this->aliases[$abstract]);
+    }
+
+    /**
      * Alias a type to a different name.
      */
     public function alias(string $abstract, string $alias): void
@@ -296,18 +308,6 @@ class Container implements \ArrayAccess
     }
 
     /**
-     * Determine if the given abstract type has been bound.
-     */
-    public function bound(string $abstract): bool
-    {
-        $abstract = $this->getAlias($abstract);
-
-        return isset($this->bindings[$abstract])
-               || isset($this->instances[$abstract])
-               || isset($this->aliases[$abstract]);
-    }
-
-    /**
      * @return \ReflectionClass<object>
      *
      * @internal
@@ -361,16 +361,6 @@ class Container implements \ArrayAccess
     }
 
     /**
-     * Enable or disable the reflection cache.
-     */
-    public function clearCache(): self
-    {
-        $this->getReflectionCache()->clear();
-
-        return $this;
-    }
-
-    /**
      * Get all of the container's bindings.
      *
      * @return array<string, array{concrete: \Closure, shared: bool}>
@@ -378,6 +368,16 @@ class Container implements \ArrayAccess
     public function getBindings(): array
     {
         return $this->bindings;
+    }
+
+    /**
+     * Enable or disable the reflection cache.
+     */
+    public function clearCache(): self
+    {
+        $this->getReflectionCache()->clear();
+
+        return $this;
     }
 
     /**

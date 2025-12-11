@@ -157,6 +157,8 @@ final class Resolver
     }
 
     /**
+     * @phpstan-return never
+     *
      * @throws BindingResolutionException
      */
     private function unresolvable(\ReflectionParameter $parameter, bool $isUnion = false): void
