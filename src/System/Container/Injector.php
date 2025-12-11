@@ -36,6 +36,8 @@ final class Injector
 
     /**
      * Injects dependencies into public methods with #[Inject] attributes.
+     *
+     * @param \ReflectionClass<object> $reflector
      */
     private function injectMethods(object $instance, \ReflectionClass $reflector): void
     {
@@ -64,7 +66,7 @@ final class Injector
                 foreach ($parameters as $param) {
                     // Check for #[Inject] on the parameter itself
                     $paramAttributes = $param->getAttributes(Inject::class);
-                    $hasParamInject  = !empty($paramAttributes);
+                    $hasParamInject  = false === empty($paramAttributes);
                     $hasMethodInject = isset($injects[$param->name]);
 
                     if ($hasParamInject || $hasMethodInject) {
@@ -114,6 +116,8 @@ final class Injector
 
     /**
      * Injects dependencies into public properties with #[Inject] attributes.
+     *
+     * @param \ReflectionClass<object> $reflector
      */
     private function injectProperties(object $instance, \ReflectionClass $reflector): void
     {
