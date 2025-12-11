@@ -8,7 +8,7 @@ namespace System\Container\Attribute;
 final class Inject
 {
     public function __construct(
-        /** @param string|array<string, string> $name */
+        /** @var string|array<string, string> */
         private string|array $name = [],
     ) {
     }
