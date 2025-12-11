@@ -32,6 +32,9 @@ final class ReflectionCache
      */
     private array $constructorCache = [];
 
+    /**
+     * @return \ReflectionClass<object>
+     */
     public function getReflectionClass(string $class, \Closure $creator): \ReflectionClass
     {
         if (isset($this->classCache[$class])) {

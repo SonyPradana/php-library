@@ -39,17 +39,17 @@ class Container implements \ArrayAccess
     /**
      * The dependency resolver instance.
      */
-    protected ?Resolver $resolver = null;
+    private ?Resolver $resolver = null;
 
     /**
      * The callable invoker instance.
      */
-    protected ?Invoker $invoker = null;
+    private ?Invoker $invoker = null;
 
     /**
      * The reflection cache instance.
      */
-    protected ?ReflectionCache $reflectionCache = null;
+    private ?ReflectionCache $reflectionCache = null;
 
     /**
      * The parameter override stack.
@@ -157,95 +157,6 @@ class Container implements \ArrayAccess
     }
 
     /**
-     * @param array<string, true> $resolving
-     */
-    private function resolveAlias(string $abstract, array $resolving): string
-    {
-        if (false === isset($this->aliases[$abstract])) {
-            return $abstract;
-        }
-
-        if (isset($resolving[$abstract])) {
-            throw new CircularAliasException($abstract);
-        }
-
-        $resolving[$abstract] = true;
-
-        return $this->resolveAlias($this->aliases[$abstract], $resolving);
-    }
-
-    /**
-     * Get the Closure to be used when building a type.
-     *
-     * @return \Closure(self, array<mixed>):mixed
-     */
-    protected function getClosure(string $abstract, string $concrete): \Closure
-    {
-        return function ($container, $parameters = []) use ($abstract, $concrete) {
-            if ($abstract == $concrete) {
-                return $container->build($concrete, $parameters);
-            }
-
-            return $container->resolve($concrete, $parameters, false);
-        };
-    }
-
-    /**
-     * Resolve the given type from the container.
-     *
-     * @param array<int|string, mixed> $parameters
-     *
-     * @throws BindingResolutionException
-     */
-    protected function resolve(string $abstract, array $parameters = [], bool $useCache = true): mixed
-    {
-        $abstract = $this->getAlias($abstract);
-
-        if ($useCache && isset($this->instances[$abstract])) {
-            return $this->instances[$abstract];
-        }
-
-        $this->with[] = $parameters;
-
-        $concrete = $this->getConcrete($abstract);
-
-        if ($concrete instanceof \Closure) {
-            $object = $this->call($concrete, $this->getLastParameterOverride());
-        } else {
-            $object = $this->build($concrete, $this->getLastParameterOverride());
-        }
-
-        if ($useCache || $this->isShared($abstract)) {
-            $this->instances[$abstract] = $object;
-        }
-
-        array_pop($this->with);
-
-        return $object;
-    }
-
-    /**
-     * Determine if a given type is shared.
-     */
-    protected function isShared(string $abstract): bool
-    {
-        return isset($this->bindings[$abstract]['shared'])
-               && true === $this->bindings[$abstract]['shared'];
-    }
-
-    /**
-     * Get the concrete type for a given abstract.
-     */
-    protected function getConcrete(string $abstract): mixed
-    {
-        if (isset($this->bindings[$abstract])) {
-            return $this->bindings[$abstract]['concrete'];
-        }
-
-        return $abstract;
-    }
-
-    /**
      * Instantiate a concrete instance of the given type.
      *
      * @param array<int|string, mixed> $parameters
@@ -264,86 +175,6 @@ class Container implements \ArrayAccess
     }
 
     /**
-     * Lazy load the resolver instance.
-     */
-    private function getResolver(): Resolver
-    {
-        if (null === $this->resolver) {
-            $this->resolver = new Resolver($this);
-        }
-
-        return $this->resolver;
-    }
-
-    /**
-     * @internal
-     */
-    public function getReflectionClass(string $class): \ReflectionClass
-    {
-        return $this->getReflectionCache()->getReflectionClass($class, function () use ($class) {
-            if (false === class_exists($class) && false === interface_exists($class)) {
-                throw new \ReflectionException("Class {$class} does not exist");
-            }
-
-            return new \ReflectionClass($class);
-        });
-    }
-
-    /**
-     * @internal
-     */
-    public function getReflectionMethod(string|object $class, string $method): \ReflectionMethod
-    {
-        $className = is_object($class) ? $class::class : $class;
-
-        return $this->getReflectionCache()->getReflectionMethod($className, $method, fn () => new \ReflectionMethod($class, $method));
-    }
-
-    /**
-     * @internal
-     */
-    public function getConstructorParameters(string $class): ?array
-    {
-        return $this->getReflectionCache()->getConstructorParameters($class, function () use ($class) {
-            $reflector   = $this->getReflectionClass($class);
-            $constructor = $reflector->getConstructor();
-
-            return $constructor ? $constructor->getParameters() : null;
-        });
-    }
-
-    private function getReflectionCache(): ReflectionCache
-    {
-        if (null === $this->reflectionCache) {
-            $this->reflectionCache = new ReflectionCache();
-        }
-
-        return $this->reflectionCache;
-    }
-
-    /**
-     * Determine if the given type is a primitive type.
-     */
-    protected function isPrimitiveType(string $type): bool
-    {
-        static $types = ['int' => true, 'float' => true, 'string' => true, 'bool' => true, 'array' => true, 'object' => true, 'callable' => true, 'iterable' => true, 'resource' => true];
-
-        return isset($types[$type]);
-    }
-
-    /**
-     * Get the last parameter override.
-     *
-     * @return array<mixed>
-     *
-     * @internal
-     */
-    public function getLastParameterOverride(): array
-    {
-        return count($this->with) ? end($this->with) : [];
-    }
-
-    /**
      * Call the given callable and inject its dependencies.
      *
      * @param callable|object|array<string>|string     $callable   $callable
@@ -354,15 +185,6 @@ class Container implements \ArrayAccess
     public function call(callable|object|array|string $callable, array $parameters = []): mixed
     {
         return $this->getInvoker()->call($callable, $parameters);
-    }
-
-    private function getInvoker(): Invoker
-    {
-        if (null === $this->invoker) {
-            $this->invoker = new Invoker($this);
-        }
-
-        return $this->invoker;
     }
 
     /**
@@ -450,8 +272,8 @@ class Container implements \ArrayAccess
         }
 
         // Look for property with #[Inject] attribute
-        foreach ($reflector->getProperties(\ReflectionMethod::IS_PUBLIC) as $method) {
-            $attributes = $method->getAttributes(Inject::class);
+        foreach ($reflector->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
+            $attributes = $property->getAttributes(Inject::class);
             if (0 === count($attributes)) {
                 continue;
             }
@@ -465,7 +287,7 @@ class Container implements \ArrayAccess
                 }
 
                 $dependency = $this->get($abstract);
-                $method->setValue($instance, $dependency);
+                $property->setValue($instance, $dependency);
             } catch (BindingResolutionException $e) {
                 // Suppress exception if injection fails,
                 // allowing other injections to proceed.
@@ -486,6 +308,59 @@ class Container implements \ArrayAccess
         return isset($this->bindings[$abstract])
                || isset($this->instances[$abstract])
                || isset($this->aliases[$abstract]);
+    }
+
+    /**
+     * @return \ReflectionClass<object>
+     *
+     * @internal
+     */
+    public function getReflectionClass(string $class): \ReflectionClass
+    {
+        return $this->getReflectionCache()->getReflectionClass($class, function () use ($class) {
+            if (false === class_exists($class) && false === interface_exists($class)) {
+                throw new \ReflectionException("Class {$class} does not exist");
+            }
+
+            return new \ReflectionClass($class);
+        });
+    }
+
+    /**
+     * @internal
+     */
+    public function getReflectionMethod(string|object $class, string $method): \ReflectionMethod
+    {
+        $className = is_object($class) ? $class::class : $class;
+
+        return $this->getReflectionCache()->getReflectionMethod($className, $method, fn () => new \ReflectionMethod($class, $method));
+    }
+
+    /**
+     * @return ?array<\ReflectionParameter>
+     *
+     * @internal
+     */
+    public function getConstructorParameters(string $class): ?array
+    {
+        return $this->getReflectionCache()->getConstructorParameters($class, function () use ($class) {
+            $reflector   = $this->getReflectionClass($class);
+            $constructor = $reflector->getConstructor();
+
+            return $constructor ? $constructor->getParameters() : null;
+        });
+    }
+
+    /**
+     * Get the last parameter override.
+     *
+     * @return array<mixed>
+     *
+     * @internal
+     */
+    public function getLastParameterOverride(): array
+    {
+        return count($this->with) ? end($this->with) : [];
     }
 
     /**
@@ -513,11 +388,10 @@ class Container implements \ArrayAccess
      */
     public function flush(): void
     {
-        $this->bindings  = [];
-        $this->instances = [];
-        $this->aliases   = [];
-        $this->with      = [];
-
+        $this->bindings        = [];
+        $this->instances       = [];
+        $this->aliases         = [];
+        $this->with            = [];
         $this->resolver        = null;
         $this->invoker         = null;
         $this->reflectionCache = null;
@@ -564,17 +438,139 @@ class Container implements \ArrayAccess
      */
     public function offsetUnset($offset): void
     {
-        $offset = $this->getAlias($offset); // Ensure we're unsetting the canonical name
-
+        $offset = $this->getAlias($offset);
         unset($this->instances[$offset]);
         unset($this->bindings[$offset]);
-        // Also remove from aliases if it was an alias itself, or an alias pointing to it
         foreach ($this->aliases as $alias => $abstract) {
             if ($abstract === $offset || $alias === $offset) {
                 unset($this->aliases[$alias]);
             }
         }
-        unset($this->reflectionCache[$offset]);
-        unset($this->constructorCache[$offset]);
+    }
+
+    /**
+     * Resolve the given type from the container.
+     *
+     * @param array<int|string, mixed> $parameters
+     *
+     * @throws BindingResolutionException
+     */
+    protected function resolve(string $abstract, array $parameters = [], bool $useCache = true): mixed
+    {
+        $abstract = $this->getAlias($abstract);
+
+        if ($useCache && isset($this->instances[$abstract])) {
+            return $this->instances[$abstract];
+        }
+
+        $this->with[] = $parameters;
+
+        $concrete = $this->getConcrete($abstract);
+
+        if ($concrete instanceof \Closure) {
+            $object = $this->call($concrete, $this->getLastParameterOverride());
+        } else {
+            $object = $this->build($concrete, $this->getLastParameterOverride());
+        }
+
+        if ($useCache || $this->isShared($abstract)) {
+            $this->instances[$abstract] = $object;
+        }
+
+        array_pop($this->with);
+
+        return $object;
+    }
+
+    /**
+     * Determine if a given type is shared.
+     */
+    protected function isShared(string $abstract): bool
+    {
+        return isset($this->bindings[$abstract]['shared'])
+               && true === $this->bindings[$abstract]['shared'];
+    }
+
+    /**
+     * Get the concrete type for a given abstract.
+     */
+    protected function getConcrete(string $abstract): mixed
+    {
+        if (isset($this->bindings[$abstract])) {
+            return $this->bindings[$abstract]['concrete'];
+        }
+
+        return $abstract;
+    }
+
+    /**
+     * Get the Closure to be used when building a type.
+     *
+     * @return \Closure(self, array<mixed>):mixed
+     */
+    protected function getClosure(string $abstract, string $concrete): \Closure
+    {
+        return function ($container, $parameters = []) use ($abstract, $concrete) {
+            if ($abstract == $concrete) {
+                return $container->build($concrete, $parameters);
+            }
+
+            return $container->resolve($concrete, $parameters, false);
+        };
+    }
+
+    /**
+     * Determine if the given type is a primitive type.
+     */
+    protected function isPrimitiveType(string $type): bool
+    {
+        static $types = ['int' => true, 'float' => true, 'string' => true, 'bool' => true, 'array' => true, 'object' => true, 'callable' => true, 'iterable' => true, 'resource' => true];
+
+        return isset($types[$type]);
+    }
+
+    /**
+     * @param array<string, true> $resolving
+     */
+    private function resolveAlias(string $abstract, array $resolving): string
+    {
+        if (false === isset($this->aliases[$abstract])) {
+            return $abstract;
+        }
+
+        if (isset($resolving[$abstract])) {
+            throw new CircularAliasException($abstract);
+        }
+
+        $resolving[$abstract] = true;
+
+        return $this->resolveAlias($this->aliases[$abstract], $resolving);
+    }
+
+    private function getResolver(): Resolver
+    {
+        if (null === $this->resolver) {
+            $this->resolver = new Resolver($this);
+        }
+
+        return $this->resolver;
+    }
+
+    private function getInvoker(): Invoker
+    {
+        if (null === $this->invoker) {
+            $this->invoker = new Invoker($this);
+        }
+
+        return $this->invoker;
+    }
+
+    private function getReflectionCache(): ReflectionCache
+    {
+        if (null === $this->reflectionCache) {
+            $this->reflectionCache = new ReflectionCache();
+        }
+
+        return $this->reflectionCache;
     }
 }
