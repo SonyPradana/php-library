@@ -64,6 +64,37 @@ class Container implements \ArrayAccess
     protected array $with = [];
 
     /**
+     * Resolve and return an entry from the container (singleton behavior - PHP-DI compatible).
+     *
+     * @throws EntryNotFoundException
+     * @throws BindingResolutionException
+     */
+    public function get(string $name): mixed
+    {
+        if (false === $this->has($name)
+        && false === class_exists($name)
+        && false === interface_exists($name)
+        ) {
+            throw new EntryNotFoundException($name);
+        }
+
+        return $this->resolve($name, [], true);
+    }
+
+    /**
+     * Resolve a new instance from the container (always fresh - PHP-DI compatible).
+     *
+     * @param string|class-string      $name
+     * @param array<int|string, mixed> $parameters
+     *
+     * @throws BindingResolutionException
+     */
+    public function make(string $name, array $parameters = []): mixed
+    {
+        return $this->resolve($name, $parameters, false);
+    }
+
+    /**
      * Define an object or a value in the container.
      */
     public function set(string $name, mixed $value): void
@@ -101,36 +132,6 @@ class Container implements \ArrayAccess
         }
 
         $this->bindings[$abstract] = compact('concrete', 'shared');
-    }
-
-    /**
-     * Resolve and return an entry from the container (singleton behavior - PHP-DI compatible).
-     *
-     * @throws EntryNotFoundException
-     * @throws BindingResolutionException
-     */
-    public function get(string $name): mixed
-    {
-        if (false === $this->has($name)) {
-            if (false === class_exists($name) && false === interface_exists($name)) {
-                throw new EntryNotFoundException($name);
-            }
-        }
-
-        return $this->resolve($name, [], true);
-    }
-
-    /**
-     * Resolve a new instance from the container (always fresh - PHP-DI compatible).
-     *
-     * @param string|class-string      $name
-     * @param array<int|string, mixed> $parameters
-     *
-     * @throws BindingResolutionException
-     */
-    public function make(string $name, array $parameters = []): mixed
-    {
-        return $this->resolve($name, $parameters, false);
     }
 
     /**
