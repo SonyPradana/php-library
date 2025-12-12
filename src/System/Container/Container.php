@@ -64,6 +64,29 @@ class Container implements \ArrayAccess
     protected array $with = [];
 
     /**
+     * Define an object or a value in the container.
+     */
+    public function set(string $name, mixed $value): void
+    {
+        // If the value is a Closure,
+        // it's a factory for a shared instance.
+        if ($value instanceof \Closure) {
+            $this->bind($name, $value, true);
+
+            return;
+        }
+
+        $name = $this->getAlias($name);
+
+        // Store the value directly as a resolved.
+        $this->instances[$name] = $value;
+        $this->bindings[$name]  = [
+            'concrete' => fn () => $this->instances[$name],
+            'shared'   => true,
+        ];
+    }
+
+    /**
      * Register a binding with the container.
      */
     public function bind(string $abstract, \Closure|string|null $concrete = null, bool $shared = false): void
@@ -108,29 +131,6 @@ class Container implements \ArrayAccess
     public function make(string $name, array $parameters = []): mixed
     {
         return $this->resolve($name, $parameters, false);
-    }
-
-    /**
-     * Define an object or a value in the container.
-     */
-    public function set(string $name, mixed $value): void
-    {
-        // If the value is a Closure,
-        // it's a factory for a shared instance.
-        if ($value instanceof \Closure) {
-            $this->bind($name, $value, true);
-
-            return;
-        }
-
-        $name = $this->getAlias($name);
-
-        // Store the value directly as a resolved.
-        $this->instances[$name] = $value;
-        $this->bindings[$name]  = [
-            'concrete' => fn () => $this->instances[$name],
-            'shared'   => true,
-        ];
     }
 
     /**
