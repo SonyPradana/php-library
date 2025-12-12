@@ -64,7 +64,7 @@ class Container implements \ArrayAccess
     protected array $with = [];
 
     /**
-     * Resolve and return an entry from the container (singleton behavior - PHP-DI compatible).
+     * Resolve and return an entry from the container.
      *
      * @throws EntryNotFoundException
      * @throws BindingResolutionException
@@ -82,7 +82,7 @@ class Container implements \ArrayAccess
     }
 
     /**
-     * Resolve a new instance from the container (always fresh - PHP-DI compatible).
+     * Resolve a new instance from the container.
      *
      * @param string|class-string      $name
      * @param array<int|string, mixed> $parameters
