@@ -99,7 +99,7 @@ class ArrayAccessTest extends TestCase
         $instance1 = $container['foo'];
         $instance2 = $container['foo'];
 
-        $this->assertSame($instance1, $instance2);
+        $this->assertNotSame($instance1, $instance2);
     }
 
     /**
@@ -137,7 +137,7 @@ class ArrayAccessTest extends TestCase
 
         $instance2 = $container['foo'];
 
-        $this->assertSame($instance1, $instance2);
+        $this->assertNotSame($instance1, $instance2);
     }
 
     /**

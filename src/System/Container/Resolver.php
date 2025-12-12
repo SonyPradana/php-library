@@ -11,8 +11,6 @@ use System\Container\Exceptions\BindingResolutionException;
  */
 final class Resolver
 {
-    private Container $container;
-
     /**
      * The stack of concretions currently being built.
      *
@@ -20,9 +18,9 @@ final class Resolver
      */
     private array $buildStack = [];
 
-    public function __construct(Container $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private Container $container,
+    ) {
     }
 
     /**
