@@ -43,6 +43,7 @@
         "psr-4": {
             "System\\Test\\Console\\": "tests/Console",
             "System\\Test\\Database\\": "tests/DataBase",
+            "System\\Test\\Template\\VarExport": "tests/Template/VarExport",
             "System\\Test\\Router\\Attribute\\": "tests/Router/Attribute"
         },
         "files": [
