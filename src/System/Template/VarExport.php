@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace System\Template;
 
 use System\Template\VarExport\Compiler\ClosureCompiler;
-use System\Template\VarExport\Compiler\Compiler;
 use System\Template\VarExport\Compiler\StringCompiler;
 
 final class VarExport
