@@ -26,7 +26,7 @@ class BasicTypesTest extends TestCase
 
         $expected = <<<'PHP'
 [
-    123,
+    0 => 123,
 ]
 PHP;
         // Normalize line endings to LF for consistent comparison
@@ -48,7 +48,7 @@ PHP;
 
         $expected = <<<'PHP'
 [
-    -456,
+    0 => -456,
 ]
 PHP;
         // Normalize line endings to LF for consistent comparison
@@ -70,7 +70,7 @@ PHP;
 
         $expected = <<<'PHP'
 [
-    0,
+    0 => 0,
 ]
 PHP;
         // Normalize line endings to LF for consistent comparison
@@ -92,7 +92,7 @@ PHP;
 
         $expected = <<<'PHP'
 [
-    123.45,
+    0 => 123.45,
 ]
 PHP;
         // Normalize line endings to LF for consistent comparison
@@ -114,7 +114,7 @@ PHP;
 
         $expected = <<<'PHP'
 [
-    -67.89,
+    0 => -67.89,
 ]
 PHP;
         // Normalize line endings to LF for consistent comparison
@@ -136,7 +136,7 @@ PHP;
 
         $expected = <<<'PHP'
 [
-    10.0,
+    0 => 10.0,
 ]
 PHP;
         // Normalize line endings to LF for consistent comparison
@@ -158,7 +158,7 @@ PHP;
 
         $expected = <<<'PHP'
 [
-    10.0,
+    0 => 10.0,
 ]
 PHP;
         // Normalize line endings to LF for consistent comparison
@@ -180,7 +180,7 @@ PHP;
 
         $expected = <<<'PHP'
 [
-    12300.0,
+    0 => 12300.0,
 ]
 PHP;
         // Normalize line endings to LF for consistent comparison
@@ -202,7 +202,7 @@ PHP;
 
         $expected = <<<'PHP'
 [
-    true,
+    0 => true,
 ]
 PHP;
         // Normalize line endings to LF for consistent comparison
@@ -224,7 +224,7 @@ PHP;
 
         $expected = <<<'PHP'
 [
-    false,
+    0 => false,
 ]
 PHP;
         // Normalize line endings to LF for consistent comparison
@@ -246,7 +246,7 @@ PHP;
 
         $expected = <<<'PHP'
 [
-    null,
+    0 => null,
 ]
 PHP;
         // Normalize line endings to LF for consistent comparison

@@ -13,11 +13,6 @@ use PHPUnit\Framework\TestCase;
  */
 class ObjectCompilationTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        $this->markTestSkipped('Skeleton tests for Object Compilation, not yet implemented.');
-    }
-
     /**
      * @test
      *
@@ -25,6 +20,7 @@ class ObjectCompilationTest extends TestCase
      */
     public function compilesObjectWithSerializeMethod(): void
     {
+        $this->markTestSkipped('Skeleton tests for Object Compilation, not yet implemented.');
     }
 
     /**
@@ -34,6 +30,7 @@ class ObjectCompilationTest extends TestCase
      */
     public function compilesObjectWithToArrayMethod(): void
     {
+        $this->markTestSkipped('Skeleton tests for Object Compilation, not yet implemented.');
     }
 
     /**
@@ -43,6 +40,7 @@ class ObjectCompilationTest extends TestCase
      */
     public function compilesObjectWithSerializableInterface(): void
     {
+        $this->markTestSkipped('Skeleton tests for Object Compilation, not yet implemented.');
     }
 
     /**
@@ -52,6 +50,7 @@ class ObjectCompilationTest extends TestCase
      */
     public function compilesObjectWithPropertiesVisibility(): void
     {
+        $this->markTestSkipped('Skeleton tests for Object Compilation, not yet implemented.');
     }
 
     /**
@@ -61,6 +60,7 @@ class ObjectCompilationTest extends TestCase
      */
     public function compilesStdClassObject(): void
     {
+        $this->markTestSkipped('Skeleton tests for Object Compilation, not yet implemented.');
     }
 
     /**
@@ -70,6 +70,7 @@ class ObjectCompilationTest extends TestCase
      */
     public function compilesObjectWithoutSerializeMethods(): void
     {
+        $this->markTestSkipped('Skeleton tests for Object Compilation, not yet implemented.');
     }
 
     /**
@@ -79,5 +80,6 @@ class ObjectCompilationTest extends TestCase
      */
     public function compilesDateTimeObject(): void
     {
+        $this->markTestSkipped('Skeleton tests for Object Compilation, not yet implemented.');
     }
 }

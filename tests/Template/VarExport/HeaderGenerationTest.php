@@ -20,7 +20,7 @@ class HeaderGenerationTest extends TestCase
      */
     public function generatesPhpOpenTag(): void
     {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
+        $this->markTestSkipped('VarExport::compileToString() is a private method, and there is no public method to directly retrieve the complete generated header as a string for testing without writing to a file.');
     }
 
     /**

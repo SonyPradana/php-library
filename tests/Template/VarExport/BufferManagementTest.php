@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Tests\Template\VarExport;
 
 use PHPUnit\Framework\TestCase;
+use System\Template\VarExport;
 
 /**
  * @covers \Savanna\System\Template\VarExport
@@ -20,7 +21,9 @@ class BufferManagementTest extends TestCase
      */
     public function bufferStartsEmpty(): void
     {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
+        $varExport = new VarExport();
+        $result    = $varExport->export([]);
+        $this->assertEquals('[]', $result);
     }
 
     /**
@@ -30,7 +33,26 @@ class BufferManagementTest extends TestCase
      */
     public function bufferAccumulatesCorrectly(): void
     {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
+        $this->markTestSkipped('VarExport\'s export method flushes the buffer after each call, preventing accumulation across multiple calls.');
+
+        $varExport = new VarExport();
+
+        $result1 = $varExport->export(['key1' => 'value1']);
+        $result2 = $varExport->export(['key2' => 'value2']);
+
+        $expected1 = <<<'PHP'
+[
+    'key1' => 'value1',
+]
+PHP;
+        $expected2 = <<<'PHP'
+[
+    'key2' => 'value2',
+]
+PHP;
+
+        $this->assertEquals($expected1, trim($result1));
+        $this->assertEquals($expected2, trim($result2));
     }
 
     /**
@@ -40,7 +62,15 @@ class BufferManagementTest extends TestCase
      */
     public function bufferResetsAfterCompile(): void
     {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
+        $varExport = new VarExport();
+
+        // First export operation
+        $varExport->export(['foo' => 'bar']);
+
+        // Second export operation, expecting buffer to be reset
+        $result = $varExport->export([]);
+
+        $this->assertEquals('[]', $result);
     }
 
     /**
@@ -50,7 +80,7 @@ class BufferManagementTest extends TestCase
      */
     public function getBufferReturnsArray(): void
     {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
+        $this->markTestSkipped('VarExport does not expose a public getBuffer() method that returns an array. The internal getBuffer() method returns a string.');
     }
 
     /**
@@ -60,7 +90,7 @@ class BufferManagementTest extends TestCase
      */
     public function getBufferAsStringReturnsString(): void
     {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
+        $this->markTestSkipped('VarExport does not expose a public getBufferAsString() method.');
     }
 
     /**
@@ -70,7 +100,7 @@ class BufferManagementTest extends TestCase
      */
     public function getBufferSizeReturnsCorrectCount(): void
     {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
+        $this->markTestSkipped('VarExport does not expose a public getBufferSize() method.');
     }
 
     /**
@@ -80,6 +110,6 @@ class BufferManagementTest extends TestCase
      */
     public function bufferAfterMultipleCompileOperations(): void
     {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
+        $this->markTestSkipped('VarExport\'s export method flushes the buffer after each call, so there is no accumulated state to test "after multiple compile operations."');
     }
 }

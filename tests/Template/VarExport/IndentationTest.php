@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Tests\Template\VarExport;
 
 use PHPUnit\Framework\TestCase;
+use System\Template\VarExport;
 
 /**
  * @covers \Savanna\System\Template\VarExport
@@ -20,7 +21,39 @@ class IndentationTest extends TestCase
      */
     public function usesTwoSpaceIndentationConsistently(): void
     {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
+        $varExport = new VarExport();
+        $varExport->setIndetation('  '); // Two spaces
+
+        $array = [
+            'key1' => 'value1',
+            'key2' => [
+                'nested_key1' => 'nested_value1',
+                'nested_key2' => [
+                    'double_nested_key' => 'double_nested_value',
+                ],
+            ],
+            'key3' => 'value3',
+        ];
+
+        $output = $varExport->export($array);
+
+        $expected = <<<'PHP'
+[
+  'key1' => 'value1',
+  'key2' => [
+    'nested_key1' => 'nested_value1',
+    'nested_key2' => [
+      'double_nested_key' => 'double_nested_value',
+    ],
+  ],
+  'key3' => 'value3',
+]
+PHP;
+        // Normalize line endings to LF for consistent comparison
+        $normalizedOutput   = str_replace(["\r\n", "\r"], "\n", $output);
+        $normalizedExpected = str_replace(["\r\n", "\r"], "\n", $expected);
+
+        $this->assertEquals($normalizedExpected, $normalizedOutput);
     }
 
     /**
@@ -30,7 +63,39 @@ class IndentationTest extends TestCase
      */
     public function usesFourSpaceIndentationConsistently(): void
     {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
+        $varExport = new VarExport();
+        $varExport->setIndetation('    '); // Four spaces
+
+        $array = [
+            'key1' => 'value1',
+            'key2' => [
+                'nested_key1' => 'nested_value1',
+                'nested_key2' => [
+                    'double_nested_key' => 'double_nested_value',
+                ],
+            ],
+            'key3' => 'value3',
+        ];
+
+        $output = $varExport->export($array);
+
+        $expected = <<<'PHP'
+[
+    'key1' => 'value1',
+    'key2' => [
+        'nested_key1' => 'nested_value1',
+        'nested_key2' => [
+            'double_nested_key' => 'double_nested_value',
+        ],
+    ],
+    'key3' => 'value3',
+]
+PHP;
+        // Normalize line endings to LF for consistent comparison
+        $normalizedOutput   = str_replace(["\r\n", "\r"], "\n", $output);
+        $normalizedExpected = str_replace(["\r\n", "\r"], "\n", $expected);
+
+        $this->assertEquals($normalizedExpected, $normalizedOutput);
     }
 
     /**
@@ -40,7 +105,39 @@ class IndentationTest extends TestCase
      */
     public function usesEightSpaceIndentationConsistently(): void
     {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
+        $varExport = new VarExport();
+        $varExport->setIndetation('        '); // Eight spaces
+
+        $array = [
+            'key1' => 'value1',
+            'key2' => [
+                'nested_key1' => 'nested_value1',
+                'nested_key2' => [
+                    'double_nested_key' => 'double_nested_value',
+                ],
+            ],
+            'key3' => 'value3',
+        ];
+
+        $output = $varExport->export($array);
+
+        $expected = <<<'PHP'
+[
+        'key1' => 'value1',
+        'key2' => [
+                'nested_key1' => 'nested_value1',
+                'nested_key2' => [
+                        'double_nested_key' => 'double_nested_value',
+                ],
+        ],
+        'key3' => 'value3',
+]
+PHP;
+        // Normalize line endings to LF for consistent comparison
+        $normalizedOutput   = str_replace(["\r\n", "\r"], "\n", $output);
+        $normalizedExpected = str_replace(["\r\n", "\r"], "\n", $expected);
+
+        $this->assertEquals($normalizedExpected, $normalizedOutput);
     }
 
     /**
@@ -50,7 +147,39 @@ class IndentationTest extends TestCase
      */
     public function usesOneTabIndentationConsistently(): void
     {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
+        $varExport = new VarExport();
+        $varExport->setIndetation("\t"); // One tab
+
+        $array = [
+            'key1' => 'value1',
+            'key2' => [
+                'nested_key1' => 'nested_value1',
+                'nested_key2' => [
+                    'double_nested_key' => 'double_nested_value',
+                ],
+            ],
+            'key3' => 'value3',
+        ];
+
+        $output = $varExport->export($array);
+
+        $expected = <<<'PHP'
+[
+	'key1' => 'value1',
+	'key2' => [
+		'nested_key1' => 'nested_value1',
+		'nested_key2' => [
+			'double_nested_key' => 'double_nested_value',
+		],
+	],
+	'key3' => 'value3',
+]
+PHP;
+        // Normalize line endings to LF for consistent comparison
+        $normalizedOutput   = str_replace(["\r\n", "\r"], "\n", $output);
+        $normalizedExpected = str_replace(["\r\n", "\r"], "\n", $expected);
+
+        $this->assertEquals($normalizedExpected, $normalizedOutput);
     }
 
     /**
@@ -60,7 +189,39 @@ class IndentationTest extends TestCase
      */
     public function usesTwoTabIndentationConsistently(): void
     {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
+        $varExport = new VarExport();
+        $varExport->setIndetation("\t\t"); // Two tabs
+
+        $array = [
+            'key1' => 'value1',
+            'key2' => [
+                'nested_key1' => 'nested_value1',
+                'nested_key2' => [
+                    'double_nested_key' => 'double_nested_value',
+                ],
+            ],
+            'key3' => 'value3',
+        ];
+
+        $output = $varExport->export($array);
+
+        $expected = <<<'PHP'
+[
+		'key1' => 'value1',
+		'key2' => [
+				'nested_key1' => 'nested_value1',
+				'nested_key2' => [
+						'double_nested_key' => 'double_nested_value',
+				],
+		],
+		'key3' => 'value3',
+]
+PHP;
+        // Normalize line endings to LF for consistent comparison
+        $normalizedOutput   = str_replace(["\r\n", "\r"], "\n", $output);
+        $normalizedExpected = str_replace(["\r\n", "\r"], "\n", $expected);
+
+        $this->assertEquals($normalizedExpected, $normalizedOutput);
     }
 
     /**
@@ -70,7 +231,45 @@ class IndentationTest extends TestCase
      */
     public function maintainsNestedArrayIndentationLevels(): void
     {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
+        $varExport = new VarExport();
+        // Default indentation is 4 spaces
+
+        $array = [
+            'level1_key1' => 'value1',
+            'level1_key2' => [
+                'level2_key1' => 'value2',
+                'level2_key2' => [
+                    'level3_key1' => 'value3',
+                    'level3_key2' => [
+                        'level4_key1' => 'value4',
+                    ],
+                ],
+            ],
+            'level1_key3' => 'value5',
+        ];
+
+        $output = $varExport->export($array);
+
+        $expected = <<<'PHP'
+[
+    'level1_key1' => 'value1',
+    'level1_key2' => [
+        'level2_key1' => 'value2',
+        'level2_key2' => [
+            'level3_key1' => 'value3',
+            'level3_key2' => [
+                'level4_key1' => 'value4',
+            ],
+        ],
+    ],
+    'level1_key3' => 'value5',
+]
+PHP;
+        // Normalize line endings to LF for consistent comparison
+        $normalizedOutput   = str_replace(["\r\n", "\r"], "\n", $output);
+        $normalizedExpected = str_replace(["\r\n", "\r"], "\n", $expected);
+
+        $this->assertEquals($normalizedExpected, $normalizedOutput);
     }
 
     /**
@@ -80,7 +279,7 @@ class IndentationTest extends TestCase
      */
     public function normalizesClosureIndentation(): void
     {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
+        $this->markTestSkipped('VarExport\'s closure extraction is not yet precise enough to normalize indentation correctly, as it extracts the entire line including variable assignments.');
     }
 
     /**
@@ -90,6 +289,6 @@ class IndentationTest extends TestCase
      */
     public function handlesMixedIndentationInSource(): void
     {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
+        $this->markTestSkipped('VarExport does not expose a public API to re-indent arbitrary PHP code with mixed indentation. Its internal indentation normalization is tied to closure processing, which currently has pending issues (e.g., precise closure extraction).');
     }
 }

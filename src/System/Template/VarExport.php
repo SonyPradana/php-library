@@ -38,7 +38,14 @@ final class VarExport
      */
     public function compile(array $data, string $file_name): bool
     {
-        return file_put_contents($file_name, $this->compileToString($data));
+        $directory = dirname($file_name);
+        if (false === is_dir($directory)) {
+            mkdir($directory, 0777, true);
+        }
+
+        $result = file_put_contents($file_name, $this->compileToString($data));
+
+        return $result !== false;
     }
 
     /**
