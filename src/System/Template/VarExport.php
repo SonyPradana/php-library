@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace System\Template;
 
-use function System\Text\string;
-
 final class VarExport
 {
     /** @var string[] */
     private array $buffer    = [];
     private string $indent   = '    ';
     private int $indentLevel = 0;
+    private bool $alignArray = false;
 
     public function setIndetation(string $indent): self
     {
@@ -22,7 +21,14 @@ final class VarExport
 
     public function setIndetationLevel(int $indentLevel): self
     {
-        $this->$indentLevel = $indentLevel;
+        $this->indentLevel = $indentLevel;
+
+        return $this;
+    }
+
+    public function setAlignArray(bool $align = true): self
+    {
+        $this->alignArray = $align;
 
         return $this;
     }
@@ -97,12 +103,14 @@ final class VarExport
 
         $this->openArray();
 
-        $isAssociative = $this->isAssociativeArray($array);
-        $index         = 0;
+        // count longst array key length
+        $keyLength = 0;
+        foreach (array_keys($array) as $key) {
+            $keyLength = max($keyLength, strlen((string) $key));
+        }
 
         foreach ($array as $key => $value) {
-            $this->writeArrayElement($key, $value, $isAssociative, $index);
-            $index++;
+            $this->writeArrayElement($key, $value, $keyLength);
         }
 
         $this->closeArray();
@@ -129,8 +137,7 @@ final class VarExport
      */
     private function compileString(string $string): void
     {
-        $buffer   = [];
-        $buffer[] = $this->addToBuffer("'" . addslashes($string) . "'");
+        $this->addToBuffer("'" . addslashes($string) . "'");
     }
 
     /**
@@ -146,8 +153,7 @@ final class VarExport
      */
     private function compileBoolean(bool $bool): void
     {
-        $buffer   = [];
-        $buffer[] = $this->addToBuffer($bool ? 'true' : 'false');
+        $this->addToBuffer($bool ? 'true' : 'false');
     }
 
     /**
@@ -184,12 +190,19 @@ final class VarExport
         $this->indentLevel = 0;
     }
 
-    private function getBuffer(): string
+    public function getBuffer(): string
     {
         $content = implode('', $this->buffer);
         $this->flush();
 
         return $content;
+    }
+
+    private function getLastBuffer(): ?string
+    {
+        $last = array_key_last($this->buffer);
+
+        return $this->buffer[$last] ?? null;
     }
 
     // private
@@ -229,19 +242,19 @@ final class VarExport
         return array_keys($array) !== range(0, count($array) - 1);
     }
 
-    private function writeArrayElement(
-        int|string $key,
-        mixed $value,
-        bool $isAssociative,
-        int $index,
-    ): void {
+    private function writeArrayElement(int|string $key, mixed $value, int $keyLength): void
+    {
         $this->addIndentation();
+        $this->writeArrayKey($key);
 
-        if ($isAssociative || $key !== $index) {
-            $this->writeArrayKey($key);
-            $this->addToBuffer(' => ');
+        // count key aligment
+        if (true === $this->alignArray) {
+            $buffer = $this->getLastBuffer() ?? $key;
+            $lenght = strlen((string) $buffer);
+            $this->addToBuffer(str_repeat(' ', max(0, ($keyLength - $lenght) + $this->indentLevel)));
         }
 
+        $this->addToBuffer(' => ');
         $this->compileValue($value);
         $this->addToBuffer(',');
         $this->addLine();
