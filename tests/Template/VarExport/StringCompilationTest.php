@@ -61,7 +61,19 @@ PHP;
      */
     public function compilesStringWithSingleQuotes(): void
     {
-        $this->markTestSkipped('VarExport\'s compileString method does not properly escape single quotes within strings, leading to PHP syntax errors if the generated output is evaluated. Revision of compileString is suggested (e.g., using addcslashes($string, "\'") or var_export($string, true)).');
+        $varExport = new VarExport();
+        $output    = $varExport->export(["it's a string"]);
+
+        $expected = <<<'PHP'
+[
+    0 => 'it\'s a string',
+]
+PHP;
+        // Normalize line endings to LF for consistent comparison
+        $normalizedOutput   = str_replace("\r\n", "\n", $output);
+        $normalizedExpected = str_replace("\r\n", "\n", $expected);
+
+        $this->assertEquals($normalizedExpected, $normalizedOutput);
     }
 
     /**
@@ -76,7 +88,7 @@ PHP;
 
         $expected = <<<'PHP'
 [
-    0 => 'This is a \"quoted\" string',
+    0 => 'This is a "quoted" string',
 ]
 PHP;
         // Normalize line endings to LF for consistent comparison
@@ -93,7 +105,19 @@ PHP;
      */
     public function compilesStringWithBackslashes(): void
     {
-        $this->markTestSkipped('VarExport\'s compileString method does not properly escape backslashes within strings, leading to incorrect output. Revision of compileString is suggested (e.g., using addcslashes($string, "\\") or var_export($string, true)).');
+        $varExport = new VarExport();
+        $output    = $varExport->export(['a\\b']);
+
+        $expected = <<<'PHP'
+[
+    0 => 'a\\b',
+]
+PHP;
+        // Normalize line endings to LF for consistent comparison
+        $normalizedOutput   = str_replace("\r\n", "\n", $output);
+        $normalizedExpected = str_replace("\r\n", "\n", $expected);
+
+        $this->assertEquals($normalizedExpected, $normalizedOutput);
     }
 
     /**
@@ -125,8 +149,6 @@ PHP;
      */
     public function compilesStringWithNewlines(): void
     {
-        $this->markTestSkipped('VarExport\'s compileString method does not properly escape newlines within strings, leading to invalid PHP output if the generated string is evaluated. It should escape `\n` to `\\n`.');
-
         $varExport = new VarExport();
         $output    = $varExport->export(["First line\nSecond line"]);
 

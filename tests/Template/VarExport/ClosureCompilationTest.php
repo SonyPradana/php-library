@@ -291,7 +291,7 @@ PHP;
         // Should contain IIFE wrapper for captured var
         $this->assertStringContainsString('(function() {', $output);
         $this->assertStringContainsString('$capturedVar =', $output);
-        $this->assertStringContainsString("return function () use (\$capturedVar)", $output);
+        $this->assertStringContainsString('return function () use ($capturedVar)', $output);
         $this->assertStringContainsString('})(),', $output);
     }
 
@@ -315,7 +315,7 @@ PHP;
         $this->assertStringContainsString('(function() {', $output);
         $this->assertStringContainsString('$var1 =', $output);
         $this->assertStringContainsString('$var2 =', $output);
-        $this->assertStringContainsString("return function () use (\$var1, \$var2)", $output);
+        $this->assertStringContainsString('return function () use ($var1, $var2)', $output);
         $this->assertStringContainsString('})(),', $output);
     }
 
@@ -337,7 +337,7 @@ PHP;
         // Should contain IIFE wrapper with reference var
         $this->assertStringContainsString('(function() {', $output);
         $this->assertStringContainsString('$var =', $output);
-        $this->assertStringContainsString("return function () use (&\$var)", $output);
+        $this->assertStringContainsString('return function () use (&$var)', $output);
         $this->assertStringContainsString('})(),', $output);
     }
 
@@ -373,7 +373,7 @@ PHP;
         };
 
         $closure = $getHandler();
-        $output = $this->exporter->export(['handler' => $closure]);
+        $output  = $this->exporter->export(['handler' => $closure]);
 
         $this->assertStringContainsString('function ($value)', $output);
         $this->assertStringContainsString('return $value * 2', $output);
@@ -387,7 +387,8 @@ PHP;
     public function compilesClosureFromClassMethod(): void
     {
         $handler = new class {
-            public function getClosure() {
+            public function getClosure()
+            {
                 return function ($x) {
                     return $x + 1;
                 };
@@ -395,7 +396,7 @@ PHP;
         };
 
         $closure = $handler->getClosure();
-        $output = $this->exporter->export(['method_closure' => $closure]);
+        $output  = $this->exporter->export(['method_closure' => $closure]);
 
         $this->assertStringContainsString('function ($x)', $output);
         $this->assertStringContainsString('return $x + 1', $output);
@@ -409,7 +410,8 @@ PHP;
     public function compilesStaticClosure(): void
     {
         $handler = new class {
-            public static function getStaticClosure() {
+            public static function getStaticClosure()
+            {
                 return static function () {
                     return 'static closure';
                 };
@@ -417,7 +419,7 @@ PHP;
         };
 
         $closure = $handler::getStaticClosure();
-        $output = $this->exporter->export(['static_closure' => $closure]);
+        $output  = $this->exporter->export(['static_closure' => $closure]);
 
         $this->assertStringContainsString('function ()', $output);
         $this->assertStringContainsString('static closure', $output);
@@ -448,7 +450,7 @@ PHP;
         $this->expectExceptionMessage('Source file not found');
 
         $closureCode = 'return function() { return "created with eval"; };';
-        $closure = eval($closureCode);
+        $closure     = eval($closureCode);
 
         $this->exporter->export(['eval_closure' => $closure]);
     }
@@ -468,7 +470,7 @@ PHP;
         $reflection->method('getStartLine')->willReturn(1);
         $reflection->method('getEndLine')->willReturn(1);
 
-        $extractor = new \System\Template\VarExport\Compiler\ClosureExtractor();
+        $extractor = new VarExport\Compiler\ClosureExtractor();
         $extractor->extract($reflection);
     }
 
@@ -489,7 +491,7 @@ PHP;
         $reflection->method('getStartLine')->willReturn(1);
         $reflection->method('getEndLine')->willReturn(1);
 
-        $extractor = new \System\Template\VarExport\Compiler\ClosureExtractor();
+        $extractor = new VarExport\Compiler\ClosureExtractor();
         $extractor->extract($reflection);
     }
 
@@ -525,6 +527,7 @@ PHP;
             $inner = function () {
                 return 'inner';
             };
+
             return $inner();
         };
 
@@ -547,6 +550,7 @@ PHP;
                 This is a heredoc
                 with multiple lines
                 EOD;
+
             return $heredoc;
         };
 
@@ -613,7 +617,7 @@ PHP;
         // IIFE wrapper should be present for captured variables
         $this->assertStringContainsString('(function() {', $output);
         $this->assertStringContainsString('})(),', $output);
-        $this->assertStringContainsString("use (\$capturedVar)", $output);
+        $this->assertStringContainsString('use ($capturedVar)', $output);
     }
 
     /**
@@ -623,8 +627,8 @@ PHP;
      */
     public function warningIncludesVariableNames(): void
     {
-        $varOne = 'first';
-        $varTwo = 'second';
+        $varOne   = 'first';
+        $varTwo   = 'second';
         $varThree = 'third';
 
         $closure = function () use ($varOne, $varTwo, $varThree) {
@@ -691,7 +695,7 @@ PHP;
      */
     public function inlinesCapturedVariableValues(): void
     {
-        $num = 123;
+        $num  = 123;
         $text = 'hello';
         $flag = true;
 

@@ -8,6 +8,6 @@ class StringCompiler extends Compiler
 {
     public function compile(mixed $data): array
     {
-        return ["'" . addslashes($data) . "'"];
+        return [var_export($data, true)];
     }
 }
