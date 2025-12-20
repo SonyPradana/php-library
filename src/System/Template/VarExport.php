@@ -144,7 +144,7 @@ final class VarExport
             ->getStaticVariables();
 
         if ([] === $capturedVars) {
-            $this->addToBuffers($compile);
+            $this->writeClosureLines($compile);
 
             return;
         }
@@ -282,19 +282,41 @@ final class VarExport
 
         foreach ($capturedVars as $name => $value) {
             $this->addIndentation();
-            $this->addToBuffer('$' . $name . ' = ');
+            $this->addToBuffer('$');
+            $this->addToBuffer($name);
+            $this->addToBuffer(' = ');
             $this->compileValue($value);
             $this->addToBuffer(';');
             $this->addLine();
         }
 
         $this->addIndentation();
-        $this->addToBuffer('return ' . implode('', $closureCode) . ';');
+        $this->addToBuffer('return ');
+        $this->writeClosureLines($closureCode);
+        $this->addToBuffer(';');
         $this->addLine();
 
         $this->indentLevel--;
         $this->addIndentation();
         $this->addToBuffer('})()');
+    }
+
+    /**
+     * @param string[] $lines
+     */
+    private function writeClosureLines(array $lines): void
+    {
+        $firstLine = true;
+
+        foreach ($lines as $line) {
+            if (false === $firstLine) {
+                $this->addLine();
+                $this->addIndentation();
+            }
+
+            $this->addToBuffer(rtrim($line));
+            $firstLine = false;
+        }
     }
 
     // buffer helpers

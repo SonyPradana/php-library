@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Template\VarExport\Compiler\Closure;
+namespace System\Template\VarExport\Compiler;
 
 /**
  * ClosureExtractor - Extract and normalize closure source code using tokenization.
@@ -11,13 +11,11 @@ namespace System\Template\VarExport\Compiler\Closure;
  * using PHP's tokenizer to accurately parse closure boundaries without regex.
  *
  * Features:
- * - Token-based parsing (no regex)
+ * - Token-based parsing
  * - Handles function() and fn() syntax
  * - Tracks brace/parenthesis depth
  * - Normalizes indentation
- * - Returns structured data (AST-like)
- *
- * @author Your Name
+ * - Returns structured data
  */
 final class ClosureExtractor
 {
@@ -95,11 +93,11 @@ final class ClosureExtractor
             throw new \InvalidArgumentException('Cannot extract runtime-created closure. Closure must be defined in a source file.');
         }
 
-        if (!file_exists($file)) {
+        if (false === file_exists($file)) {
             throw new \InvalidArgumentException("Source file not found: {$file}");
         }
 
-        if (!is_readable($file)) {
+        if (false === is_readable($file)) {
             throw new \InvalidArgumentException("Source file not readable: {$file}");
         }
     }
@@ -145,14 +143,14 @@ final class ClosureExtractor
             }
 
             // Detect closure start
-            if (!$inClosure && ($this->isToken($token, T_FUNCTION) || $this->isToken($token, T_FN))) {
+            if (false === $inClosure && ($this->isToken($token, T_FUNCTION) || $this->isToken($token, T_FN))) {
                 $inClosure       = true;
                 $closureStart    = $i;
                 $isArrowFunction = $this->isToken($token, T_FN);
                 continue;
             }
 
-            if (!$inClosure) {
+            if (false === $inClosure) {
                 continue;
             }
 
@@ -192,7 +190,7 @@ final class ClosureExtractor
             }
         }
 
-        if ($closureStart === null || $closureEnd === null) {
+        if (null === $closureStart || null === $closureEnd) {
             throw new \InvalidArgumentException("Could not extract closure from line {$lineNumber} in {$file}");
         }
 
@@ -245,7 +243,7 @@ final class ClosureExtractor
             }
 
             // Detect type
-            if ($state === 'initial') {
+            if ('initial' === $state) {
                 if ($this->isToken($token, T_FUNCTION)) {
                     $ast['isArrowFunction'] = false;
                     $state                  = 'parameters';
@@ -258,14 +256,12 @@ final class ClosureExtractor
             }
 
             // Parse parameters (simplified - can be enhanced)
-            if ($state === 'parameters') {
-                if ($this->isChar($token, '(')) {
-                    $state = 'inside_params';
-                    continue;
-                }
+            if ('parameters' === $state && $this->isChar($token, '(')) {
+                $state = 'inside_params';
+                continue;
             }
 
-            if ($state === 'inside_params') {
+            if ('inside_params' === $state) {
                 if ($this->isChar($token, ')')) {
                     $ast['parameters'][] = trim($buffer);
                     $buffer              = '';
@@ -277,7 +273,7 @@ final class ClosureExtractor
             }
 
             // Detect use clause
-            if ($state === 'after_params') {
+            if ('after_params' === $state) {
                 if ($this->isToken($token, T_USE)) {
                     $state = 'use_clause';
                     continue;
@@ -296,7 +292,7 @@ final class ClosureExtractor
             }
 
             // Parse return type
-            if ($state === 'return_type') {
+            if ('return_type' === $state) {
                 if ($this->isChar($token, '{') || $this->isToken($token, T_DOUBLE_ARROW)) {
                     $ast['returnType'] = trim($buffer);
                     $buffer            = $this->tokenToString($token);
@@ -308,7 +304,7 @@ final class ClosureExtractor
             }
 
             // Parse body
-            if ($state === 'body') {
+            if ('body' === $state) {
                 $buffer .= $this->tokenToString($token);
             }
         }
@@ -383,7 +379,7 @@ final class ClosureExtractor
             }
         }
 
-        return $minIndent === PHP_INT_MAX ? 0 : $minIndent;
+        return PHP_INT_MAX === $minIndent ? 0 : $minIndent;
     }
 
     /**
@@ -395,18 +391,19 @@ final class ClosureExtractor
      */
     private function removeIndentation(array $lines, int $indent): array
     {
-        if ($indent === 0) {
+        if (0 === $indent) {
             return $lines;
         }
 
         $normalized = [];
 
         foreach ($lines as $line) {
-            if (trim($line) === '') {
+            if ('' === trim($line)) {
                 $normalized[] = '';
-            } else {
-                $normalized[] = substr($line, min($indent, strlen($line)));
+                continue;
             }
+
+            $normalized[] = substr($line, min($indent, strlen($line)));
         }
 
         return $normalized;
