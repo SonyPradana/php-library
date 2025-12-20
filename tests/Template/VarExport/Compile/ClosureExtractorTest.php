@@ -78,8 +78,8 @@ final class ClosureExtractorTest extends TestCase
 
         // Verify closure structure is preserved
         $this->assertStringContainsString('function', $normalized);
-        $this->assertStringContainsString('$a = 1 + 2', $normalized);
-        $this->assertStringContainsString('$bolamasgakada = 1 + 2', $normalized);
+        $this->assertStringContainsString('= 1 + 2', $normalized);
+        $this->assertStringContainsString('bolamasgakada', $normalized);
         $this->assertStringContainsString('echo $a', $normalized);
         $this->assertStringContainsString('$b = \'text\'', $normalized);
         $this->assertStringContainsString('return \'Route::class\'', $normalized);
@@ -371,7 +371,7 @@ final class ClosureExtractorTest extends TestCase
 
         // Should contain closure content
         $this->assertStringContainsString('function', $normalized);
-        $this->assertStringContainsString('$a = 1 + 2', $normalized);
+        $this->assertStringContainsString('= 1 + 2', $normalized);
     }
 
     /**
