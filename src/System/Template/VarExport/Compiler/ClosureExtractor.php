@@ -50,14 +50,12 @@ final class ClosureExtractor
         $originalCode = implode('', $sourceLines);
 
         // Extract pure closure code (without prefix/suffix)
-        if ($isSingleLine) {
-            $closureCode = $this->extractFromSingleLine($originalCode, $file, $startLine);
-        } else {
-            $closureCode = $originalCode;
-        }
+        // This handles both single-line and multi-line cases
+        $closureCode = $this->extractFromSourceCode($originalCode, $file, $startLine);
 
         // Parse into structured data
-        $tokens = $this->tokenize($closureCode);
+        // Tokenize with PHP tags for proper token type detection
+        $tokens = $this->tokenize('<?php ' . $closureCode);
         $ast    = $this->buildClosureAST($tokens);
 
         // Normalize closure code
@@ -120,12 +118,14 @@ final class ClosureExtractor
     }
 
     /**
-     * Extract closure from single line using tokenization.
+     * Extract pure closure code from source code.
+     * Handles both single-line and multi-line closures.
+     * Removes any prefix (like array keys) before the function/fn keyword.
      */
-    private function extractFromSingleLine(string $line, string $file, int $lineNumber): string
+    private function extractFromSourceCode(string $code, string $file, int $lineNumber): string
     {
-        // Tokenize the line
-        $tokens = $this->tokenize('<?php ' . $line);
+        // Tokenize the code with PHP tags
+        $tokens = $this->tokenize('<?php ' . $code);
 
         // Find closure boundaries
         $closureStart    = null;
@@ -143,7 +143,7 @@ final class ClosureExtractor
                 continue;
             }
 
-            // Detect closure start
+            // Detect closure start (function or fn keyword)
             if (false === $inClosure && ($this->isToken($token, T_FUNCTION) || $this->isToken($token, T_FN))) {
                 $inClosure       = true;
                 $closureStart    = $i;
@@ -151,6 +151,7 @@ final class ClosureExtractor
                 continue;
             }
 
+            // Skip everything before closure starts
             if (false === $inClosure) {
                 continue;
             }
@@ -177,7 +178,7 @@ final class ClosureExtractor
 
             // Handle arrow function
             if ($isArrowFunction && $this->isToken($token, T_DOUBLE_ARROW)) {
-                // Continue until we hit delimiter
+                // Continue until we hit delimiter or semicolon
                 for ($j = $i + 1; $j < count($tokens); $j++) {
                     $nextToken = $tokens[$j];
 
@@ -386,7 +387,6 @@ final class ClosureExtractor
 
         return implode(PHP_EOL, $lines);
     }
-
 
     /**
      * Find minimum indentation in lines.
