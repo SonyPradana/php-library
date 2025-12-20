@@ -60,7 +60,8 @@ final class ClosureExtractor
         $tokens = $this->tokenize($closureCode);
         $ast    = $this->buildClosureAST($tokens);
 
-        // Normalize indentation
+        // Normalize closure code
+        $closureCode     = $this->normalizeClosureCode($closureCode);
         $lines           = explode("\n", $closureCode);
         $minIndent       = $this->findMinimumIndentation($lines);
         $normalizedLines = $this->removeIndentation($lines, $minIndent);
@@ -359,6 +360,33 @@ final class ClosureExtractor
     {
         return is_string($token) && $token === $char;
     }
+
+    private function normalizeClosureCode(string $closureCode): string
+    {
+        // Remove trailing array delimiter comma on last non-empty line
+        $lines = explode("\n", $closureCode);
+        for ($i = count($lines) - 1; $i >= 0; $i--) {
+            if (trim($lines[$i]) === '') {
+                continue;
+            }
+
+            $trimmed = rtrim($lines[$i]);
+            if ('' !== $trimmed && (substr($trimmed, -1) === ',')) {
+                $lines[$i] = rtrim(substr($trimmed, 0, -1));
+            }
+
+            break;
+        }
+
+        // Remove trailing empty lines after trimming comma so we don't leave
+        // a blank line between the closure and the array-level comma.
+        while (false === empty($lines) && '' === trim($lines[count($lines) - 1])) {
+            array_pop($lines);
+        }
+
+        return implode("\n", $lines);
+    }
+
 
     /**
      * Find minimum indentation in lines.
