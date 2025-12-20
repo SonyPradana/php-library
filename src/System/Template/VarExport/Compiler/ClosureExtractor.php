@@ -62,10 +62,10 @@ final class ClosureExtractor
 
         // Normalize closure code
         $closureCode     = $this->normalizeClosureCode($closureCode);
-        $lines           = explode("\n", $closureCode);
+        $lines           = explode(PHP_EOL, $closureCode);
         $minIndent       = $this->findMinimumIndentation($lines);
         $normalizedLines = $this->removeIndentation($lines, $minIndent);
-        $normalizedCode  = implode("\n", $normalizedLines);
+        $normalizedCode  = implode(PHP_EOL, $normalizedLines);
 
         return [
             'lines'      => $normalizedLines,
@@ -364,7 +364,7 @@ final class ClosureExtractor
     private function normalizeClosureCode(string $closureCode): string
     {
         // Remove trailing array delimiter comma on last non-empty line
-        $lines = explode("\n", $closureCode);
+        $lines = explode(PHP_EOL, $closureCode);
         for ($i = count($lines) - 1; $i >= 0; $i--) {
             if (trim($lines[$i]) === '') {
                 continue;
@@ -384,7 +384,7 @@ final class ClosureExtractor
             array_pop($lines);
         }
 
-        return implode("\n", $lines);
+        return implode(PHP_EOL, $lines);
     }
 
 
