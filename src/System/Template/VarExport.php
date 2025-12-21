@@ -15,6 +15,8 @@ final class VarExport
     private int $indentLevel = 0;
     private bool $alignArray = false;
     private ?StringCompiler $string_compiler;
+    /** @var string[] */
+    private array $namespaces = [];
 
     public function __construct()
     {
@@ -72,10 +74,15 @@ final class VarExport
      */
     private function compileToString(array $data): string
     {
-        $this->addToBuffer('<?php');
-        $this->addLine(2);
-        $this->addToBuffer('declare(strict_types=1);');
-        $this->addLine(2);
+        $hedears = [
+            '<?php',
+            PHP_EOL,
+            PHP_EOL,
+            'declare(strict_types=1);',
+            PHP_EOL,
+            PHP_EOL,
+        ];
+
         $this->addToBuffer('// auto-generated file, do not edit!');
         $this->addLine();
         $this->addToBuffer('// generated on ' . date('Y-m-d H:i:s'));
@@ -84,6 +91,14 @@ final class VarExport
         $this->compileValue($data); // compiles and adds to buffer
         $this->addToBuffer(';');
         $this->addLine();
+
+        if ([] !== $this->namespaces) {
+            $this->prependToBuffers(
+                $this->compileNamespace($this->namespaces)
+            );
+        }
+
+        $this->prependToBuffers($hedears);
 
         return $this->getBuffer();
     }
@@ -206,6 +221,25 @@ final class VarExport
         $this->addToBuffer(var_export($value, true));
     }
 
+    /**
+     * @param string[] $namespaces
+     *
+     * @return string[]
+     */
+    private function compileNamespace(array $namespaces): array
+    {
+        $uses = [];
+        foreach ($namespaces as $namespaces) {
+            $uses[] = "use {$namespaces};";
+            $uses[] = PHP_EOL;
+        }
+        if (false === empty($uses)) {
+            $uses[] = PHP_EOL;
+        }
+
+        return $uses;
+    }
+
     public function flush(): void
     {
         $this->buffer      = [];
@@ -324,6 +358,18 @@ final class VarExport
     private function addToBuffer(string $content): string
     {
         return $this->buffer[] = $content;
+    }
+
+    /**
+     * @param string[] $contents
+     *
+     * @return string[]
+     */
+    private function prependToBuffers(array $contents): array
+    {
+        array_unshift($this->buffer, ...$contents);
+
+        return $contents;
     }
 
     /**
