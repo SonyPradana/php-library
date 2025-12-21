@@ -60,7 +60,7 @@ final class ClosureExtractor
 
         // Normalize closure code
         $closureCode     = $this->normalizeClosureCode($closureCode);
-        $lines           = explode(PHP_EOL, $closureCode);
+        $lines           = explode("\n", $closureCode);
         $minIndent       = $this->findMinimumIndentation($lines);
         $normalizedLines = $this->removeIndentation($lines, $minIndent);
         $normalizedCode  = implode(PHP_EOL, $normalizedLines);
@@ -364,8 +364,11 @@ final class ClosureExtractor
 
     private function normalizeClosureCode(string $closureCode): string
     {
+        // Normalize line endings to PHP_EOL
+        $closureCode = str_replace(["\r\n", "\r"], "\n", $closureCode);
+
         // Remove trailing array delimiter comma on last non-empty line
-        $lines = explode(PHP_EOL, $closureCode);
+        $lines = explode("\n", $closureCode);
         for ($i = count($lines) - 1; $i >= 0; $i--) {
             if (trim($lines[$i]) === '') {
                 continue;
@@ -385,16 +388,29 @@ final class ClosureExtractor
             array_pop($lines);
         }
 
-        return implode(PHP_EOL, $lines);
+        return implode("\n", $lines);
     }
 
     /**
      * Find minimum indentation in lines.
      *
+     * For multi-line closures, use the indentation of the closing brace as the baseline.
+     * This ensures that body indentation is calculated relative to where the closure is defined.
+     *
      * @param string[] $lines
      */
     private function findMinimumIndentation(array $lines): int
     {
+        // Check if this is a multi-line closure
+        if (count($lines) > 1) {
+            // For multi-line closures, find the indentation of the closing brace (last line)
+            $lastLine = $lines[count($lines) - 1];
+            if (preg_match('/^(\s*)/', $lastLine, $matches)) {
+                return strlen($matches[1]);
+            }
+        }
+
+        // For single-line closures, find minimum indentation among non-empty lines
         $minIndent = PHP_INT_MAX;
 
         foreach ($lines as $line) {
@@ -413,6 +429,9 @@ final class ClosureExtractor
     /**
      * Remove indentation from lines.
      *
+     * For multi-line closures, preserve the first line (opening brace) as-is,
+     * and remove indentation from the rest based on the closing brace's indentation.
+     *
      * @param string[] $lines
      *
      * @return string[]
@@ -425,7 +444,13 @@ final class ClosureExtractor
 
         $normalized = [];
 
-        foreach ($lines as $line) {
+        foreach ($lines as $i => $line) {
+            // For multi-line closures, preserve the first line as-is
+            if (0 === $i && count($lines) > 1) {
+                $normalized[] = $line;
+                continue;
+            }
+
             if ('' === trim($line)) {
                 $normalized[] = '';
                 continue;

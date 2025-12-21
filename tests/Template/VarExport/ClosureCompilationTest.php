@@ -27,10 +27,11 @@ final class ClosureCompilationTest extends TestCase
     {
         $exported = $this->exporter->export($value);
 
-        $this->assertEquals(
-            preg_replace('/\s+/', '', $expected),
-            preg_replace('/\s+/', '', $exported)
-        );
+        // Normalize line endings to LF for consistent comparison
+        $normalizedOutput   = str_replace("\r\n", "\n", $exported);
+        $normalizedExpected = str_replace("\r\n", "\n", $expected);
+
+        $this->assertEquals($normalizedExpected, $normalizedOutput);
     }
 
     /**
@@ -42,11 +43,11 @@ final class ClosureCompilationTest extends TestCase
     {
         $closure = function () { return 'test'; };
 
-        $expected = <<<PHP
-        [
-            'closure' => function () { return 'test'; },
-        ]
-        PHP;
+        $expected = <<<'PHP'
+[
+    'closure' => function () { return 'test'; },
+]
+PHP;
 
         $this->assertCompiles($expected, ['closure' => $closure]);
     }
@@ -61,10 +62,10 @@ final class ClosureCompilationTest extends TestCase
         $closure = fn () => 'test';
 
         $expected = <<<PHP
-        [
-            'closure' => fn () => 'test',
-        ]
-        PHP;
+[
+    'closure' => fn () => 'test',
+]
+PHP;
 
         $this->assertCompiles($expected, ['closure' => $closure]);
     }

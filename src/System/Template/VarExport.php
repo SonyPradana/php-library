@@ -311,7 +311,9 @@ final class VarExport
         foreach ($lines as $line) {
             if (false === $firstLine) {
                 $this->addLine();
-                $this->addIndentation();
+                if ('' !== trim($line)) {
+                    $this->addIndentation();
+                }
             }
 
             $this->addToBuffer(rtrim($line));
