@@ -227,8 +227,6 @@ final class VarExport
         return $this->buffer[$last] ?? null;
     }
 
-    // private
-
     private function openArray(): void
     {
         $this->addToBuffer('[');

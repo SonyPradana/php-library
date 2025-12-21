@@ -7,9 +7,6 @@ namespace System\Template\VarExport\Compiler;
 /**
  * ClosureExtractor - Extract and normalize closure source code using tokenization.
  *
- * This class handles the complex task of extracting closure definitions from source files
- * using PHP's tokenizer to accurately parse closure boundaries without regex.
- *
  * Features:
  * - Token-based parsing
  * - Handles function() and fn() syntax
@@ -45,16 +42,13 @@ final class ClosureExtractor
         $endLine      = $reflection->getEndLine();
         $isSingleLine = $startLine === $endLine;
 
-        // Read source lines
         $sourceLines  = $this->readSourceLines($file, $startLine, $endLine);
         $originalCode = implode('', $sourceLines);
 
-        // Extract pure closure code (without prefix/suffix)
-        // This handles both single-line and multi-line cases
+        // Extract pure closure code
         $closureCode = $this->extractFromSourceCode($originalCode, $file, $startLine);
 
-        // Parse into structured data
-        // Tokenize with PHP tags for proper token type detection
+        // Tokenize the code with PHP tags
         $tokens = $this->tokenize('<?php ' . $closureCode);
         $ast    = $this->buildClosureAST($tokens);
 
@@ -127,7 +121,6 @@ final class ClosureExtractor
         // Tokenize the code with PHP tags
         $tokens = $this->tokenize('<?php ' . $code);
 
-        // Find closure boundaries
         $closureStart    = null;
         $closureEnd      = null;
         $inClosure       = false;
@@ -138,12 +131,11 @@ final class ClosureExtractor
         for ($i = 0; $i < count($tokens); $i++) {
             $token = $tokens[$i];
 
-            // Skip PHP open tag
             if ($this->isToken($token, T_OPEN_TAG)) {
                 continue;
             }
 
-            // Detect closure start (function or fn keyword)
+            // Detect closure start
             if (false === $inClosure && ($this->isToken($token, T_FUNCTION) || $this->isToken($token, T_FN))) {
                 $inClosure       = true;
                 $closureStart    = $i;
@@ -199,7 +191,6 @@ final class ClosureExtractor
         // Extract tokens between start and end
         $closureTokens = array_slice($tokens, $closureStart, $closureEnd - $closureStart + 1);
 
-        // Reconstruct code from tokens
         return $this->tokensToString($closureTokens);
     }
 
@@ -257,7 +248,7 @@ final class ClosureExtractor
                 }
             }
 
-            // Parse parameters (simplified - can be enhanced)
+            // Parse parameters
             if ('parameters' === $state && $this->isChar($token, '(')) {
                 $state = 'inside_params';
                 continue;
@@ -364,10 +355,9 @@ final class ClosureExtractor
 
     private function normalizeClosureCode(string $closureCode): string
     {
-        // Normalize line endings to PHP_EOL
+        // VarExport will handle final output formatting with the appropriate line endings.
         $closureCode = str_replace(["\r\n", "\r"], "\n", $closureCode);
 
-        // Remove trailing array delimiter comma on last non-empty line
         $lines = explode("\n", $closureCode);
         for ($i = count($lines) - 1; $i >= 0; $i--) {
             if (trim($lines[$i]) === '') {
@@ -382,8 +372,7 @@ final class ClosureExtractor
             break;
         }
 
-        // Remove trailing empty lines after trimming comma so we don't leave
-        // a blank line between the closure and the array-level comma.
+        // Remove trailing empty lines
         while (false === empty($lines) && '' === trim($lines[count($lines) - 1])) {
             array_pop($lines);
         }
@@ -394,23 +383,17 @@ final class ClosureExtractor
     /**
      * Find minimum indentation in lines.
      *
-     * For multi-line closures, use the indentation of the closing brace as the baseline.
-     * This ensures that body indentation is calculated relative to where the closure is defined.
-     *
      * @param string[] $lines
      */
     private function findMinimumIndentation(array $lines): int
     {
-        // Check if this is a multi-line closure
         if (count($lines) > 1) {
-            // For multi-line closures, find the indentation of the closing brace (last line)
             $lastLine = $lines[count($lines) - 1];
             if (preg_match('/^(\s*)/', $lastLine, $matches)) {
                 return strlen($matches[1]);
             }
         }
 
-        // For single-line closures, find minimum indentation among non-empty lines
         $minIndent = PHP_INT_MAX;
 
         foreach ($lines as $line) {
@@ -445,7 +428,7 @@ final class ClosureExtractor
         $normalized = [];
 
         foreach ($lines as $i => $line) {
-            // For multi-line closures, preserve the first line as-is
+            // For multi-line closures
             if (0 === $i && count($lines) > 1) {
                 $normalized[] = $line;
                 continue;
