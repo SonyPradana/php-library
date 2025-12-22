@@ -19,8 +19,8 @@ class FileOperationsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->tempDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('varexport_test_');
-        if (!is_dir($this->tempDir)) {
+        $this->tempDir = __DIR__ . DIRECTORY_SEPARATOR . uniqid('varexport_test_');
+        if (false === is_dir($this->tempDir)) {
             mkdir($this->tempDir, 0777, true);
         }
     }
@@ -35,7 +35,7 @@ class FileOperationsTest extends TestCase
 
     private function deleteDirectory(string $dir): void
     {
-        if (!is_dir($dir)) {
+        if (false === is_dir($dir)) {
             return;
         }
         $files = array_diff(scandir($dir), ['.', '..']);
