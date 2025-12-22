@@ -34,7 +34,7 @@ final class NamespaceResolver
         foreach ($reflection->getStaticVariables() as $value) {
             if (true === is_object($value)) {
                 /* @var class-string */
-                $classes[] = get_class($value);
+                $classes[] = $value::class;
             }
         }
 
