@@ -18,6 +18,10 @@ class FileOperationsTest extends TestCase
 
     protected function setUp(): void
     {
+        if (getenv('CI') !== false || getenv('GITHUB_ACTIONS') === 'true') {
+            $this->markTestSkipped('CI environment is unwritable directory.');
+        }
+
         parent::setUp();
         $this->tempDir = __DIR__ . DIRECTORY_SEPARATOR . uniqid('varexport_test_');
         if (false === is_dir($this->tempDir)) {
