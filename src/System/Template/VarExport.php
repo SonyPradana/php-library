@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace System\Template;
 
+use System\Template\Parser\Closure\NamespaceResolver;
 use System\Template\VarExport\Compiler\ClosureCompiler;
 use System\Template\VarExport\Compiler\StringCompiler;
-use System\Template\VarExport\FunctionUseStatementResolver;
 
 final class VarExport
 {
@@ -159,8 +159,10 @@ final class VarExport
             ->getReflection()
             ->getStaticVariables();
 
-        $namespaces       = new FunctionUseStatementResolver();
-        $this->namespaces = $namespaces->resolve($closureCompiler->getReflection());
+        $namespaces       = new NamespaceResolver();
+        $this->namespaces = $namespaces->resolve(
+            reflection: $closureCompiler->getReflection()
+        );
 
         if ([] === $capturedVars) {
             $this->writeClosureLines($compile);
@@ -232,6 +234,7 @@ final class VarExport
      */
     private function compileNamespace(array $namespaces): array
     {
+        sort($namespaces);
         $uses = [];
         foreach ($namespaces as $namespaces) {
             if ('' === $namespaces) {

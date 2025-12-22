@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace System\Template\VarExport;
+namespace System\Template\Parser\Closure;
 
-final class FunctionUseStatementResolver
+use System\Template\Parser\File\NamespaceResolver as ParseNamespace;
+
+final class NamespaceResolver
 {
     /**
      * @return array<int, string>
@@ -15,8 +17,8 @@ final class FunctionUseStatementResolver
         $classes = [];
 
         // class file parse
-        $classParse = new UseStatementParser();
-        foreach ($classParse->parse($reflection->getFileName()) as $parse) {
+        $classParse = new ParseNamespace();
+        foreach ($classParse->resolveFile($reflection->getFileName()) as $parse) {
             $classes[] = $parse;
         }
 
@@ -42,7 +44,6 @@ final class FunctionUseStatementResolver
     }
 
     /**
-     * @param ReflectionType|null      $type
      * @param array<int, class-string> $classes
      */
     private function collectFromType(?\ReflectionType $type, array &$classes): void

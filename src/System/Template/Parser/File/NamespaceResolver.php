@@ -2,20 +2,30 @@
 
 declare(strict_types=1);
 
-namespace System\Template\VarExport;
+namespace System\Template\Parser\File;
 
-final class UseStatementParser
+final class NamespaceResolver
 {
     /**
-     * @return array<int, string>
+     * @return string[]
      */
-    public function parse(string $file): array
+    public function resolveFile(string $file): array
     {
         if (false === is_file($file)) {
             return [];
         }
 
-        $tokens = token_get_all((string) file_get_contents($file));
+        $sources = (string) file_get_contents($file);
+
+        return $this->resolve($sources);
+    }
+
+    /**
+     * @return string[]
+     */
+    public function resolve(string $sources): array
+    {
+        $tokens = token_get_all($sources);
         $uses   = [];
 
         $i     = 0;
@@ -36,8 +46,8 @@ final class UseStatementParser
     }
 
     /**
-     * @param array<int, mixed>  $tokens
-     * @param array<int, string> $uses
+     * @param array<int, mixed> $tokens
+     * @param string[]          $uses
      */
     private function parseUseStatement(array $tokens, int &$i, array &$uses): void
     {
@@ -85,8 +95,8 @@ final class UseStatementParser
     }
 
     /**
-     * @param array<int, mixed>  $tokens
-     * @param array<int, string> $uses
+     * @param array<int, mixed> $tokens
+     * @param string[]          $uses
      */
     private function parseGroupedUse(array $tokens, int &$i, string $base, array &$uses): void
     {
@@ -105,7 +115,7 @@ final class UseStatementParser
                 } else {
                     if (',' === $token || '}' === $token) {
                         if ('' !== $class) {
-                            $uses[] = $base . '\\' . $class;
+                            $uses[] = $base . $class;
                         }
                         break;
                     }
@@ -114,7 +124,7 @@ final class UseStatementParser
                 $i++;
             }
 
-            if ('}' === $token) {
+            if (isset($token) && '}' === $token) {
                 while (isset($tokens[$i]) && ';' !== $tokens[$i]) {
                     $i++;
                 }
