@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace System\Tests\Template\VarExport\Compile;
 
 use PHPUnit\Framework\TestCase;
-use System\Template\VarExport\Compiler\ClosureExtractor;
+use System\Template\VarExport\ClosureExtractor;
 
 /**
- * @covers \System\Template\VarExport\Compiler\ClosureExtractor
+ * @covers \System\Template\VarExport\ClosureExtractor
  *
  * @internal
  *

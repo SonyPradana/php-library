@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace System\Template\VarExport\Compiler;
 
+use System\Template\VarExport\ClosureExtractor;
+
 class ClosureCompiler extends Compiler
 {
     private \ReflectionFunction $reflection;

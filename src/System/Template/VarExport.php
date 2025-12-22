@@ -6,6 +6,7 @@ namespace System\Template;
 
 use System\Template\VarExport\Compiler\ClosureCompiler;
 use System\Template\VarExport\Compiler\StringCompiler;
+use System\Template\VarExport\FunctionUseStatementResolver;
 
 final class VarExport
 {
@@ -158,6 +159,9 @@ final class VarExport
             ->getReflection()
             ->getStaticVariables();
 
+        $namespaces = new FunctionUseStatementResolver();
+        $this->namespaces = $namespaces->resolve($closureCompiler->getReflection());
+
         if ([] === $capturedVars) {
             $this->writeClosureLines($compile);
 
@@ -230,6 +234,9 @@ final class VarExport
     {
         $uses = [];
         foreach ($namespaces as $namespaces) {
+            if ('' === $namespaces) {
+                continue;
+            }
             $uses[] = "use {$namespaces};";
             $uses[] = PHP_EOL;
         }

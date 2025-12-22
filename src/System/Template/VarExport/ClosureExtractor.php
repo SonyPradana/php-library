@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Template\VarExport\Compiler;
+namespace System\Template\VarExport;
 
 /**
  * ClosureExtractor - Extract and normalize closure source code using tokenization.

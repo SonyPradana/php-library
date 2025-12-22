@@ -471,7 +471,7 @@ PHP;
         $reflection->method('getStartLine')->willReturn(1);
         $reflection->method('getEndLine')->willReturn(1);
 
-        $extractor = new VarExport\Compiler\ClosureExtractor();
+        $extractor = new VarExport\ClosureExtractor();
         $extractor->extract($reflection);
     }
 
@@ -492,7 +492,7 @@ PHP;
         $reflection->method('getStartLine')->willReturn(1);
         $reflection->method('getEndLine')->willReturn(1);
 
-        $extractor = new VarExport\Compiler\ClosureExtractor();
+        $extractor = new VarExport\ClosureExtractor();
         $extractor->extract($reflection);
     }
 
