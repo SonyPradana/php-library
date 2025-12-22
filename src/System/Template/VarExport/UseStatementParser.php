@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace System\Template\VarExport;
 
-use function System\Console\ok;
-use function System\Console\style;
-
 final class UseStatementParser
 {
     /**
@@ -19,9 +16,9 @@ final class UseStatementParser
         }
 
         $tokens = token_get_all((string) file_get_contents($file));
-        $uses = [];
+        $uses   = [];
 
-        $i = 0;
+        $i     = 0;
         $count = count($tokens);
 
         while ($i < $count) {
@@ -39,11 +36,11 @@ final class UseStatementParser
     }
 
     /**
-     * @param array<int, mixed> $tokens
-     * @param int $i
+     * @param array<int, mixed>  $tokens
      * @param array<int, string> $uses
      */
-    private function parseUseStatement(array $tokens, int &$i, array &$uses): void {
+    private function parseUseStatement(array $tokens, int &$i, array &$uses): void
+    {
         $base = '';
 
         while (isset($tokens[$i])) {
@@ -67,16 +64,18 @@ final class UseStatementParser
             } else {
                 if ('{' === $token) {
                     $this->parseGroupedUse($tokens, $i, $base, $uses);
+
                     return;
                 }
 
                 if (',' === $token) {
                     $uses[] = $base;
-                    $base = '';
+                    $base   = '';
                 }
 
                 if (';' === $token) {
                     $uses[] = $base;
+
                     return;
                 }
             }
@@ -86,7 +85,7 @@ final class UseStatementParser
     }
 
     /**
-     * @param array<int, mixed> $tokens
+     * @param array<int, mixed>  $tokens
      * @param array<int, string> $uses
      */
     private function parseGroupedUse(array $tokens, int &$i, string $base, array &$uses): void
@@ -119,6 +118,7 @@ final class UseStatementParser
                 while (isset($tokens[$i]) && ';' !== $tokens[$i]) {
                     $i++;
                 }
+
                 return;
             }
 
@@ -126,4 +126,3 @@ final class UseStatementParser
         }
     }
 }
-

@@ -26,7 +26,7 @@ final class UseStatementParserTest extends TestCase
         $file = __DIR__ . '/../../expected/uses';
 
         $parser = new UseStatementParser();
-        $uses = $parser->parse($file);
+        $uses   = $parser->parse($file);
 
         $expected = [
             'System\Http\Request',

@@ -7,7 +7,6 @@ namespace System\Template\VarExport;
 final class FunctionUseStatementResolver
 {
     /**
-     * @param callable $callable
      * @return array<int, string>
      */
     public function resolve(\ReflectionFunction $reflection): array
@@ -32,7 +31,7 @@ final class FunctionUseStatementResolver
         // Static variables
         foreach ($reflection->getStaticVariables() as $value) {
             if (true === is_object($value)) {
-                /** @var class-string */
+                /* @var class-string */
                 $classes[] = get_class($value);
             }
         }
@@ -43,16 +42,17 @@ final class FunctionUseStatementResolver
     }
 
     /**
-     * @param ReflectionType|null $type
+     * @param ReflectionType|null      $type
      * @param array<int, class-string> $classes
      */
-    private function collectFromType(?\ReflectionType $type, array &$classes): void {
+    private function collectFromType(?\ReflectionType $type, array &$classes): void
+    {
         if (null === $type) {
             return;
         }
 
         if ($type instanceof \ReflectionNamedType && false === $type->isBuiltin()) {
-            /** @var class-string */
+            /* @var class-string */
             $classes[] = $type->getName();
 
             return;

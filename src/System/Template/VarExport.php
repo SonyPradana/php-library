@@ -159,7 +159,7 @@ final class VarExport
             ->getReflection()
             ->getStaticVariables();
 
-        $namespaces = new FunctionUseStatementResolver();
+        $namespaces       = new FunctionUseStatementResolver();
         $this->namespaces = $namespaces->resolve($closureCompiler->getReflection());
 
         if ([] === $capturedVars) {
