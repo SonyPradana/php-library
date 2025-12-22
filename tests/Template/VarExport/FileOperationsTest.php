@@ -18,11 +18,12 @@ class FileOperationsTest extends TestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         if (getenv('CI') !== false || getenv('GITHUB_ACTIONS') === 'true') {
             $this->markTestSkipped('CI environment is unwritable directory.');
         }
 
-        parent::setUp();
         $this->tempDir = __DIR__ . DIRECTORY_SEPARATOR . uniqid('varexport_test_');
         if (false === is_dir($this->tempDir)) {
             mkdir($this->tempDir, 0777, true);
@@ -32,6 +33,11 @@ class FileOperationsTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
+
+        if (getenv('CI') !== false || getenv('GITHUB_ACTIONS') === 'true') {
+            $this->markTestSkipped('CI environment is unwritable directory.');
+        }
+
         if (is_dir($this->tempDir)) {
             $this->deleteDirectory($this->tempDir);
         }
