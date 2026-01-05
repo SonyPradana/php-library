@@ -109,12 +109,12 @@ final class VarExport
         match (true) {
             is_array($value)           => $this->compileArray($value),
             $value instanceof \Closure => $this->compileClosure($value),
+            is_object($value)          => $this->compileObject($value),
             is_string($value)          => $this->compileString($value),
             is_int($value)             => $this->compileInteger($value),
             is_bool($value)            => $this->compileBoolean($value),
             is_float($value)           => $this->compileFloat($value),
             is_null($value)            => $this->compileNull(),
-            is_object($value)          => throw new \InvalidArgumentException('Cannot compile resource type'),
             is_resource($value)        => throw new \InvalidArgumentException('Cannot compile resource type'),
             default                    => $this->compileFallback($value),
         };
@@ -171,6 +171,14 @@ final class VarExport
         }
 
         $this->wrapClosure($compile, $capturedVars);
+    }
+
+    private function compileObject(object $object): void
+    {
+        match (true) {
+            method_exists($object, '__set_state') => $this->compileSetState($object),
+            method_exists($object, 'toArray')     => $this->compileToArray($object),
+        };
     }
 
     /**
@@ -248,6 +256,27 @@ final class VarExport
         }
 
         return $uses;
+    }
+
+    private function compileSetState(mixed $object): void
+    {
+        $class      = $object::class;
+        $reflection = new \ReflectionObject($object);
+        $properties = [];
+
+        foreach ($reflection->getProperties() as $property) {
+            $property->setAccessible(true);
+            $properties[$property->getName()] = $property->getValue($object);
+        }
+
+        $this->addToBuffer("{$class}::__set_state(");
+        $this->compileArray($properties);
+        $this->addToBuffer(')');
+    }
+
+    private function compileToArray(mixed $object): void
+    {
+        $this->compileArray((array) $object->toArray());
     }
 
     public function flush(): void
