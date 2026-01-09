@@ -177,7 +177,6 @@ final class VarExport
     {
         match (true) {
             method_exists($object, '__set_state') => $this->compileSetState($object),
-            method_exists($object, 'toArray')     => $this->compileToArray($object),
         };
     }
 
@@ -272,11 +271,6 @@ final class VarExport
         $this->addToBuffer("{$class}::__set_state(");
         $this->compileArray($properties);
         $this->addToBuffer(')');
-    }
-
-    private function compileToArray(mixed $object): void
-    {
-        $this->compileArray((array) $object->toArray());
     }
 
     public function flush(): void
