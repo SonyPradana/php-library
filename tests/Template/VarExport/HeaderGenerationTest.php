@@ -2,124 +2,27 @@
 
 declare(strict_types=1);
 
-namespace System\Tests\Template\VarExport;
+namespace System\Test\Template\VarExport;
 
 use PHPUnit\Framework\TestCase;
+use System\Template\VarExport;
 
-/**
- * @covers \Savanna\System\Template\VarExport
- *
- * @testdox Skeleton Test for Header Generation
- */
 class HeaderGenerationTest extends TestCase
 {
     /**
      * @test
-     *
-     * @testdox Generates PHP open tag
      */
-    public function generatesPhpOpenTag(): void
+    public function itGeneratesHeader()
     {
-        $this->markTestSkipped('VarExport::compileToString() is a private method, and there is no public method to directly retrieve the complete generated header as a string for testing without writing to a file.');
-    }
+        $exporter   = new VarExport();
+        $reflection = new \ReflectionClass($exporter);
+        $method     = $reflection->getMethod('compileToString');
+        $method->setAccessible(true);
+        $output = $method->invoke($exporter, []);
 
-    /**
-     * @test
-     *
-     * @testdox Generates strict_types declaration when enabled
-     */
-    public function generatesStrictTypesDeclarationEnabled(): void
-    {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
-    }
-
-    /**
-     * @test
-     *
-     * @testdox Generates strict_types declaration when disabled
-     */
-    public function generatesStrictTypesDeclarationDisabled(): void
-    {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
-    }
-
-    /**
-     * @test
-     *
-     * @testdox Generates namespace declaration with namespace
-     */
-    public function generatesNamespaceDeclarationWithNamespace(): void
-    {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
-    }
-
-    /**
-     * @test
-     *
-     * @testdox Generates namespace declaration without namespace
-     */
-    public function generatesNamespaceDeclarationWithoutNamespace(): void
-    {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
-    }
-
-    /**
-     * @test
-     *
-     * @testdox Generates warning comment when enabled
-     */
-    public function generatesWarningCommentEnabled(): void
-    {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
-    }
-
-    /**
-     * @test
-     *
-     * @testdox Generates warning comment when disabled
-     */
-    public function generatesWarningCommentDisabled(): void
-    {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
-    }
-
-    /**
-     * @test
-     *
-     * @testdox Generates timestamp comment when enabled
-     */
-    public function generatesTimestampCommentEnabled(): void
-    {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
-    }
-
-    /**
-     * @test
-     *
-     * @testdox Generates timestamp comment when disabled
-     */
-    public function generatesTimestampCommentDisabled(): void
-    {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
-    }
-
-    /**
-     * @test
-     *
-     * @testdox Generates complete header with all options enabled
-     */
-    public function generatesCompleteHeaderWithAllOptions(): void
-    {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
-    }
-
-    /**
-     * @test
-     *
-     * @testdox Generates minimal header with all options disabled
-     */
-    public function generatesMinimalHeaderWithAllOptionsDisabled(): void
-    {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
+        $this->assertStringStartsWith('<?php', $output);
+        $this->assertStringContainsString('declare(strict_types=1);', $output);
+        $this->assertStringContainsString('// auto-generated file, do not edit!', $output);
+        $this->assertStringContainsString('return ', $output);
     }
 }
