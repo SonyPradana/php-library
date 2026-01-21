@@ -22,7 +22,7 @@ class IndentationTest extends TestCase
     public function usesTwoSpaceIndentationConsistently(): void
     {
         $varExport = new VarExport();
-        $varExport->setIndetation('  '); // Two spaces
+        $varExport->setIndentation('  '); // Two spaces
 
         $array = [
             'key1' => 'value1',
@@ -64,7 +64,7 @@ PHP;
     public function usesFourSpaceIndentationConsistently(): void
     {
         $varExport = new VarExport();
-        $varExport->setIndetation('    '); // Four spaces
+        $varExport->setIndentation('    '); // Four spaces
 
         $array = [
             'key1' => 'value1',
@@ -106,7 +106,7 @@ PHP;
     public function usesEightSpaceIndentationConsistently(): void
     {
         $varExport = new VarExport();
-        $varExport->setIndetation('        '); // Eight spaces
+        $varExport->setIndentation('        '); // Eight spaces
 
         $array = [
             'key1' => 'value1',
@@ -148,7 +148,7 @@ PHP;
     public function usesOneTabIndentationConsistently(): void
     {
         $varExport = new VarExport();
-        $varExport->setIndetation("\t"); // One tab
+        $varExport->setIndentation("\t"); // One tab
 
         $array = [
             'key1' => 'value1',
@@ -190,7 +190,7 @@ PHP;
     public function usesTwoTabIndentationConsistently(): void
     {
         $varExport = new VarExport();
-        $varExport->setIndetation("\t\t"); // Two tabs
+        $varExport->setIndentation("\t\t"); // Two tabs
 
         $array = [
             'key1' => 'value1',
@@ -270,25 +270,5 @@ PHP;
         $normalizedExpected = str_replace(["\r\n", "\r"], "\n", $expected);
 
         $this->assertEquals($normalizedExpected, $normalizedOutput);
-    }
-
-    /**
-     * @test
-     *
-     * @testdox Normalizes closure indentation
-     */
-    public function normalizesClosureIndentation(): void
-    {
-        $this->markTestSkipped('VarExport\'s closure extraction is not yet precise enough to normalize indentation correctly, as it extracts the entire line including variable assignments.');
-    }
-
-    /**
-     * @test
-     *
-     * @testdox Handles mixed indentation in source
-     */
-    public function handlesMixedIndentationInSource(): void
-    {
-        $this->markTestSkipped('VarExport does not expose a public API to re-indent arbitrary PHP code with mixed indentation. Its internal indentation normalization is tied to closure processing, which currently has pending issues (e.g., precise closure extraction).');
     }
 }

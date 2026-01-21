@@ -24,14 +24,14 @@ final class VarExport
         $this->string_compiler = new StringCompiler();
     }
 
-    public function setIndetation(string $indent): self
+    public function setIndentation(string $indent): self
     {
         $this->indent = $indent;
 
         return $this;
     }
 
-    public function setIndetationLevel(int $indentLevel): self
+    public function setIndentationLevel(int $indentLevel): self
     {
         $this->indentLevel = $indentLevel;
 
@@ -73,7 +73,7 @@ final class VarExport
     /**
      * @param array<array-key, mixed> $data
      */
-    private function compileToString(array $data): string
+    public function compileToString(array $data): string
     {
         $hedears = [
             '<?php',
