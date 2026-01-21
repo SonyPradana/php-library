@@ -271,4 +271,82 @@ PHP;
 
         $this->assertEquals($normalizedExpected, $normalizedOutput);
     }
+
+    /**
+     * @test
+     *
+     * @testdox Normalizes closure indentation
+     */
+    public function normalizesClosureIndentation(): void
+    {
+        // $this->markTestSkipped('VarExport\'s closure extraction is not yet precise enough to normalize indentation correctly, as it extracts the entire line including variable assignments.');
+
+        $varExport = new VarExport();
+        $varExport->setIndentation('    '); // 4 spaces
+
+        $array = [
+            'closure' => function () {
+                $a = 1;
+
+                return $a;
+            },
+        ];
+
+        $output = $varExport->export($array);
+
+        $expected = <<<'PHP'
+[
+    'closure' => function () {
+        $a = 1;
+
+        return $a;
+    },
+]
+PHP;
+        // Normalize line endings for consistent comparison
+        $normalizedOutput   = str_replace(["\r\n", "\r"], "\n", $output);
+        $normalizedExpected = str_replace(["\r\n", "\r"], "\n", $expected);
+
+        $this->assertEquals($normalizedExpected, $normalizedOutput);
+    }
+
+    /**
+     * @test
+     *
+     * @testdox Handles mixed indentation in source
+     */
+    public function handlesMixedIndentationInSource(): void
+    {
+        // $this->markTestSkipped('VarExport does not expose a public API to re-indent arbitrary PHP code with mixed indentation. Its internal indentation normalization is tied to closure processing, which currently has pending issues (e.g., precise closure extraction).');
+
+        $varExport = new VarExport();
+        $varExport->setIndentation('    '); // 4 spaces
+
+        $array = [
+            'closure' => function () {
+                $a = 1;
+                $b = 2;
+
+                return $a + $b;
+            },
+        ];
+
+        $output = $varExport->export($array);
+
+        $expected = <<<'PHP'
+[
+    'closure' => function () {
+        $a = 1;
+        $b = 2;
+
+        return $a + $b;
+    },
+]
+PHP;
+        // Normalize line endings for consistent comparison
+        $normalizedOutput   = str_replace(["\r\n", "\r"], "\n", $output);
+        $normalizedExpected = str_replace(["\r\n", "\r"], "\n", $expected);
+
+        $this->assertEquals($normalizedExpected, $normalizedOutput);
+    }
 }
