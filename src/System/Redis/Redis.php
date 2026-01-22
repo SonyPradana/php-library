@@ -29,6 +29,62 @@ class Redis implements RedisInterface
     /**
      * {@inheritdoc}
      */
+    public function get(string $key)
+    {
+        return $this->redis->get($key);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function set(string $key, $value, $timeout = null)
+    {
+        return $this->redis->set($key, $value, $timeout);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function del($keys)
+    {
+        return $this->redis->del($keys);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function exists(string $key)
+    {
+        return $this->redis->exists($key);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function incr(string $key)
+    {
+        return $this->redis->incr($key);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function decr(string $key)
+    {
+        return $this->redis->decr($key);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function keys(string $pattern)
+    {
+        return $this->redis->keys($pattern);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function command(string $command, array $arguments = [])
     {
         return $this->redis->rawCommand($command, ...$arguments);
