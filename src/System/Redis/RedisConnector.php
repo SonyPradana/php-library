@@ -25,7 +25,7 @@ class RedisConnector
         $redis = new PhpRedis();
 
         $redis->connect(
-            $config['host'] ?? '12-7.0.0.1',
+            $config['host'] ?? '127.0.0.1',
             $config['port'] ?? 6379,
             $config['timeout'] ?? 0.0,
             $config['reserved'] ?? null,
