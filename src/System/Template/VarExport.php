@@ -17,8 +17,7 @@ final class VarExport
     private bool $alignArray = false;
     private ?StringCompiler $string_compiler;
     /** @var string[] */
-    private array $namespaces = [];
-
+    private array $namespaces            = [];
     private bool $fallbackToObjectExport = true;
 
     public function __construct()
@@ -26,6 +25,10 @@ final class VarExport
         $this->string_compiler = new StringCompiler();
     }
 
+    /**
+     * @param bool $enable True to enable fallback to object export,
+     *                     false will return null for objects without __set_state method
+     */
     public function setFallbackToObjectExport(bool $enable): self
     {
         $this->fallbackToObjectExport = $enable;
@@ -151,7 +154,20 @@ final class VarExport
         }
 
         foreach ($array as $key => $value) {
-            $this->writeArrayElement($key, $value, $keyLength);
+            $this->addIndentation();
+            $this->writeArrayKey($key);
+
+            // count key aligment
+            if (true === $this->alignArray) {
+                $buffer = $this->getLastBuffer() ?? $key;
+                $lenght = strlen((string) $buffer);
+                $this->addToBuffer(str_repeat(' ', max(0, ($keyLength - $lenght) + $this->indentLevel)));
+            }
+
+            $this->addToBuffer(' => ');
+            $this->compileValue($value);
+            $this->addToBuffer(',');
+            $this->addLine();
         }
 
         $this->closeArray();
@@ -182,6 +198,9 @@ final class VarExport
         $this->wrapClosure($compile, $capturedVars);
     }
 
+    /**
+     * @internal
+     */
     private function compileObject(object $object): void
     {
         if (method_exists($object, '__set_state')) {
@@ -192,7 +211,11 @@ final class VarExport
 
         if ($this->fallbackToObjectExport) {
             $this->compileFallback($object);
+
+            return;
         }
+
+        $this->addToBuffer('null');
     }
 
     /**
@@ -272,28 +295,7 @@ final class VarExport
         $this->addLine();
         $this->indentLevel++;
 
-        // Calculate max key length (unquoted) for alignment
-        $keyLength = 0;
-        foreach (array_keys($properties) as $key) {
-            $keyLength = max($keyLength, strlen((string) $key));
-        }
-
-        foreach ($properties as $key => $value) {
-            $this->addIndentation();
-            $this->addToBuffer(' ');  // Add one extra space for object properties
-            $this->writeArrayKey($key);
-
-            // Add spacing for alignment (based on unquoted key length)
-            $unquotedKeyLength = strlen((string) $key);
-            if ($keyLength > $unquotedKeyLength) {
-                $this->addToBuffer(str_repeat(' ', $keyLength - $unquotedKeyLength));
-            }
-
-            $this->addToBuffer(' => ');
-            $this->compileValue($value);
-            $this->addToBuffer(',');
-            $this->addLine();
-        }
+        $this->writeArrayElements($properties, true);
 
         $this->indentLevel--;
         $this->addIndentation();
@@ -374,6 +376,38 @@ final class VarExport
         $this->addToBuffer(']');
     }
 
+    /**
+     * @param array<array-key, mixed> $elements
+     */
+    private function writeArrayElements(array $elements, bool $addExtraSpace = false): void
+    {
+        // Calculate max key length (unquoted) for alignment
+        $keyLength = 0;
+        foreach (array_keys($elements) as $key) {
+            $keyLength = max($keyLength, strlen((string) $key));
+        }
+
+        foreach ($elements as $key => $value) {
+            $this->addIndentation();
+            if ($addExtraSpace) {
+                $this->addToBuffer(' ');  // Add one extra space for object properties
+            }
+
+            $this->writeArrayKey($key);
+
+            // Add spacing for alignment (based on unquoted key length)
+            $unquotedKeyLength = strlen((string) $key);
+            if ($keyLength > $unquotedKeyLength) {
+                $this->addToBuffer(str_repeat(' ', $keyLength - $unquotedKeyLength));
+            }
+
+            $this->addToBuffer(' => ');
+            $this->compileValue($value);
+            $this->addToBuffer(',');
+            $this->addLine();
+        }
+    }
+
     private function writeArrayKey(int|string $key): void
     {
         if (is_string($key)) {
@@ -381,24 +415,6 @@ final class VarExport
         } else {
             $this->addToBuffer((string) $key);
         }
-    }
-
-    private function writeArrayElement(int|string $key, mixed $value, int $keyLength): void
-    {
-        $this->addIndentation();
-        $this->writeArrayKey($key);
-
-        // count key aligment
-        if (true === $this->alignArray) {
-            $buffer = $this->getLastBuffer() ?? $key;
-            $lenght = strlen((string) $buffer);
-            $this->addToBuffer(str_repeat(' ', max(0, ($keyLength - $lenght) + $this->indentLevel)));
-        }
-
-        $this->addToBuffer(' => ');
-        $this->compileValue($value);
-        $this->addToBuffer(',');
-        $this->addLine();
     }
 
     /**

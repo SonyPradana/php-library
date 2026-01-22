@@ -43,5 +43,4 @@ class BufferManagementTest extends TestCase
 
         $this->assertEquals('[]', $result);
     }
-
 }
