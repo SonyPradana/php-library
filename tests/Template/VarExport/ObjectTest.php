@@ -50,8 +50,8 @@ PHP;
         $expected = <<<'PHP'
 [
     'obj' => (object) [
-         'name' => 'test',
-         'age'  => 99,
+        'name' => 'test',
+        'age'  => 99,
     ],
 ]
 PHP;
