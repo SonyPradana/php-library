@@ -19,9 +19,18 @@ final class VarExport
     /** @var string[] */
     private array $namespaces = [];
 
+    private bool $fallbackToObjectExport = true;
+
     public function __construct()
     {
         $this->string_compiler = new StringCompiler();
+    }
+
+    public function setFallbackToObjectExport(bool $enable): self
+    {
+        $this->fallbackToObjectExport = $enable;
+
+        return $this;
     }
 
     public function setIndentation(string $indent): self
@@ -175,9 +184,15 @@ final class VarExport
 
     private function compileObject(object $object): void
     {
-        match (true) {
-            method_exists($object, '__set_state') => $this->compileSetState($object),
-        };
+        if (method_exists($object, '__set_state')) {
+            $this->compileSetState($object);
+
+            return;
+        }
+
+        if ($this->fallbackToObjectExport) {
+            $this->compileFallback($object);
+        }
     }
 
     /**
@@ -231,7 +246,58 @@ final class VarExport
      */
     private function compileFallback(mixed $value): void
     {
+        if (is_object($value)) {
+            $this->compileFallbackObject($value);
+
+            return;
+        }
+
         $this->addToBuffer(var_export($value, true));
+    }
+
+    /**
+     * @internal
+     */
+    private function compileFallbackObject(object $object): void
+    {
+        $reflection = new \ReflectionObject($object);
+        $properties = [];
+
+        foreach ($reflection->getProperties() as $property) {
+            $property->setAccessible(true);
+            $properties[$property->getName()] = $property->getValue($object);
+        }
+
+        $this->addToBuffer('(object) [');
+        $this->addLine();
+        $this->indentLevel++;
+
+        // Calculate max key length (unquoted) for alignment
+        $keyLength = 0;
+        foreach (array_keys($properties) as $key) {
+            $keyLength = max($keyLength, strlen((string) $key));
+        }
+
+        foreach ($properties as $key => $value) {
+            $this->addIndentation();
+            $this->addToBuffer(' ');  // Add one extra space for object properties
+            $this->writeArrayKey($key);
+
+            // Add spacing for alignment (based on unquoted key length)
+            $unquotedKeyLength = strlen((string) $key);
+            if ($keyLength > $unquotedKeyLength) {
+                $this->addToBuffer(str_repeat(' ', $keyLength - $unquotedKeyLength));
+            }
+
+            $this->addToBuffer(' => ');
+            $this->compileValue($value);
+            $this->addToBuffer(',');
+            $this->addLine();
+        }
+
+        $this->indentLevel--;
+        $this->addIndentation();
+        $this->addToBuffer(']');
     }
 
     /**
