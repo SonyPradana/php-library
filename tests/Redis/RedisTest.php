@@ -37,6 +37,14 @@ class RedisTest extends TestCase
         $this->assertEquals('test_value', $this->redis->get('test_key'));
     }
 
+    public function testSetWithExpiry()
+    {
+        $this->assertTrue($this->redis->set('exp_key', 'exp_value', 1)); // Set with 1-second expiry
+        $this->assertEquals('exp_value', $this->redis->get('exp_key')); // Should be present immediately
+        sleep(2); // Wait for key to expire
+        $this->assertFalse($this->redis->get('exp_key')); // Should be expired
+    }
+
     public function testCanUseCommand()
     {
         $this->assertEquals('+PONG', $this->redis->command('ping'));
@@ -91,6 +99,28 @@ class RedisTest extends TestCase
     {
         $this->redis->hSet('hash', 'field', 'value');
         $this->assertEquals('value', $this->redis->hGet('hash', 'field'));
+    }
+
+    public function testHashOperations()
+    {
+        $this->redis->hSet('myhash', 'field1', 'value1');
+        $this->redis->hSet('myhash', 'field2', 'value2');
+        $this->assertEquals(2, $this->redis->hLen('myhash'));
+        $this->assertEquals(1, $this->redis->hDel('myhash', 'field1')); // Returns number of fields deleted
+        $this->assertEquals(1, $this->redis->hLen('myhash'));
+        $this->assertEquals('value2', $this->redis->hGet('myhash', 'field2'));
+        $this->assertFalse($this->redis->hGet('myhash', 'field1'));
+    }
+
+    public function testListOperations()
+    {
+        $this->redis->lPush('mylist', 'item1');
+        $this->redis->lPush('mylist', 'item2');
+        $this->assertEquals(2, $this->redis->lLen('mylist'));
+        $this->assertEquals('item1', $this->redis->rPop('mylist'));
+        $this->assertEquals('item2', $this->redis->rPop('mylist'));
+        $this->assertFalse($this->redis->rPop('mylist')); // List should be empty
+        $this->assertEquals(0, $this->redis->lLen('mylist'));
     }
 
     public function testConnectWithDatabase()
