@@ -7,9 +7,14 @@ namespace System\Text\Redis;
 use PHPUnit\Framework\TestCase;
 use System\Redis\Redis;
 
+/**
+ * @coversDefaultClass \System\Redis\Redis
+ */
 class RedisTest extends TestCase
 {
     /**
+     * The Redis connection.
+     *
      * @var Redis
      */
     private $redis;
@@ -18,8 +23,8 @@ class RedisTest extends TestCase
     {
         parent::setUp();
         $this->redis = new Redis([
-            'host' => '127.0.0.1',
-            'port' => 6379,
+            'host'     => '127.0.0.1',
+            'port'     => 6379,
             'database' => 1,
         ]);
         $this->redis->flushdb();
@@ -29,63 +34,129 @@ class RedisTest extends TestCase
     {
         parent::tearDown();
         $this->redis->flushdb();
+        $this->redis = null;
     }
 
-    public function testCanSetAndGet()
+    /**
+     * @test
+     *
+     * @covers ::set
+     * @covers ::get
+     *
+     * @testdox Can set and get a value
+     */
+    public function itCanSetAndGetValues()
     {
         $this->assertTrue($this->redis->set('test_key', 'test_value'));
         $this->assertEquals('test_value', $this->redis->get('test_key'));
     }
 
-    public function testSetWithExpiry()
+    /**
+     * @test
+     *
+     * @covers ::set
+     * @covers ::get
+     *
+     * @testdox Can set a key with an expiry
+     */
+    public function itCanSetAKeyWithAnExpiry()
     {
-        $this->assertTrue($this->redis->set('exp_key', 'exp_value', 1)); // Set with 1-second expiry
-        $this->assertEquals('exp_value', $this->redis->get('exp_key')); // Should be present immediately
-        sleep(2); // Wait for key to expire
-        $this->assertFalse($this->redis->get('exp_key')); // Should be expired
+        $this->assertTrue($this->redis->set('exp_key', 'exp_value', 1));
+        $this->assertEquals('exp_value', $this->redis->get('exp_key'));
+        sleep(2);
+        $this->assertFalse($this->redis->get('exp_key'));
     }
 
-    public function testCanUseCommand()
+    /**
+     * @test
+     *
+     * @covers ::command
+     *
+     * @testdox Can run a raw command
+     */
+    public function itCanRunARawCommand()
     {
         $this->assertEquals('+PONG', $this->redis->command('ping'));
     }
 
-    public function testCallNotExistCommand()
+    /**
+     * @test
+     *
+     * @covers ::__call
+     *
+     * @testdox Throws an exception for a non-existent command
+     */
+    public function itThrowsAnExceptionForNonExistentCommand()
     {
         $this->expectException(\RedisException::class);
 
         $this->redis->notExistCommand();
     }
 
-    public function testCanDelete()
+    /**
+     * @test
+     *
+     * @covers ::del
+     *
+     * @testdox Can delete keys
+     */
+    public function itCanDeleteKeys()
     {
         $this->redis->set('test_key', 'test_value');
         $this->assertEquals(1, $this->redis->del('test_key'));
         $this->assertFalse($this->redis->get('test_key'));
     }
 
-    public function testExists()
+    /**
+     * @test
+     *
+     * @covers ::exists
+     *
+     * @testdox Can check if a key exists
+     */
+    public function itCanCheckIfAKeyExists()
     {
         $this->redis->set('test_key', 'test_value');
         $this->assertEquals(1, $this->redis->exists('test_key'));
         $this->assertEquals(0, $this->redis->exists('non_existent_key'));
     }
 
-    public function testIncr()
+    /**
+     * @test
+     *
+     * @covers ::incr
+     *
+     * @testdox Can increment a value
+     */
+    public function itCanIncrementAValue()
     {
         $this->redis->set('counter', '1');
         $this->assertEquals(2, $this->redis->incr('counter'));
         $this->assertEquals('2', $this->redis->get('counter'));
     }
 
-    public function testDecr()
+    /**
+     * @test
+     *
+     * @covers ::decr
+     *
+     * @testdox Can decrement a value
+     */
+    public function itCanDecrementAValue()
     {
         $this->redis->set('counter', '2');
         $this->assertEquals(1, $this->redis->decr('counter'));
         $this->assertEquals('1', $this->redis->get('counter'));
     }
 
-    public function testKeys()
+    /**
+     * @test
+     *
+     * @covers ::keys
+     *
+     * @testdox Can get keys matching a pattern
+     */
+    public function itCanGetKeysMatchingAPattern()
     {
         $this->redis->set('key1', 'value1');
         $this->redis->set('key2', 'value2');
@@ -95,45 +166,74 @@ class RedisTest extends TestCase
         $this->assertContains('key2', $keys);
     }
 
-    public function testCall()
+    /**
+     * @test
+     *
+     * @covers ::__call
+     *
+     * @testdox Can call redis commands magically
+     */
+    public function itCanCallRedisCommandsMagically()
     {
         $this->redis->hSet('hash', 'field', 'value');
         $this->assertEquals('value', $this->redis->hGet('hash', 'field'));
     }
 
-    public function testHashOperations()
+    /**
+     * @test
+     *
+     * @covers ::__call
+     *
+     * @testdox Can perform hash operations
+     */
+    public function itCanPerformHashOperations()
     {
         $this->redis->hSet('myhash', 'field1', 'value1');
         $this->redis->hSet('myhash', 'field2', 'value2');
         $this->assertEquals(2, $this->redis->hLen('myhash'));
-        $this->assertEquals(1, $this->redis->hDel('myhash', 'field1')); // Returns number of fields deleted
+        $this->assertEquals(1, $this->redis->hDel('myhash', 'field1'));
         $this->assertEquals(1, $this->redis->hLen('myhash'));
         $this->assertEquals('value2', $this->redis->hGet('myhash', 'field2'));
         $this->assertFalse($this->redis->hGet('myhash', 'field1'));
     }
 
-    public function testListOperations()
+    /**
+     * @test
+     *
+     * @covers ::__call
+     *
+     * @testdox Can perform list operations
+     */
+    public function itCanPerformListOperations()
     {
         $this->redis->lPush('mylist', 'item1');
         $this->redis->lPush('mylist', 'item2');
         $this->assertEquals(2, $this->redis->lLen('mylist'));
         $this->assertEquals('item1', $this->redis->rPop('mylist'));
         $this->assertEquals('item2', $this->redis->rPop('mylist'));
-        $this->assertFalse($this->redis->rPop('mylist')); // List should be empty
+        $this->assertFalse($this->redis->rPop('mylist'));
         $this->assertEquals(0, $this->redis->lLen('mylist'));
     }
 
-    public function testConnectWithDatabase()
+    /**
+     * @test
+     *
+     * @covers ::__construct
+     * @covers \System\Redis\RedisConnector::connect
+     *
+     * @testdox Can connect to a specific database
+     */
+    public function itCanConnectToASpecificDatabase()
     {
         $redis = new Redis([
-            'host' => '127.0.0.1',
-            'port' => 6379,
-            'database' => 0, // Connect to database 0
+            'host'     => '127.0.0.1',
+            'port'     => 6379,
+            'database' => 0,
         ]);
-        $redis->flushdb(); // Clear database 0
+        $redis->flushdb();
 
-        $this->redis->set('key_db1', 'value_db1'); // Still in database 1
-        $redis->set('key_db0', 'value_db0'); // In database 0
+        $this->redis->set('key_db1', 'value_db1');
+        $redis->set('key_db0', 'value_db0');
 
         $this->assertEquals('value_db1', $this->redis->get('key_db1'));
         $this->assertFalse($this->redis->get('key_db0'));
@@ -141,6 +241,6 @@ class RedisTest extends TestCase
         $this->assertEquals('value_db0', $redis->get('key_db0'));
         $this->assertFalse($redis->get('key_db1'));
 
-        $redis->flushdb(); // Clear database 0
+        $redis->flushdb();
     }
 }
