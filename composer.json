@@ -78,7 +78,7 @@
         "test:refacto": "rector --dry-run",
         "test:lint": "php-cs-fixer fix -v --dry-run --diff",
         "test:types": "phpstan analyse --ansi --memory-limit=-1 --debug",
-        "test:unit": "phpunit --testdox --exclude-group database,not-for-mysql5.7",
+        "test:unit": "phpunit --testdox --exclude-group database,not-for-mysql5.7,redis",
         "test:release": "php ./bin/split-repo.php validate",
         "test:facade": "php ./bin/facade.php facade:update --from-file /resources/facades.php --debug --dry-run",
         "test:facade:update": "php ./bin/facade.php facade:update --from-file /resources/facades.php --debug",
@@ -94,7 +94,7 @@
             "rector --dry-run",
             "php-cs-fixer fix -v --dry-run",
             "phpstan analyse --ansi --memory-limit=-1",
-            "phpunit --exclude-group database,not-for-mysql5.7",
+            "phpunit --exclude-group database,not-for-mysql5.7,redis",
             "php ./bin/split-repo.php validate",
             "php ./bin/facade.php facade:update --from-file /resources/facades.php --dry-run"
         ]

@@ -9,6 +9,8 @@ use System\Redis\Redis;
 
 /**
  * @coversDefaultClass \System\Redis\Redis
+ *
+ * @group redis
  */
 class RedisTest extends TestCase
 {
