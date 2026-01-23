@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace System\Redis;
 
 use Redis as PhpRedis;
-use RuntimeException;
 
 class RedisConnector
 {
@@ -13,13 +12,11 @@ class RedisConnector
      * Create a new Redis connection.
      *
      * @param array<string, mixed> $config
-     *
-     * @return PhpRedis
      */
     public function connect(array $config): PhpRedis
     {
         if (!class_exists('Redis')) {
-            throw new RuntimeException('Redis extension is not installed.');
+            throw new \RuntimeException('Redis extension is not installed.');
         }
 
         $redis = new PhpRedis();

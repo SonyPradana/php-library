@@ -9,8 +9,6 @@ interface RedisInterface
     /**
      * Get the value of a key.
      *
-     * @param string $key
-     *
      * @return mixed
      */
     public function get(string $key);
@@ -18,9 +16,8 @@ interface RedisInterface
     /**
      * Set the string value of a key.
      *
-     * @param string $key
-     * @param mixed  $value
-     * @param mixed  $timeout
+     * @param mixed $value
+     * @param mixed $timeout
      *
      * @return bool
      */
@@ -38,16 +35,12 @@ interface RedisInterface
     /**
      * Determine if a key exists.
      *
-     * @param string $key
-     *
      * @return int
      */
     public function exists(string $key);
 
     /**
      * Increment the integer value of a key by one.
-     *
-     * @param string $key
      *
      * @return int
      */
@@ -56,16 +49,12 @@ interface RedisInterface
     /**
      * Decrement the integer value of a key by one.
      *
-     * @param string $key
-     *
      * @return int
      */
     public function decr(string $key);
 
     /**
      * Find all keys matching the given pattern.
-     *
-     * @param string $pattern
      *
      * @return array<int, string>
      */
@@ -74,8 +63,7 @@ interface RedisInterface
     /**
      * Runs a raw Redis command.
      *
-     * @param string $command
-     * @param array<int, mixed>  $arguments
+     * @param array<int, mixed> $arguments
      *
      * @return mixed
      */
@@ -84,8 +72,7 @@ interface RedisInterface
     /**
      * Dynamically handle calls to the class.
      *
-     * @param string $method
-     * @param array<int, mixed>  $arguments
+     * @param array<int, mixed> $arguments
      *
      * @return mixed
      */

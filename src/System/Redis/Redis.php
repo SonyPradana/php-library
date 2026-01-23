@@ -22,7 +22,7 @@ class Redis implements RedisInterface
      */
     public function __construct(array $config)
     {
-        $connector = new RedisConnector();
+        $connector   = new RedisConnector();
         $this->redis = $connector->connect($config);
     }
 
