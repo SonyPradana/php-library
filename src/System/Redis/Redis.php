@@ -95,10 +95,6 @@ class Redis implements RedisInterface
      */
     public function __call(string $method, array $arguments)
     {
-        try {
-            return $this->redis->{$method}(...$arguments);
-        } catch (\Throwable $th) {
-            throw new \RedisException($th->getMessage(), (int) $th->getCode(), $th);
-        }
+        return $this->redis->{$method}(...$arguments);
     }
 }

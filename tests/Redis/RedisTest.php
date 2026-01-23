@@ -84,20 +84,6 @@ class RedisTest extends TestCase
     /**
      * @test
      *
-     * @covers ::__call
-     *
-     * @testdox Throws an exception for a non-existent command
-     */
-    public function itThrowsAnExceptionForNonExistentCommand()
-    {
-        $this->expectException(\RedisException::class);
-
-        $this->redis->notExistCommand();
-    }
-
-    /**
-     * @test
-     *
      * @covers ::del
      *
      * @testdox Can delete keys
