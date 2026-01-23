@@ -26,6 +26,9 @@
         "phpstan/phpstan": "^1.12",
         "rector/rector": "^1.2"
     },
+    "suggest": {
+        "ext-redis": "Required to use the phpredis connector."
+    },
     "autoload": {
         "psr-4": {
             "System\\": "src/System/",
