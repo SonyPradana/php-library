@@ -15,6 +15,7 @@ return [
         'sonypradana/http'        => '/src/System/Http/',
         'sonypradana/macroable'   => '/src/System/Macroable/',
         'sonypradana/ratelimiter' => '/src/System/RateLimiter/',
+        'sonypradana/redis'       => '/src/System/Redis/',
         'sonypradana/router'      => '/src/System/Router/',
         'sonypradana/security'    => '/src/System/Security/',
         'sonypradana/support'     => '/src/System/Support/',
