@@ -85,6 +85,30 @@ class Redis implements RedisInterface
     /**
      * {@inheritdoc}
      */
+    public function client(): object
+    {
+        return $this->redis;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function disconnect(): void
+    {
+        // not yet
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName(): ?string
+    {
+        return 'PHPRedis';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function command(string $command, array $arguments = [])
     {
         return $this->redis->rawCommand($command, ...$arguments);

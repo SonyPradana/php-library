@@ -61,6 +61,21 @@ interface RedisInterface
     public function keys(string $pattern);
 
     /**
+     * Get uderlying redis client .
+     */
+    public function client(): object;
+
+    /**
+     * Disconnect from Redis Server.
+     */
+    public function disconnect(): void;
+
+    /**
+     * Get connection name.
+     */
+    public function getName(): ?string;
+
+    /**
      * Runs a raw Redis command.
      *
      * @param array<int, mixed> $arguments
