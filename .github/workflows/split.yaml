@@ -50,6 +50,9 @@ jobs:
                         local_path: 'RateLimiter'
                         split_repository: 'ratelimiter'
                     -
+                        local_path: 'Redis'
+                        split_repository: 'redis'
+                    -
                         local_path: 'Router'
                         split_repository: 'router'
                     -
