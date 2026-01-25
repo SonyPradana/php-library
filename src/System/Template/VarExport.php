@@ -17,23 +17,11 @@ final class VarExport
     private bool $alignArray = false;
     private ?StringCompiler $string_compiler;
     /** @var string[] */
-    private array $namespaces            = [];
-    private bool $fallbackToObjectExport = true;
+    private array $namespaces = [];
 
     public function __construct()
     {
         $this->string_compiler = new StringCompiler();
-    }
-
-    /**
-     * @param bool $enable True to enable fallback to object export,
-     *                     false will return null for objects without __set_state method
-     */
-    public function setFallbackToObjectExport(bool $enable): self
-    {
-        $this->fallbackToObjectExport = $enable;
-
-        return $this;
     }
 
     public function setIndentation(string $indent): self
@@ -188,13 +176,7 @@ final class VarExport
             return;
         }
 
-        if ($this->fallbackToObjectExport) {
-            $this->compileFallback($object);
-
-            return;
-        }
-
-        $this->addToBuffer('null');
+        $this->compileFallback($object);
     }
 
     /**
