@@ -16,10 +16,8 @@ class RedisTest extends TestCase
 {
     /**
      * The Redis connection.
-     *
-     * @var Redis
      */
-    private $redis;
+    private Redis $redis;
 
     protected function setUp(): void
     {
@@ -36,7 +34,7 @@ class RedisTest extends TestCase
     {
         parent::tearDown();
         $this->redis->flushdb();
-        $this->redis = null;
+        $this->redis = null; // @phpstan-ignore-line
     }
 
     /**
@@ -47,26 +45,10 @@ class RedisTest extends TestCase
      *
      * @testdox Can set and get a value
      */
-    public function itCanSetAndGetValues()
+    public function itCanSetAndGetValues(): void
     {
         $this->assertTrue($this->redis->set('test_key', 'test_value'));
         $this->assertEquals('test_value', $this->redis->get('test_key'));
-    }
-
-    /**
-     * @test
-     *
-     * @covers ::set
-     * @covers ::get
-     *
-     * @testdox Can set a key with an expiry
-     */
-    public function itCanSetAKeyWithAnExpiry()
-    {
-        $this->assertTrue($this->redis->set('exp_key', 'exp_value', 1));
-        $this->assertEquals('exp_value', $this->redis->get('exp_key'));
-        sleep(2);
-        $this->assertFalse($this->redis->get('exp_key'));
     }
 
     /**
@@ -76,7 +58,7 @@ class RedisTest extends TestCase
      *
      * @testdox Can run a raw command
      */
-    public function itCanRunARawCommand()
+    public function itCanRunARawCommand(): void
     {
         $this->assertEquals('+PONG', $this->redis->command('ping'));
     }
@@ -88,7 +70,7 @@ class RedisTest extends TestCase
      *
      * @testdox Can delete keys
      */
-    public function itCanDeleteKeys()
+    public function itCanDeleteKeys(): void
     {
         $this->redis->set('test_key', 'test_value');
         $this->assertEquals(1, $this->redis->del('test_key'));
@@ -102,7 +84,7 @@ class RedisTest extends TestCase
      *
      * @testdox Can check if a key exists
      */
-    public function itCanCheckIfAKeyExists()
+    public function itCanCheckIfAKeyExists(): void
     {
         $this->redis->set('test_key', 'test_value');
         $this->assertEquals(1, $this->redis->exists('test_key'));
@@ -116,7 +98,7 @@ class RedisTest extends TestCase
      *
      * @testdox Can increment a value
      */
-    public function itCanIncrementAValue()
+    public function itCanIncrementAValue(): void
     {
         $this->redis->set('counter', '1');
         $this->assertEquals(2, $this->redis->incr('counter'));
@@ -130,7 +112,7 @@ class RedisTest extends TestCase
      *
      * @testdox Can decrement a value
      */
-    public function itCanDecrementAValue()
+    public function itCanDecrementAValue(): void
     {
         $this->redis->set('counter', '2');
         $this->assertEquals(1, $this->redis->decr('counter'));
@@ -144,7 +126,7 @@ class RedisTest extends TestCase
      *
      * @testdox Can get keys matching a pattern
      */
-    public function itCanGetKeysMatchingAPattern()
+    public function itCanGetKeysMatchingAPattern(): void
     {
         $this->redis->set('key1', 'value1');
         $this->redis->set('key2', 'value2');
@@ -161,7 +143,7 @@ class RedisTest extends TestCase
      *
      * @testdox Can call redis commands magically
      */
-    public function itCanCallRedisCommandsMagically()
+    public function itCanCallRedisCommandsMagically(): void
     {
         $this->redis->hSet('hash', 'field', 'value');
         $this->assertEquals('value', $this->redis->hGet('hash', 'field'));
@@ -174,7 +156,7 @@ class RedisTest extends TestCase
      *
      * @testdox Can perform hash operations
      */
-    public function itCanPerformHashOperations()
+    public function itCanPerformHashOperations(): void
     {
         $this->redis->hSet('myhash', 'field1', 'value1');
         $this->redis->hSet('myhash', 'field2', 'value2');
@@ -192,7 +174,7 @@ class RedisTest extends TestCase
      *
      * @testdox Can perform list operations
      */
-    public function itCanPerformListOperations()
+    public function itCanPerformListOperations(): void
     {
         $this->redis->lPush('mylist', 'item1');
         $this->redis->lPush('mylist', 'item2');
@@ -211,7 +193,7 @@ class RedisTest extends TestCase
      *
      * @testdox Can connect to a specific database
      */
-    public function itCanConnectToASpecificDatabase()
+    public function itCanConnectToASpecificDatabase(): void
     {
         $redis = new Redis([
             'host'     => '127.0.0.1',

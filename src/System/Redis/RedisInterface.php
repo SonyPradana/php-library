@@ -7,61 +7,46 @@ namespace System\Redis;
 interface RedisInterface
 {
     /**
-     * Get the value of a key.
-     *
-     * @return mixed
+     * Get value from redis.
      */
-    public function get(string $key);
+    public function get(string $key): mixed;
 
     /**
-     * Set the string value of a key.
-     *
-     * @param mixed $value
-     * @param mixed $timeout
-     *
-     * @return bool
+     * Set value to redis.
      */
-    public function set(string $key, $value, $timeout = null);
+    public function set(string $key, mixed $value, ?int $timeout = null): bool;
 
     /**
-     * Delete a key.
+     * Delete from redis.
      *
-     * @param string|string[] $keys
-     *
-     * @return int
+     * @param list<string>|string $keys
      */
-    public function del($keys);
+    public function del(string|array $keys): int;
 
     /**
-     * Determine if a key exists.
-     *
-     * @return int
+     * Check key exists.
      */
-    public function exists(string $key);
+    public function exists(string $key): bool;
 
     /**
-     * Increment the integer value of a key by one.
-     *
-     * @return int
+     * Increment value.
      */
-    public function incr(string $key);
+    public function incr(string $key): int|false;
 
     /**
-     * Decrement the integer value of a key by one.
-     *
-     * @return int
+     * Decrement value.
      */
-    public function decr(string $key);
+    public function decr(string $key): int|false;
 
     /**
-     * Find all keys matching the given pattern.
+     * Get redis keys.
      *
-     * @return array<int, string>
+     * @return list<string>
      */
-    public function keys(string $pattern);
+    public function keys(string $pattern): array;
 
     /**
-     * Get uderlying redis client .
+     * Get redis client connection.
      */
     public function client(): object;
 
@@ -71,20 +56,16 @@ interface RedisInterface
     public function getName(): ?string;
 
     /**
-     * Runs a raw Redis command.
+     * Call redis raw command.
      *
-     * @param array<int, mixed> $arguments
-     *
-     * @return mixed
+     * @param list<mixed> $arguments
      */
-    public function command(string $command, array $arguments = []);
+    public function command(string $command, array $arguments = []): mixed;
 
     /**
-     * Dynamically handle calls to the class.
+     * Call redis raw command from magic method.
      *
-     * @param array<int, mixed> $arguments
-     *
-     * @return mixed
+     * @param list<mixed> $arguments
      */
-    public function __call(string $method, array $arguments);
+    public function __call(string $method, array $arguments): mixed;
 }

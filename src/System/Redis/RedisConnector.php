@@ -4,38 +4,38 @@ declare(strict_types=1);
 
 namespace System\Redis;
 
-use Redis as PhpRedis;
-
 class RedisConnector
 {
     /**
-     * Create a new Redis connection.
-     *
-     * @param array<string, mixed> $config
+     * @param array{
+     *     host?: string,
+     *     port?: int,
+     *     timeout?: int,
+     *     password?: string,
+     *     database?: int,
+     *     unix_socket?: string,
+     * } $config
      */
-    public function connect(array $config): PhpRedis
+    public function connect(array $config): \Redis
     {
-        if (!class_exists('Redis')) {
-            throw new \RuntimeException('Redis extension is not installed.');
+        $redis = new \Redis();
+
+        if (isset($config['unix_socket'])) {
+            $redis->connect((string) $config['unix_socket']);
+        } else {
+            $redis->connect(
+                (string) ($config['host'] ?? '127.0.0.1'),
+                (int) ($config['port'] ?? 6379),
+                (int) ($config['timeout'] ?? 0)
+            );
         }
 
-        $redis = new PhpRedis();
-
-        $redis->connect(
-            $config['host'] ?? '127.0.0.1',
-            $config['port'] ?? 6379,
-            $config['timeout'] ?? 0.0,
-            $config['reserved'] ?? null,
-            $config['retry_interval'] ?? 0,
-            $config['read_timeout'] ?? 0.0
-        );
-
         if (isset($config['password'])) {
-            $redis->auth($config['password']);
+            $redis->auth((string) $config['password']);
         }
 
         if (isset($config['database'])) {
-            $redis->select($config['database']);
+            $redis->select((int) $config['database']);
         }
 
         return $redis;

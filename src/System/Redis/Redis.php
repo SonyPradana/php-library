@@ -6,6 +6,16 @@ namespace System\Redis;
 
 use Redis as PhpRedis;
 
+/**
+ * @method bool         flushdb()
+ * @method int|false    hSet(string $key, string $hashKey, string $value)
+ * @method string|false hGet(string $key, string $hashKey)
+ * @method int|false    hLen(string $key)
+ * @method int|false    hDel(string $key, string ...$hashKeys)
+ * @method int|false    lPush(string $key, mixed ...$values)
+ * @method mixed        rPop(string $key)
+ * @method int|false    lLen(string $key)
+ */
 class Redis implements RedisInterface
 {
     /**
@@ -29,7 +39,7 @@ class Redis implements RedisInterface
     /**
      * {@inheritdoc}
      */
-    public function get(string $key)
+    public function get(string $key): mixed
     {
         return $this->redis->get($key);
     }
@@ -37,15 +47,19 @@ class Redis implements RedisInterface
     /**
      * {@inheritdoc}
      */
-    public function set(string $key, $value, $timeout = null)
+    public function set(string $key, mixed $value, ?int $timeout = null): bool
     {
-        return $this->redis->set($key, $value, $timeout);
+        if ($timeout !== null) {
+            return $this->redis->setex($key, $timeout, $value);
+        }
+
+        return $this->redis->set($key, $value);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function del($keys)
+    public function del(string|array $keys): int
     {
         return $this->redis->del($keys);
     }
@@ -53,15 +67,15 @@ class Redis implements RedisInterface
     /**
      * {@inheritdoc}
      */
-    public function exists(string $key)
+    public function exists(string $key): bool
     {
-        return $this->redis->exists($key);
+        return (bool) $this->redis->exists($key);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function incr(string $key)
+    public function incr(string $key): int|false
     {
         return $this->redis->incr($key);
     }
@@ -69,7 +83,7 @@ class Redis implements RedisInterface
     /**
      * {@inheritdoc}
      */
-    public function decr(string $key)
+    public function decr(string $key): int|false
     {
         return $this->redis->decr($key);
     }
@@ -77,7 +91,7 @@ class Redis implements RedisInterface
     /**
      * {@inheritdoc}
      */
-    public function keys(string $pattern)
+    public function keys(string $pattern): array
     {
         return $this->redis->keys($pattern);
     }
@@ -101,16 +115,24 @@ class Redis implements RedisInterface
     /**
      * {@inheritdoc}
      */
-    public function command(string $command, array $arguments = [])
+    public function command(string $command, array $arguments = []): mixed
     {
         return $this->redis->rawCommand($command, ...$arguments);
     }
 
     /**
-     * {@inheritdoc}
+     * Call redis raw command from magic method.
      */
-    public function __call(string $method, array $arguments)
+    public function __call(string $method, array $arguments): mixed
     {
         return $this->redis->{$method}(...$arguments);
+    }
+
+    /**
+     * Flushes all the databases.
+     */
+    public function flushdb(): bool
+    {
+        return $this->redis->flushdb();
     }
 }
