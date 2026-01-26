@@ -66,11 +66,6 @@ interface RedisInterface
     public function client(): object;
 
     /**
-     * Disconnect from Redis Server.
-     */
-    public function disconnect(): void;
-
-    /**
      * Get connection name.
      */
     public function getName(): ?string;

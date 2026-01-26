@@ -93,14 +93,6 @@ class Redis implements RedisInterface
     /**
      * {@inheritdoc}
      */
-    public function disconnect(): void
-    {
-        // not yet
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): ?string
     {
         return 'PHPRedis';
