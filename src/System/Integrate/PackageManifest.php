@@ -36,7 +36,7 @@ final class PackageManifest
      *
      * @return string[]
      */
-    protected function config(string $key): array
+    private function config(string $key): array
     {
         $manifest = $this->getPackageManifest();
         $result   = [];
@@ -60,7 +60,7 @@ final class PackageManifest
      *
      * @return array<string, array<string, array<int, string>>>
      */
-    protected function getPackageManifest(): array
+    private function getPackageManifest(): array
     {
         if ($this->package_manifest) {
             return $this->package_manifest;
