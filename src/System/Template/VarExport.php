@@ -89,7 +89,7 @@ final class VarExport
         $this->addToBuffer('// generated on ' . date('Y-m-d H:i:s'));
         $this->addLine(2);
         $this->addToBuffer('return ');
-        $this->compileValue($data); // compiles and adds to buffer
+        $this->compileValue($data);
         $this->addToBuffer(';');
         $this->addLine();
 
@@ -166,17 +166,69 @@ final class VarExport
     }
 
     /**
+     * Compile an object value.
+     *
+     * - stdClass      → (object) [...]               — natural representation, no class name needed
+     * - custom class  → ClassName::__set_state([...]) — preserves class type, consistent with var_export
+     *
      * @internal
      */
     private function compileObject(object $object): void
     {
-        if (method_exists($object, '__set_state')) {
-            $this->compileSetState($object);
+        if ($object instanceof \stdClass) {
+            $this->compileStdClass($object);
 
             return;
         }
 
-        $this->compileFallback($object);
+        $this->compileSetState($object);
+    }
+
+    /**
+     * Compile a stdClass object using (object) [...] cast syntax.
+     * Uses Reflection to access all properties consistently.
+     *
+     * @internal
+     */
+    private function compileStdClass(object $object): void
+    {
+        $reflection = new \ReflectionObject($object);
+        $properties = [];
+
+        foreach ($reflection->getProperties() as $property) {
+            $property->setAccessible(true);
+            $properties[$property->getName()] = $property->getValue($object);
+        }
+
+        $this->openObject();
+        $this->writeArrayElements(elements: $properties, isArrayMode: false);
+        $this->closeObject();
+    }
+
+    /**
+     * Compile any object using ClassName::__set_state([...]) syntax.
+     * Consistent with PHP's native var_export() behavior.
+     * Includes private and protected properties via Reflection.
+     *
+     * Note: if the class does not implement __set_state(), requiring the
+     * output file will throw an Error at runtime — same as var_export behavior.
+     *
+     * @internal
+     */
+    private function compileSetState(object $object): void
+    {
+        $class      = $object::class;
+        $reflection = new \ReflectionObject($object);
+        $properties = [];
+
+        foreach ($reflection->getProperties() as $property) {
+            $property->setAccessible(true);
+            $properties[$property->getName()] = $property->getValue($object);
+        }
+
+        $this->addToBuffer("{$class}::__set_state(");
+        $this->compileArray($properties);
+        $this->addToBuffer(')');
     }
 
     /**
@@ -230,33 +282,7 @@ final class VarExport
      */
     private function compileFallback(mixed $value): void
     {
-        if (is_object($value)) {
-            $this->compileFallbackObject($value);
-
-            return;
-        }
-
         $this->addToBuffer(var_export($value, true));
-    }
-
-    /**
-     * @internal
-     */
-    private function compileFallbackObject(object $object): void
-    {
-        $reflection = new \ReflectionObject($object);
-        $properties = [];
-
-        foreach ($reflection->getProperties() as $property) {
-            $property->setAccessible(true);
-            $properties[$property->getName()] = $property->getValue($object);
-        }
-
-        $this->openObject();
-
-        $this->writeArrayElements(elements: $properties, isArrayMode: false);
-
-        $this->closeObject();
     }
 
     /**
@@ -280,22 +306,6 @@ final class VarExport
         }
 
         return $uses;
-    }
-
-    private function compileSetState(mixed $object): void
-    {
-        $class      = $object::class;
-        $reflection = new \ReflectionObject($object);
-        $properties = [];
-
-        foreach ($reflection->getProperties() as $property) {
-            $property->setAccessible(true);
-            $properties[$property->getName()] = $property->getValue($object);
-        }
-
-        $this->addToBuffer("{$class}::__set_state(");
-        $this->compileArray($properties);
-        $this->addToBuffer(')');
     }
 
     public function flush(): void
@@ -352,7 +362,6 @@ final class VarExport
      */
     private function writeArrayElements(array $elements, bool $isArrayMode = true): void
     {
-        // Calculate max key length
         $keyLength = 0;
         foreach (array_keys($elements) as $key) {
             $keyLength = max($keyLength, strlen((string) $key));
@@ -363,12 +372,10 @@ final class VarExport
             $this->writeArrayKey($key);
 
             if ($isArrayMode && $this->alignArray) {
-                // Array alignment using compiled key length + indentation
                 $buffer = $this->getLastBuffer() ?? $key;
                 $lenght = strlen((string) $buffer);
                 $this->addToBuffer(str_repeat(' ', max(0, ($keyLength - $lenght) + $this->indentLevel)));
             } elseif (false === $isArrayMode) {
-                // Object alignment using unquoted key length
                 $unquotedKeyLength = strlen((string) $key);
                 if ($keyLength > $unquotedKeyLength) {
                     $this->addToBuffer(str_repeat(' ', $keyLength - $unquotedKeyLength));
