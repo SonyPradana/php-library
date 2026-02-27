@@ -5,81 +5,75 @@ declare(strict_types=1);
 namespace System\Tests\Template\VarExport;
 
 use PHPUnit\Framework\TestCase;
+use System\Template\VarExport;
 
-/**
- * @covers \Savanna\System\Template\VarExport
- *
- * @testdox Skeleton Test for Edge Cases and Error Handling
- */
 class EdgeCasesTest extends TestCase
 {
     /**
      * @test
-     *
-     * @testdox Ensures resource type throws exception
      */
-    public function resourceTypeThrowsException(): void
+    public function itThrowsExceptionOnResourceType()
     {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
+        $resource = fopen('php://memory', 'r');
+        $exporter = new VarExport();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot compile resource type');
+
+        $exporter->export([$resource]);
+        fclose($resource);
     }
 
     /**
      * @test
-     *
-     * @testdox Handles circular reference if detectable
      */
-    public function handlesCircularReference(): void
+    public function itCanHandleDeeplyNestedArray()
     {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
+        $array   = [];
+        $current = &$array;
+        for ($i = 0; $i < 50; $i++) {
+            $current['next'] = [];
+            $current         = &$current['next'];
+        }
+        $current['end'] = true;
+
+        $exporter = new VarExport();
+        $exported = $exporter->export($array);
+
+        $this->assertStringContainsString('\'end\' => true', $exported);
+        $this->assertStringContainsString(str_repeat('    ', 50), $exported);
     }
 
     /**
      * @test
-     *
-     * @testdox Handles extremely large arrays within memory limits
      */
-    public function handlesExtremelyLargeArrays(): void
+    public function itCanHandleBinaryDataInStrings()
     {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
+        $binary   = "\x00\x01\x02\x03\xff";
+        $exporter = new VarExport();
+        $exported = $exporter->export([$binary]);
+
+        $this->assertNotEmpty($exported);
+
+        $file = tempnam(sys_get_temp_dir(), 'test');
+        file_put_contents($file, "<?php return {$exported};");
+        $imported = require $file;
+        unlink($file);
+
+        $this->assertEquals([$binary], $imported);
     }
 
     /**
      * @test
-     *
-     * @testdox Handles extremely deep nesting within recursion limits
      */
-    public function handlesExtremelyDeepNesting(): void
+    public function itCanHandleCircularReference()
     {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
-    }
+        $a       = new \stdClass();
+        $a->self = $a;
 
-    /**
-     * @test
-     *
-     * @testdox Handles invalid UTF-8 strings
-     */
-    public function handlesInvalidUtf8Strings(): void
-    {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
-    }
+        $exporter = new VarExport();
+        $exported = $exporter->export([$a]);
 
-    /**
-     * @test
-     *
-     * @testdox Handles binary data in strings
-     */
-    public function handlesBinaryDataInStrings(): void
-    {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
-    }
-
-    /**
-     * @test
-     *
-     * @testdox Handles special float values (INF, NAN)
-     */
-    public function handlesSpecialFloatValues(): void
-    {
-        $this->markTestSkipped('Skeleton tests for Array Compilation, not yet implemented.');
+        $this->assertStringContainsString('null /* RECURSION */', $exported);
     }
 }

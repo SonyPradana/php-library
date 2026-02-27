@@ -7,6 +7,7 @@ namespace System\Template;
 use System\Template\Parser\Closure\NamespaceResolver;
 use System\Template\VarExport\Compiler\ClosureCompiler;
 use System\Template\VarExport\Compiler\StringCompiler;
+use System\Template\VarExport\Value\Constant;
 
 final class VarExport
 {
@@ -18,6 +19,8 @@ final class VarExport
     private ?StringCompiler $string_compiler;
     /** @var string[] */
     private array $namespaces = [];
+    /** @var array<string, bool> */
+    private array $references = [];
 
     public function __construct()
     {
@@ -107,6 +110,7 @@ final class VarExport
     private function compileValue(mixed $value): void
     {
         match (true) {
+            $value instanceof Constant => $this->addToBuffer($value->getName()),
             is_array($value)           => $this->compileArray($value),
             $value instanceof \Closure => $this->compileClosure($value),
             is_object($value)          => $this->compileObject($value),
@@ -166,22 +170,28 @@ final class VarExport
     }
 
     /**
-     * Compile an object value.
-     *
-     * - stdClass      → (object) [...]               — natural representation, no class name needed
-     * - custom class  → ClassName::__set_state([...]) — preserves class type, consistent with var_export
-     *
      * @internal
      */
     private function compileObject(object $object): void
     {
+        $hash = spl_object_hash($object);
+        if (isset($this->references[$hash])) {
+            $this->addToBuffer('null /* RECURSION */');
+
+            return;
+        }
+
+        $this->references[$hash] = true;
+
         if ($object instanceof \stdClass) {
             $this->compileStdClass($object);
+            unset($this->references[$hash]);
 
             return;
         }
 
         $this->compileSetState($object);
+        unset($this->references[$hash]);
     }
 
     /**
@@ -312,6 +322,7 @@ final class VarExport
     {
         $this->buffer      = [];
         $this->indentLevel = 0;
+        $this->references  = [];
     }
 
     public function getBuffer(): string
