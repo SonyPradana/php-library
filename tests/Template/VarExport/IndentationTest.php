@@ -279,8 +279,6 @@ PHP;
      */
     public function normalizesClosureIndentation(): void
     {
-        // $this->markTestSkipped('VarExport\'s closure extraction is not yet precise enough to normalize indentation correctly, as it extracts the entire line including variable assignments.');
-
         $varExport = new VarExport();
         $varExport->setIndentation('    '); // 4 spaces
 
@@ -317,8 +315,6 @@ PHP;
      */
     public function handlesMixedIndentationInSource(): void
     {
-        // $this->markTestSkipped('VarExport does not expose a public API to re-indent arbitrary PHP code with mixed indentation. Its internal indentation normalization is tied to closure processing, which currently has pending issues (e.g., precise closure extraction).');
-
         $varExport = new VarExport();
         $varExport->setIndentation('    '); // 4 spaces
 
