@@ -6,6 +6,7 @@ namespace System\Template\VarExport;
 
 use PHPUnit\Framework\TestCase;
 use System\Template\VarExport;
+use System\Template\VarExport\Value\Constant;
 
 /**
  * @covers \Savanna\System\Template\VarExport
@@ -325,12 +326,8 @@ PHP;
      */
     public function compilesArrayWithConstant(): void
     {
-        $this->markTestSkipped('VarExport currently exports the value of the constant, not its name. This would require specific handling in VarExport to identify and output constant names.');
-        // Define a constant for the test
-        define('MY_TEST_CONSTANT', 'ConstantValue');
-
         $varExport = new VarExport();
-        $output    = $varExport->export(['my_constant' => MY_TEST_CONSTANT]);
+        $output    = $varExport->export(['my_constant' => new Constant('MY_TEST_CONSTANT')]);
 
         $expected = <<<'PHP'
 [
