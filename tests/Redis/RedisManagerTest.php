@@ -11,6 +11,8 @@ use System\Redis\RedisManager;
 
 /**
  * @covers \System\Redis\RedisManager
+ *
+ * @group redis
  */
 class RedisManagerTest extends TestCase
 {
