@@ -19,8 +19,10 @@ class RedisConnector
      *     database?: int,
      *     unix_socket?: string,
      * } $config
+     *
+     * @return \Redis
      */
-    public function connect(array $config): \Redis
+    public function connect(array $config): object
     {
         $redis = new \Redis();
 
@@ -74,12 +76,10 @@ class RedisConnector
     /**
      * Establish the connection to Redis.
      *
-     * @param \Redis       $redis
-     * @param string       $method
-     * @param list<mixed>  $parameters
-     * @param bool         $persistent
+     * @param \Redis      $redis
+     * @param list<mixed> $parameters
      */
-    protected function establishConnection(\Redis $redis, string $method, array $parameters, bool $persistent): void
+    protected function establishConnection($redis, string $method, array $parameters, bool $persistent): void
     {
         $method = $persistent ? 'pconnect' : 'connect';
 

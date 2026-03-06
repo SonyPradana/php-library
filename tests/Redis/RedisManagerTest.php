@@ -44,7 +44,7 @@ class RedisManagerTest extends TestCase
     }
 
     /** @test */
-    public function it_can_set_and_get_default_driver(): void
+    public function itCanSetAndGetDefaultDriver(): void
     {
         $manager = new RedisManager();
         $driver  = $this->createRedisDriver();
@@ -61,7 +61,7 @@ class RedisManagerTest extends TestCase
     }
 
     /** @test */
-    public function it_can_set_and_get_named_drivers(): void
+    public function itCanSetAndGetNamedDrivers(): void
     {
         $manager = new RedisManager();
 
@@ -94,7 +94,7 @@ class RedisManagerTest extends TestCase
     }
 
     /** @test */
-    public function it_can_use_closure_as_driver(): void
+    public function itCanUseClosureAsDriver(): void
     {
         $manager = new RedisManager();
         $manager->setDriver('lazy', function () {
@@ -108,7 +108,7 @@ class RedisManagerTest extends TestCase
     }
 
     /** @test */
-    public function it_can_connect_via_unix_socket(): void
+    public function itCanConnectViaUnixSocket(): void
     {
         $socket_path = '/var/run/redis/redis-server.sock';
 

@@ -9,6 +9,7 @@ use System\Redis\Redis;
 
 /**
  * @coversDefaultClass \System\Redis\Redis
+ *
  * @covers \System\Redis\RedisConnector
  *
  * @group redis
@@ -29,7 +30,7 @@ class RedisConnectionTest extends TestCase
      *
      * @testdox Can connect using persistent connection
      */
-    public function it_can_connect_using_persistent_connection(): void
+    public function itCanConnectUsingPersistentConnection(): void
     {
         $redis = new Redis([
             'host'       => '127.0.0.1',
@@ -40,7 +41,7 @@ class RedisConnectionTest extends TestCase
 
         $this->assertTrue($redis->set('persistent_key', 'value'));
         $this->assertEquals('value', $redis->get('persistent_key'));
-        
+
         $redis->disconnect();
     }
 
@@ -49,7 +50,7 @@ class RedisConnectionTest extends TestCase
      *
      * @testdox Can set read timeout
      */
-    public function it_can_set_read_timeout(): void
+    public function itCanSetReadTimeout(): void
     {
         $redis = new Redis([
             'host'         => '127.0.0.1',
@@ -59,7 +60,7 @@ class RedisConnectionTest extends TestCase
         ]);
 
         $this->assertEquals(2.5, $redis->client()->getOption(\Redis::OPT_READ_TIMEOUT));
-        
+
         $redis->disconnect();
     }
 
@@ -68,7 +69,7 @@ class RedisConnectionTest extends TestCase
      *
      * @testdox Throws exception on connection failure
      */
-    public function it_throws_exception_on_connection_failure(): void
+    public function itThrowsExceptionOnConnectionFailure(): void
     {
         $this->expectException(\RedisException::class);
         $this->expectExceptionMessage('Could not connect to Redis');
