@@ -7,6 +7,7 @@ namespace System\Integrate\Console;
 use System\Console\Command;
 use System\Integrate\Application;
 use System\Router\Router;
+use System\Template\VarExport;
 
 use function System\Console\fail;
 use function System\Console\ok;
@@ -66,12 +67,6 @@ class RouteCacheCommand extends Command
 
         $routes = [];
         foreach ($router->getRoutesRaw() as $route) {
-            if (is_callable($route['function'])) {
-                warn("Route '{$route['name']}' cannot be cached because it contains a closure/callback function")->out();
-
-                return 1;
-            }
-
             $routes[] = [
                 'method'     => $route['method'],
                 'uri'        => $route['uri'],
@@ -82,12 +77,14 @@ class RouteCacheCommand extends Command
                 'patterns'   => $route['patterns'] ?? [],
             ];
         }
-        $cached_route = '<?php return ' . var_export($routes, true) . ';' . PHP_EOL;
-        if (file_put_contents($app->getApplicationCachePath() . 'route.php', $cached_route)) {
+
+        $file = $app->getApplicationCachePath() . 'route.php';
+        if ((new VarExport())->compile($routes, $file)) {
             ok('Route file has successfully created.')->out();
 
             return 0;
         }
+
         fail('Cant build route cache.')->out();
 
         return 1;
