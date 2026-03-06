@@ -42,6 +42,19 @@ To run the tests for the Redis module, the `php-redis` extension was required. T
   - **Expiry:** Ensured keys set with a timeout are automatically deleted.
   - **Hash Operations:** Added tests for `hDel` and `hLen`.
   - **List Operations:** Added tests for `lPush`, `rPop`, and `lLen`.
+- **Connection Enhancements:** Added a dedicated test suite (`RedisConnectionTest.php`) to verify:
+  - Persistent connections (`pconnect`).
+  - Read timeout configuration.
+  - Error handling and `RedisException` throwing on connection failure.
+
+#### Production Readiness Enhancements
+- **RedisConnector Refactoring:**
+  - Added support for persistent connections via the `persistent` and `persistent_id` configuration options.
+  - Introduced `read_timeout` and `retry_interval` settings for better connection resiliency in production.
+  - Wrapped connection and authentication logic in a `try-catch` block to provide clearer error messages when Redis is unreachable or authentication fails.
+- **API Improvements:**
+  - Added a `disconnect()` method to `RedisInterface`, `Redis`, and `RedisManager` to allow for explicit connection closure (wrapping `PhpRedis::close()`).
+  - Improved type safety in `RedisConnector` with more exhaustive PHPDoc for the configuration array.
 
 #### Test Code Refactoring
 - The entire `tests/Redis/RedisTest.php` file was refactored to align with a more modern, descriptive testing style:

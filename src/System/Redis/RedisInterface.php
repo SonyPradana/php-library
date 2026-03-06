@@ -56,6 +56,11 @@ interface RedisInterface
     public function getName(): ?string;
 
     /**
+     * Disconnect from redis.
+     */
+    public function disconnect(): void;
+
+    /**
      * Call redis raw command.
      *
      * @param list<mixed> $arguments

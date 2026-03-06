@@ -115,6 +115,14 @@ class Redis implements RedisInterface
     /**
      * {@inheritdoc}
      */
+    public function disconnect(): void
+    {
+        $this->redis->close();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function command(string $command, array $arguments = []): mixed
     {
         return $this->redis->rawCommand($command, ...$arguments);

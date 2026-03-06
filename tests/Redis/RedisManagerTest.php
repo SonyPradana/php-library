@@ -14,6 +14,15 @@ use System\Redis\RedisManager;
  */
 class RedisManagerTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (!extension_loaded('redis')) {
+            $this->markTestSkipped('Redis extension not loaded.');
+        }
+    }
+
     private function createRedisDriver(): Redis
     {
         // Assumes redis is running on localhost:6379
@@ -27,13 +36,15 @@ class RedisManagerTest extends TestCase
 
     protected function tearDown(): void
     {
-        $redis = $this->createRedisDriver();
-        $redis->flushdb();
+        if (extension_loaded('redis')) {
+            $redis = $this->createRedisDriver();
+            $redis->flushdb();
+        }
         parent::tearDown();
     }
 
     /** @test */
-    public function itCanSetAndGetDefaultDriver(): void
+    public function it_can_set_and_get_default_driver(): void
     {
         $manager = new RedisManager();
         $driver  = $this->createRedisDriver();
@@ -50,7 +61,7 @@ class RedisManagerTest extends TestCase
     }
 
     /** @test */
-    public function itCanSetAndGetNamedDrivers(): void
+    public function it_can_set_and_get_named_drivers(): void
     {
         $manager = new RedisManager();
 
@@ -83,7 +94,7 @@ class RedisManagerTest extends TestCase
     }
 
     /** @test */
-    public function itCanUseClosureAsDriver(): void
+    public function it_can_use_closure_as_driver(): void
     {
         $manager = new RedisManager();
         $manager->setDriver('lazy', function () {
@@ -97,7 +108,7 @@ class RedisManagerTest extends TestCase
     }
 
     /** @test */
-    public function itCanConnectViaUnixSocket(): void
+    public function it_can_connect_via_unix_socket(): void
     {
         $socket_path = '/var/run/redis/redis-server.sock';
 

@@ -10,7 +10,11 @@ class RedisConnector
      * @param array{
      *     host?: string,
      *     port?: int,
-     *     timeout?: int,
+     *     timeout?: float,
+     *     retry_interval?: int,
+     *     read_timeout?: float,
+     *     persistent?: bool,
+     *     persistent_id?: string,
      *     password?: string,
      *     database?: int,
      *     unix_socket?: string,
@@ -20,24 +24,65 @@ class RedisConnector
     {
         $redis = new \Redis();
 
-        if (isset($config['unix_socket'])) {
-            $redis->connect((string) $config['unix_socket']);
-        } else {
-            $redis->connect(
-                (string) ($config['host'] ?? '127.0.0.1'),
-                (int) ($config['port'] ?? 6379),
-                (int) ($config['timeout'] ?? 0)
-            );
-        }
+        $timeout        = (float) ($config['timeout'] ?? 0.0);
+        $retry_interval = (int) ($config['retry_interval'] ?? 0);
+        $read_timeout   = (float) ($config['read_timeout'] ?? 0.0);
+        $persistent     = (bool) ($config['persistent'] ?? false);
+        $persistent_id  = (string) ($config['persistent_id'] ?? '');
 
-        if (isset($config['password'])) {
-            $redis->auth((string) $config['password']);
-        }
+        try {
+            if (isset($config['unix_socket'])) {
+                $this->establishConnection(
+                    $redis,
+                    'connect',
+                    [(string) $config['unix_socket'], 0, $timeout, $persistent_id, $retry_interval],
+                    $persistent
+                );
+            } else {
+                $this->establishConnection(
+                    $redis,
+                    'connect',
+                    [
+                        (string) ($config['host'] ?? '127.0.0.1'),
+                        (int) ($config['port'] ?? 6379),
+                        $timeout,
+                        $persistent_id,
+                        $retry_interval,
+                    ],
+                    $persistent
+                );
+            }
 
-        if (isset($config['database'])) {
-            $redis->select((int) $config['database']);
+            if ($read_timeout > 0) {
+                $redis->setOption(\Redis::OPT_READ_TIMEOUT, $read_timeout);
+            }
+
+            if (isset($config['password']) && $config['password'] !== '') {
+                $redis->auth((string) $config['password']);
+            }
+
+            if (isset($config['database'])) {
+                $redis->select((int) $config['database']);
+            }
+        } catch (\RedisException $e) {
+            throw new \RedisException("Could not connect to Redis: {$e->getMessage()}", (int) $e->getCode(), $e);
         }
 
         return $redis;
+    }
+
+    /**
+     * Establish the connection to Redis.
+     *
+     * @param \Redis       $redis
+     * @param string       $method
+     * @param list<mixed>  $parameters
+     * @param bool         $persistent
+     */
+    protected function establishConnection(\Redis $redis, string $method, array $parameters, bool $persistent): void
+    {
+        $method = $persistent ? 'pconnect' : 'connect';
+
+        $redis->{$method}(...$parameters);
     }
 }

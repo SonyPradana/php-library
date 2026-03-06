@@ -141,6 +141,14 @@ class RedisManager implements RedisInterface
     /**
      * {@inheritdoc}
      */
+    public function disconnect(): void
+    {
+        $this->driver()->disconnect();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function command(string $command, array $arguments = []): mixed
     {
         return $this->driver()->command($command, ...$arguments);
