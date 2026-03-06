@@ -62,12 +62,15 @@ final class NamespaceResolverTest extends TestCase
      */
     public function itCanResolveCollectsUnionTypes(): void
     {
+        if (PHP_VERSION_ID < 80000) {
+            $this->markTestSkipped('Union types require PHP 8.0');
+        }
+
         $resolver = new NamespaceResolver();
 
-        $fn = static function (UnionA|UnionB $param): UnionC|UnionD {
-            return new UnionC();
-        };
+        $fn = require __DIR__ . '/Fixtures/union_closure.php';
 
+        /** @var \Closure $fn */
         $reflection = new \ReflectionFunction($fn);
         $result     = $resolver->resolve($reflection);
 
@@ -82,12 +85,15 @@ final class NamespaceResolverTest extends TestCase
      */
     public function itCanResolveCollectsIntersectionTypes(): void
     {
+        if (PHP_VERSION_ID < 80100) {
+            $this->markTestSkipped('Intersection types require PHP 8.1');
+        }
+
         $resolver = new NamespaceResolver();
 
-        $fn = static function (IntersectionA&IntersectionB $param): IntersectionA&IntersectionB {
-            return new class implements IntersectionA, IntersectionB {};
-        };
+        $fn = require __DIR__ . '/Fixtures/intersection_closure.php';
 
+        /** @var \Closure $fn */
         $reflection = new \ReflectionFunction($fn);
         $result     = $resolver->resolve($reflection);
 
