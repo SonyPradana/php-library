@@ -28,7 +28,18 @@ class Redis implements RedisInterface
     /**
      * Create a new Redis instance.
      *
-     * @param array<string, mixed> $config
+     * @param array{
+     *     host?: string,
+     *     port?: int,
+     *     timeout?: float,
+     *     retry_interval?: int,
+     *     read_timeout?: float,
+     *     persistent?: bool,
+     *     persistent_id?: string,
+     *     password?: string,
+     *     database?: int,
+     *     unix_socket?: string,
+     * } $config
      */
     public function __construct(array $config)
     {

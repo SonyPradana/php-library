@@ -55,6 +55,8 @@ To run the tests for the Redis module, the `php-redis` extension was required. T
 - **API Improvements:**
   - Added a `disconnect()` method to `RedisInterface`, `Redis`, and `RedisManager` to allow for explicit connection closure (wrapping `PhpRedis::close()`).
   - Improved type safety in `RedisConnector` with more exhaustive PHPDoc for the configuration array.
+- **Static Analysis Compliance:**
+  - Achieved PHPStan Level 9 compliance for the entire `System/Redis` module by refining array shapes and argument handling in `Redis`, `RedisManager`, and `RedisConnector`.
 
 #### Test Code Refactoring
 - The entire `tests/Redis/RedisTest.php` file was refactored to align with a more modern, descriptive testing style:

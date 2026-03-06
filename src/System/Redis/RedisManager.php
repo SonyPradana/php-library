@@ -151,7 +151,7 @@ class RedisManager implements RedisInterface
      */
     public function command(string $command, array $arguments = []): mixed
     {
-        return $this->driver()->command($command, ...$arguments);
+        return $this->driver()->command($command, (array) $arguments);
     }
 
     /**
@@ -159,6 +159,6 @@ class RedisManager implements RedisInterface
      */
     public function __call(string $method, array $arguments): mixed
     {
-        return $this->driver()->{$method}(...$arguments);
+        return $this->driver()->{$method}(...((array) $arguments));
     }
 }
