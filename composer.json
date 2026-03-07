@@ -26,7 +26,8 @@
         "rector/rector": "^1.2"
     },
     "suggest": {
-        "ext-redis": "Required to use the phpredis connector."
+        "ext-redis": "Required to use the phpredis connector.",
+        "ext-apcu": "Required to use the APCu cache driver."
     },
     "autoload": {
         "psr-4": {

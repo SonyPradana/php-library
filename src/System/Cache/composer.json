@@ -10,6 +10,9 @@
     "require": {
         "php": "^8.0"
     },
+    "suggest": {
+        "ext-apcu": "Required to use the APCu cache driver."
+    },
     "autoload": {
         "psr-4": {
             "System\\Cache\\": ""
