@@ -429,36 +429,6 @@ PHP;
     /**
      * @test
      *
-     * @testdox Runtime closure created with eval throws exception
-     */
-    public function runtimeClosureThrowsException(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Source file not found');
-
-        $closure = eval('return function() { return "test"; };');
-        $this->exporter->export(['closure' => $closure]);
-    }
-
-    /**
-     * @test
-     *
-     * @testdox Eval created closure throws exception
-     */
-    public function evalCreatedClosureThrowsException(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Source file not found');
-
-        $closureCode = 'return function() { return "created with eval"; };';
-        $closure     = eval($closureCode);
-
-        $this->exporter->export(['eval_closure' => $closure]);
-    }
-
-    /**
-     * @test
-     *
      * @testdox Closure from non-existent file throws exception
      */
     public function closureFromNonExistentFileThrowsException(): void

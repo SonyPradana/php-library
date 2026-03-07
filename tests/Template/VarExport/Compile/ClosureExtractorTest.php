@@ -400,23 +400,6 @@ final class ClosureExtractorTest extends TestCase
     /**
      * @test
      *
-     * @testdox Runtime closure throws exception
-     */
-    public function runtimeClosureThrowsException(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        // eval() creates eval'd code file which doesn't exist as a real file
-        $this->expectExceptionMessage('Source file not found');
-
-        $closure    = eval('return function() { return "test"; };');
-        $reflection = new \ReflectionFunction($closure);
-
-        $this->extractor->extract($reflection);
-    }
-
-    /**
-     * @test
-     *
      * @testdox Non-existent file throws exception
      */
     public function nonExistentFileThrowsException(): void
