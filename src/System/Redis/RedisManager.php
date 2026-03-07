@@ -49,18 +49,14 @@ class RedisManager implements RedisInterface
 
     public function driver(?string $driver_name = null): RedisInterface
     {
-        // If no specific driver name is requested, return the default driver.
         if ($driver_name === null) {
             return $this->default_driver;
         }
 
-        // If a named driver exists, resolve and return it.
         if (isset($this->driver[$driver_name])) {
             return $this->resolve($driver_name);
         }
 
-        // If the requested named driver does not exist, return the default driver
-        // (following the implicit behavior from CacheManager).
         return $this->default_driver;
     }
 
