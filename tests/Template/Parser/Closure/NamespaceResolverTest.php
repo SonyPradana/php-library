@@ -68,11 +68,21 @@ final class NamespaceResolverTest extends TestCase
 
         $resolver = new NamespaceResolver();
 
-        $fn = require __DIR__ . '/Fixtures/union_closure.php';
+        $code = <<<'PHP'
+<?php
+namespace Tests\Template\Parser\Closure;
+return static function (UnionA|UnionB $param): UnionC|UnionD {
+    return new UnionC();
+};
+PHP;
+        $file = __DIR__ . '/union_closure.php';
+        file_put_contents($file, $code);
+        $fn = require $file;
 
         /** @var \Closure $fn */
         $reflection = new \ReflectionFunction($fn);
         $result     = $resolver->resolve($reflection);
+        unlink($file);
 
         self::assertContains(UnionA::class, $result);
         self::assertContains(UnionB::class, $result);
@@ -91,11 +101,21 @@ final class NamespaceResolverTest extends TestCase
 
         $resolver = new NamespaceResolver();
 
-        $fn = require __DIR__ . '/Fixtures/intersection_closure.php';
+        $code = <<<'PHP'
+<?php
+namespace Tests\Template\Parser\Closure;
+return static function (IntersectionA&IntersectionB $param): IntersectionA&IntersectionB {
+    return new class implements IntersectionA, IntersectionB {};
+};
+PHP;
+        $file = __DIR__ . '/intersection_closure.php';
+        file_put_contents($file, $code);
+        $fn = require $file;
 
         /** @var \Closure $fn */
         $reflection = new \ReflectionFunction($fn);
         $result     = $resolver->resolve($reflection);
+        unlink($file);
 
         self::assertContains(IntersectionA::class, $result);
         self::assertContains(IntersectionB::class, $result);
