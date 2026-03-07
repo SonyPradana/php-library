@@ -1,7 +1,0 @@
-parameters:
-    level: 7
-    paths:
-        - bin
-        - src
-
-    reportUnmatchedIgnoredErrors: true
