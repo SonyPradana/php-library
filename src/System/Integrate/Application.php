@@ -208,8 +208,6 @@ final class Application extends Container
      */
     public function __construct(string $base_path)
     {
-        parent::__construct();
-
         // set base path
         $this->setBasePath($base_path);
         $this->setConfigPath($_ENV['CONFIG_PATH'] ?? DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR);
