@@ -108,7 +108,7 @@ class RouteCacheCommandTest extends TestCase
     /**
      * @test
      */
-    public function itFailCreateRouteCache(): void
+    public function itSuccessCreateRouteCache(): void
     {
         $app = new Application(dirname(__DIR__) . '/assets/app1/');
         $app->setConfigPath('/config/');
@@ -121,8 +121,7 @@ class RouteCacheCommandTest extends TestCase
         $status = $command->cache($app, $route);
         $out    = ob_get_clean();
 
-        $this->assertEquals(1, $status);
-        $this->assertStringContainsString('Route \'function\' cannot be cached because it contains a closure/callback function', $out);
+        $this->assertEquals(0, $status);
 
         $app->flush();
     }

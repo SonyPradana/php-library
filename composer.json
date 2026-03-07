@@ -43,6 +43,7 @@
             "System\\Test\\Console\\": "tests/Console",
             "System\\Test\\Container\\": "tests/Container",
             "System\\Test\\Database\\": "tests/DataBase",
+            "System\\Test\\Template\\": "tests/Template",
             "System\\Test\\Router\\Attribute\\": "tests/Router/Attribute"
         },
         "files": [
