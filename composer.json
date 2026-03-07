@@ -25,6 +25,9 @@
         "phpstan/phpstan": "^1.12",
         "rector/rector": "^1.2"
     },
+    "suggest": {
+        "ext-redis": "Required to use the phpredis connector."
+    },
     "autoload": {
         "psr-4": {
             "System\\": "src/System/",
@@ -60,6 +63,7 @@
         "sonypradana/file": "self.version",
         "sonypradana/http": "self.version",
         "sonypradana/ratelimiter": "self.version",
+        "sonypradana/redis": "self.version",
         "sonypradana/router": "self.version",
         "sonypradana/security": "self.version",
         "sonypradana/support": "self.version",
@@ -79,7 +83,7 @@
         "test:refacto": "rector --dry-run",
         "test:lint": "php-cs-fixer fix -v --dry-run --diff",
         "test:types": "phpstan analyse --ansi --memory-limit=-1 --debug",
-        "test:unit": "phpunit --testdox --exclude-group database,not-for-mysql5.7",
+        "test:unit": "phpunit --testdox --exclude-group database,not-for-mysql5.7,redis",
         "test:release": "php ./bin/split-repo.php validate",
         "test:facade": "php ./bin/facade.php facade:update --from-file /resources/facades.php --debug --dry-run",
         "test:facade:update": "php ./bin/facade.php facade:update --from-file /resources/facades.php --debug",
@@ -95,7 +99,7 @@
             "rector --dry-run",
             "php-cs-fixer fix -v --dry-run",
             "phpstan analyse --ansi --memory-limit=-1",
-            "phpunit --exclude-group database,not-for-mysql5.7",
+            "phpunit --exclude-group database,not-for-mysql5.7,redis",
             "php ./bin/split-repo.php validate",
             "php ./bin/facade.php facade:update --from-file /resources/facades.php --dry-run"
         ]
