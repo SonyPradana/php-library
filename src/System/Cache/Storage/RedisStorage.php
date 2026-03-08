@@ -84,7 +84,7 @@ class RedisStorage implements CacheInterface
 
     public function increment(string $key, int $value): int
     {
-        if (!$this->has($key)) {
+        if (false === $this->has($key)) {
             $this->set($key, $value, $this->defaultTTL);
 
             return $value;
@@ -92,7 +92,7 @@ class RedisStorage implements CacheInterface
 
         $currentValue = $this->get($key);
 
-        if (!is_int($currentValue)) {
+        if (false === is_int($currentValue)) {
             throw new \InvalidArgumentException('Value to increment must be an integer.');
         }
 
@@ -124,7 +124,7 @@ class RedisStorage implements CacheInterface
 
     private function calculateTTLInSeconds(int|\DateInterval|null $ttl): int
     {
-        if ($ttl === null) {
+        if (null === $ttl) {
             return $this->defaultTTL;
         }
 
