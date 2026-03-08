@@ -43,6 +43,10 @@ class Redis implements RedisInterface
      */
     public function __construct(array $config)
     {
+        if (!extension_loaded('redis')) {
+            throw new \RuntimeException('The Redis extension is not loaded.');
+        }
+
         $connector   = new RedisConnector();
         $this->redis = $connector->connect($config);
     }
