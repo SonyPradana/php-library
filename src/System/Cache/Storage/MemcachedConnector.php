@@ -9,23 +9,20 @@ class MemcachedConnector
     /**
      * Create a new Memcached connection.
      *
-     * @param array<int, array{host: string, port: int, weight?: int}> $servers
-     * @param array<int, mixed>                                        $options
+     * @param array<int, array{host: string, port?: int, weight?: int}> $servers
+     * @param array<int, mixed>                                         $options
      */
     public function connect(array $servers, ?string $persistent_id = null, array $options = []): \Memcached
     {
         $memcached = $this->createMemcachedInstance($persistent_id);
 
-        if (count($memcached->getServerList()) === 0) {
-            foreach ($servers as $server) {
-                $host = $server['host'];
-                $port = $server['port'];
+        $currentServers = $memcached->getServerList();
 
-                // If the host starts with a forward slash, it's a Unix socket.
-                if (str_starts_with($host, '/')) {
-                    $port = 0;
-                }
+        foreach ($servers as $server) {
+            $host = $server['host'];
+            $port = str_starts_with($host, '/') ? 0 : ($server['port'] ?? 11211);
 
+            if (!$this->serverExists($host, $port, $currentServers)) {
                 $memcached->addServer(
                     $host,
                     $port,
@@ -47,5 +44,19 @@ class MemcachedConnector
     protected function createMemcachedInstance(?string $persistent_id = null): \Memcached
     {
         return $persistent_id ? new \Memcached($persistent_id) : new \Memcached();
+    }
+
+    /**
+     * @param array<int, array{host: string, port: int}> $currentServers
+     */
+    private function serverExists(string $host, int $port, array $currentServers): bool
+    {
+        foreach ($currentServers as $server) {
+            if ($server['host'] === $host && $server['port'] === $port) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

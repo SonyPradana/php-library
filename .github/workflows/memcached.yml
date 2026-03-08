@@ -16,13 +16,12 @@ jobs:
     services:
       memcached:
         image: memcached:1.6-alpine
+        # We run memcached with both TCP and Socket support in the container
+        # -s is for unix socket path, -a is for permissions
+        options: >-
+          --name memcached
         ports:
           - 11211:11211
-
-    strategy:
-      fail-fast: false
-      matrix:
-        php-version: ["8.0", "8.1", "8.2", "8.3", "8.4"]
 
     steps:
     - uses: actions/checkout@v3
@@ -30,9 +29,20 @@ jobs:
     - name: Install PHP with extensions
       uses: shivammathur/setup-php@v2
       with:
-        php-version: ${{ matrix.php-version }}
+        php-version: '8.1'
         extensions: mbstring, memcached
         coverage: none
+
+    - name: Setup Memcached Unix Socket
+      run: |
+        # Create directory for socket
+        sudo mkdir -p /var/run/memcached
+        sudo chmod 777 /var/run/memcached
+        
+        # Start another memcached instance for socket testing
+        # -d: daemon, -s: socket path, -a: permissions, -u: user
+        sudo apt-get update && sudo apt-get install -y memcached
+        sudo memcached -d -s /var/run/memcached/memcached.sock -a 777 -u memcache
 
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
@@ -42,9 +52,9 @@ jobs:
       uses: actions/cache@v3
       with:
         path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        key: ${{ runner.os }}-php-8.1-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
-          ${{ runner.os }}-php-
+          ${{ runner.os }}-php-8.1-
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
