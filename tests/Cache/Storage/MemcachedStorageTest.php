@@ -222,4 +222,23 @@ class MemcachedStorageTest extends TestCase
         $this->assertEquals('remembered', $result);
         $this->assertEquals('remembered', $this->storage->get('rem-key'));
     }
+
+    /**
+     * @test
+     *
+     * @testdox it normalizes invalid keys (long or spaces)
+     *
+     * @covers \System\Cache\Storage\MemcachedStorage::normalizeKey
+     */
+    public function itNormalizesInvalidKeys(): void
+    {
+        // Key with space
+        $this->assertTrue($this->storage->set('key with space', 'value1'));
+        $this->assertEquals('value1', $this->storage->get('key with space'));
+
+        // Very long key
+        $longKey = str_repeat('a', 300);
+        $this->assertTrue($this->storage->set($longKey, 'value2'));
+        $this->assertEquals('value2', $this->storage->get($longKey));
+    }
 }

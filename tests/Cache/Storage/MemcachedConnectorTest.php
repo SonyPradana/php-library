@@ -50,4 +50,34 @@ class MemcachedConnectorTest extends TestCase
         $this->assertTrue($found);
         $this->assertEquals('test_', $memcached->getOption(\Memcached::OPT_PREFIX_KEY));
     }
+
+    /**
+     * @test
+     *
+     * @testdox it can connect using DSN
+     *
+     * @covers \System\Cache\Storage\MemcachedConnector::connect
+     * @covers \System\Cache\Storage\MemcachedConnector::parseDsn
+     */
+    public function itCanConnectUsingDsn(): void
+    {
+        if (!class_exists('\Memcached')) {
+            $this->markTestSkipped('Memcached extension is not installed.');
+        }
+
+        $connector = new MemcachedConnector();
+        $memcached = $connector->connect('memcached://127.0.0.1:11211?weight=50');
+
+        $this->assertInstanceOf('\Memcached', $memcached);
+
+        $serverList = $memcached->getServerList();
+        $found      = false;
+        foreach ($serverList as $server) {
+            if ($server['host'] === '127.0.0.1' && $server['port'] === 11211) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found);
+    }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Cache\Storage;
 
 use System\Cache\CacheInterface;
+use System\Cache\Exceptions\CacheException;
 
 class MemcachedStorage implements CacheInterface
 {
@@ -16,28 +17,44 @@ class MemcachedStorage implements CacheInterface
 
     public function get(string $key, mixed $default = null): mixed
     {
-        $value = $this->memcached->get($key);
+        try {
+            $value = $this->memcached->get($this->normalizeKey($key));
 
-        if ($this->memcached->getResultCode() === \Memcached::RES_NOTFOUND) {
-            return $default;
+            if ($this->memcached->getResultCode() === \Memcached::RES_NOTFOUND) {
+                return $default;
+            }
+
+            return $value;
+        } catch (\MemcachedException $e) {
+            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
         }
-
-        return $value;
     }
 
     public function set(string $key, mixed $value, int|\DateInterval|null $ttl = null): bool
     {
-        return $this->memcached->set($key, $value, $this->calculateExpiration($ttl));
+        try {
+            return $this->memcached->set($this->normalizeKey($key), $value, $this->calculateExpiration($ttl));
+        } catch (\MemcachedException $e) {
+            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
+        }
     }
 
     public function delete(string $key): bool
     {
-        return $this->memcached->delete($key);
+        try {
+            return $this->memcached->delete($this->normalizeKey($key));
+        } catch (\MemcachedException $e) {
+            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
+        }
     }
 
     public function clear(): bool
     {
-        return $this->memcached->flush();
+        try {
+            return $this->memcached->flush();
+        } catch (\MemcachedException $e) {
+            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
+        }
     }
 
     public function getMultiple(iterable $keys, mixed $default = null): iterable
@@ -48,25 +65,42 @@ class MemcachedStorage implements CacheInterface
             return [];
         }
 
-        $values = $this->memcached->getMulti($keys_array);
-
-        if ($values === false) {
-            $values = [];
-        }
-
-        $result = [];
+        // Map original keys to normalized keys
+        $normalizedKeysMap = [];
         foreach ($keys_array as $key) {
-            $result[$key] = array_key_exists($key, $values) ? $values[$key] : $default;
+            $normalizedKeysMap[$this->normalizeKey($key)] = $key;
         }
 
-        return $result;
+        try {
+            $values = $this->memcached->getMulti(array_keys($normalizedKeysMap));
+
+            if ($values === false) {
+                $values = [];
+            }
+
+            $result = [];
+            foreach ($normalizedKeysMap as $normalizedKey => $originalKey) {
+                $result[$originalKey] = array_key_exists($normalizedKey, $values) ? $values[$normalizedKey] : $default;
+            }
+
+            return $result;
+        } catch (\MemcachedException $e) {
+            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
+        }
     }
 
     public function setMultiple(iterable $values, int|\DateInterval|null $ttl = null): bool
     {
-        $values_array = is_array($values) ? $values : iterator_to_array($values);
+        $normalizedValues = [];
+        foreach ($values as $key => $value) {
+            $normalizedValues[$this->normalizeKey((string) $key)] = $value;
+        }
 
-        return $this->memcached->setMulti($values_array, $this->calculateExpiration($ttl));
+        try {
+            return $this->memcached->setMulti($normalizedValues, $this->calculateExpiration($ttl));
+        } catch (\MemcachedException $e) {
+            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
+        }
     }
 
     public function deleteMultiple(iterable $keys): bool
@@ -77,56 +111,73 @@ class MemcachedStorage implements CacheInterface
             return true;
         }
 
-        /** @var array<string, bool|int>|bool $results */
-        $results = $this->memcached->deleteMulti($keys_array);
+        $normalizedKeys = array_map([$this, 'normalizeKey'], $keys_array);
 
-        if (is_array($results)) {
-            foreach ($results as $result) {
-                if ($result !== true && $result !== \Memcached::RES_SUCCESS) {
-                    return false;
+        try {
+            /** @var array<string, bool|int>|bool $results */
+            $results = $this->memcached->deleteMulti($normalizedKeys);
+
+            if (is_array($results)) {
+                foreach ($results as $result) {
+                    if ($result !== true && $result !== \Memcached::RES_SUCCESS) {
+                        return false;
+                    }
                 }
+
+                return true;
             }
 
-            return true;
+            return (bool) $results;
+        } catch (\MemcachedException $e) {
+            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
         }
-
-        return (bool) $results;
     }
 
     public function has(string $key): bool
     {
-        $this->memcached->get($key);
+        try {
+            $this->memcached->get($this->normalizeKey($key));
 
-        return $this->memcached->getResultCode() !== \Memcached::RES_NOTFOUND;
+            return $this->memcached->getResultCode() !== \Memcached::RES_NOTFOUND;
+        } catch (\MemcachedException $e) {
+            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
+        }
     }
 
     public function increment(string $key, int $value): int
     {
-        // Memcached::increment fails if key doesn't exist.
-        // We'll try to increment, and if it fails because it doesn't exist, we'll set it.
-        $result = $this->memcached->increment($key, $value);
+        $normalizedKey = $this->normalizeKey($key);
+        try {
+            $result = $this->memcached->increment($normalizedKey, $value);
 
-        if ($result === false && $this->memcached->getResultCode() === \Memcached::RES_NOTFOUND) {
-            $this->set($key, $value, 0);
+            if ($result === false && $this->memcached->getResultCode() === \Memcached::RES_NOTFOUND) {
+                $this->set($key, $value, 0);
 
-            return $value;
+                return $value;
+            }
+
+            return (int) $result;
+        } catch (\MemcachedException $e) {
+            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
         }
-
-        return (int) $result;
     }
 
     public function decrement(string $key, int $value): int
     {
-        // Memcached::decrement also fails if key doesn't exist.
-        $result = $this->memcached->decrement($key, $value);
+        $normalizedKey = $this->normalizeKey($key);
+        try {
+            $result = $this->memcached->decrement($normalizedKey, $value);
 
-        if ($result === false && $this->memcached->getResultCode() === \Memcached::RES_NOTFOUND) {
-            $this->set($key, -$value, 0);
+            if ($result === false && $this->memcached->getResultCode() === \Memcached::RES_NOTFOUND) {
+                $this->set($key, -$value, 0);
 
-            return -$value;
+                return -$value;
+            }
+
+            return (int) $result;
+        } catch (\MemcachedException $e) {
+            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
         }
-
-        return (int) $result;
     }
 
     public function remember(string $key, int|\DateInterval|null $ttl, \Closure $callback): mixed
@@ -140,6 +191,20 @@ class MemcachedStorage implements CacheInterface
         $this->set($key, $value = $callback(), $ttl);
 
         return $value;
+    }
+
+    /**
+     * Normalize the cache key to satisfy Memcached requirements.
+     */
+    protected function normalizeKey(string $key): string
+    {
+        // Memcached key limit is 250 characters.
+        // Also contains no control characters or whitespace.
+        if (strlen($key) > 240 || preg_match('/[\s\x00-\x1F\x7F]/', $key)) {
+            return 'savanna:' . sha1($key);
+        }
+
+        return $key;
     }
 
     /**

@@ -7,14 +7,18 @@ namespace System\Cache\Storage;
 class MemcachedConnector
 {
     /**
-     * Create a new Memcached connection.
+     * Create a new Memcached connection from DSN or array of servers.
      *
-     * @param array<int, array{host: string, port?: int, weight?: int}> $servers
-     * @param array<int, mixed>                                         $options
+     * @param array<int, array{host: string, port?: int, weight?: int}>|string $servers
+     * @param array<int, mixed>                                                $options
      */
-    public function connect(array $servers, ?string $persistent_id = null, array $options = []): \Memcached
+    public function connect(array|string $servers, ?string $persistent_id = null, array $options = []): \Memcached
     {
         $memcached = $this->createMemcachedInstance($persistent_id);
+
+        if (is_string($servers)) {
+            $servers = $this->parseDsn($servers);
+        }
 
         $currentServers = $memcached->getServerList();
 
@@ -36,6 +40,46 @@ class MemcachedConnector
         }
 
         return $memcached;
+    }
+
+    /**
+     * Parse Dsn string to servers array.
+     * Format: memcached://host:port?weight=100 or memcached:///path/to/socket.
+     *
+     * @return array<int, array{host: string, port: int, weight: int}>
+     */
+    public function parseDsn(string $dsn): array
+    {
+        if (!str_starts_with($dsn, 'memcached://')) {
+            throw new \InvalidArgumentException('Invalid Memcached DSN format.');
+        }
+
+        $url = parse_url($dsn);
+        if ($url === false) {
+            throw new \InvalidArgumentException('Could not parse Memcached DSN.');
+        }
+
+        $host = $url['host'] ?? '';
+        $port = $url['port'] ?? 11211;
+        $path = $url['path'] ?? '';
+
+        // Handle Unix Socket (memcached:///path/to/socket)
+        if ($host === '' && $path !== '') {
+            $host = $path;
+            $port = 0;
+        }
+
+        $weight = 0;
+        if (isset($url['query'])) {
+            parse_str($url['query'], $query);
+            $weight = (int) ($query['weight'] ?? 0);
+        }
+
+        return [[
+            'host'   => $host,
+            'port'   => (int) $port,
+            'weight' => $weight,
+        ]];
     }
 
     /**
