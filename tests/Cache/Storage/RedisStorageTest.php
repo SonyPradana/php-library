@@ -6,159 +6,249 @@ namespace System\Test\Cache\Storage;
 
 use PHPUnit\Framework\TestCase;
 use System\Cache\Storage\RedisStorage;
-use System\Redis\RedisInterface;
+use System\Redis\Redis;
 
+/**
+ * @coversDefaultClass \System\Cache\Storage\RedisStorage
+ *
+ * @group redis
+ */
 final class RedisStorageTest extends TestCase
 {
+    /** @var Redis|null */
+    private $redis;
+
+    /** @var RedisStorage|null */
+    private $storage;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        if (!extension_loaded('redis')) {
+            $this->markTestSkipped('Redis extension not loaded.');
+        }
+
+        try {
+            $this->redis = new Redis([
+                'host'     => '127.0.0.1',
+                'port'     => 6379,
+                'database' => 2,
+            ]);
+            $this->redis->command('ping');
+        } catch (\Exception $e) {
+            $this->markTestSkipped('Could not connect to Redis server: ' . $e->getMessage());
+        }
+
+        $this->redis->flushdb();
+        $this->storage = new RedisStorage($this->redis);
+    }
+
     protected function tearDown(): void
     {
-        \Mockery::close();
+        if ($this->redis) {
+            $this->redis->flushdb();
+            $this->redis->disconnect();
+        }
+        $this->redis   = null;
+        $this->storage = null;
+        parent::tearDown();
     }
 
-    /** @test */
-    public function itCanGetCache()
+    /**
+     * @test
+     *
+     * @testdox it can set and get cache
+     *
+     * @covers ::set
+     * @covers ::get
+     * @covers ::calculateTTLInSeconds
+     */
+    public function itCanSetAndGetCache()
     {
-        $redis = \Mockery::mock(RedisInterface::class);
-        $redis->shouldReceive('get')->with('key')->andReturn(serialize('value'));
-
-        $storage = new RedisStorage($redis);
-
-        $this->assertEquals('value', $storage->get('key'));
+        $this->assertTrue($this->storage->set('key', 'value'));
+        $this->assertEquals('value', $this->storage->get('key'));
     }
 
-    /** @test */
+    /**
+     * @test
+     *
+     * @testdox it can get default value if key not found
+     *
+     * @covers ::get
+     */
     public function itCanGetDefaultIfKeyNotFound()
     {
-        $redis = \Mockery::mock(RedisInterface::class);
-        $redis->shouldReceive('get')->with('key')->andReturn(false);
-
-        $storage = new RedisStorage($redis);
-
-        $this->assertEquals('default', $storage->get('key', 'default'));
+        $this->assertEquals('default', $this->storage->get('key', 'default'));
     }
 
-    /** @test */
-    public function itCanSetCache()
-    {
-        $redis = \Mockery::mock(RedisInterface::class);
-        $redis->shouldReceive('set')->with('key', serialize('value'), 3600)->andReturn(true);
-
-        $storage = new RedisStorage($redis);
-
-        $this->assertTrue($storage->set('key', 'value', 3600));
-    }
-
-    /** @test */
+    /**
+     * @test
+     *
+     * @testdox it can delete cache
+     *
+     * @covers ::delete
+     */
     public function itCanDeleteCache()
     {
-        $redis = \Mockery::mock(RedisInterface::class);
-        $redis->shouldReceive('del')->with('key')->andReturn(1);
-
-        $storage = new RedisStorage($redis);
-
-        $this->assertTrue($storage->delete('key'));
+        $this->storage->set('key', 'value');
+        $this->assertTrue($this->storage->delete('key'));
+        $this->assertNull($this->storage->get('key'));
     }
 
-    /** @test */
+    /**
+     * @test
+     *
+     * @testdox it can clear cache
+     *
+     * @covers ::clear
+     */
     public function itCanClearCache()
     {
-        $redis = \Mockery::mock(RedisInterface::class);
-        $redis->shouldReceive('command')->with('flushdb')->andReturn(true);
-
-        $storage = new RedisStorage($redis);
-
-        $this->assertTrue($storage->clear());
+        $this->storage->set('key1', 'value1');
+        $this->storage->set('key2', 'value2');
+        $this->assertTrue($this->storage->clear());
+        $this->assertNull($this->storage->get('key1'));
+        $this->assertNull($this->storage->get('key2'));
     }
 
-    /** @test */
+    /**
+     * @test
+     *
+     * @testdox it can check if key exists
+     *
+     * @covers ::has
+     */
     public function itCanCheckIfKeyExists()
     {
-        $redis = \Mockery::mock(RedisInterface::class);
-        $redis->shouldReceive('exists')->with('key')->andReturn(true);
-
-        $storage = new RedisStorage($redis);
-
-        $this->assertTrue($storage->has('key'));
+        $this->storage->set('key', 'value');
+        $this->assertTrue($this->storage->has('key'));
+        $this->assertFalse($this->storage->has('not_found'));
     }
 
-    /** @test */
+    /**
+     * @test
+     *
+     * @testdox it can increment cache value
+     *
+     * @covers ::increment
+     */
     public function itCanIncrementCache()
     {
-        $redis = \Mockery::mock(RedisInterface::class);
-        // First it checks if key exists
-        $redis->shouldReceive('exists')->with('key')->andReturn(true);
-        // Then it gets the value
-        $redis->shouldReceive('get')->with('key')->andReturn(serialize(10));
-        // Then it sets the incremented value
-        $redis->shouldReceive('set')->with('key', serialize(11), 3600)->andReturn(true);
-
-        $storage = new RedisStorage($redis);
-
-        $this->assertEquals(11, $storage->increment('key', 1));
+        $this->storage->set('key', 10);
+        $this->assertEquals(11, $this->storage->increment('key', 1));
+        $this->assertEquals(11, $this->storage->get('key'));
     }
 
-    /** @test */
+    /**
+     * @test
+     *
+     * @testdox it can decrement cache value
+     *
+     * @covers ::decrement
+     */
     public function itCanDecrementCache()
     {
-        $redis = \Mockery::mock(RedisInterface::class);
-        $redis->shouldReceive('exists')->with('key')->andReturn(true);
-        $redis->shouldReceive('get')->with('key')->andReturn(serialize(10));
-        $redis->shouldReceive('set')->with('key', serialize(9), 3600)->andReturn(true);
-
-        $storage = new RedisStorage($redis);
-
-        $this->assertEquals(9, $storage->decrement('key', 1));
+        $this->storage->set('key', 10);
+        $this->assertEquals(9, $this->storage->decrement('key', 1));
+        $this->assertEquals(9, $this->storage->get('key'));
     }
 
-    /** @test */
+    /**
+     * @test
+     *
+     * @testdox it can remember cache value
+     *
+     * @covers ::remember
+     */
     public function itCanRememberCache()
     {
-        $redis = \Mockery::mock(RedisInterface::class);
-        $redis->shouldReceive('get')->with('key')->andReturn(false);
-        $redis->shouldReceive('set')->with('key', serialize('value'), 3600)->andReturn(true);
-
-        $storage = new RedisStorage($redis);
-
-        $result = $storage->remember('key', 3600, fn () => 'value');
-
+        $result = $this->storage->remember('key', 3600, fn () => 'value');
         $this->assertEquals('value', $result);
+        $this->assertEquals('value', $this->storage->get('key'));
     }
 
-    /** @test */
+    /**
+     * @test
+     *
+     * @testdox it can get multiple cache values
+     *
+     * @covers ::getMultiple
+     */
     public function itCanGetMultipleCache()
     {
-        $redis = \Mockery::mock(RedisInterface::class);
-        $redis->shouldReceive('get')->with('key1')->andReturn(serialize('value1'));
-        $redis->shouldReceive('get')->with('key2')->andReturn(serialize('value2'));
+        $this->storage->set('key1', 'value1');
+        $this->storage->set('key2', 'value2');
 
-        $storage = new RedisStorage($redis);
-
-        $results = $storage->getMultiple(['key1', 'key2']);
-
+        $results = $this->storage->getMultiple(['key1', 'key2']);
         $this->assertEquals(['key1' => 'value1', 'key2' => 'value2'], $results);
     }
 
-    /** @test */
+    /**
+     * @test
+     *
+     * @testdox it can set multiple cache values
+     *
+     * @covers ::setMultiple
+     */
     public function itCanSetMultipleCache()
     {
-        $redis = \Mockery::mock(RedisInterface::class);
-        $redis->shouldReceive('set')->with('key1', serialize('value1'), 3600)->andReturn(true);
-        $redis->shouldReceive('set')->with('key2', serialize('value2'), 3600)->andReturn(true);
-
-        $storage = new RedisStorage($redis);
-
-        $this->assertTrue($storage->setMultiple(['key1' => 'value1', 'key2' => 'value2'], 3600));
+        $this->assertTrue($this->storage->setMultiple(['key1' => 'value1', 'key2' => 'value2'], 3600));
+        $this->assertEquals('value1', $this->storage->get('key1'));
+        $this->assertEquals('value2', $this->storage->get('key2'));
     }
 
-    /** @test */
+    /**
+     * @test
+     *
+     * @testdox it can delete multiple cache values
+     *
+     * @covers ::deleteMultiple
+     */
     public function itCanDeleteMultipleCache()
     {
-        $redis = \Mockery::mock(RedisInterface::class);
-        $redis->shouldReceive('del')->with('key1')->andReturn(1);
-        $redis->shouldReceive('del')->with('key2')->andReturn(1);
+        $this->storage->set('key1', 'value1');
+        $this->storage->set('key2', 'value2');
 
-        $storage = new RedisStorage($redis);
+        $this->assertTrue($this->storage->deleteMultiple(['key1', 'key2']));
+        $this->assertNull($this->storage->get('key1'));
+        $this->assertNull($this->storage->get('key2'));
+    }
 
-        $this->assertTrue($storage->deleteMultiple(['key1', 'key2']));
+    /**
+     * @test
+     *
+     * @testdox it should not unserialize objects by default for security
+     *
+     * @covers ::get
+     */
+    public function itShouldNotUnserializeObjectsByDefaultForSecurity()
+    {
+        $obj      = new \stdClass();
+        $obj->foo = 'bar';
+        $this->storage->set('key', $obj);
+
+        $result = $this->storage->get('key');
+
+        $this->assertInstanceOf('__PHP_Incomplete_Class', $result);
+    }
+
+    /**
+     * @test
+     *
+     * @testdox it should handle expiration using DateInterval
+     *
+     * @covers ::calculateTTLInSeconds
+     * @covers ::set
+     */
+    public function itShouldHandleExpirationWithDateInterval()
+    {
+        $interval = new \DateInterval('PT1S');
+        $this->assertTrue($this->storage->set('expire_key', 'value', $interval));
+        $this->assertEquals('value', $this->storage->get('expire_key'));
+
+        sleep(2);
+
+        $this->assertNull($this->storage->get('expire_key'));
     }
 }

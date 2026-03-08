@@ -10,6 +10,9 @@
     "require": {
         "php": "^8.0"
     },
+    "suggest": {
+        "ext-redis": "Required to use the phpredis connector."
+    },
     "autoload": {
         "psr-4": {
             "System\\Cache\\": ""
