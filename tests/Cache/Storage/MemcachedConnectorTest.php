@@ -37,7 +37,7 @@ class MemcachedConnectorTest extends TestCase
         $this->assertInstanceOf('\Memcached', $memcached);
 
         $serverList = $memcached->getServerList();
-        
+
         // Find our server in the list (in case of persistent connections from other runs)
         $found = false;
         foreach ($serverList as $server) {
@@ -46,7 +46,7 @@ class MemcachedConnectorTest extends TestCase
                 break;
             }
         }
-        
+
         $this->assertTrue($found);
         $this->assertEquals('test_', $memcached->getOption(\Memcached::OPT_PREFIX_KEY));
     }
@@ -74,7 +74,7 @@ class MemcachedConnectorTest extends TestCase
         $this->assertInstanceOf('\Memcached', $memcached);
 
         $serverList = $memcached->getServerList();
-        
+
         $found = false;
         foreach ($serverList as $server) {
             if ($server['host'] === '/var/run/memcached/memcached.sock' && $server['port'] === 0) {
@@ -82,7 +82,7 @@ class MemcachedConnectorTest extends TestCase
                 break;
             }
         }
-        
+
         $this->assertTrue($found);
     }
 }
