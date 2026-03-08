@@ -10,6 +10,9 @@
     "require": {
         "php": "^8.0"
     },
+    "suggest": {
+        "ext-memcached": "Required to use the memcached connector."
+    },
     "autoload": {
         "psr-4": {
             "System\\Cache\\": ""
