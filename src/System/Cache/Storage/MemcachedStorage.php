@@ -9,52 +9,47 @@ use System\Cache\Exceptions\CacheException;
 
 class MemcachedStorage implements CacheInterface
 {
+    /**
+     * @param \Memcached $memcached
+     */
     public function __construct(
-        private \Memcached $memcached,
+        private object $memcached,
         private int $defaultTTL = 3_600,
     ) {
+        /** @var class-string $class */
+        $class = '\Memcached';
+
+        if (false === class_exists($class) || false === ($memcached instanceof $class)) {
+            throw new \InvalidArgumentException('The memcached must be an instance of \Memcached.');
+        }
+
+        $this->memcached = $memcached;
     }
 
     public function get(string $key, mixed $default = null): mixed
     {
-        try {
+        return $this->call(function () use ($key, $default) {
             $value = $this->memcached->get($this->normalizeKey($key));
 
-            if ($this->memcached->getResultCode() === \Memcached::RES_NOTFOUND) {
-                return $default;
-            }
-
-            return $value;
-        } catch (\MemcachedException $e) {
-            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
-        }
+            return $this->memcached->getResultCode() === \Memcached::RES_NOTFOUND
+                ? $default
+                : $value;
+        });
     }
 
     public function set(string $key, mixed $value, int|\DateInterval|null $ttl = null): bool
     {
-        try {
-            return $this->memcached->set($this->normalizeKey($key), $value, $this->calculateExpiration($ttl));
-        } catch (\MemcachedException $e) {
-            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
-        }
+        return $this->call(fn () => $this->memcached->set($this->normalizeKey($key), $value, $this->calculateExpiration($ttl)));
     }
 
     public function delete(string $key): bool
     {
-        try {
-            return $this->memcached->delete($this->normalizeKey($key));
-        } catch (\MemcachedException $e) {
-            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
-        }
+        return $this->call(fn () => $this->memcached->delete($this->normalizeKey($key)));
     }
 
     public function clear(): bool
     {
-        try {
-            return $this->memcached->flush();
-        } catch (\MemcachedException $e) {
-            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
-        }
+        return $this->call(fn () => $this->memcached->flush());
     }
 
     public function getMultiple(iterable $keys, mixed $default = null): iterable
@@ -65,28 +60,23 @@ class MemcachedStorage implements CacheInterface
             return [];
         }
 
-        // Map original keys to normalized keys
         $normalizedKeysMap = [];
         foreach ($keys_array as $key) {
             $normalizedKeysMap[$this->normalizeKey($key)] = $key;
         }
 
-        try {
-            $values = $this->memcached->getMulti(array_keys($normalizedKeysMap));
-
-            if ($values === false) {
-                $values = [];
-            }
+        return $this->call(function () use ($normalizedKeysMap, $default) {
+            $values = $this->memcached->getMulti(array_keys($normalizedKeysMap)) ?: [];
 
             $result = [];
             foreach ($normalizedKeysMap as $normalizedKey => $originalKey) {
-                $result[$originalKey] = array_key_exists($normalizedKey, $values) ? $values[$normalizedKey] : $default;
+                $result[$originalKey] = array_key_exists($normalizedKey, $values)
+                    ? $values[$normalizedKey]
+                    : $default;
             }
 
             return $result;
-        } catch (\MemcachedException $e) {
-            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
-        }
+        });
     }
 
     public function setMultiple(iterable $values, int|\DateInterval|null $ttl = null): bool
@@ -96,11 +86,7 @@ class MemcachedStorage implements CacheInterface
             $normalizedValues[$this->normalizeKey((string) $key)] = $value;
         }
 
-        try {
-            return $this->memcached->setMulti($normalizedValues, $this->calculateExpiration($ttl));
-        } catch (\MemcachedException $e) {
-            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
-        }
+        return $this->call(fn () => $this->memcached->setMulti($normalizedValues, $this->calculateExpiration($ttl)));
     }
 
     public function deleteMultiple(iterable $keys): bool
@@ -113,7 +99,7 @@ class MemcachedStorage implements CacheInterface
 
         $normalizedKeys = array_map([$this, 'normalizeKey'], $keys_array);
 
-        try {
+        return $this->call(function () use ($normalizedKeys) {
             /** @var array<string, bool|int>|bool $results */
             $results = $this->memcached->deleteMulti($normalizedKeys);
 
@@ -128,27 +114,22 @@ class MemcachedStorage implements CacheInterface
             }
 
             return (bool) $results;
-        } catch (\MemcachedException $e) {
-            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
-        }
+        });
     }
 
     public function has(string $key): bool
     {
-        try {
+        return $this->call(function () use ($key) {
             $this->memcached->get($this->normalizeKey($key));
 
             return $this->memcached->getResultCode() !== \Memcached::RES_NOTFOUND;
-        } catch (\MemcachedException $e) {
-            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
-        }
+        });
     }
 
     public function increment(string $key, int $value): int
     {
-        $normalizedKey = $this->normalizeKey($key);
-        try {
-            $result = $this->memcached->increment($normalizedKey, $value);
+        return $this->call(function () use ($key, $value) {
+            $result = $this->memcached->increment($this->normalizeKey($key), $value);
 
             if ($result === false && $this->memcached->getResultCode() === \Memcached::RES_NOTFOUND) {
                 $this->set($key, $value, 0);
@@ -157,16 +138,13 @@ class MemcachedStorage implements CacheInterface
             }
 
             return (int) $result;
-        } catch (\MemcachedException $e) {
-            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
-        }
+        });
     }
 
     public function decrement(string $key, int $value): int
     {
-        $normalizedKey = $this->normalizeKey($key);
-        try {
-            $result = $this->memcached->decrement($normalizedKey, $value);
+        return $this->call(function () use ($key, $value) {
+            $result = $this->memcached->decrement($this->normalizeKey($key), $value);
 
             if ($result === false && $this->memcached->getResultCode() === \Memcached::RES_NOTFOUND) {
                 $this->set($key, -$value, 0);
@@ -175,9 +153,7 @@ class MemcachedStorage implements CacheInterface
             }
 
             return (int) $result;
-        } catch (\MemcachedException $e) {
-            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
-        }
+        });
     }
 
     public function remember(string $key, int|\DateInterval|null $ttl, \Closure $callback): mixed
@@ -191,6 +167,24 @@ class MemcachedStorage implements CacheInterface
         $this->set($key, $value = $callback(), $ttl);
 
         return $value;
+    }
+
+    /**
+     * @template T
+     *
+     * @param callable(): T $operation
+     *
+     * @return T
+     *
+     * @throws CacheException
+     */
+    private function call(callable $operation): mixed
+    {
+        try {
+            return $operation();
+        } catch (\MemcachedException $e) {
+            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
+        }
     }
 
     /**

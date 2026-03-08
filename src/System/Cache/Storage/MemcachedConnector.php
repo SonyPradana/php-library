@@ -11,8 +11,10 @@ class MemcachedConnector
      *
      * @param array<int, array{host: string, port?: int, weight?: int}>|string $servers
      * @param array<int, mixed>                                                $options
+     *
+     * @return \Memcached
      */
-    public function connect(array|string $servers, ?string $persistent_id = null, array $options = []): \Memcached
+    public function connect(array|string $servers, ?string $persistent_id = null, array $options = []): object
     {
         $memcached = $this->createMemcachedInstance($persistent_id);
 
@@ -26,7 +28,7 @@ class MemcachedConnector
             $host = $server['host'];
             $port = str_starts_with($host, '/') ? 0 : ($server['port'] ?? 11211);
 
-            if (!$this->serverExists($host, $port, $currentServers)) {
+            if (false === $this->serverExists($host, $port, $currentServers)) {
                 $memcached->addServer(
                     $host,
                     $port,
@@ -50,7 +52,7 @@ class MemcachedConnector
      */
     public function parseDsn(string $dsn): array
     {
-        if (!str_starts_with($dsn, 'memcached://')) {
+        if (false === str_starts_with($dsn, 'memcached://')) {
             throw new \InvalidArgumentException('Invalid Memcached DSN format.');
         }
 
@@ -84,10 +86,15 @@ class MemcachedConnector
 
     /**
      * Create a new Memcached instance.
+     *
+     * @return \Memcached
      */
-    protected function createMemcachedInstance(?string $persistent_id = null): \Memcached
+    protected function createMemcachedInstance(?string $persistent_id = null): object
     {
-        return $persistent_id ? new \Memcached($persistent_id) : new \Memcached();
+        /** @var class-string<\Memcached> $class */
+        $class = '\Memcached';
+
+        return $persistent_id ? new $class($persistent_id) : new $class();
     }
 
     /**
