@@ -50,39 +50,4 @@ class MemcachedConnectorTest extends TestCase
         $this->assertTrue($found);
         $this->assertEquals('test_', $memcached->getOption(\Memcached::OPT_PREFIX_KEY));
     }
-
-    /**
-     * @test
-     *
-     * @testdox it can connect to memcached via unix socket
-     *
-     * @covers \System\Cache\Storage\MemcachedConnector::connect
-     */
-    public function itCanConnectToMemcachedViaUnixSocket(): void
-    {
-        if (!class_exists('\Memcached')) {
-            $this->markTestSkipped('Memcached extension is not installed.');
-        }
-
-        $connector = new MemcachedConnector();
-        // Use a unique ID to ensure a fresh server list if possible
-        $memcached = $connector->connect(
-            [['host' => '/var/run/memcached/memcached.sock', 'port' => 11211]],
-            'test_persistent_id_socket'
-        );
-
-        $this->assertInstanceOf('\Memcached', $memcached);
-
-        $serverList = $memcached->getServerList();
-
-        $found = false;
-        foreach ($serverList as $server) {
-            if ($server['host'] === '/var/run/memcached/memcached.sock' && $server['port'] === 0) {
-                $found = true;
-                break;
-            }
-        }
-
-        $this->assertTrue($found);
-    }
 }

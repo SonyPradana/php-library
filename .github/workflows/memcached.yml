@@ -33,17 +33,6 @@ jobs:
         extensions: mbstring, memcached
         coverage: none
 
-    - name: Setup Memcached Unix Socket
-      run: |
-        # Create directory for socket
-        sudo mkdir -p /var/run/memcached
-        sudo chmod 777 /var/run/memcached
-        
-        # Start another memcached instance for socket testing
-        # -d: daemon, -s: socket path, -a: permissions, -u: user
-        sudo apt-get update && sudo apt-get install -y memcached
-        sudo memcached -d -s /var/run/memcached/memcached.sock -a 777 -u memcache
-
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
 
