@@ -23,7 +23,7 @@ class RedisStorage implements CacheInterface
             return $default;
         }
 
-        return unserialize((string) $value);
+        return unserialize((string) $value, ['allowed_classes' => false]);
     }
 
     public function set(string $key, mixed $value, int|\DateInterval|null $ttl = null): bool
