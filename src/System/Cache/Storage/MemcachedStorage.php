@@ -9,6 +9,8 @@ use System\Cache\Exceptions\CacheException;
 
 class MemcachedStorage implements CacheInterface
 {
+    private string $prefix_key = 'memcached-storage:';
+
     /**
      * @param \Memcached $memcached
      */
@@ -56,7 +58,7 @@ class MemcachedStorage implements CacheInterface
     {
         $keys_array = is_array($keys) ? $keys : iterator_to_array($keys);
 
-        if (count($keys_array) === 0) {
+        if (0 === count($keys_array)) {
             return [];
         }
 
@@ -93,7 +95,7 @@ class MemcachedStorage implements CacheInterface
     {
         $keys_array = is_array($keys) ? $keys : iterator_to_array($keys);
 
-        if (count($keys_array) === 0) {
+        if (0 === count($keys_array)) {
             return true;
         }
 
@@ -195,7 +197,7 @@ class MemcachedStorage implements CacheInterface
         // Memcached key limit is 250 characters.
         // Also contains no control characters or whitespace.
         if (strlen($key) > 240 || preg_match('/[\s\x00-\x1F\x7F]/', $key)) {
-            return 'savanna:' . sha1($key);
+            return $this->prefix_key . sha1($key);
         }
 
         return $key;
