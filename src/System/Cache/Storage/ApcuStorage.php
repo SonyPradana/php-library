@@ -12,7 +12,7 @@ class ApcuStorage implements CacheInterface
         private string $prefix = '',
         private int $defaultTTL = 3_600,
     ) {
-        if (!static::isSupported()) {
+        if (false === static::isSupported()) {
             throw new \RuntimeException('APCu extension is not loaded or enabled.');
         }
     }
@@ -115,7 +115,7 @@ class ApcuStorage implements CacheInterface
 
     public function increment(string $key, int $value): int
     {
-        if ($this->has($key) && !is_int($this->get($key))) {
+        if ($this->has($key) && false === is_int($this->get($key))) {
             throw new \InvalidArgumentException('Value increment must be integer.');
         }
 

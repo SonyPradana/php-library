@@ -7,6 +7,11 @@ namespace System\Text\Cache\Storage;
 use PHPUnit\Framework\TestCase;
 use System\Cache\Storage\ApcuStorage;
 
+/**
+ * @group apcu
+ *
+ * @covers \System\Cache\Storage\ApcuStorage
+ */
 class ApcuStorageTest extends TestCase
 {
     protected ApcuStorage $storage;
@@ -23,52 +28,84 @@ class ApcuStorageTest extends TestCase
 
     protected function tearDown(): void
     {
-        if (\extension_loaded('apcu') && \apcu_enabled()) {
+        if (ApcuStorage::isSupported()) {
             $this->storage->clear();
         }
     }
 
-    public function testSetAndGet(): void
+    /**
+     * @test
+     *
+     * @testdox It can set and get value from apcu storage
+     */
+    public function itCanSetAndGet(): void
     {
         $this->assertTrue($this->storage->set('key1', 'value1'));
         $this->assertEquals('value1', $this->storage->get('key1'));
     }
 
-    public function testGetWithDefault(): void
+    /**
+     * @test
+     *
+     * @testdox It can get value with default value if key not found
+     */
+    public function itCanGetWithDefault(): void
     {
         $this->assertEquals('default', $this->storage->get('non_existing_key', 'default'));
     }
 
-    public function testSetWithTTL(): void
+    /**
+     * @test
+     *
+     * @testdox It can set value with TTL
+     */
+    public function itShouldSetWithTTL(): void
     {
-        // APCu TTL testing might be tricky in a single request but let's try
         $this->assertTrue($this->storage->set('key2', 'value2', 1));
-        // We can't really sleep here as per existing tests style, but for APCu we might have to if we want to verify.
-        // Existing tests mark it as skipped.
-        $this->markTestSkipped('sleep is not allowed');
+        // We can't easily test expiration in a unit test without sleeping,
+        // which is usually discouraged. For now, we verify the set operation returns true.
     }
 
-    public function testDelete(): void
+    /**
+     * @test
+     *
+     * @testdox It can delete value from apcu storage
+     */
+    public function itCanDelete(): void
     {
         $this->storage->set('key3', 'value3');
         $this->assertTrue($this->storage->delete('key3'));
         $this->assertFalse($this->storage->has('key3'));
     }
 
-    public function testDeleteNonExistingKey(): void
+    /**
+     * @test
+     *
+     * @testdox It returns false when deleting non existing key
+     */
+    public function itShouldReturnFalseWhenDeleteNonExistingKey(): void
     {
-        // apcu_delete returns false if key doesn't exist
         $this->assertFalse($this->storage->delete('non_existing_key'));
     }
 
-    public function testClear(): void
+    /**
+     * @test
+     *
+     * @testdox It can clear all values from apcu storage
+     */
+    public function itCanClear(): void
     {
         $this->storage->set('key4', 'value4');
         $this->assertTrue($this->storage->clear());
         $this->assertFalse($this->storage->has('key4'));
     }
 
-    public function testGetMultiple(): void
+    /**
+     * @test
+     *
+     * @testdox It can get multiple values from apcu storage
+     */
+    public function itCanGetMultiple(): void
     {
         $this->storage->set('key5', 'value5');
         $this->storage->set('key6', 'value6');
@@ -76,14 +113,24 @@ class ApcuStorageTest extends TestCase
         $this->assertEquals(['key5' => 'value5', 'key6' => 'value6', 'non_existing_key' => 'default'], $result);
     }
 
-    public function testSetMultiple(): void
+    /**
+     * @test
+     *
+     * @testdox It can set multiple values to apcu storage
+     */
+    public function itCanSetMultiple(): void
     {
         $this->assertTrue($this->storage->setMultiple(['key7' => 'value7', 'key8' => 'value8']));
         $this->assertEquals('value7', $this->storage->get('key7'));
         $this->assertEquals('value8', $this->storage->get('key8'));
     }
 
-    public function testDeleteMultiple(): void
+    /**
+     * @test
+     *
+     * @testdox It can delete multiple values from apcu storage
+     */
+    public function itCanDeleteMultiple(): void
     {
         $this->storage->set('key9', 'value9');
         $this->storage->set('key10', 'value10');
@@ -92,26 +139,46 @@ class ApcuStorageTest extends TestCase
         $this->assertFalse($this->storage->has('key10'));
     }
 
-    public function testHas(): void
+    /**
+     * @test
+     *
+     * @testdox It can check if key exists in apcu storage
+     */
+    public function itCanHas(): void
     {
         $this->storage->set('key11', 'value11');
         $this->assertTrue($this->storage->has('key11'));
         $this->assertFalse($this->storage->has('non_existing_key'));
     }
 
-    public function testIncrement(): void
+    /**
+     * @test
+     *
+     * @testdox It can increment value in apcu storage
+     */
+    public function itCanIncrement(): void
     {
         $this->assertEquals(10, $this->storage->increment('key12', 10));
         $this->assertEquals(20, $this->storage->increment('key12', 10));
     }
 
-    public function testDecrement(): void
+    /**
+     * @test
+     *
+     * @testdox It can decrement value in apcu storage
+     */
+    public function itCanDecrement(): void
     {
         $this->storage->increment('key13', 20);
         $this->assertEquals(10, $this->storage->decrement('key13', 10));
     }
 
-    public function testGetInfo(): void
+    /**
+     * @test
+     *
+     * @testdox It can get info of a key from apcu storage
+     */
+    public function itCanGetInfo(): void
     {
         $this->storage->set('key14', 'value14');
         $info = $this->storage->getInfo('key14');
@@ -121,7 +188,12 @@ class ApcuStorageTest extends TestCase
         $this->assertArrayHasKey('mtime', $info);
     }
 
-    public function testRemember(): void
+    /**
+     * @test
+     *
+     * @testdox It can remember value in apcu storage
+     */
+    public function itCanRemember(): void
     {
         $value = $this->storage->remember('key1', 1, fn (): string => 'value1');
         $this->assertEquals('value1', $value);
