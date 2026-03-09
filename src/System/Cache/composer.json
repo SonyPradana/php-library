@@ -11,7 +11,7 @@
         "php": "^8.0"
     },
     "suggest": {
-        "ext-pdo": "Required to use the PDO cache driver.",
+        "ext-pdo": "Required to use the PDO cache driver."
     },
     "autoload": {
         "psr-4": {
