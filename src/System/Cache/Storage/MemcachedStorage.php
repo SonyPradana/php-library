@@ -196,7 +196,8 @@ class MemcachedStorage implements CacheInterface
     {
         // Memcached key limit is 250 characters.
         // Also contains no control characters or whitespace.
-        if (strlen($key) > 240 || preg_match('/[\s\x00-\x1F\x7F]/', $key)) {
+        $keyLenghtLimit = 250 - strlen($this->prefix_key);
+        if (strlen($key) > $keyLenghtLimit || preg_match('/[\s\x00-\x1F\x7F]/', $key)) {
             return $this->prefix_key . sha1($key);
         }
 
