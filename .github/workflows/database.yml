@@ -6,6 +6,8 @@ on:
       - ".github/workflows/database.yml"
       - "src/System/Database/**"
       - "tests/DataBase/**"
+      - "src/System/Cache/Storage/PdoStorage.php"
+      - "tests/Cache/Storage/PdoStorageRealConnectionTest.php"
     branches:
       - master
   pull_request:
@@ -13,6 +15,8 @@ on:
       - ".github/workflows/database.yml"
       - "src/System/Database/**"
       - "tests/DataBase/**"
+      - "src/System/Cache/Storage/PdoStorage.php"
+      - "tests/Cache/Storage/PdoStorageRealConnectionTest.php"
 
 jobs:
   mysql_57:
@@ -53,7 +57,7 @@ jobs:
           command: composer update --prefer-stable --prefer-dist --no-interaction --no-progress
 
       - name: Execute tests
-        run: vendor/bin/phpunit tests/DataBase tests/Cache/Storage/PdoStorageRealConnectionTest.php tests/Cache/Storage/PdoStorageRealConnectionTest.php --exclude-group not-for-mysql5.7
+        run: vendor/bin/phpunit --group database --exclude-group not-for-mysql5.7
         env:
           DB_CONNECTION: mysql
           DB_USERNAME: root
@@ -96,7 +100,7 @@ jobs:
           command: composer update --prefer-stable --prefer-dist --no-interaction --no-progress
 
       - name: Execute tests
-        run: vendor/bin/phpunit tests/DataBase tests/Cache/Storage/PdoStorageRealConnectionTest.php
+        run: vendor/bin/phpunit --group database
         env:
           DB_CONNECTION: mysql
           DB_USERNAME: root
@@ -139,6 +143,6 @@ jobs:
           command: composer update --prefer-stable --prefer-dist --no-interaction --no-progress
 
       - name: Execute tests
-        run: vendor/bin/phpunit tests/DataBase tests/Cache/Storage/PdoStorageRealConnectionTest.php
+        run: vendor/bin/phpunit --group database
         env:
           DB_CONNECTION: mariadb
