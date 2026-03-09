@@ -12,13 +12,14 @@ class ApcuStorage implements CacheInterface
         private string $prefix = '',
         private int $defaultTTL = 3_600,
     ) {
-        if (!\extension_loaded('apcu')) {
-            throw new \RuntimeException('APCu extension is not loaded.');
+        if (!static::isSupported()) {
+            throw new \RuntimeException('APCu extension is not loaded or enabled.');
         }
+    }
 
-        if (!\apcu_enabled()) {
-            throw new \RuntimeException('APCu is not enabled.');
-        }
+    public static function isSupported(): bool
+    {
+        return \extension_loaded('apcu') && \apcu_enabled();
     }
 
     /**

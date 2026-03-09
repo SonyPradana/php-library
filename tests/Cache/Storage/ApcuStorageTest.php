@@ -13,7 +13,7 @@ class ApcuStorageTest extends TestCase
 
     protected function setUp(): void
     {
-        if (!\extension_loaded('apcu') || !\apcu_enabled()) {
+        if (!ApcuStorage::isSupported()) {
             $this->markTestSkipped('APCu extension is not loaded or enabled for CLI.');
         }
 
