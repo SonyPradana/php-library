@@ -9,6 +9,7 @@ use System\Cache\Storage\PdoStorage;
 
 /**
  * @group database
+ *
  * @covers \System\Cache\Storage\PdoStorage
  */
 class PdoStorageTest extends TestCase
@@ -32,12 +33,14 @@ class PdoStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it can get and set cache
+     *
      * @covers \System\Cache\Storage\PdoStorage::get
      * @covers \System\Cache\Storage\PdoStorage::set
      * @covers \System\Cache\Storage\PdoStorage::quoteIdentifier
      */
-    public function it_can_get_and_set_cache()
+    public function itCanGetAndSetCache()
     {
         $this->assertTrue($this->storage->set('foo', 'bar'));
         $this->assertEquals('bar', $this->storage->get('foo'));
@@ -45,10 +48,12 @@ class PdoStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it should return null if cache expired
+     *
      * @covers \System\Cache\Storage\PdoStorage::get
      */
-    public function it_should_return_null_if_cache_expired()
+    public function itShouldReturnNullIfCacheExpired()
     {
         $this->storage->set('foo', 'bar', -1);
         $this->assertNull($this->storage->get('foo'));
@@ -56,10 +61,12 @@ class PdoStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it can delete cache
+     *
      * @covers \System\Cache\Storage\PdoStorage::delete
      */
-    public function it_can_delete_cache()
+    public function itCanDeleteCache()
     {
         $this->storage->set('foo', 'bar');
         $this->assertTrue($this->storage->delete('foo'));
@@ -68,10 +75,12 @@ class PdoStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it can clear all cache
+     *
      * @covers \System\Cache\Storage\PdoStorage::clear
      */
-    public function it_can_clear_all_cache()
+    public function itCanClearAllCache()
     {
         $this->storage->set('foo', 'bar');
         $this->storage->set('baz', 'qux');
@@ -82,10 +91,12 @@ class PdoStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it can check if cache exists
+     *
      * @covers \System\Cache\Storage\PdoStorage::has
      */
-    public function it_can_check_if_cache_exists()
+    public function itCanCheckIfCacheExists()
     {
         $this->storage->set('foo', 'bar');
         $this->assertTrue($this->storage->has('foo'));
@@ -94,10 +105,12 @@ class PdoStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it can increment cache value
+     *
      * @covers \System\Cache\Storage\PdoStorage::increment
      */
-    public function it_can_increment_cache_value()
+    public function itCanIncrementCacheValue()
     {
         $this->storage->set('num', 1);
         $this->assertEquals(2, $this->storage->increment('num', 1));
@@ -106,10 +119,12 @@ class PdoStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it can decrement cache value
+     *
      * @covers \System\Cache\Storage\PdoStorage::decrement
      */
-    public function it_can_decrement_cache_value()
+    public function itCanDecrementCacheValue()
     {
         $this->storage->set('num', 10);
         $this->assertEquals(7, $this->storage->decrement('num', 3));
@@ -118,10 +133,12 @@ class PdoStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it can remember cache value
+     *
      * @covers \System\Cache\Storage\PdoStorage::remember
      */
-    public function it_can_remember_cache_value()
+    public function itCanRememberCacheValue()
     {
         $this->assertNull($this->storage->get('rem'));
         $value = $this->storage->remember('rem', 60, fn () => 'remembered');
@@ -131,12 +148,14 @@ class PdoStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it can handle multiple cache operations
+     *
      * @covers \System\Cache\Storage\PdoStorage::getMultiple
      * @covers \System\Cache\Storage\PdoStorage::setMultiple
      * @covers \System\Cache\Storage\PdoStorage::deleteMultiple
      */
-    public function it_can_handle_multiple_cache_operations()
+    public function itCanHandleMultipleCacheOperations()
     {
         $values = ['a' => 1, 'b' => 2];
         $this->assertTrue($this->storage->setMultiple($values));

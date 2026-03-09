@@ -9,6 +9,7 @@ use System\Cache\Storage\PdoStorage;
 
 /**
  * @group database
+ *
  * @covers \System\Cache\Storage\PdoStorage
  */
 class PdoStorageRealConnectionTest extends TestCase
@@ -27,7 +28,7 @@ class PdoStorageRealConnectionTest extends TestCase
         $port         = $_ENV['DB_PORT'] ?? '3306';
 
         try {
-            $dsn = "{$this->driver}:host={$host};port={$port};dbname={$db};charset=utf8mb4";
+            $dsn       = "{$this->driver}:host={$host};port={$port};dbname={$db};charset=utf8mb4";
             $this->pdo = new \PDO($dsn, $user, $pass, [
                 \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
             ]);
@@ -69,11 +70,13 @@ class PdoStorageRealConnectionTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it can get and set cache on real connection
+     *
      * @covers \System\Cache\Storage\PdoStorage::get
      * @covers \System\Cache\Storage\PdoStorage::set
      */
-    public function it_can_get_and_set_cache_on_real_connection()
+    public function itCanGetAndSetCacheOnRealConnection()
     {
         $this->assertTrue($this->storage->set('real_key', ['complex' => 'data', 'number' => 123]));
         $result = $this->storage->get('real_key');
@@ -85,10 +88,12 @@ class PdoStorageRealConnectionTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it should handle cache expiration on real connection
+     *
      * @covers \System\Cache\Storage\PdoStorage::get
      */
-    public function it_should_handle_cache_expiration_on_real_connection()
+    public function itShouldHandleCacheExpirationOnRealConnection()
     {
         $this->storage->set('expired_soon', 'bye', 1);
         $this->assertEquals('bye', $this->storage->get('expired_soon'));
@@ -101,10 +106,12 @@ class PdoStorageRealConnectionTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it can increment cache on real connection
+     *
      * @covers \System\Cache\Storage\PdoStorage::increment
      */
-    public function it_can_increment_cache_on_real_connection()
+    public function itCanIncrementCacheOnRealConnection()
     {
         $this->storage->set('counter', 10, 10);
         $this->assertEquals(15, $this->storage->increment('counter', 5));
@@ -113,10 +120,12 @@ class PdoStorageRealConnectionTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it can clear cache on real connection
+     *
      * @covers \System\Cache\Storage\PdoStorage::clear
      */
-    public function it_can_clear_cache_on_real_connection()
+    public function itCanClearCacheOnRealConnection()
     {
         $this->storage->set('a', 1);
         $this->storage->set('b', 2);
