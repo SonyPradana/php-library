@@ -8,11 +8,21 @@ use System\Cache\CacheInterface;
 
 class PdoStorage implements CacheInterface
 {
+    /**
+     * @param \PDO   $pdo PDO instance
+     */
     public function __construct(
-        private \PDO $pdo,
+        private $pdo,
         private string $table = 'cache',
         private int $defaultTTL = 3_600,
     ) {
+        if (false === extension_loaded('pdo') || !class_exists('\PDO')) {
+            throw new \RuntimeException('The PDO extension is required to use PdoStorage.');
+        }
+
+        if (false === ($this->pdo instanceof \PDO)) {
+            throw new \InvalidArgumentException('The pdo must be an instance of \PDO.');
+        }
     }
 
     public function get(string $key, mixed $default = null): mixed

@@ -26,6 +26,7 @@
         "rector/rector": "^1.2"
     },
     "suggest": {
+        "ext-pdo": "Required to use the PDO cache driver.",
         "ext-redis": "Required to use the phpredis connector."
     },
     "autoload": {
