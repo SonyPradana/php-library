@@ -17,7 +17,10 @@ class PdoStorage implements CacheInterface
 
     public function get(string $key, mixed $default = null): mixed
     {
-        $stmt = $this->pdo->prepare("SELECT value, expiration FROM {$this->table} WHERE key = :key");
+        $table = $this->quoteIdentifier($this->table);
+        $key_column = $this->quoteIdentifier('key');
+        
+        $stmt = $this->pdo->prepare("SELECT value, expiration FROM {$table} WHERE {$key_column} = :key");
         $stmt->execute(['key' => $key]);
         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
@@ -39,10 +42,16 @@ class PdoStorage implements CacheInterface
         $expiration = $this->calculateExpirationTimestamp($ttl);
         $serialized = serialize($value);
 
-        $stmt = $this->pdo->prepare("DELETE FROM {$this->table} WHERE key = :key");
+        $table = $this->quoteIdentifier($this->table);
+        $key_column = $this->quoteIdentifier('key');
+
+        $stmt = $this->pdo->prepare("DELETE FROM {$table} WHERE {$key_column} = :key");
         $stmt->execute(['key' => $key]);
 
-        $stmt = $this->pdo->prepare("INSERT INTO {$this->table} (key, value, expiration) VALUES (:key, :value, :expiration)");
+        $value_column = $this->quoteIdentifier('value');
+        $exp_column = $this->quoteIdentifier('expiration');
+        
+        $stmt = $this->pdo->prepare("INSERT INTO {$table} ({$key_column}, {$value_column}, {$exp_column}) VALUES (:key, :value, :expiration)");
 
         return $stmt->execute([
             'key'        => $key,
@@ -53,14 +62,18 @@ class PdoStorage implements CacheInterface
 
     public function delete(string $key): bool
     {
-        $stmt = $this->pdo->prepare("DELETE FROM {$this->table} WHERE key = :key");
+        $table = $this->quoteIdentifier($this->table);
+        $key_column = $this->quoteIdentifier('key');
+        
+        $stmt = $this->pdo->prepare("DELETE FROM {$table} WHERE {$key_column} = :key");
 
         return $stmt->execute(['key' => $key]);
     }
 
     public function clear(): bool
     {
-        $stmt = $this->pdo->prepare("DELETE FROM {$this->table}");
+        $table = $this->quoteIdentifier($this->table);
+        $stmt = $this->pdo->prepare("DELETE FROM {$table}");
 
         return $stmt->execute();
     }
@@ -101,7 +114,11 @@ class PdoStorage implements CacheInterface
 
     public function has(string $key): bool
     {
-        $stmt = $this->pdo->prepare("SELECT 1 FROM {$this->table} WHERE key = :key AND expiration > :now");
+        $table = $this->quoteIdentifier($this->table);
+        $key_column = $this->quoteIdentifier('key');
+        $exp_column = $this->quoteIdentifier('expiration');
+
+        $stmt = $this->pdo->prepare("SELECT 1 FROM {$table} WHERE {$key_column} = :key AND {$exp_column} > :now");
         $stmt->execute([
             'key' => $key,
             'now' => time(),
@@ -112,7 +129,10 @@ class PdoStorage implements CacheInterface
 
     public function increment(string $key, int $value): int
     {
-        $stmt = $this->pdo->prepare("SELECT value, expiration FROM {$this->table} WHERE key = :key");
+        $table = $this->quoteIdentifier($this->table);
+        $key_column = $this->quoteIdentifier('key');
+
+        $stmt = $this->pdo->prepare("SELECT value, expiration FROM {$table} WHERE {$key_column} = :key");
         $stmt->execute(['key' => $key]);
         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
@@ -153,6 +173,16 @@ class PdoStorage implements CacheInterface
         $this->set($key, $value = $callback(), $ttl);
 
         return $value;
+    }
+
+    private function quoteIdentifier(string $identifier): string
+    {
+        $driver = $this->pdo->getAttribute(\PDO::ATTR_DRIVER_NAME);
+
+        return match ($driver) {
+            'mysql', 'mariadb' => "`{$identifier}`",
+            default            => "\"{$identifier}\"",
+        };
     }
 
     private function calculateExpirationTimestamp(int|\DateInterval|\DateTimeInterface|null $ttl): int

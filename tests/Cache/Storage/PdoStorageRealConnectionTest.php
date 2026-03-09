@@ -4,48 +4,76 @@ declare(strict_types=1);
 
 namespace System\Test\Cache\Storage;
 
+use PHPUnit\Framework\TestCase;
 use System\Cache\Storage\PdoStorage;
-use System\Test\Database\TestDatabase;
 
-class PdoStorageRealConnectionTest extends TestDatabase
+/**
+ * @group database
+ * @covers \System\Cache\Storage\PdoStorage
+ */
+class PdoStorageRealConnectionTest extends TestCase
 {
+    private \PDO $pdo;
     private PdoStorage $storage;
+    private string $driver;
 
     protected function setUp(): void
     {
-        $this->createConnection();
+        $this->driver = $_ENV['DB_CONNECTION'] ?? 'mysql';
+        $host         = $_ENV['DB_HOST'] ?? '127.0.0.1';
+        $db           = $_ENV['DB_DATABASE'] ?? 'forge';
+        $user         = $_ENV['DB_USERNAME'] ?? 'root';
+        $pass         = $_ENV['DB_PASSWORD'] ?? '';
+        $port         = $_ENV['DB_PORT'] ?? '3306';
+
+        try {
+            $dsn = "{$this->driver}:host={$host};port={$port};dbname={$db};charset=utf8mb4";
+            $this->pdo = new \PDO($dsn, $user, $pass, [
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+            ]);
+        } catch (\PDOException $e) {
+            $this->markTestSkipped('Database connection failed: ' . $e->getMessage());
+        }
+
         $this->createCacheTable();
-
-        $reflection = new \ReflectionClass($this->pdo);
-        $property   = $reflection->getProperty('dbh');
-        $property->setAccessible(true);
-        $dbh = $property->getValue($this->pdo);
-
-        $this->storage = new PdoStorage($dbh, 'cache', 60);
+        $this->storage = new PdoStorage($this->pdo, 'cache', 60);
     }
 
     protected function tearDown(): void
     {
-        $this->dropCacheTable();
+        if (isset($this->pdo)) {
+            $this->dropCacheTable();
+        }
     }
 
     private function createCacheTable(): void
     {
-        $this->pdo->query('
-            CREATE TABLE cache (
-                key VARCHAR(255) PRIMARY KEY,
-                value TEXT,
-                expiration INT
+        $quote = match ($this->driver) {
+            'mysql', 'mariadb' => '`',
+            default            => '"',
+        };
+
+        $this->pdo->exec("
+            CREATE TABLE IF NOT EXISTS cache (
+                {$quote}key{$quote} VARCHAR(255) PRIMARY KEY,
+                {$quote}value{$quote} TEXT,
+                {$quote}expiration{$quote} INT
             )
-        ')->execute();
+        ");
     }
 
     private function dropCacheTable(): void
     {
-        $this->pdo->query('DROP TABLE IF EXISTS cache')->execute();
+        $this->pdo->exec('DROP TABLE IF EXISTS cache');
     }
 
-    public function testRealConnectionGetAndSet()
+    /**
+     * @test
+     * @testdox it can get and set cache on real connection
+     * @covers \System\Cache\Storage\PdoStorage::get
+     * @covers \System\Cache\Storage\PdoStorage::set
+     */
+    public function it_can_get_and_set_cache_on_real_connection()
     {
         $this->assertTrue($this->storage->set('real_key', ['complex' => 'data', 'number' => 123]));
         $result = $this->storage->get('real_key');
@@ -55,7 +83,12 @@ class PdoStorageRealConnectionTest extends TestDatabase
         $this->assertEquals(123, $result['number']);
     }
 
-    public function testRealConnectionExpiration()
+    /**
+     * @test
+     * @testdox it should handle cache expiration on real connection
+     * @covers \System\Cache\Storage\PdoStorage::get
+     */
+    public function it_should_handle_cache_expiration_on_real_connection()
     {
         $this->storage->set('expired_soon', 'bye', 1);
         $this->assertEquals('bye', $this->storage->get('expired_soon'));
@@ -66,14 +99,24 @@ class PdoStorageRealConnectionTest extends TestDatabase
         $this->assertNull($this->storage->get('expired_soon'));
     }
 
-    public function testRealConnectionIncrement()
+    /**
+     * @test
+     * @testdox it can increment cache on real connection
+     * @covers \System\Cache\Storage\PdoStorage::increment
+     */
+    public function it_can_increment_cache_on_real_connection()
     {
         $this->storage->set('counter', 10, 10);
         $this->assertEquals(15, $this->storage->increment('counter', 5));
         $this->assertEquals(15, $this->storage->get('counter'));
     }
 
-    public function testRealConnectionClear()
+    /**
+     * @test
+     * @testdox it can clear cache on real connection
+     * @covers \System\Cache\Storage\PdoStorage::clear
+     */
+    public function it_can_clear_cache_on_real_connection()
     {
         $this->storage->set('a', 1);
         $this->storage->set('b', 2);
