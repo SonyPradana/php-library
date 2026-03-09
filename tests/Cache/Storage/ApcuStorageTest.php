@@ -37,6 +37,11 @@ class ApcuStorageTest extends TestCase
      * @test
      *
      * @testdox It can set and get value from apcu storage
+     *
+     * @covers \System\Cache\Storage\ApcuStorage::set
+     * @covers \System\Cache\Storage\ApcuStorage::get
+     * @covers \System\Cache\Storage\ApcuStorage::calculateTTL
+     * @covers \System\Cache\Storage\ApcuStorage::__construct
      */
     public function itCanSetAndGet(): void
     {
@@ -48,6 +53,8 @@ class ApcuStorageTest extends TestCase
      * @test
      *
      * @testdox It can get value with default value if key not found
+     *
+     * @covers \System\Cache\Storage\ApcuStorage::get
      */
     public function itCanGetWithDefault(): void
     {
@@ -58,18 +65,21 @@ class ApcuStorageTest extends TestCase
      * @test
      *
      * @testdox It can set value with TTL
+     *
+     * @covers \System\Cache\Storage\ApcuStorage::set
+     * @covers \System\Cache\Storage\ApcuStorage::calculateTTL
      */
     public function itShouldSetWithTTL(): void
     {
         $this->assertTrue($this->storage->set('key2', 'value2', 1));
-        // We can't easily test expiration in a unit test without sleeping,
-        // which is usually discouraged. For now, we verify the set operation returns true.
     }
 
     /**
      * @test
      *
      * @testdox It can delete value from apcu storage
+     *
+     * @covers \System\Cache\Storage\ApcuStorage::delete
      */
     public function itCanDelete(): void
     {
@@ -82,6 +92,8 @@ class ApcuStorageTest extends TestCase
      * @test
      *
      * @testdox It returns false when deleting non existing key
+     *
+     * @covers \System\Cache\Storage\ApcuStorage::delete
      */
     public function itShouldReturnFalseWhenDeleteNonExistingKey(): void
     {
@@ -92,6 +104,8 @@ class ApcuStorageTest extends TestCase
      * @test
      *
      * @testdox It can clear all values from apcu storage
+     *
+     * @covers \System\Cache\Storage\ApcuStorage::clear
      */
     public function itCanClear(): void
     {
@@ -104,6 +118,8 @@ class ApcuStorageTest extends TestCase
      * @test
      *
      * @testdox It can get multiple values from apcu storage
+     *
+     * @covers \System\Cache\Storage\ApcuStorage::getMultiple
      */
     public function itCanGetMultiple(): void
     {
@@ -117,6 +133,9 @@ class ApcuStorageTest extends TestCase
      * @test
      *
      * @testdox It can set multiple values to apcu storage
+     *
+     * @covers \System\Cache\Storage\ApcuStorage::setMultiple
+     * @covers \System\Cache\Storage\ApcuStorage::calculateTTL
      */
     public function itCanSetMultiple(): void
     {
@@ -129,6 +148,8 @@ class ApcuStorageTest extends TestCase
      * @test
      *
      * @testdox It can delete multiple values from apcu storage
+     *
+     * @covers \System\Cache\Storage\ApcuStorage::deleteMultiple
      */
     public function itCanDeleteMultiple(): void
     {
@@ -143,6 +164,8 @@ class ApcuStorageTest extends TestCase
      * @test
      *
      * @testdox It can check if key exists in apcu storage
+     *
+     * @covers \System\Cache\Storage\ApcuStorage::has
      */
     public function itCanHas(): void
     {
@@ -155,6 +178,8 @@ class ApcuStorageTest extends TestCase
      * @test
      *
      * @testdox It can increment value in apcu storage
+     *
+     * @covers \System\Cache\Storage\ApcuStorage::increment
      */
     public function itCanIncrement(): void
     {
@@ -166,6 +191,9 @@ class ApcuStorageTest extends TestCase
      * @test
      *
      * @testdox It can decrement value in apcu storage
+     *
+     * @covers \System\Cache\Storage\ApcuStorage::decrement
+     * @covers \System\Cache\Storage\ApcuStorage::increment
      */
     public function itCanDecrement(): void
     {
@@ -177,6 +205,8 @@ class ApcuStorageTest extends TestCase
      * @test
      *
      * @testdox It can get info of a key from apcu storage
+     *
+     * @covers \System\Cache\Storage\ApcuStorage::getInfo
      */
     public function itCanGetInfo(): void
     {
@@ -192,6 +222,8 @@ class ApcuStorageTest extends TestCase
      * @test
      *
      * @testdox It can remember value in apcu storage
+     *
+     * @covers \System\Cache\Storage\ApcuStorage::remember
      */
     public function itCanRemember(): void
     {
