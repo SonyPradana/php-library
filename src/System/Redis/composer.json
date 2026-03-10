@@ -8,10 +8,8 @@
         }
     ],
     "require": {
-        "php": "^8.0"
-    },
-    "suggest": {
-        "ext-redis": "Required to use the phpredis connector."
+        "php": "^8.0",
+        "ext-redis": "*"
     },
     "autoload": {
         "psr-4": {
