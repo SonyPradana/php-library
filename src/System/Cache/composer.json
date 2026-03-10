@@ -1,6 +1,6 @@
 {
     "name": "sonypradana/cache",
-    "description": "Part of php-library, cache manger",
+    "description": "Part of php-library, cache manager",
     "authors": [
         {
             "name": "Angger Pradana",
@@ -8,20 +8,14 @@
         }
     ],
     "require": {
-        "php": "^8.0",
-        "sonypradana/redis": "^0.40.4"
+        "php": "^8.0"
     },
     "suggest": {
-        "ext-redis": "Required to use the phpredis connector."
-    },
-    "suggest": {
-        "ext-apcu": "Required to use the APCu cache driver."
-    },
-    "suggest": {
-        "ext-pdo": "Required to use the PDO cache driver."
-    },
-    "suggest": {
-        "ext-memcached": "Required to use the memcached connector."
+        "ext-apcu": "Required to use the APCu cache driver.",
+        "ext-memcached": "Required to use the memcached connector.",
+        "ext-pdo": "Required to use the PDO cache driver.",
+        "ext-redis": "Required to use the phpredis connector.",
+        "sonypradana/redis": "Required to use the Redis cache driver."
     },
     "autoload": {
         "psr-4": {
