@@ -36,7 +36,7 @@ class FileStorage implements CacheInterface
             return [];
         }
 
-        return unserialize($data);
+        return unserialize($data, ['allowed_classes' => false]);
     }
 
     public function get(string $key, mixed $default = null): mixed
@@ -53,7 +53,7 @@ class FileStorage implements CacheInterface
             return $default;
         }
 
-        $cacheData = unserialize($data);
+        $cacheData = unserialize($data, ['allowed_classes' => false]);
 
         if (time() >= $cacheData['timestamp']) {
             $this->delete($key);
@@ -175,7 +175,7 @@ class FileStorage implements CacheInterface
 
         $result = (int) ($ori + $value);
 
-        $this->set($key, $result, $ttl);
+        $this->set($key, $result, (int) $ttl);
 
         return $result;
     }
