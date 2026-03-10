@@ -8,7 +8,14 @@
         }
     ],
     "require": {
-        "php": "^8.0"
+        "php": "^8.0",
+        "sonypradana/redis": "^0.40.4"
+    },
+    "suggest": {
+        "ext-redis": "Required to use the phpredis connector."
+    },
+    "suggest": {
+        "ext-apcu": "Required to use the APCu cache driver."
     },
     "suggest": {
         "ext-pdo": "Required to use the PDO cache driver."
