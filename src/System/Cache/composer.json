@@ -20,6 +20,9 @@
     "suggest": {
         "ext-pdo": "Required to use the PDO cache driver."
     },
+    "suggest": {
+        "ext-memcached": "Required to use the memcached connector."
+    },
     "autoload": {
         "psr-4": {
             "System\\Cache\\": ""

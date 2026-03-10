@@ -1,0 +1,52 @@
+name: Memcached Test
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
+
+jobs:
+  memcached:
+    runs-on: ubuntu-latest
+
+    services:
+      memcached:
+        image: memcached:1.6-alpine
+        # We run memcached with both TCP and Socket support in the container
+        # -s is for unix socket path, -a is for permissions
+        options: >-
+          --name memcached
+        ports:
+          - 11211:11211
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install PHP with extensions
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: mbstring, memcached
+        coverage: none
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate --strict
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-8.1-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-8.1-
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Run Memcached tests
+      run: ./vendor/bin/phpunit --testdox --group memcached
