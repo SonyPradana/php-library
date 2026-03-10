@@ -17,6 +17,9 @@
     "suggest": {
         "ext-apcu": "Required to use the APCu cache driver."
     },
+    "suggest": {
+        "ext-pdo": "Required to use the PDO cache driver."
+    },
     "autoload": {
         "psr-4": {
             "System\\Cache\\": ""

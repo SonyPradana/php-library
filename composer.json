@@ -26,7 +26,8 @@
         "rector/rector": "^1.2"
     },
     "suggest": {
-        "ext-redis": "Required to use the phpredis connector.",
+        "ext-pdo": "Required to use the DataBase component.",
+        "ext-redis": "Required to use the Redis component.",
         "ext-apcu": "Required to use the APCu cache driver."
     },
     "autoload": {
