@@ -15,7 +15,7 @@
         "ext-memcached": "Required to use the memcached connector.",
         "ext-pdo": "Required to use the PDO cache driver.",
         "ext-redis": "Required to use the phpredis connector.",
-        "sonypradana/redis": "Required to use the Redis cache driver (^0.40.4)."
+        "sonypradana/redis": "Required to use the Redis cache driver."
     },
     "autoload": {
         "psr-4": {
