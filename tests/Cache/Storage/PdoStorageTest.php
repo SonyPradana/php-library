@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Test\Cache\Storage;
 
 use PHPUnit\Framework\TestCase;
+use System\Cache\Exceptions\InvalidCacheArgumentException;
 use System\Cache\Storage\PdoStorage;
 
 /**
@@ -166,5 +167,19 @@ class PdoStorageTest extends TestCase
         $this->assertTrue($this->storage->deleteMultiple(['a', 'b']));
         $this->assertNull($this->storage->get('a'));
         $this->assertNull($this->storage->get('b'));
+    }
+
+    /**
+     * @test
+     *
+     * @testdox It throws InvalidCacheArgumentException if increment value is not integer
+     *
+     * @covers \System\Cache\Storage\PdoStorage::increment
+     */
+    public function itThrowsInvalidCacheArgumentExceptionWhenIncrementValueIsNotInteger(): void
+    {
+        $this->storage->set('key', 'not an integer');
+        $this->expectException(InvalidCacheArgumentException::class);
+        $this->storage->increment('key', 1);
     }
 }

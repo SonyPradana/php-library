@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace System\Cache;
 
+use System\Cache\Exceptions\UnsupportedCacheDriverException;
 use System\Cache\Storage\ArrayStorage;
 
 class CacheManager implements CacheInterface
@@ -44,7 +45,7 @@ class CacheManager implements CacheInterface
         }
 
         if (null === $driver) {
-            throw new \Exception("Can use driver {$driver_name}.");
+            throw new UnsupportedCacheDriverException("Can use driver {$driver_name}.");
         }
 
         return $this->driver[$driver_name] = $driver;

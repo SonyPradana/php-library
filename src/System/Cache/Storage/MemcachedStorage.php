@@ -6,6 +6,8 @@ namespace System\Cache\Storage;
 
 use System\Cache\CacheInterface;
 use System\Cache\Exceptions\CacheException;
+use System\Cache\Exceptions\InvalidCacheArgumentException;
+use System\Cache\Exceptions\UnsupportedCacheDriverException;
 
 class MemcachedStorage implements CacheInterface
 {
@@ -22,7 +24,7 @@ class MemcachedStorage implements CacheInterface
         $class = '\Memcached';
 
         if (false === class_exists($class) || false === ($memcached instanceof $class)) {
-            throw new \InvalidArgumentException('The memcached must be an instance of \Memcached.');
+            throw new InvalidCacheArgumentException('The memcached must be an instance of \Memcached.');
         }
 
         $this->memcached = $memcached;
@@ -185,7 +187,7 @@ class MemcachedStorage implements CacheInterface
         try {
             return $operation();
         } catch (\MemcachedException $e) {
-            throw new CacheException($e->getMessage(), (int) $e->getCode(), $e);
+            throw new UnsupportedCacheDriverException($e->getMessage(), (int) $e->getCode(), $e);
         }
     }
 

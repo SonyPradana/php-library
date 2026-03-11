@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace System\Cache\Storage;
 
 use System\Cache\CacheInterface;
+use System\Cache\Exceptions\InvalidCacheArgumentException;
+use System\Cache\Exceptions\UnsupportedCacheDriverException;
 
 class ApcuStorage implements CacheInterface
 {
@@ -13,7 +15,7 @@ class ApcuStorage implements CacheInterface
         private int $defaultTTL = 3_600,
     ) {
         if (false === static::isSupported()) {
-            throw new \RuntimeException('APCu extension is not loaded or enabled.');
+            throw new UnsupportedCacheDriverException('APCu extension is not loaded or enabled.');
         }
     }
 
@@ -116,7 +118,7 @@ class ApcuStorage implements CacheInterface
     public function increment(string $key, int $value): int
     {
         if ($this->has($key) && false === is_int($this->get($key))) {
-            throw new \InvalidArgumentException('Value increment must be integer.');
+            throw new InvalidCacheArgumentException('Value increment must be integer.');
         }
 
         $result = \apcu_inc($this->prefix . $key, $value, $success);
