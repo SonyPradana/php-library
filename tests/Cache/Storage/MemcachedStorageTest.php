@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace System\Test\Cache\Storage;
 
 use PHPUnit\Framework\TestCase;
+use System\Cache\Exceptions\InvalidCacheArgumentException;
+use System\Cache\Exceptions\UnsupportedCacheDriverException;
 use System\Cache\Storage\MemcachedConnector;
 use System\Cache\Storage\MemcachedStorage;
 
@@ -240,5 +242,36 @@ class MemcachedStorageTest extends TestCase
         $longKey = str_repeat('a', 300);
         $this->assertTrue($this->storage->set($longKey, 'value2'));
         $this->assertEquals('value2', $this->storage->get($longKey));
+    }
+
+    /**
+     * @test
+     *
+     * @testdox It throws InvalidCacheArgumentException if memcached is not an instance of \Memcached
+     *
+     * @covers \System\Cache\Storage\MemcachedStorage::__construct
+     */
+    public function itThrowsInvalidCacheArgumentExceptionWhenMemcachedIsNotInstanceOfMemcached(): void
+    {
+        $this->expectException(InvalidCacheArgumentException::class);
+        new MemcachedStorage(new \stdClass());
+    }
+
+    /**
+     * @test
+     *
+     * @testdox It throws UnsupportedCacheDriverException if MemcachedException is thrown
+     *
+     * @covers \System\Cache\Storage\MemcachedStorage::get
+     */
+    public function itThrowsUnsupportedCacheDriverExceptionWhenMemcachedExceptionIsThrown(): void
+    {
+        $memcachedMock = $this->createMock(\Memcached::class);
+        $memcachedMock->method('get')->willThrowException(new \MemcachedException('Test exception'));
+
+        $storage = new MemcachedStorage($memcachedMock);
+
+        $this->expectException(UnsupportedCacheDriverException::class);
+        $storage->get('key');
     }
 }

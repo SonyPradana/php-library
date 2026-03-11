@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace System\Text\Cache\Storage;
 
 use PHPUnit\Framework\TestCase;
+use System\Cache\Exceptions\InvalidCacheArgumentException;
+use System\Cache\Exceptions\UnsupportedCacheDriverException;
 use System\Cache\Storage\ApcuStorage;
 
 /**
@@ -232,5 +234,36 @@ class ApcuStorageTest extends TestCase
         // second call should get from cache
         $value = $this->storage->remember('key1', 1, fn (): string => 'value2');
         $this->assertEquals('value1', $value);
+    }
+
+    /**
+     * @test
+     *
+     * @testdox It throws UnsupportedCacheDriverException if APCu is not supported
+     *
+     * @covers \System\Cache\Storage\ApcuStorage::__construct
+     */
+    public function itThrowsUnsupportedCacheDriverExceptionWhenApcuIsNotSupported(): void
+    {
+        if (ApcuStorage::isSupported()) {
+            $this->markTestSkipped('APCu extension is loaded or enabled for CLI.');
+        }
+
+        $this->expectException(UnsupportedCacheDriverException::class);
+        new ApcuStorage('test_');
+    }
+
+    /**
+     * @test
+     *
+     * @testdox It throws InvalidCacheArgumentException if increment value is not integer
+     *
+     * @covers \System\Cache\Storage\ApcuStorage::increment
+     */
+    public function itThrowsInvalidCacheArgumentExceptionWhenIncrementValueIsNotInteger(): void
+    {
+        $this->storage->set('key', 'not an integer');
+        $this->expectException(InvalidCacheArgumentException::class);
+        $this->storage->increment('key', 1);
     }
 }

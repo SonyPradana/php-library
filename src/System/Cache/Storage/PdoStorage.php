@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace System\Cache\Storage;
 
 use System\Cache\CacheInterface;
+use System\Cache\Exceptions\InvalidCacheArgumentException;
+use System\Cache\Exceptions\UnsupportedCacheDriverException;
 
 class PdoStorage implements CacheInterface
 {
@@ -19,11 +21,11 @@ class PdoStorage implements CacheInterface
         /** @var class-string $class */
         $class = '\PDO';
         if (false === extension_loaded('pdo') || false === class_exists($class)) {
-            throw new \RuntimeException('The PDO extension is required to use PdoStorage.');
+            throw new UnsupportedCacheDriverException('The PDO extension is required to use PdoStorage.');
         }
 
         if (false === ($this->pdo instanceof $class)) {
-            throw new \InvalidArgumentException('The pdo must be an instance of \PDO.');
+            throw new InvalidCacheArgumentException('The pdo must be an instance of \PDO.');
         }
     }
 
@@ -158,7 +160,7 @@ class PdoStorage implements CacheInterface
         $expiration = (int) $row['expiration'];
 
         if (false === is_int($current)) {
-            throw new \InvalidArgumentException('Value increment must be integer.');
+            throw new InvalidCacheArgumentException('Value increment must be integer.');
         }
 
         $new = $current + $value;
