@@ -173,7 +173,6 @@ class MemcachedStorage implements CacheInterface
         return $value;
     }
 
-    
     /**
      * @template T
      *

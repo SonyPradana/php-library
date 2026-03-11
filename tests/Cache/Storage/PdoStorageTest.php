@@ -6,7 +6,6 @@ namespace System\Test\Cache\Storage;
 
 use PHPUnit\Framework\TestCase;
 use System\Cache\Exceptions\InvalidCacheArgumentException;
-use System\Cache\Exceptions\UnsupportedCacheDriverException;
 use System\Cache\Storage\PdoStorage;
 
 /**
@@ -143,7 +142,7 @@ class PdoStorageTest extends TestCase
     public function itCanRememberCacheValue()
     {
         $this->assertNull($this->storage->get('rem'));
-        $value = $this->storage->remember('rem', 60, fn() => 'remembered');
+        $value = $this->storage->remember('rem', 60, fn () => 'remembered');
         $this->assertEquals('remembered', $value);
         $this->assertEquals('remembered', $this->storage->get('rem'));
     }

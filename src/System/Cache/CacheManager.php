@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace System\Cache;
 
-use System\Cache\Storage\ArrayStorage;
-
 use System\Cache\Exceptions\UnsupportedCacheDriverException;
+use System\Cache\Storage\ArrayStorage;
 
 class CacheManager implements CacheInterface
 {
