@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Cache\Storage;
 
 use System\Cache\CacheInterface;
+use System\Cache\Exceptions\CacheException;
 use System\Cache\Exceptions\InvalidCacheArgumentException;
 
 class StackStorage implements CacheInterface
@@ -265,6 +266,6 @@ class StackStorage implements CacheInterface
             ? $this->lastExceptions[array_key_last($this->lastExceptions)]
             : null;
 
-        throw new \RuntimeException(sprintf('All cache drivers are unhealthy. Cannot perform "%s".', $operation), 0, $previous);
+        throw new CacheException(sprintf('All cache drivers are unhealthy. Cannot perform "%s".', $operation), 0, $previous);
     }
 }
