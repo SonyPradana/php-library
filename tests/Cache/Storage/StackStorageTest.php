@@ -17,6 +17,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should throw when constructed with empty drivers
+     *
+     * @covers \System\Cache\Storage\StackStorage::__construct
      */
     public function itThrowsOnEmptyDrivers(): void
     {
@@ -29,6 +31,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should return value from first healthy driver
+     *
+     * @covers \System\Cache\Storage\StackStorage::get
      */
     public function itReturnsValueFromFirstDriver(): void
     {
@@ -46,6 +50,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should fallback to next driver when first driver returns null
+     *
+     * @covers \System\Cache\Storage\StackStorage::get
      */
     public function itFallsBackToNextDriver(): void
     {
@@ -63,6 +69,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should return default when all drivers miss
+     *
+     * @covers \System\Cache\Storage\StackStorage::get
      */
     public function itReturnsDefaultWhenAllDriversMiss(): void
     {
@@ -75,6 +83,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should fallback to next driver when first driver throws
+     *
+     * @covers \System\Cache\Storage\StackStorage::get
      */
     public function itFallsBackWhenDriverThrows(): void
     {
@@ -92,6 +102,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should broadcast set operation to all drivers
+     *
+     * @covers \System\Cache\Storage\StackStorage::set
      */
     public function itBroadcastsSetToAllDrivers(): void
     {
@@ -109,6 +121,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should return true if at least one driver succeeds on set
+     *
+     * @covers \System\Cache\Storage\StackStorage::set
      */
     public function itReturnsTrueIfAtLeastOneDriverSucceedsOnSet(): void
     {
@@ -124,6 +138,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should broadcast delete to all drivers
+     *
+     * @covers \System\Cache\Storage\StackStorage::delete
      */
     public function itBroadcastsDelete(): void
     {
@@ -144,6 +160,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should broadcast clear to all drivers
+     *
+     * @covers \System\Cache\Storage\StackStorage::clear
      */
     public function itBroadcastsClearToAllDrivers(): void
     {
@@ -151,7 +169,8 @@ class StackStorageTest extends TestCase
         $b = new FakeArrayCache();
 
         $a->set('foo', 'bar');
-        $b->set('baz', 'qux');
+        $baz = 'qux';
+        $b->set('baz', $baz);
 
         $stack = new StackStorage([$a, $b]);
         $stack->clear();
@@ -164,6 +183,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should return true if any driver has the key
+     *
+     * @covers \System\Cache\Storage\StackStorage::has
      */
     public function itReturnsTrueIfAnyDriverHasKey(): void
     {
@@ -181,6 +202,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should return false if no driver has the key
+     *
+     * @covers \System\Cache\Storage\StackStorage::has
      */
     public function itReturnsFalseIfNoDriverHasKey(): void
     {
@@ -193,6 +216,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should resolve multiple keys across drivers
+     *
+     * @covers \System\Cache\Storage\StackStorage::getMultiple
      */
     public function itResolvesMultipleKeysAcrossDrivers(): void
     {
@@ -215,6 +240,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should return default for all keys when all drivers miss
+     *
+     * @covers \System\Cache\Storage\StackStorage::getMultiple
      */
     public function itReturnsDefaultForAllKeysWhenAllDriversMiss(): void
     {
@@ -230,6 +257,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should broadcast setMultiple to all drivers
+     *
+     * @covers \System\Cache\Storage\StackStorage::setMultiple
      */
     public function itBroadcastsSetMultiple(): void
     {
@@ -249,6 +278,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should broadcast deleteMultiple to all drivers
+     *
+     * @covers \System\Cache\Storage\StackStorage::deleteMultiple
      */
     public function itBroadcastsDeleteMultiple(): void
     {
@@ -269,6 +300,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should increment on first healthy driver
+     *
+     * @covers \System\Cache\Storage\StackStorage::increment
      */
     public function itIncrementsOnFirstHealthyDriver(): void
     {
@@ -282,6 +315,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should decrement on first healthy driver
+     *
+     * @covers \System\Cache\Storage\StackStorage::decrement
      */
     public function itDecrementsOnFirstHealthyDriver(): void
     {
@@ -296,6 +331,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should throw when all drivers are unhealthy for increment
+     *
+     * @covers \System\Cache\Storage\StackStorage::increment
      */
     public function itThrowsWhenAllDriversUnhealthyForIncrement(): void
     {
@@ -309,6 +346,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should throw when all drivers are unhealthy for decrement
+     *
+     * @covers \System\Cache\Storage\StackStorage::decrement
      */
     public function itThrowsWhenAllDriversUnhealthyForDecrement(): void
     {
@@ -322,6 +361,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should fallback to next driver for increment when first fails
+     *
+     * @covers \System\Cache\Storage\StackStorage::increment
      */
     public function itFallsBackToNextDriverForIncrement(): void
     {
@@ -337,6 +378,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should remember computed value
+     *
+     * @covers \System\Cache\Storage\StackStorage::remember
      */
     public function itRemembersValue(): void
     {
@@ -355,6 +398,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should not execute callback if value already cached
+     *
+     * @covers \System\Cache\Storage\StackStorage::remember
      */
     public function itDoesNotExecuteCallbackIfCached(): void
     {
@@ -378,6 +423,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should mark driver unhealthy when exception occurs
+     *
+     * @covers \System\Cache\Storage\StackStorage::getHealthMap
      */
     public function itMarksDriverUnhealthyOnException(): void
     {
@@ -399,6 +446,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should skip unhealthy driver on subsequent calls
+     *
+     * @covers \System\Cache\Storage\StackStorage::get
      */
     public function itSkipsUnhealthyDriverOnSubsequentCalls(): void
     {
@@ -421,6 +470,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should recover driver health
+     *
+     * @covers \System\Cache\Storage\StackStorage::recover
      */
     public function itRecoversDriver(): void
     {
@@ -439,6 +490,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should ignore recover call for out-of-bound index
+     *
+     * @covers \System\Cache\Storage\StackStorage::recover
      */
     public function itIgnoresRecoverForInvalidIndex(): void
     {
@@ -452,6 +505,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should record exception per driver index on failure
+     *
+     * @covers \System\Cache\Storage\StackStorage::getLastExceptions
      */
     public function itRecordsLastExceptionOnFailure(): void
     {
@@ -471,6 +526,8 @@ class StackStorageTest extends TestCase
      * @test
      *
      * @testdox it should have no exceptions initially
+     *
+     * @covers \System\Cache\Storage\StackStorage::getLastExceptions
      */
     public function itHasNoExceptionsInitially(): void
     {
