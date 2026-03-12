@@ -40,9 +40,7 @@ class StackStorage implements CacheInterface
     public function get(string $key, mixed $default = null): mixed
     {
         foreach ($this->healthyDrivers() as $index => $driver) {
-            $value = $this->tryCall($index, static function () use ($driver, $key): mixed {
-                return $driver->get($key, null);
-            });
+            $value = $this->tryCall($index, static fn (): mixed => $driver->get($key, null));
 
             if (null !== $value) {
                 return $value;
@@ -54,23 +52,17 @@ class StackStorage implements CacheInterface
 
     public function set(string $key, mixed $value, \DateInterval|int|null $ttl = null): bool
     {
-        return $this->broadcast(static function (CacheInterface $d) use ($key, $value, $ttl): bool {
-            return $d->set($key, $value, $ttl);
-        });
+        return $this->broadcast(static fn (CacheInterface $d): bool => $d->set($key, $value, $ttl));
     }
 
     public function delete(string $key): bool
     {
-        return $this->broadcast(static function (CacheInterface $d) use ($key): bool {
-            return $d->delete($key);
-        });
+        return $this->broadcast(static fn (CacheInterface $d): bool => $d->delete($key));
     }
 
     public function clear(): bool
     {
-        return $this->broadcast(static function (CacheInterface $d): bool {
-            return $d->clear();
-        });
+        return $this->broadcast(static fn (CacheInterface $d): bool => $d->clear());
     }
 
     /**
@@ -91,9 +83,7 @@ class StackStorage implements CacheInterface
             }
 
             /** @var array<string, mixed>|null $fetched */
-            $fetched = $this->tryCall($index, static function () use ($driver, $missing): mixed {
-                return $driver->getMultiple($missing, null);
-            });
+            $fetched = $this->tryCall($index, static fn (): mixed => $driver->getMultiple($missing, null));
 
             if (null === $fetched) {
                 continue;
@@ -125,9 +115,7 @@ class StackStorage implements CacheInterface
         /** @var array<string, mixed> $values */
         $values = is_array($values) ? $values : iterator_to_array($values);
 
-        return $this->broadcast(static function (CacheInterface $d) use ($values, $ttl): bool {
-            return $d->setMultiple($values, $ttl);
-        });
+        return $this->broadcast(static fn (CacheInterface $d): bool => $d->setMultiple($values, $ttl));
     }
 
     /**
@@ -138,17 +126,13 @@ class StackStorage implements CacheInterface
         /** @var string[] $keys */
         $keys = is_array($keys) ? $keys : iterator_to_array($keys);
 
-        return $this->broadcast(static function (CacheInterface $d) use ($keys): bool {
-            return $d->deleteMultiple($keys);
-        });
+        return $this->broadcast(static fn (CacheInterface $d): bool => $d->deleteMultiple($keys));
     }
 
     public function has(string $key): bool
     {
         foreach ($this->healthyDrivers() as $index => $driver) {
-            $result = $this->tryCall($index, static function () use ($driver, $key): bool {
-                return $driver->has($key);
-            });
+            $result = $this->tryCall($index, static fn (): bool => $driver->has($key));
 
             if (true === $result) {
                 return true;
@@ -161,9 +145,7 @@ class StackStorage implements CacheInterface
     public function increment(string $key, int $value): int
     {
         return $this->firstHealthy(
-            static function (CacheInterface $d) use ($key, $value): int {
-                return $d->increment($key, $value);
-            },
+            static fn (CacheInterface $d): int => $d->increment($key, $value),
             'increment'
         );
     }
@@ -171,9 +153,7 @@ class StackStorage implements CacheInterface
     public function decrement(string $key, int $value): int
     {
         return $this->firstHealthy(
-            static function (CacheInterface $d) use ($key, $value): int {
-                return $d->decrement($key, $value);
-            },
+            static fn (CacheInterface $d): int => $d->decrement($key, $value),
             'decrement'
         );
     }
@@ -257,9 +237,7 @@ class StackStorage implements CacheInterface
         $result = false;
 
         foreach ($this->healthyDrivers() as $index => $driver) {
-            $succeeded = $this->tryCall($index, static function () use ($callback, $driver): bool {
-                return $callback($driver);
-            });
+            $succeeded = $this->tryCall($index, static fn (): bool => $callback($driver));
 
             $result = (true === $succeeded) || $result;
         }
@@ -276,9 +254,7 @@ class StackStorage implements CacheInterface
     {
         foreach ($this->healthyDrivers() as $index => $driver) {
             /** @var int|null $result */
-            $result = $this->tryCall($index, static function () use ($callback, $driver): int {
-                return $callback($driver);
-            });
+            $result = $this->tryCall($index, static fn (): int => $callback($driver));
 
             if (null !== $result) {
                 return $result;
