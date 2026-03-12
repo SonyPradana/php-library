@@ -13,12 +13,9 @@ use System\Cache\Storage\StackStorage;
  */
 class StackStorageTest extends TestCase
 {
-    // -------------------------------------------------------------------
-    // Constructor
-    // -------------------------------------------------------------------
-
     /**
      * @test
+     *
      * @testdox it should throw when constructed with empty drivers
      */
     public function itThrowsOnEmptyDrivers(): void
@@ -28,12 +25,9 @@ class StackStorageTest extends TestCase
         new StackStorage([]);
     }
 
-    // -------------------------------------------------------------------
-    // get()
-    // -------------------------------------------------------------------
-
     /**
      * @test
+     *
      * @testdox it should return value from first healthy driver
      */
     public function itReturnsValueFromFirstDriver(): void
@@ -50,6 +44,7 @@ class StackStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it should fallback to next driver when first driver returns null
      */
     public function itFallsBackToNextDriver(): void
@@ -66,6 +61,7 @@ class StackStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it should return default when all drivers miss
      */
     public function itReturnsDefaultWhenAllDriversMiss(): void
@@ -77,6 +73,7 @@ class StackStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it should fallback to next driver when first driver throws
      */
     public function itFallsBackWhenDriverThrows(): void
@@ -91,12 +88,9 @@ class StackStorageTest extends TestCase
         $this->assertSame('bar', $stack->get('foo'));
     }
 
-    // -------------------------------------------------------------------
-    // set()
-    // -------------------------------------------------------------------
-
     /**
      * @test
+     *
      * @testdox it should broadcast set operation to all drivers
      */
     public function itBroadcastsSetToAllDrivers(): void
@@ -113,6 +107,7 @@ class StackStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it should return true if at least one driver succeeds on set
      */
     public function itReturnsTrueIfAtLeastOneDriverSucceedsOnSet(): void
@@ -125,12 +120,9 @@ class StackStorageTest extends TestCase
         $this->assertTrue($stack->set('foo', 'bar'));
     }
 
-    // -------------------------------------------------------------------
-    // delete()
-    // -------------------------------------------------------------------
-
     /**
      * @test
+     *
      * @testdox it should broadcast delete to all drivers
      */
     public function itBroadcastsDelete(): void
@@ -148,12 +140,9 @@ class StackStorageTest extends TestCase
         $this->assertNull($b->get('foo'));
     }
 
-    // -------------------------------------------------------------------
-    // clear()
-    // -------------------------------------------------------------------
-
     /**
      * @test
+     *
      * @testdox it should broadcast clear to all drivers
      */
     public function itBroadcastsClearToAllDrivers(): void
@@ -171,12 +160,9 @@ class StackStorageTest extends TestCase
         $this->assertNull($b->get('baz'));
     }
 
-    // -------------------------------------------------------------------
-    // has()
-    // -------------------------------------------------------------------
-
     /**
      * @test
+     *
      * @testdox it should return true if any driver has the key
      */
     public function itReturnsTrueIfAnyDriverHasKey(): void
@@ -193,6 +179,7 @@ class StackStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it should return false if no driver has the key
      */
     public function itReturnsFalseIfNoDriverHasKey(): void
@@ -202,12 +189,9 @@ class StackStorageTest extends TestCase
         $this->assertFalse($stack->has('missing'));
     }
 
-    // -------------------------------------------------------------------
-    // getMultiple()
-    // -------------------------------------------------------------------
-
     /**
      * @test
+     *
      * @testdox it should resolve multiple keys across drivers
      */
     public function itResolvesMultipleKeysAcrossDrivers(): void
@@ -229,6 +213,7 @@ class StackStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it should return default for all keys when all drivers miss
      */
     public function itReturnsDefaultForAllKeysWhenAllDriversMiss(): void
@@ -241,12 +226,9 @@ class StackStorageTest extends TestCase
         $this->assertSame('x', $result['b']);
     }
 
-    // -------------------------------------------------------------------
-    // setMultiple()
-    // -------------------------------------------------------------------
-
     /**
      * @test
+     *
      * @testdox it should broadcast setMultiple to all drivers
      */
     public function itBroadcastsSetMultiple(): void
@@ -263,12 +245,9 @@ class StackStorageTest extends TestCase
         $this->assertSame(2, $b->get('y'));
     }
 
-    // -------------------------------------------------------------------
-    // deleteMultiple()
-    // -------------------------------------------------------------------
-
     /**
      * @test
+     *
      * @testdox it should broadcast deleteMultiple to all drivers
      */
     public function itBroadcastsDeleteMultiple(): void
@@ -286,12 +265,9 @@ class StackStorageTest extends TestCase
         $this->assertNull($b->get('x'));
     }
 
-    // -------------------------------------------------------------------
-    // increment() / decrement()
-    // -------------------------------------------------------------------
-
     /**
      * @test
+     *
      * @testdox it should increment on first healthy driver
      */
     public function itIncrementsOnFirstHealthyDriver(): void
@@ -304,6 +280,7 @@ class StackStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it should decrement on first healthy driver
      */
     public function itDecrementsOnFirstHealthyDriver(): void
@@ -317,6 +294,7 @@ class StackStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it should throw when all drivers are unhealthy for increment
      */
     public function itThrowsWhenAllDriversUnhealthyForIncrement(): void
@@ -329,6 +307,7 @@ class StackStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it should throw when all drivers are unhealthy for decrement
      */
     public function itThrowsWhenAllDriversUnhealthyForDecrement(): void
@@ -341,6 +320,7 @@ class StackStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it should fallback to next driver for increment when first fails
      */
     public function itFallsBackToNextDriverForIncrement(): void
@@ -353,12 +333,9 @@ class StackStorageTest extends TestCase
         $this->assertSame(3, $stack->increment('counter', 3));
     }
 
-    // -------------------------------------------------------------------
-    // remember()
-    // -------------------------------------------------------------------
-
     /**
      * @test
+     *
      * @testdox it should remember computed value
      */
     public function itRemembersValue(): void
@@ -376,6 +353,7 @@ class StackStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it should not execute callback if value already cached
      */
     public function itDoesNotExecuteCallbackIfCached(): void
@@ -396,12 +374,9 @@ class StackStorageTest extends TestCase
         $this->assertSame('cached', $value);
     }
 
-    // -------------------------------------------------------------------
-    // Health map & failover
-    // -------------------------------------------------------------------
-
     /**
      * @test
+     *
      * @testdox it should mark driver unhealthy when exception occurs
      */
     public function itMarksDriverUnhealthyOnException(): void
@@ -422,6 +397,7 @@ class StackStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it should skip unhealthy driver on subsequent calls
      */
     public function itSkipsUnhealthyDriverOnSubsequentCalls(): void
@@ -443,6 +419,7 @@ class StackStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it should recover driver health
      */
     public function itRecoversDriver(): void
@@ -460,6 +437,7 @@ class StackStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it should ignore recover call for out-of-bound index
      */
     public function itIgnoresRecoverForInvalidIndex(): void
@@ -470,12 +448,9 @@ class StackStorageTest extends TestCase
         $this->assertTrue($stack->getHealthMap()[0]);
     }
 
-    // -------------------------------------------------------------------
-    // lastExceptions
-    // -------------------------------------------------------------------
-
     /**
      * @test
+     *
      * @testdox it should record exception per driver index on failure
      */
     public function itRecordsLastExceptionOnFailure(): void
@@ -494,6 +469,7 @@ class StackStorageTest extends TestCase
 
     /**
      * @test
+     *
      * @testdox it should have no exceptions initially
      */
     public function itHasNoExceptionsInitially(): void
@@ -504,9 +480,7 @@ class StackStorageTest extends TestCase
     }
 }
 
-// -------------------------------------------------------------------
 // Fakes
-// -------------------------------------------------------------------
 
 class FakeArrayCache implements CacheInterface
 {
@@ -540,7 +514,8 @@ class FakeArrayCache implements CacheInterface
     }
 
     /**
-     * @param  iterable<string>       $keys
+     * @param iterable<string> $keys
+     *
      * @return iterable<string, mixed>
      */
     public function getMultiple(iterable $keys, mixed $default = null): iterable
