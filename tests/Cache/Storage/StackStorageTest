@@ -1,0 +1,670 @@
+<?php
+
+declare(strict_types=1);
+
+namespace System\Tests\Cache\Storage;
+
+use PHPUnit\Framework\TestCase;
+use System\Cache\CacheInterface;
+use System\Cache\Storage\StackStorage;
+
+/**
+ * @covers \System\Cache\Storage\StackStorage
+ */
+class StackStorageTest extends TestCase
+{
+    // -------------------------------------------------------------------
+    // Constructor
+    // -------------------------------------------------------------------
+
+    /**
+     * @test
+     * @testdox it should throw when constructed with empty drivers
+     */
+    public function itThrowsOnEmptyDrivers(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        new StackStorage([]);
+    }
+
+    // -------------------------------------------------------------------
+    // get()
+    // -------------------------------------------------------------------
+
+    /**
+     * @test
+     * @testdox it should return value from first healthy driver
+     */
+    public function itReturnsValueFromFirstDriver(): void
+    {
+        $a = new FakeArrayCache();
+        $b = new FakeArrayCache();
+
+        $a->set('foo', 'bar');
+
+        $stack = new StackStorage([$a, $b]);
+
+        $this->assertSame('bar', $stack->get('foo'));
+    }
+
+    /**
+     * @test
+     * @testdox it should fallback to next driver when first driver returns null
+     */
+    public function itFallsBackToNextDriver(): void
+    {
+        $a = new FakeArrayCache();
+        $b = new FakeArrayCache();
+
+        $b->set('foo', 'bar');
+
+        $stack = new StackStorage([$a, $b]);
+
+        $this->assertSame('bar', $stack->get('foo'));
+    }
+
+    /**
+     * @test
+     * @testdox it should return default when all drivers miss
+     */
+    public function itReturnsDefaultWhenAllDriversMiss(): void
+    {
+        $stack = new StackStorage([new FakeArrayCache()]);
+
+        $this->assertSame('fallback', $stack->get('missing', 'fallback'));
+    }
+
+    /**
+     * @test
+     * @testdox it should fallback to next driver when first driver throws
+     */
+    public function itFallsBackWhenDriverThrows(): void
+    {
+        $fail = new FailingCache();
+        $ok   = new FakeArrayCache();
+
+        $ok->set('foo', 'bar');
+
+        $stack = new StackStorage([$fail, $ok]);
+
+        $this->assertSame('bar', $stack->get('foo'));
+    }
+
+    // -------------------------------------------------------------------
+    // set()
+    // -------------------------------------------------------------------
+
+    /**
+     * @test
+     * @testdox it should broadcast set operation to all drivers
+     */
+    public function itBroadcastsSetToAllDrivers(): void
+    {
+        $a = new FakeArrayCache();
+        $b = new FakeArrayCache();
+
+        $stack = new StackStorage([$a, $b]);
+        $stack->set('foo', 'bar');
+
+        $this->assertSame('bar', $a->get('foo'));
+        $this->assertSame('bar', $b->get('foo'));
+    }
+
+    /**
+     * @test
+     * @testdox it should return true if at least one driver succeeds on set
+     */
+    public function itReturnsTrueIfAtLeastOneDriverSucceedsOnSet(): void
+    {
+        $fail = new FailingCache();
+        $ok   = new FakeArrayCache();
+
+        $stack = new StackStorage([$fail, $ok]);
+
+        $this->assertTrue($stack->set('foo', 'bar'));
+    }
+
+    // -------------------------------------------------------------------
+    // delete()
+    // -------------------------------------------------------------------
+
+    /**
+     * @test
+     * @testdox it should broadcast delete to all drivers
+     */
+    public function itBroadcastsDelete(): void
+    {
+        $a = new FakeArrayCache();
+        $b = new FakeArrayCache();
+
+        $a->set('foo', 'bar');
+        $b->set('foo', 'bar');
+
+        $stack = new StackStorage([$a, $b]);
+        $stack->delete('foo');
+
+        $this->assertNull($a->get('foo'));
+        $this->assertNull($b->get('foo'));
+    }
+
+    // -------------------------------------------------------------------
+    // clear()
+    // -------------------------------------------------------------------
+
+    /**
+     * @test
+     * @testdox it should broadcast clear to all drivers
+     */
+    public function itBroadcastsClearToAllDrivers(): void
+    {
+        $a = new FakeArrayCache();
+        $b = new FakeArrayCache();
+
+        $a->set('foo', 'bar');
+        $b->set('baz', 'qux');
+
+        $stack = new StackStorage([$a, $b]);
+        $stack->clear();
+
+        $this->assertNull($a->get('foo'));
+        $this->assertNull($b->get('baz'));
+    }
+
+    // -------------------------------------------------------------------
+    // has()
+    // -------------------------------------------------------------------
+
+    /**
+     * @test
+     * @testdox it should return true if any driver has the key
+     */
+    public function itReturnsTrueIfAnyDriverHasKey(): void
+    {
+        $a = new FakeArrayCache();
+        $b = new FakeArrayCache();
+
+        $b->set('foo', 'bar');
+
+        $stack = new StackStorage([$a, $b]);
+
+        $this->assertTrue($stack->has('foo'));
+    }
+
+    /**
+     * @test
+     * @testdox it should return false if no driver has the key
+     */
+    public function itReturnsFalseIfNoDriverHasKey(): void
+    {
+        $stack = new StackStorage([new FakeArrayCache()]);
+
+        $this->assertFalse($stack->has('missing'));
+    }
+
+    // -------------------------------------------------------------------
+    // getMultiple()
+    // -------------------------------------------------------------------
+
+    /**
+     * @test
+     * @testdox it should resolve multiple keys across drivers
+     */
+    public function itResolvesMultipleKeysAcrossDrivers(): void
+    {
+        $a = new FakeArrayCache();
+        $b = new FakeArrayCache();
+
+        $a->set('foo', 'from-a');
+        $b->set('bar', 'from-b');
+
+        $stack  = new StackStorage([$a, $b]);
+        /** @var array<string, mixed> $result */
+        $result = $stack->getMultiple(['foo', 'bar', 'baz'], 'default');
+
+        $this->assertSame('from-a', $result['foo']);
+        $this->assertSame('from-b', $result['bar']);
+        $this->assertSame('default', $result['baz']);
+    }
+
+    /**
+     * @test
+     * @testdox it should return default for all keys when all drivers miss
+     */
+    public function itReturnsDefaultForAllKeysWhenAllDriversMiss(): void
+    {
+        $stack  = new StackStorage([new FakeArrayCache()]);
+        /** @var array<string, mixed> $result */
+        $result = $stack->getMultiple(['a', 'b'], 'x');
+
+        $this->assertSame('x', $result['a']);
+        $this->assertSame('x', $result['b']);
+    }
+
+    // -------------------------------------------------------------------
+    // setMultiple()
+    // -------------------------------------------------------------------
+
+    /**
+     * @test
+     * @testdox it should broadcast setMultiple to all drivers
+     */
+    public function itBroadcastsSetMultiple(): void
+    {
+        $a = new FakeArrayCache();
+        $b = new FakeArrayCache();
+
+        $stack = new StackStorage([$a, $b]);
+        $stack->setMultiple(['x' => 1, 'y' => 2]);
+
+        $this->assertSame(1, $a->get('x'));
+        $this->assertSame(2, $a->get('y'));
+        $this->assertSame(1, $b->get('x'));
+        $this->assertSame(2, $b->get('y'));
+    }
+
+    // -------------------------------------------------------------------
+    // deleteMultiple()
+    // -------------------------------------------------------------------
+
+    /**
+     * @test
+     * @testdox it should broadcast deleteMultiple to all drivers
+     */
+    public function itBroadcastsDeleteMultiple(): void
+    {
+        $a = new FakeArrayCache();
+        $b = new FakeArrayCache();
+
+        $a->set('x', 1);
+        $b->set('x', 1);
+
+        $stack = new StackStorage([$a, $b]);
+        $stack->deleteMultiple(['x']);
+
+        $this->assertNull($a->get('x'));
+        $this->assertNull($b->get('x'));
+    }
+
+    // -------------------------------------------------------------------
+    // increment() / decrement()
+    // -------------------------------------------------------------------
+
+    /**
+     * @test
+     * @testdox it should increment on first healthy driver
+     */
+    public function itIncrementsOnFirstHealthyDriver(): void
+    {
+        $stack = new StackStorage([new FakeArrayCache()]);
+
+        $this->assertSame(5, $stack->increment('counter', 5));
+        $this->assertSame(8, $stack->increment('counter', 3));
+    }
+
+    /**
+     * @test
+     * @testdox it should decrement on first healthy driver
+     */
+    public function itDecrementsOnFirstHealthyDriver(): void
+    {
+        $stack = new StackStorage([new FakeArrayCache()]);
+
+        $stack->increment('counter', 10);
+
+        $this->assertSame(7, $stack->decrement('counter', 3));
+    }
+
+    /**
+     * @test
+     * @testdox it should throw when all drivers are unhealthy for increment
+     */
+    public function itThrowsWhenAllDriversUnhealthyForIncrement(): void
+    {
+        $this->expectException(\RuntimeException::class);
+
+        $stack = new StackStorage([new FailingCache(), new FailingCache()]);
+        $stack->increment('foo', 1);
+    }
+
+    /**
+     * @test
+     * @testdox it should throw when all drivers are unhealthy for decrement
+     */
+    public function itThrowsWhenAllDriversUnhealthyForDecrement(): void
+    {
+        $this->expectException(\RuntimeException::class);
+
+        $stack = new StackStorage([new FailingCache(), new FailingCache()]);
+        $stack->decrement('foo', 1);
+    }
+
+    /**
+     * @test
+     * @testdox it should fallback to next driver for increment when first fails
+     */
+    public function itFallsBackToNextDriverForIncrement(): void
+    {
+        $fail = new FailingCache();
+        $ok   = new FakeArrayCache();
+
+        $stack = new StackStorage([$fail, $ok]);
+
+        $this->assertSame(3, $stack->increment('counter', 3));
+    }
+
+    // -------------------------------------------------------------------
+    // remember()
+    // -------------------------------------------------------------------
+
+    /**
+     * @test
+     * @testdox it should remember computed value
+     */
+    public function itRemembersValue(): void
+    {
+        $cache = new FakeArrayCache();
+        $stack = new StackStorage([$cache]);
+
+        $value = $stack->remember('foo', null, static function (): string {
+            return 'computed';
+        });
+
+        $this->assertSame('computed', $value);
+        $this->assertSame('computed', $stack->get('foo'));
+    }
+
+    /**
+     * @test
+     * @testdox it should not execute callback if value already cached
+     */
+    public function itDoesNotExecuteCallbackIfCached(): void
+    {
+        $cache = new FakeArrayCache();
+        $cache->set('foo', 'cached');
+
+        $stack  = new StackStorage([$cache]);
+        $called = false;
+
+        $value = $stack->remember('foo', null, static function () use (&$called): string {
+            $called = true;
+
+            return 'computed';
+        });
+
+        $this->assertFalse($called);
+        $this->assertSame('cached', $value);
+    }
+
+    // -------------------------------------------------------------------
+    // Health map & failover
+    // -------------------------------------------------------------------
+
+    /**
+     * @test
+     * @testdox it should mark driver unhealthy when exception occurs
+     */
+    public function itMarksDriverUnhealthyOnException(): void
+    {
+        $fail = new FailingCache();
+        $ok   = new FakeArrayCache();
+
+        $ok->set('foo', 'bar');
+
+        $stack  = new StackStorage([$fail, $ok]);
+        $stack->get('foo');
+
+        $health = $stack->getHealthMap();
+
+        $this->assertFalse($health[0]);
+        $this->assertTrue($health[1]);
+    }
+
+    /**
+     * @test
+     * @testdox it should skip unhealthy driver on subsequent calls
+     */
+    public function itSkipsUnhealthyDriverOnSubsequentCalls(): void
+    {
+        $fail = new FailingCache();
+        $ok   = new FakeArrayCache();
+
+        $ok->set('foo', 'bar');
+
+        $stack = new StackStorage([$fail, $ok]);
+
+        // first call marks fail as unhealthy
+        $stack->get('foo');
+
+        // second call — fail should be skipped entirely
+        $this->assertSame('bar', $stack->get('foo'));
+        $this->assertFalse($stack->getHealthMap()[0]);
+    }
+
+    /**
+     * @test
+     * @testdox it should recover driver health
+     */
+    public function itRecoversDriver(): void
+    {
+        $fail = new FailingCache();
+        $ok   = new FakeArrayCache();
+
+        $stack = new StackStorage([$fail, $ok]);
+        $stack->get('foo');
+
+        $stack->recover(0);
+
+        $this->assertTrue($stack->getHealthMap()[0]);
+    }
+
+    /**
+     * @test
+     * @testdox it should ignore recover call for out-of-bound index
+     */
+    public function itIgnoresRecoverForInvalidIndex(): void
+    {
+        $stack = new StackStorage([new FakeArrayCache()]);
+        $stack->recover(99); // should not throw
+
+        $this->assertTrue($stack->getHealthMap()[0]);
+    }
+
+    // -------------------------------------------------------------------
+    // lastExceptions
+    // -------------------------------------------------------------------
+
+    /**
+     * @test
+     * @testdox it should record exception per driver index on failure
+     */
+    public function itRecordsLastExceptionOnFailure(): void
+    {
+        $fail = new FailingCache();
+        $ok   = new FakeArrayCache();
+
+        $stack = new StackStorage([$fail, $ok]);
+        $stack->get('foo');
+
+        $exceptions = $stack->getLastExceptions();
+
+        $this->assertArrayHasKey(0, $exceptions);
+        $this->assertInstanceOf(\RuntimeException::class, $exceptions[0]);
+    }
+
+    /**
+     * @test
+     * @testdox it should have no exceptions initially
+     */
+    public function itHasNoExceptionsInitially(): void
+    {
+        $stack = new StackStorage([new FakeArrayCache()]);
+
+        $this->assertSame([], $stack->getLastExceptions());
+    }
+}
+
+// -------------------------------------------------------------------
+// Fakes
+// -------------------------------------------------------------------
+
+class FakeArrayCache implements CacheInterface
+{
+    /** @var array<string, mixed> */
+    private array $data = [];
+
+    public function get(string $key, mixed $default = null): mixed
+    {
+        return $this->data[$key] ?? $default;
+    }
+
+    public function set(string $key, mixed $value, \DateInterval|int|null $ttl = null): bool
+    {
+        $this->data[$key] = $value;
+
+        return true;
+    }
+
+    public function delete(string $key): bool
+    {
+        unset($this->data[$key]);
+
+        return true;
+    }
+
+    public function clear(): bool
+    {
+        $this->data = [];
+
+        return true;
+    }
+
+    /**
+     * @param  iterable<string>       $keys
+     * @return iterable<string, mixed>
+     */
+    public function getMultiple(iterable $keys, mixed $default = null): iterable
+    {
+        $result = [];
+
+        foreach ($keys as $key) {
+            $result[$key] = $this->data[$key] ?? $default;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param iterable<string, mixed> $values
+     */
+    public function setMultiple(iterable $values, \DateInterval|int|null $ttl = null): bool
+    {
+        foreach ($values as $k => $v) {
+            $this->data[(string) $k] = $v;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param iterable<string> $keys
+     */
+    public function deleteMultiple(iterable $keys): bool
+    {
+        foreach ($keys as $key) {
+            unset($this->data[$key]);
+        }
+
+        return true;
+    }
+
+    public function has(string $key): bool
+    {
+        return array_key_exists($key, $this->data);
+    }
+
+    public function increment(string $key, int $value): int
+    {
+        $this->data[$key] = ((int) ($this->data[$key] ?? 0)) + $value;
+
+        return (int) $this->data[$key];
+    }
+
+    public function decrement(string $key, int $value): int
+    {
+        $this->data[$key] = ((int) ($this->data[$key] ?? 0)) - $value;
+
+        return (int) $this->data[$key];
+    }
+
+    public function remember(string $key, \DateInterval|int|null $ttl, \Closure $callback): mixed
+    {
+        return $this->data[$key] ?? ($this->data[$key] = $callback());
+    }
+}
+
+class FailingCache implements CacheInterface
+{
+    private function fail(): never
+    {
+        throw new \RuntimeException('Driver failure');
+    }
+
+    public function get(string $key, mixed $default = null): mixed
+    {
+        $this->fail();
+    }
+
+    public function set(string $key, mixed $value, \DateInterval|int|null $ttl = null): bool
+    {
+        $this->fail();
+    }
+
+    public function delete(string $key): bool
+    {
+        $this->fail();
+    }
+
+    public function clear(): bool
+    {
+        $this->fail();
+    }
+
+    /** @param iterable<string> $keys */
+    public function getMultiple(iterable $keys, mixed $default = null): iterable
+    {
+        $this->fail();
+    }
+
+    /** @param iterable<string, mixed> $values */
+    public function setMultiple(iterable $values, \DateInterval|int|null $ttl = null): bool
+    {
+        $this->fail();
+    }
+
+    /** @param iterable<string> $keys */
+    public function deleteMultiple(iterable $keys): bool
+    {
+        $this->fail();
+    }
+
+    public function has(string $key): bool
+    {
+        $this->fail();
+    }
+
+    public function increment(string $key, int $value): int
+    {
+        $this->fail();
+    }
+
+    public function decrement(string $key, int $value): int
+    {
+        $this->fail();
+    }
+
+    public function remember(string $key, \DateInterval|int|null $ttl, \Closure $callback): mixed
+    {
+        $this->fail();
+    }
+}
