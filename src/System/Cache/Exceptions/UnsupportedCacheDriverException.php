@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace System\Cache\Exceptions;
 
-class UnsupportedCacheDriverException extends \RuntimeException implements CacheException
+class UnsupportedCacheDriverException extends \RuntimeException implements CacheExceptionInterface
 {
 }
