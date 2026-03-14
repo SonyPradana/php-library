@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
+/** @var array<string, string> */
 return [
-    'tag_version'       => '^0.40.4',
+    'tag_version'       => '^0.41.0',
     'split_repositorys' => [
         'sonypradana/cache'       => '/src/System/Cache/',
         'sonypradana/collection'  => '/src/System/Collection/',

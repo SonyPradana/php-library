@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 0.41.0 - 2026-03-14
+### Added
+- Added Failover cache storage driver ([#495](https://github.com/SonyPradana/php-library/pull/495)).
+- Added Memcached cache storage driver with TCP and Unix socket connectivity support ([#492](https://github.com/SonyPradana/php-library/pull/492)).
+- Added PDO cache storage driver ([#491](https://github.com/SonyPradana/php-library/pull/491)).
+- Added Redis cache storage driver ([#490](https://github.com/SonyPradana/php-library/pull/490)).
+- Added APCu cache storage driver ([#489](https://github.com/SonyPradana/php-library/pull/489)).
+- Added VarExport with closure compilation ([#486](https://github.com/SonyPradana/php-library/pull/486)).
+- Added dependency injection container replaces PHP-DI for better performance and control ([#484](https://github.com/SonyPradana/php-library/pull/484)).
+
 ## [0.40.4] - 2025-11-14
 ### Fixed
 - Fixed Router Middleware Attribute register even not register in other method in same class  ([#483](https://github.com/sonypradana/php-library/pull/483)).
