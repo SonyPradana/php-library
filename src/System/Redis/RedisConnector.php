@@ -8,6 +8,7 @@ class RedisConnector
 {
     /**
      * @param array{
+     *     dsn?: string,
      *     host?: string,
      *     port?: int,
      *     timeout?: float,
@@ -28,20 +29,27 @@ class RedisConnector
             throw new \RuntimeException('The Redis extension is not loaded.');
         }
 
-        $redis = new \Redis();
+        if (isset($config['dsn'])) {
+            $config = $this->parseDsn($config['dsn']) + $config;
+            unset($config['dsn']);
+        }
 
+        $redis          = new \Redis();
         $timeout        = (float) ($config['timeout'] ?? 0.0);
         $retry_interval = (int) ($config['retry_interval'] ?? 0);
         $read_timeout   = (float) ($config['read_timeout'] ?? 0.0);
         $persistent     = (bool) ($config['persistent'] ?? false);
         $persistent_id  = (string) ($config['persistent_id'] ?? '');
 
+        $host     = (string) ($config['unix_socket'] ?? $config['host'] ?? '127.0.0.1');
+        $isSocket = isset($config['unix_socket']) || str_starts_with($host, '/');
+
         try {
-            if (isset($config['unix_socket'])) {
+            if ($isSocket) {
                 $this->establishConnection(
                     $redis,
                     'connect',
-                    [(string) $config['unix_socket'], 0, $timeout, $persistent_id, $retry_interval],
+                    [$host, 0, $timeout, $persistent_id, $retry_interval],
                     $persistent
                 );
             } else {
@@ -49,7 +57,7 @@ class RedisConnector
                     $redis,
                     'connect',
                     [
-                        (string) ($config['host'] ?? '127.0.0.1'),
+                        $host,
                         (int) ($config['port'] ?? 6379),
                         $timeout,
                         $persistent_id,
@@ -75,6 +83,58 @@ class RedisConnector
         }
 
         return $redis;
+    }
+
+    /**
+     * Parse DSN string menjadi config array.
+     *
+     * Supported formats:
+     *   redis://127.0.0.1:6379
+     *   redis://:password@127.0.0.1:6379
+     *   redis://127.0.0.1:6379/2
+     *   redis:///var/run/redis.sock
+     *
+     * @return array{
+     *     host?: string,
+     *     port?: int,
+     *     password?: string,
+     *     database?: int,
+     *     unix_socket?: string,
+     * }
+     */
+    protected function parseDsn(string $dsn): array
+    {
+        $parsed = parse_url($dsn);
+
+        if (false === $parsed || ($parsed['scheme'] ?? '') !== 'redis') {
+            throw new \InvalidArgumentException("Invalid Redis DSN: {$dsn}");
+        }
+
+        $config = [];
+
+        if (isset($parsed['path']) && str_starts_with($parsed['path'], '/') && !isset($parsed['host'])) {
+            $config['unix_socket'] = $parsed['path'];
+
+            return $config;
+        }
+
+        if (isset($parsed['host'])) {
+            $config['host'] = $parsed['host'];
+        }
+
+        if (isset($parsed['port'])) {
+            $config['port'] = $parsed['port'];
+        }
+
+        if (isset($parsed['pass']) && $parsed['pass'] !== '') {
+            $config['password'] = $parsed['pass'];
+        }
+
+        if (isset($parsed['path']) && $parsed['path'] !== '/') {
+            $config['database'] = (int) ltrim($parsed['path'], '/');
+        }
+
+        return $config;
     }
 
     /**
