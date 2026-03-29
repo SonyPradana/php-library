@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 0.41.1 - 2026-03-29
+### Added
+- Added Redis DSN parser ([#496](https://github.com/SonyPradana/php-library/pull/498)).
+
 ## 0.41.0 - 2026-03-14
 ### Added
 - Added Failover cache storage driver ([#495](https://github.com/SonyPradana/php-library/pull/495)).

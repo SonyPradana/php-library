@@ -10,7 +10,7 @@
     "require": {
         "php": "^8.0",
         "ext-pdo": "*",
-        "sonypradana/collection": "^0.41.0"
+        "sonypradana/collection": "^0.41.1"
     },
     "autoload": {
         "psr-4": {
