@@ -279,7 +279,7 @@ $command = new class($argv) extends Command {
 
         $prerelease = $v_prerelease ? "-{$v_prerelease}" : '';
 
-        return "{$prefix}{$version_new}{}{$prerelease}";
+        return "{$prefix}{$version_new}{$prerelease}";
     }
 
     /**
