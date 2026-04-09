@@ -233,6 +233,16 @@ $command = new class($argv) extends Command {
         $export = new VarExport();
         $export->setAlignArray();
 
+        if ($this->hasOption('dry-run')) {
+            style('updated split-repo config: ')->textDim()
+                ->push(
+                    $export->compileToString($config)
+                )->textYellow()
+                ->out();
+
+            return true;
+        }
+
         return $export->compile($config, __DIR__ . '../../split-repo.php');
     }
 
@@ -256,6 +266,16 @@ $command = new class($argv) extends Command {
     private function writeComposer(string $path, array $composer): bool
     {
         $json = \json_encode($composer, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_SLASHES);
+
+        if ($this->hasOption('dry-run')) {
+            style("\n")
+                ->push('updated composer: ')
+                ->push($path)->textDim()->newLines()
+                ->push($json)->textYellow()->newLines()
+                ->out();
+
+            return true;
+        }
 
         return false === file_put_contents($path, "{$json}\n") ? false : true;
     }
