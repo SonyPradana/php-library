@@ -267,24 +267,39 @@ $command = new class($argv) extends Command {
             'minor'      => $v_minor,
             'patch'      => $v_patch,
             'prerelease' => $v_prerelease,
+            'prefix'     => $prefix,
         ] = $this->parseTagVersion($tag_version);
+
+        $version_new = match (true) {
+            $major  => sprintf('%d.0.0', $v_major + 1),
+            $minor  => sprintf('%d.%d.0', $v_major, $v_minor + 1),
+            $patch  => sprintf('%d.%d.%d', $v_major, $v_minor, $v_patch + 1),
+            default => sprintf('%d.%d.%d', $v_major, $v_minor, $v_patch),
+        };
 
         $prerelease = $v_prerelease ? "-{$v_prerelease}" : '';
 
-        return match (true) {
-            $major  => sprintf('^%d.0.0%s', $v_major + 1, $prerelease),
-            $minor  => sprintf('^%d.%d.0%s', $v_major, $v_minor + 1, $prerelease),
-            $patch  => sprintf('^%d.%d.%d%s', $v_major, $v_minor, $v_patch + 1, $prerelease),
-            default => sprintf('^%d.%d.%d%s', $v_major, $v_minor, $v_patch, $prerelease),
-        };
+        return "{$prefix}{$version_new}{}{$prerelease}";
     }
 
     /**
-     * @return array{major: int, minor: int, patch: int, prerelease: string}
+     * @return array{major: int, minor: int, patch: int, prerelease: string, prefix: string}
      */
     private function parseTagVersion(string $tag_version): array
     {
-        return parse_semver(ltrim($tag_version, '^'));
+        [
+            'version' => $version,
+            'prefix'  => $prefix,
+        ]       = extract_version_prefix($tag_version);
+        $parsed = parse_semver($version);
+
+        return [
+            'major'      => $parsed['major'],
+            'minor'      => $parsed['minor'],
+            'patch'      => $parsed['patch'],
+            'prerelease' => $parsed['prerelease'],
+            'prefix'     => $prefix,
+        ];
     }
 };
 
@@ -322,6 +337,28 @@ function parse_semver(string $version): array
         'minor'      => $minor,
         'patch'      => $patch,
         'prerelease' => $prerelease,
+    ];
+}
+
+/**
+ * Extract version prefix (^, ~, >, >=, <, <=, *, =, dll) dari version string.
+ *
+ * @return array{version: string, prefix: string}
+ */
+function extract_version_prefix(string $version_string): array
+{
+    // Supported prefix: ^, ~, >, >=, <, <=, =, *, v (optional)
+    if (preg_match('/^([v~*=><^]+)(.+)$/', $version_string, $matches)) {
+        return [
+            'prefix'  => $matches[1],
+            'version' => $matches[2],
+        ];
+    }
+
+    // Default prefix
+    return [
+        'prefix'  => '^',
+        'version' => ltrim($version_string, 'v'),
     ];
 }
 
