@@ -383,9 +383,8 @@ final class VarExport
             $this->writeArrayKey($key);
 
             if ($isArrayMode && $this->alignArray) {
-                $buffer = $this->getLastBuffer() ?? $key;
-                $lenght = strlen((string) $buffer);
-                $this->addToBuffer(str_repeat(' ', max(0, ($keyLength - $lenght) + $this->indentLevel)));
+                $keyLength_actual = strlen((string) $key);
+                $this->addToBuffer(str_repeat(' ', max(0, $keyLength - $keyLength_actual)));
             } elseif (false === $isArrayMode) {
                 $unquotedKeyLength = strlen((string) $key);
                 if ($keyLength > $unquotedKeyLength) {
@@ -506,3 +505,4 @@ final class VarExport
         }
     }
 }
+
