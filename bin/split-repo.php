@@ -210,6 +210,34 @@ $command = new class($argv) extends Command {
 
         return false === file_put_contents($path, "{$json}\n") ? false : true;
     }
+
+    private function writeSplitConfig(array $config): bool
+    {
+        $export = new VarExport();
+        return 0;
+    }
+
+    private function getNextVersion(string $tag_version, bool $major = false, bool $minor = false, bool $patch = false): string
+    {
+        [
+            'major' => $v_major,
+            'minor' => $v_minor,
+            'patch' => $v_patch,
+            'prerelease' => $v_prerelease,
+        ] = $this->parseTagVersion($tag_version);
+
+        return "v{$v_major}.{$v_minor}.{$v_patch}-{$v_major}";
+    }
+
+    private function parseTagVersion(string $tag_version): array
+    {
+        return [
+            'major' => 0,
+            'minor' => 0,
+            'patch' => 0,
+            'prerelease' => '',
+        ];
+    }
 };
 
 exit($command->entry());
