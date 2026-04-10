@@ -97,9 +97,7 @@ final class VarExport
         $this->addLine();
 
         if ([] !== $this->namespaces) {
-            $this->prependToBuffers(
-                $this->compileNamespace($this->namespaces)
-            );
+            $this->prependToBuffers($this->compileNamespace($this->namespaces));
         }
 
         $this->prependToBuffers($hedears);
@@ -151,14 +149,10 @@ final class VarExport
     {
         $closureCompiler = new ClosureCompiler();
         $compile         = $closureCompiler->compile($closure);
-        $capturedVars    = $closureCompiler
-            ->getReflection()
-            ->getStaticVariables();
+        $capturedVars    = $closureCompiler->getReflection()->getStaticVariables();
 
         $namespaces       = new NamespaceResolver();
-        $this->namespaces = $namespaces->resolve(
-            reflection: $closureCompiler->getReflection()
-        );
+        $this->namespaces = $namespaces->resolve(reflection: $closureCompiler->getReflection());
 
         if ([] === $capturedVars) {
             $this->writeClosureLines($compile);
@@ -246,9 +240,7 @@ final class VarExport
      */
     private function compileString(string $string): void
     {
-        $this->addToBuffers(
-            $this->string_compiler->compile($string)
-        );
+        $this->addToBuffers($this->string_compiler->compile($string));
     }
 
     /**
@@ -272,9 +264,7 @@ final class VarExport
      */
     private function compileFloat(float $float): void
     {
-        $formatted_float = $float == round($float)
-           ? number_format($float, 1, '.', '')
-           : (string) $float;
+        $formatted_float = $float == round($float) ? number_format($float, 1, '.', '') : (string) $float;
 
         $this->addToBuffer($formatted_float);
     }
@@ -333,13 +323,6 @@ final class VarExport
         return $content;
     }
 
-    private function getLastBuffer(): ?string
-    {
-        $last = array_key_last($this->buffer);
-
-        return $this->buffer[$last] ?? null;
-    }
-
     private function openArray(): void
     {
         $this->addToBuffer('[');
@@ -383,9 +366,8 @@ final class VarExport
             $this->writeArrayKey($key);
 
             if ($isArrayMode && $this->alignArray) {
-                $buffer = $this->getLastBuffer() ?? $key;
-                $lenght = strlen((string) $buffer);
-                $this->addToBuffer(str_repeat(' ', max(0, ($keyLength - $lenght) + $this->indentLevel)));
+                $keyLength_actual = strlen((string) $key);
+                $this->addToBuffer(str_repeat(' ', max(0, $keyLength - $keyLength_actual)));
             } elseif (false === $isArrayMode) {
                 $unquotedKeyLength = strlen((string) $key);
                 if ($keyLength > $unquotedKeyLength) {
