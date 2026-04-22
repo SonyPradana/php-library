@@ -34,14 +34,14 @@ class RedisConnector
             unset($config['dsn']);
         }
 
-        $redis          = new \Redis();
-        $timeout        = (float) ($config['timeout'] ?? 0.0);
+        $redis = new \Redis();
+        $timeout = (float) ($config['timeout'] ?? 0.0);
         $retry_interval = (int) ($config['retry_interval'] ?? 0);
-        $read_timeout   = (float) ($config['read_timeout'] ?? 0.0);
-        $persistent     = (bool) ($config['persistent'] ?? false);
-        $persistent_id  = (string) ($config['persistent_id'] ?? '');
+        $read_timeout = (float) ($config['read_timeout'] ?? 0.0);
+        $persistent = (bool) ($config['persistent'] ?? false);
+        $persistent_id = (string) ($config['persistent_id'] ?? '');
 
-        $host     = (string) ($config['unix_socket'] ?? $config['host'] ?? '127.0.0.1');
+        $host = (string) ($config['unix_socket'] ?? $config['host'] ?? '127.0.0.1');
         $isSocket = isset($config['unix_socket']) || str_starts_with($host, '/');
 
         try {
@@ -50,7 +50,7 @@ class RedisConnector
                     $redis,
                     'connect',
                     [$host, 0, $timeout, $persistent_id, $retry_interval],
-                    $persistent
+                    $persistent,
                 );
             } else {
                 $this->establishConnection(
@@ -63,7 +63,7 @@ class RedisConnector
                         $persistent_id,
                         $retry_interval,
                     ],
-                    $persistent
+                    $persistent,
                 );
             }
 
@@ -112,7 +112,7 @@ class RedisConnector
 
         $config = [];
 
-        if (isset($parsed['path']) && str_starts_with($parsed['path'], '/') && !isset($parsed['host'])) {
+        if (isset($parsed['path']) && str_starts_with($parsed['path'], '/') && empty($parsed['host'])) {
             $config['unix_socket'] = $parsed['path'];
 
             return $config;
