@@ -104,6 +104,10 @@ class RedisConnector
      */
     protected function parseDsn(string $dsn): array
     {
+        if (str_starts_with($dsn, 'redis:///')) {
+            return ['unix_socket' => substr($dsn, 8)];
+        }
+
         $parsed = parse_url($dsn);
 
         if (false === $parsed || ($parsed['scheme'] ?? '') !== 'redis') {
@@ -118,7 +122,7 @@ class RedisConnector
             return $config;
         }
 
-        if (isset($parsed['host'])) {
+        if (false === empty($parsed['host'])) {
             $config['host'] = $parsed['host'];
         }
 
