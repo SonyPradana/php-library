@@ -34,14 +34,14 @@ class RedisConnector
             unset($config['dsn']);
         }
 
-        $redis = new \Redis();
-        $timeout = (float) ($config['timeout'] ?? 0.0);
+        $redis          = new \Redis();
+        $timeout        = (float) ($config['timeout'] ?? 0.0);
         $retry_interval = (int) ($config['retry_interval'] ?? 0);
-        $read_timeout = (float) ($config['read_timeout'] ?? 0.0);
-        $persistent = (bool) ($config['persistent'] ?? false);
-        $persistent_id = (string) ($config['persistent_id'] ?? '');
+        $read_timeout   = (float) ($config['read_timeout'] ?? 0.0);
+        $persistent     = (bool) ($config['persistent'] ?? false);
+        $persistent_id  = (string) ($config['persistent_id'] ?? '');
 
-        $host = (string) ($config['unix_socket'] ?? $config['host'] ?? '127.0.0.1');
+        $host     = (string) ($config['unix_socket'] ?? $config['host'] ?? '127.0.0.1');
         $isSocket = isset($config['unix_socket']) || str_starts_with($host, '/');
 
         try {

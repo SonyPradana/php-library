@@ -11,12 +11,13 @@ class RedisConnectorTest extends TestCase
 {
     /**
      * @test
+     *
      * @dataProvider dsnProvider
      */
-    public function it_can_parse_redis_dsn(string $dsn, array $expected)
+    public function itCanParseRedisDsn(string $dsn, array $expected)
     {
         $connector = new RedisConnector();
-        
+
         $parseDsn = function (string $dsn) {
             return $this->parseDsn($dsn);
         };
@@ -39,24 +40,24 @@ class RedisConnectorTest extends TestCase
             'with password' => [
                 'redis://:password@127.0.0.1:6379',
                 [
-                    'host' => '127.0.0.1',
-                    'port' => 6379,
+                    'host'     => '127.0.0.1',
+                    'port'     => 6379,
                     'password' => 'password',
                 ],
             ],
             'with database' => [
                 'redis://127.0.0.1:6379/2',
                 [
-                    'host' => '127.0.0.1',
-                    'port' => 6379,
+                    'host'     => '127.0.0.1',
+                    'port'     => 6379,
                     'database' => 2,
                 ],
             ],
             'with password and database' => [
                 'redis://:secret@localhost:6379/1',
                 [
-                    'host' => 'localhost',
-                    'port' => 6379,
+                    'host'     => 'localhost',
+                    'port'     => 6379,
                     'password' => 'secret',
                     'database' => 1,
                 ],
@@ -92,10 +93,10 @@ class RedisConnectorTest extends TestCase
     /**
      * @test
      */
-    public function it_throws_exception_for_invalid_dsn_scheme()
+    public function itThrowsExceptionForInvalidDsnScheme()
     {
         $connector = new RedisConnector();
-        
+
         $parseDsn = function (string $dsn) {
             return $this->parseDsn($dsn);
         };
@@ -109,38 +110,39 @@ class RedisConnectorTest extends TestCase
     /**
      * @test
      */
-    public function it_throws_exception_for_malformed_dsn()
+    public function itThrowsExceptionForMalformedDsn()
     {
         $connector = new RedisConnector();
-        
+
         $parseDsn = function (string $dsn) {
             return $this->parseDsn($dsn);
         };
 
         $this->expectException(\InvalidArgumentException::class);
-        
+
         $parseDsn->call($connector, 'redis://:6379:invalid');
     }
 
     /**
      * @test
      */
-    public function it_can_connect_with_dsn_config()
+    public function itCanConnectWithDsnConfig()
     {
         $connector = new class extends RedisConnector {
             public $establishConnectionCalled = false;
-            public $parameters = [];
-            public $method = '';
+            public $parameters                = [];
+            public $method                    = '';
+
             protected function establishConnection($redis, string $method, array $parameters, bool $persistent): void
             {
                 $this->establishConnectionCalled = true;
-                $this->method = $method;
-                $this->parameters = $parameters;
+                $this->method                    = $method;
+                $this->parameters                = $parameters;
             }
         };
 
         $config = [
-            'dsn' => 'redis://:secret@localhost:6379/2',
+            'dsn'     => 'redis://:secret@localhost:6379/2',
             'timeout' => 2.5,
         ];
 
@@ -165,21 +167,22 @@ class RedisConnectorTest extends TestCase
     /**
      * @test
      */
-    public function it_can_connect_with_array_config()
+    public function itCanConnectWithArrayConfig()
     {
         $connector = new class extends RedisConnector {
             public $establishConnectionCalled = false;
-            public $parameters = [];
+            public $parameters                = [];
+
             protected function establishConnection($redis, string $method, array $parameters, bool $persistent): void
             {
                 $this->establishConnectionCalled = true;
-                $this->parameters = $parameters;
+                $this->parameters                = $parameters;
             }
         };
 
         $config = [
-            'host' => '127.0.0.1',
-            'port' => 6380,
+            'host'    => '127.0.0.1',
+            'port'    => 6380,
             'timeout' => 1.0,
         ];
 
@@ -187,7 +190,7 @@ class RedisConnectorTest extends TestCase
             $redis = $connector->connect($config);
             $this->assertInstanceOf(\Redis::class, $redis);
         } catch (\RedisException $e) {
-             $this->assertStringContainsString('Could not connect to Redis', $e->getMessage());
+            $this->assertStringContainsString('Could not connect to Redis', $e->getMessage());
         }
 
         $this->assertTrue($connector->establishConnectionCalled);
@@ -198,15 +201,16 @@ class RedisConnectorTest extends TestCase
     /**
      * @test
      */
-    public function it_can_connect_via_unix_socket()
+    public function itCanConnectViaUnixSocket()
     {
         $connector = new class extends RedisConnector {
             public $establishConnectionCalled = false;
-            public $parameters = [];
+            public $parameters                = [];
+
             protected function establishConnection($redis, string $method, array $parameters, bool $persistent): void
             {
                 $this->establishConnectionCalled = true;
-                $this->parameters = $parameters;
+                $this->parameters                = $parameters;
             }
         };
 
@@ -218,7 +222,7 @@ class RedisConnectorTest extends TestCase
             $redis = $connector->connect($config);
             $this->assertInstanceOf(\Redis::class, $redis);
         } catch (\RedisException $e) {
-             $this->assertStringContainsString('Could not connect to Redis', $e->getMessage());
+            $this->assertStringContainsString('Could not connect to Redis', $e->getMessage());
         }
 
         $this->assertTrue($connector->establishConnectionCalled);
@@ -229,23 +233,24 @@ class RedisConnectorTest extends TestCase
     /**
      * @test
      */
-    public function it_can_handle_persistent_connection()
+    public function itCanHandlePersistentConnection()
     {
         $connector = new class extends RedisConnector {
-            public $method = '';
+            public $method     = '';
             public $persistent = false;
             public $parameters = [];
+
             protected function establishConnection($redis, string $method, array $parameters, bool $persistent): void
             {
-                $this->method = $method;
+                $this->method     = $method;
                 $this->persistent = $persistent;
                 $this->parameters = $parameters;
             }
         };
 
         $config = [
-            'host' => '127.0.0.1',
-            'persistent' => true,
+            'host'          => '127.0.0.1',
+            'persistent'    => true,
             'persistent_id' => 'my-id',
         ];
 
@@ -258,7 +263,7 @@ class RedisConnectorTest extends TestCase
     /**
      * @test
      */
-    public function it_can_set_read_timeout()
+    public function itCanSetReadTimeout()
     {
         // This test is a bit tricky as it calls setOption on real Redis object.
         // But we can check if it runs without crashing.
@@ -270,7 +275,7 @@ class RedisConnectorTest extends TestCase
         };
 
         $config = [
-            'host' => '127.0.0.1',
+            'host'         => '127.0.0.1',
             'read_timeout' => 5.0,
         ];
 
@@ -278,17 +283,17 @@ class RedisConnectorTest extends TestCase
             $redis = $connector->connect($config);
             $this->assertInstanceOf(\Redis::class, $redis);
         } catch (\RedisException $e) {
-             $this->assertStringContainsString('Could not connect to Redis', $e->getMessage());
+            $this->assertStringContainsString('Could not connect to Redis', $e->getMessage());
         }
     }
 
     /**
      * @test
      */
-    public function it_calls_establish_connection_with_correct_method()
+    public function itCallsEstablishConnectionWithCorrectMethod()
     {
         $connector = new RedisConnector();
-        
+
         $establishConnection = function ($redis, $method, $parameters, $persistent) {
             $this->establishConnection($redis, $method, $parameters, $persistent);
         };
