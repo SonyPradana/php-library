@@ -106,15 +106,30 @@ class Templator
         $templatePath  = $this->finder->find($templateName);
 
         $cachePath = $this->cacheDir . '/' . md5($templateName) . '.php';
+        $depPath   = $this->cacheDir . '/' . md5($templateName) . '.dep';
 
         if ($cache && file_exists($cachePath) && filemtime($cachePath) >= filemtime($templatePath)) {
-            return $this->getView($cachePath, $data);
+            $is_stale = false;
+            if (file_exists($depPath)) {
+                $dependencies = unserialize(file_get_contents($depPath));
+                foreach ($dependencies as $depFile => $depth) {
+                    if (file_exists($depFile) && filemtime($cachePath) < filemtime($depFile)) {
+                        $is_stale = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!$is_stale) {
+                return $this->getView($cachePath, $data);
+            }
         }
 
         $template = file_get_contents($templatePath);
         $template = $this->templates($template, $templatePath);
 
         file_put_contents($cachePath, $template);
+        file_put_contents($depPath, serialize($this->getDependency($templatePath)));
 
         return $this->getView($cachePath, $data);
     }
@@ -128,11 +143,13 @@ class Templator
         $template_dir  = $this->finder->find($template_name);
 
         $cachePath = $this->cacheDir . '/' . md5($template_name) . '.php';
+        $depPath   = $this->cacheDir . '/' . md5($template_name) . '.dep';
 
         $template = file_get_contents($template_dir);
         $template = $this->templates($template, $template_dir);
 
         file_put_contents($cachePath, $template);
+        file_put_contents($depPath, serialize($this->getDependency($template_dir)));
 
         return $template;
     }
@@ -180,6 +197,7 @@ class Templator
     public function templates(string $template, string $view_location = ''): string
     {
         return array_reduce([
+            CommentTemplator::class,
             SetTemplator::class,
             SectionTemplator::class,
             IncludeTemplator::class,
@@ -189,7 +207,6 @@ class Templator
             NameTemplator::class,
             IfTemplator::class,
             EachTemplator::class,
-            CommentTemplator::class,
             ContinueTemplator::class,
             BreakTemplator::class,
             UseTemplator::class,
