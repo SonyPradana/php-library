@@ -72,7 +72,13 @@ class ComponentTemplator extends AbstractTemplatorParse implements DependencyTem
                 if (class_exists($class = $this->namespace . $componentName)) {
                     // For classes, we might need to trim quotes from string literals
                     $classParams = array_map(function ($val) {
-                        if (is_string($val) && (str_starts_with($val, "'") && str_ends_with($val, "'") || str_starts_with($val, '"') && str_ends_with($val, '"'))) {
+                        if (
+                            is_string($val)
+                            && (
+                                str_starts_with($val, "'") && str_ends_with($val, "'")
+                                || str_starts_with($val, '"') && str_ends_with($val, '"')
+                            )
+                        ) {
                             return substr($val, 1, -1);
                         }
                         return $val;
@@ -92,19 +98,20 @@ class ComponentTemplator extends AbstractTemplatorParse implements DependencyTem
                 // add perent dependency
                 $this->dependent_on[$templatePath] = 1;
 
-                // Support variable extraction for {{ $var }} and {!! $var !!}
+                // Support variable extraction for
+                // {{ $var }} and {!! $var !!}
                 foreach ($params as $key => $value) {
                     if (is_string($key)) {
-                        $content = preg_replace("/{{\s*\\$" . $key . "\s*}}/", "{{" . $value . "}}", $content);
-                        $content = preg_replace("/{!!\s*\\$" . $key . "\s*!!}/", "{!!" . $value . "!!}", $content);
+                        $content = preg_replace("/{{\s*\\$" . $key . "\s*}}/", '{{' . $value . '}}', $content);
+                        $content = preg_replace("/{!!\s*\\$" . $key . "\s*!!}/", '{!!' . $value . '!!}', $content);
                     }
                 }
 
-                // Check for undefined variables in component (Point 3 of issue)
-                // We search for remaining {{ $var }} or {!! $var !!} patterns
-                // that haven't been replaced.
+                // Search for remaining
+                // {{ $var }} or {!! $var !!} patterns
+                // that haven't been replaced
                 preg_match_all("/{{\s*\\$([a-zA-Z0-9_]+)\s*}}/", $content, $missingVars);
-                if (!empty($missingVars[1])) {
+                if (false === empty($missingVars[1])) {
                     throw new RequiredVariableNotFound($missingVars[1][0], $componentName);
                 }
 
@@ -117,7 +124,13 @@ class ComponentTemplator extends AbstractTemplatorParse implements DependencyTem
 
                         if (array_key_exists($yield_matches[1], $params)) {
                             $val = $params[$yield_matches[1]];
-                            if (is_string($val) && (str_starts_with($val, "'") && str_ends_with($val, "'") || str_starts_with($val, '"') && str_ends_with($val, '"'))) {
+                            if (
+                                is_string($val)
+                                && (
+                                    str_starts_with($val, "'") && str_ends_with($val, "'")
+                                    || str_starts_with($val, '"') && str_ends_with($val, '"')
+                                )
+                            ) {
                                 return substr($val, 1, -1);
                             }
                             return $val;
@@ -148,12 +161,12 @@ class ComponentTemplator extends AbstractTemplatorParse implements DependencyTem
         }
 
         $params = [];
-        if (!empty($paramsString)) {
+        if (false === empty($paramsString)) {
             // Match named parameters or positional parameters, respecting quotes
             $pattern = '/\s*([a-zA-Z0-9_]+)\s*:\s*([\'"].*?[\'"]|[^,]+)|([\'"].*?[\'"]|[^,]+)/';
             if (preg_match_all($pattern, $paramsString, $paramMatches, PREG_SET_ORDER)) {
                 foreach ($paramMatches as $match) {
-                    if (!empty($match[1])) {
+                    if (false === empty($match[1])) {
                         // Named parameter: key: value
                         $key = $match[1];
                         $value = trim($match[2]);
