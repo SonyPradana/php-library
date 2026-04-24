@@ -86,7 +86,7 @@ final class ComponentTest extends TestCase
         // Create a temporary view file for this test
         $viewPath = __DIR__ . '/view/expression.template';
         file_put_contents($viewPath, '<div>{{ $title }} - {{ $content }}</div>');
-        
+
         try {
             $out = $templator->templates('{% component(\'expression.template\', title: \'Hello\', content: "World") %}{% endcomponent %}');
             $this->assertStringContainsString('<?php echo htmlspecialchars(\'Hello\'); ?>', $out);
@@ -102,9 +102,9 @@ final class ComponentTest extends TestCase
     public function itCanHandleCommaInStringParameters()
     {
         $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
-        $viewPath = __DIR__ . '/view/comma.template';
+        $viewPath  = __DIR__ . '/view/comma.template';
         file_put_contents($viewPath, '<span>{% yield(\'text\') %}</span>');
-        
+
         try {
             $out = $templator->templates('{% component(\'comma.template\', text: \'Hello, World\') %}{% endcomponent %}');
             $this->assertEquals('<span>Hello, World</span>', trim($out));
@@ -119,13 +119,13 @@ final class ComponentTest extends TestCase
     public function itThrowsWhenRequiredVariableIsMissing()
     {
         $templator = new Templator(new TemplatorFinder([__DIR__ . '/view/'], ['']), __DIR__);
-        $viewPath = __DIR__ . '/view/required.template';
+        $viewPath  = __DIR__ . '/view/required.template';
         file_put_contents($viewPath, '<div>{{ $missingVar }}</div>');
-        
+
         try {
             $this->expectException(RequiredVariableNotFound::class);
             $this->expectExceptionMessage('Required variable $missingVar not found in component: required.template');
-            
+
             $templator->templates('{% component(\'required.template\') %}{% endcomponent %}');
         } finally {
             if (file_exists($viewPath)) {

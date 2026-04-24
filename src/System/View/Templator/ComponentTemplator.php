@@ -57,17 +57,10 @@ class ComponentTemplator extends AbstractTemplatorParse implements DependencyTem
     {
         return preg_replace_callback(
             '/{%\s*component\(\s*(.*?)\)\s*%}(.*?){%\s*endcomponent\s*%}/s',
-            function ($matches) use ($template) {
-                if (false === array_key_exists(1, $matches)) {
-                    return $template;
-                }
-                if (false === array_key_exists(2, $matches)) {
-                    return $template;
-                }
-
-                $rawParams = trim($matches[1]);
+            function ($matches) {
+                $rawParams                = trim($matches[1]);
                 [$componentName, $params] = $this->extractComponentAndParams($rawParams);
-                $innerContent = $matches[2];
+                $innerContent             = $matches[2];
 
                 if (class_exists($class = $this->namespace . $componentName)) {
                     // For classes, we might need to trim quotes from string literals
@@ -81,6 +74,7 @@ class ComponentTemplator extends AbstractTemplatorParse implements DependencyTem
                         ) {
                             return substr($val, 1, -1);
                         }
+
                         return $val;
                     }, $params);
                     $component = new $class(...$classParams);
@@ -93,8 +87,8 @@ class ComponentTemplator extends AbstractTemplatorParse implements DependencyTem
                 }
 
                 $templatePath = $this->finder->find($componentName);
-                $layout = $this->getContents($templatePath);
-                $content = $this->parseComponent($layout);
+                $layout       = $this->getContents($templatePath);
+                $content      = $this->parseComponent($layout);
                 // add perent dependency
                 $this->dependent_on[$templatePath] = 1;
 
@@ -133,6 +127,7 @@ class ComponentTemplator extends AbstractTemplatorParse implements DependencyTem
                             ) {
                                 return substr($val, 1, -1);
                             }
+
                             return $val;
                         }
 
@@ -155,7 +150,7 @@ class ComponentTemplator extends AbstractTemplatorParse implements DependencyTem
         // Split component name from params
         if (preg_match('/^([\'"][^\'"]+[\'"]|[^,]+)(?:\s*,\s*(.*))?$/s', $rawParams, $matches)) {
             $componentName = trim($matches[1], "'\" ");
-            $paramsString = $matches[2] ?? '';
+            $paramsString  = $matches[2] ?? '';
         } else {
             return [$rawParams, []];
         }
@@ -168,12 +163,12 @@ class ComponentTemplator extends AbstractTemplatorParse implements DependencyTem
                 foreach ($paramMatches as $match) {
                     if (false === empty($match[1])) {
                         // Named parameter: key: value
-                        $key = $match[1];
-                        $value = trim($match[2]);
+                        $key          = $match[1];
+                        $value        = trim($match[2]);
                         $params[$key] = $value;
                     } else {
                         // Positional parameter: value
-                        $value = trim($match[3]);
+                        $value    = trim($match[3]);
                         $params[] = $value;
                     }
                 }
