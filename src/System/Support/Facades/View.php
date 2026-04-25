@@ -10,7 +10,7 @@ namespace System\Support\Facades;
  * @method static \System\View\Templator addDependency(string $parent, string $child, int $depth = 1)
  * @method static \System\View\Templator prependDependency(array<string, int> $childs, string $parent)
  * @method static array<string, int>     getDependency(string $parent)
- * @method static string                 render(array<string, mixed> $data, string $template_name, bool $cache = true, bool $use_dep = true)
+ * @method static string                 render(array<string, mixed> $data, string $template_name, bool $cache = true, bool $use_dep = false)
  * @method static string                 compile(string $template_name)
  * @method static bool                   viewExist(string $templateName)
  * @method static string                 templates(string $template, string $view_location = '')
