@@ -9,9 +9,9 @@ class TemplatorTest extends TestCase
 {
     protected function tearDown(): void
     {
-        $files = glob(__DIR__ . '/caches/*.php');
+        $files = glob(__DIR__ . '/caches/*');
         foreach ($files as $file) {
-            if (is_file($file)) {
+            if (is_file($file) && (Str::endsWith($file, '.php') || Str::endsWith($file, '.dep'))) {
                 unlink($file);
             }
         }

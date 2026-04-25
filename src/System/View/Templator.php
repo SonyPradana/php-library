@@ -38,8 +38,8 @@ class Templator
     public function __construct($finder, string $cacheDir)
     {
         // Backwards compatibility with templator finder.
-        $this->finder    = is_string($finder) ? new TemplatorFinder([$finder]) : $finder;
-        $this->cacheDir  = $cacheDir;
+        $this->finder   = is_string($finder) ? new TemplatorFinder([$finder]) : $finder;
+        $this->cacheDir = $cacheDir;
     }
 
     /**
@@ -62,9 +62,9 @@ class Templator
         return $this;
     }
 
-    public function addDependency(string $perent, string $child, int $depend_deep = 1): self
+    public function addDependency(string $parent, string $child, int $depth = 1): self
     {
-        $this->dependency[$perent][$child] = $depend_deep;
+        $this->dependency[$parent][$child] = $depth;
 
         return $this;
     }
@@ -74,15 +74,17 @@ class Templator
      *
      * @param array<string, int> $childs
      */
-    public function prependDependency(string $perent, array $childs): self
+    public function prependDependency(string $parent, array $childs): self
     {
         foreach ($childs as $child => $depth) {
-            if ($has_depeth = isset($this->dependency[$perent][$child]) && $depth > $this->dependency[$perent][$child]) {
-                $this->addDependency($perent, $child, $depth);
+            $has_depth = isset($this->dependency[$parent][$child]);
+
+            if ($has_depth && $depth > $this->dependency[$parent][$child]) {
+                $this->addDependency($parent, $child, $depth);
             }
 
-            if (false === $has_depeth) {
-                $this->addDependency($perent, $child, $depth);
+            if (false === $has_depth) {
+                $this->addDependency($parent, $child, $depth);
             }
         }
 
@@ -92,35 +94,24 @@ class Templator
     /**
      * @return array<string, int>
      */
-    public function getDependency(string $perent): array
+    public function getDependency(string $parent): array
     {
-        return $this->dependency[$perent] ?? [];
+        return $this->dependency[$parent] ?? [];
     }
 
     /**
      * @param array<string, mixed> $data
      */
-    public function render(string $templateName, array $data, bool $cache = true): string
+    public function render(string $templateName, array $data, bool $cache = true, bool $use_dep = true): string
     {
         $templateName .= $this->suffix;
-        $templatePath  = $this->finder->find($templateName);
+        $templatePath = $this->finder->find($templateName);
 
         $cachePath = $this->cacheDir . '/' . md5($templateName) . '.php';
         $depPath   = $this->cacheDir . '/' . md5($templateName) . '.dep';
 
         if ($cache && file_exists($cachePath) && filemtime($cachePath) >= filemtime($templatePath)) {
-            $is_stale = false;
-            if (file_exists($depPath)) {
-                $dependencies = unserialize(file_get_contents($depPath));
-                foreach ($dependencies as $depFile => $depth) {
-                    if (file_exists($depFile) && filemtime($cachePath) < filemtime($depFile)) {
-                        $is_stale = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!$is_stale) {
+            if (false === $use_dep || $this->isFresh($cachePath, $depPath)) {
                 return $this->getView($cachePath, $data);
             }
         }
@@ -129,7 +120,10 @@ class Templator
         $template = $this->templates($template, $templatePath);
 
         file_put_contents($cachePath, $template);
-        file_put_contents($depPath, serialize($this->getDependency($templatePath)));
+
+        if ($use_dep) {
+            file_put_contents($depPath, serialize($this->getDependency($templatePath)));
+        }
 
         return $this->getView($cachePath, $data);
     }
@@ -137,21 +131,44 @@ class Templator
     /**
      * Compile templator file to php file.
      */
-    public function compile(string $template_name): string
+    public function compile(string $template_name, bool $use_dep = true): string
     {
         $template_name .= $this->suffix;
-        $template_dir  = $this->finder->find($template_name);
+        $template_dir = $this->finder->find($template_name);
 
-        $cachePath = $this->cacheDir . '/' . md5($template_name) . '.php';
-        $depPath   = $this->cacheDir . '/' . md5($template_name) . '.dep';
+        $path       = $this->cacheDir . '/' . md5($template_name);
+        $cache_path = $path . '.php';
 
         $template = file_get_contents($template_dir);
         $template = $this->templates($template, $template_dir);
 
-        file_put_contents($cachePath, $template);
-        file_put_contents($depPath, serialize($this->getDependency($template_dir)));
+        file_put_contents($cache_path, $template);
+
+        if ($use_dep) {
+            $dep_path = $path . '.dep';
+            file_put_contents($dep_path, serialize($this->getDependency($template_dir)));
+        }
 
         return $template;
+    }
+
+    /**
+     * Check if cache file is fresh (not stale).
+     */
+    private function isFresh(string $cachePath, string $depPath): bool
+    {
+        if (false === file_exists($depPath)) {
+            return true;
+        }
+
+        $dependencies = unserialize(file_get_contents($depPath));
+        foreach (array_keys($dependencies) as $depFile) {
+            if (file_exists($depFile) && filemtime($cachePath) < filemtime($depFile)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -196,40 +213,44 @@ class Templator
      */
     public function templates(string $template, string $view_location = ''): string
     {
-        return array_reduce([
-            CommentTemplator::class,
-            SetTemplator::class,
-            SectionTemplator::class,
-            IncludeTemplator::class,
-            PHPTemplator::class,
-            DirectiveTemplator::class,
-            ComponentTemplator::class,
-            NameTemplator::class,
-            IfTemplator::class,
-            EachTemplator::class,
-            ContinueTemplator::class,
-            BreakTemplator::class,
-            UseTemplator::class,
-            JsonTemplator::class,
-            BooleanTemplator::class,
-        ], function (string $template, string $templator) use ($view_location): string {
-            $templator = new $templator($this->finder, $this->cacheDir);
-            if ($templator instanceof IncludeTemplator) {
-                $templator->maksDept($this->max_depth);
-            }
+        return array_reduce(
+            [
+                CommentTemplator::class,
+                SetTemplator::class,
+                SectionTemplator::class,
+                IncludeTemplator::class,
+                PHPTemplator::class,
+                DirectiveTemplator::class,
+                ComponentTemplator::class,
+                NameTemplator::class,
+                IfTemplator::class,
+                EachTemplator::class,
+                ContinueTemplator::class,
+                BreakTemplator::class,
+                UseTemplator::class,
+                JsonTemplator::class,
+                BooleanTemplator::class,
+            ],
+            function (string $template, string $templator) use ($view_location): string {
+                $templator = new $templator($this->finder, $this->cacheDir);
+                if ($templator instanceof IncludeTemplator) {
+                    $templator->maksDept($this->max_depth);
+                }
 
-            if ($templator instanceof ComponentTemplator) {
-                $templator->setNamespace($this->component_namespace);
-            }
+                if ($templator instanceof ComponentTemplator) {
+                    $templator->setNamespace($this->component_namespace);
+                }
 
-            $parse = $templator->parse($template);
+                $parse = $templator->parse($template);
 
-            // Get dependecy view file (perent) after parse template.
-            if ($templator instanceof DependencyTemplatorInterface) {
-                $this->prependDependency($view_location, $templator->dependentOn());
-            }
+                // Get dependecy view file (perent) after parse template.
+                if ($templator instanceof DependencyTemplatorInterface) {
+                    $this->prependDependency($view_location, $templator->dependentOn());
+                }
 
-            return $parse;
-        }, $template);
+                return $parse;
+            },
+            $template,
+        );
     }
 }
