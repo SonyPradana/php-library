@@ -102,7 +102,7 @@ class Templator
     /**
      * @param array<string, mixed> $data
      */
-    public function render(string $template_name, array $data, bool $cache = true, bool $use_dep = true): string
+    public function render(string $template_name, array $data, bool $cache = true, bool $use_dep = false): string
     {
         $template_name .= $this->suffix;
         $template_dir = $this->finder->find($template_name);
