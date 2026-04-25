@@ -102,52 +102,47 @@ class Templator
     /**
      * @param array<string, mixed> $data
      */
-    public function render(string $templateName, array $data, bool $cache = true, bool $use_dep = true): string
-    {
-        $templateName .= $this->suffix;
-        $templatePath = $this->finder->find($templateName);
-
-        $cachePath = $this->cacheDir . '/' . md5($templateName) . '.php';
-        $depPath   = $this->cacheDir . '/' . md5($templateName) . '.dep';
-
-        if ($cache && file_exists($cachePath) && filemtime($cachePath) >= filemtime($templatePath)) {
-            if (false === $use_dep || $this->isFresh($cachePath, $depPath)) {
-                return $this->getView($cachePath, $data);
-            }
-        }
-
-        $template = file_get_contents($templatePath);
-        $template = $this->templates($template, $templatePath);
-
-        file_put_contents($cachePath, $template);
-
-        if ($use_dep) {
-            file_put_contents($depPath, serialize($this->getDependency($templatePath)));
-        }
-
-        return $this->getView($cachePath, $data);
-    }
-
-    /**
-     * Compile templator file to php file.
-     */
-    public function compile(string $template_name, bool $use_dep = true): string
+    public function render(string $template_name, array $data, bool $cache = true, bool $use_dep = true): string
     {
         $template_name .= $this->suffix;
         $template_dir = $this->finder->find($template_name);
 
         $path       = $this->cacheDir . '/' . md5($template_name);
         $cache_path = $path . '.php';
+        $dep_path   = $path . '.dep';
+
+        if ($cache && file_exists($cache_path) && filemtime($cache_path) >= filemtime($template_dir)) {
+            if (false === $use_dep || $this->isFresh($cache_path, $dep_path)) {
+                return $this->getView($cache_path, $data);
+            }
+        }
 
         $template = file_get_contents($template_dir);
         $template = $this->templates($template, $template_dir);
 
         file_put_contents($cache_path, $template);
+        file_put_contents($dep_path, serialize($this->getDependency($template_dir)));
 
-        if ($use_dep) {
-            $dep_path = $path . '.dep';
-            file_put_contents($dep_path, serialize($this->getDependency($template_dir)));
-        }
+        return $this->getView($cache_path, $data);
+    }
+
+    /**
+     * Compile templator file to php file.
+     */
+    public function compile(string $template_name): string
+    {
+        $template_name .= $this->suffix;
+        $template_dir = $this->finder->find($template_name);
+
+        $path       = $this->cacheDir . '/' . md5($template_name);
+        $cache_path = $path . '.php';
+        $dep_path   = $path . '.dep';
+
+        $template = file_get_contents($template_dir);
+        $template = $this->templates($template, $template_dir);
+
+        file_put_contents($cache_path, $template);
+        file_put_contents($dep_path, serialize($this->getDependency($template_dir)));
 
         return $template;
     }
