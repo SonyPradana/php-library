@@ -137,7 +137,7 @@ class ViewCommand extends Command
 
         $count     = 0;
         $proggress = new ProgressBar(':progress :percent - :current', [
-            ':current' => fn ($current, $max): string => array_key_exists($current, $files) ? Str::replace($files[$current], cache_path(), '') : '',
+            ':current' => fn ($current, $max): string => array_key_exists($current, $files) ? Str::replace($files[$current], view_path(), '') : '',
         ]);
 
         $proggress->maks = count($files);
