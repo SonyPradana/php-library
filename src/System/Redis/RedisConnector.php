@@ -50,7 +50,7 @@ class RedisConnector
                     $redis,
                     'connect',
                     [$host, 0, $timeout, $persistent_id, $retry_interval],
-                    $persistent
+                    $persistent,
                 );
             } else {
                 $this->establishConnection(
@@ -63,7 +63,7 @@ class RedisConnector
                         $persistent_id,
                         $retry_interval,
                     ],
-                    $persistent
+                    $persistent,
                 );
             }
 
@@ -104,6 +104,10 @@ class RedisConnector
      */
     protected function parseDsn(string $dsn): array
     {
+        if (str_starts_with($dsn, 'redis:///')) {
+            return ['unix_socket' => substr($dsn, 8)];
+        }
+
         $parsed = parse_url($dsn);
 
         if (false === $parsed || ($parsed['scheme'] ?? '') !== 'redis') {
@@ -112,13 +116,13 @@ class RedisConnector
 
         $config = [];
 
-        if (isset($parsed['path']) && str_starts_with($parsed['path'], '/') && !isset($parsed['host'])) {
+        if (isset($parsed['path']) && str_starts_with($parsed['path'], '/') && empty($parsed['host'])) {
             $config['unix_socket'] = $parsed['path'];
 
             return $config;
         }
 
-        if (isset($parsed['host'])) {
+        if (false === empty($parsed['host'])) {
             $config['host'] = $parsed['host'];
         }
 
