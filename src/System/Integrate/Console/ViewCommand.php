@@ -126,8 +126,8 @@ class ViewCommand extends Command
 
     public function clear(): int
     {
-        warn('Clear cache file in ' . compiled_view_path())->out(false);
-        $files = $this->findFiles(compiled_view_path() . DIRECTORY_SEPARATOR, $this->prefix);
+        warn('Clear cache file in ' . cache_path())->out(false);
+        $files = $this->findFiles(cache_path() . DIRECTORY_SEPARATOR, $this->prefix);
 
         if (0 === count($files)) {
             warn('No file cache clear.')->out();
@@ -137,7 +137,7 @@ class ViewCommand extends Command
 
         $count     = 0;
         $proggress = new ProgressBar(':progress :percent - :current', [
-            ':current' => fn ($current, $max): string => array_key_exists($current, $files) ? Str::replace($files[$current], compiled_view_path(), '') : '',
+            ':current' => fn ($current, $max): string => array_key_exists($current, $files) ? Str::replace($files[$current], cache_path(), '') : '',
         ]);
 
         $proggress->maks = count($files);
