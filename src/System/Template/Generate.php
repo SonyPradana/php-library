@@ -229,8 +229,8 @@ class Generate
     {
         return match ($this->rule) {
             self::SET_CLASS, self::SET_ABSTRACT => 'abstract',
-            self::SET_TRAIT => 'trait',
-            default         => '',
+            self::SET_TRAIT                     => 'trait',
+            default                             => '',
         };
     }
 

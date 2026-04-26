@@ -83,13 +83,13 @@
     "scripts": {
         "refacto": "rector",
         "lint": "php-cs-fixer fix -v",
+        "facade:update": "php ./bin/facade.php facade:update --from-file /resources/facades.php --debug",
         "test:refacto": "rector --dry-run",
         "test:lint": "php-cs-fixer fix -v --dry-run --diff",
         "test:types": "phpstan analyse --ansi --memory-limit=-1 --debug",
         "test:unit": "phpunit --testdox --exclude-group database,not-for-mysql5.7,redis,apcu,memcached",
         "test:release": "php ./bin/split-repo.php validate",
         "test:facade": "php ./bin/facade.php facade:update --from-file /resources/facades.php --debug --dry-run",
-        "test:facade:update": "php ./bin/facade.php facade:update --from-file /resources/facades.php --debug",
         "test:dev": [
             "@test:refacto",
             "@test:lint",
@@ -105,6 +105,11 @@
             "phpunit --exclude-group database,not-for-mysql5.7,redis,apcu,memcached",
             "php ./bin/split-repo.php validate",
             "php ./bin/facade.php facade:update --from-file /resources/facades.php --dry-run"
+        ],
+        "fix": [
+            "@facade:update",
+            "@refacto",
+            "@lint"
         ]
     },
     "minimum-stability": "dev",

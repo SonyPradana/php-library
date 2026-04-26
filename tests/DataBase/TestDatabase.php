@@ -79,7 +79,7 @@ abstract class TestDatabase extends TestCase
         $configuration = $this->getConfiguration();
         $this->env     = match ($use_connection) {
             'mysql', 'mariadb' => $configuration['mysql'],
-            'sqlite' => $configuration['sqlite'],
+            'sqlite'           => $configuration['sqlite'],
         };
     }
 

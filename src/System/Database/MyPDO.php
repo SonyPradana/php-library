@@ -215,8 +215,8 @@ class MyPDO implements ConnectionInterface
     {
         return match ($configs['driver']) {
             'mysql', 'mariadb' => $this->makeMysqlDsn($configs),
-            'pgsql'  => $this->makePgsqlDsn($configs),
-            'sqlite' => $this->makeSqliteDsn($configs),
+            'pgsql'            => $this->makePgsqlDsn($configs),
+            'sqlite'           => $this->makeSqliteDsn($configs),
         };
     }
 
