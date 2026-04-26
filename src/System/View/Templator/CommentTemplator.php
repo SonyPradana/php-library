@@ -11,7 +11,7 @@ class CommentTemplator extends AbstractTemplatorParse
     public function parse(string $template): string
     {
         return preg_replace(
-            '/{#\s*(.*?)\s*#}/',
+            '/{#\s*(.*?)\s*#}/s',
             '<?php /* $1 */ ?>',
             $template
         );

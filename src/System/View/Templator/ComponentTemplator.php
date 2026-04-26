@@ -6,7 +6,9 @@ namespace System\View\Templator;
 
 use System\View\AbstractTemplatorParse;
 use System\View\DependencyTemplatorInterface;
+use System\View\Exceptions\RequiredVariableNotFound;
 use System\View\Exceptions\ViewFileNotFound;
+use System\View\Exceptions\YieldSectionNotFound;
 use System\View\InteractWithCacheTrait;
 
 class ComponentTemplator extends AbstractTemplatorParse implements DependencyTemplatorInterface
@@ -55,26 +57,33 @@ class ComponentTemplator extends AbstractTemplatorParse implements DependencyTem
     {
         return preg_replace_callback(
             '/{%\s*component\(\s*(.*?)\)\s*%}(.*?){%\s*endcomponent\s*%}/s',
-            function ($matches) use ($template) {
-                if (!array_key_exists(1, $matches)) {
-                    return $template;
-                }
-                if (!array_key_exists(2, $matches)) {
-                    return $template;
-                }
-
+            function ($matches) {
                 $rawParams                = trim($matches[1]);
                 [$componentName, $params] = $this->extractComponentAndParams($rawParams);
                 $innerContent             = $matches[2];
 
                 if (class_exists($class = $this->namespace . $componentName)) {
-                    $component = new $class(...$params);
+                    // For classes, we might need to trim quotes from string literals
+                    $classParams = array_map(function ($val) {
+                        if (
+                            is_string($val)
+                            && (
+                                str_starts_with($val, "'") && str_ends_with($val, "'")
+                                || str_starts_with($val, '"') && str_ends_with($val, '"')
+                            )
+                        ) {
+                            return substr($val, 1, -1);
+                        }
+
+                        return $val;
+                    }, $params);
+                    $component = new $class(...$classParams);
 
                     return $component->render($innerContent);
                 }
 
                 if (false === $this->finder->exists($componentName)) {
-                    throw new ViewFileNotFound('Template file not found: ' . $componentName);
+                    throw new ViewFileNotFound($componentName);
                 }
 
                 $templatePath = $this->finder->find($componentName);
@@ -82,6 +91,23 @@ class ComponentTemplator extends AbstractTemplatorParse implements DependencyTem
                 $content      = $this->parseComponent($layout);
                 // add perent dependency
                 $this->dependent_on[$templatePath] = 1;
+
+                // Support variable extraction for
+                // {{ $var }} and {!! $var !!}
+                foreach ($params as $key => $value) {
+                    if (is_string($key)) {
+                        $content = preg_replace("/{{\s*\\$" . $key . "\s*}}/", '{{' . $value . '}}', $content);
+                        $content = preg_replace("/{!!\s*\\$" . $key . "\s*!!}/", '{!!' . $value . '!!}', $content);
+                    }
+                }
+
+                // Search for remaining
+                // {{ $var }} or {!! $var !!} patterns
+                // that haven't been replaced
+                preg_match_all("/{{\s*\\$([a-zA-Z0-9_]+)\s*}}/", $content, $missingVars);
+                if (false === empty($missingVars[1])) {
+                    throw new RequiredVariableNotFound($missingVars[1][0], $componentName);
+                }
 
                 return preg_replace_callback(
                     "/{%\s*yield\(\'([^\']+)\'\)\s*%}/",
@@ -91,15 +117,26 @@ class ComponentTemplator extends AbstractTemplatorParse implements DependencyTem
                         }
 
                         if (array_key_exists($yield_matches[1], $params)) {
-                            return $params[$yield_matches[1]];
+                            $val = $params[$yield_matches[1]];
+                            if (
+                                is_string($val)
+                                && (
+                                    str_starts_with($val, "'") && str_ends_with($val, "'")
+                                    || str_starts_with($val, '"') && str_ends_with($val, '"')
+                                )
+                            ) {
+                                return substr($val, 1, -1);
+                            }
+
+                            return $val;
                         }
 
-                        throw new \Exception('yield section not found: ' . $yield_matches[1]);
+                        throw new YieldSectionNotFound($yield_matches[1]);
                     },
-                    $content
+                    $content,
                 );
             },
-            $template
+            $template,
         );
     }
 
@@ -110,20 +147,31 @@ class ComponentTemplator extends AbstractTemplatorParse implements DependencyTem
      */
     private function extractComponentAndParams(string $rawParams): array
     {
-        $parts         = explode(',', $rawParams, 2);
-        $componentName = trim($parts[0], "'\"");
+        // Split component name from params
+        if (preg_match('/^([\'"][^\'"]+[\'"]|[^,]+)(?:\s*,\s*(.*))?$/s', $rawParams, $matches)) {
+            $componentName = trim($matches[1], "'\" ");
+            $paramsString  = $matches[2] ?? '';
+        } else {
+            return [$rawParams, []];
+        }
 
-        $paramsString = $parts[1] ?? '';
-        $params       = [];
-        foreach (explode(',', $paramsString) as $param) {
-            $param = trim($param);
-            if (str_contains($param, ':')) {
-                [$key, $value] = explode(':', $param, 2);
-                $key           = trim($key);
-                $value         = trim($value, "'\" ");
-                $params[$key]  = $value;
-            } elseif (!empty($param)) {
-                $params[] = trim($param, "'\" ");
+        $params = [];
+        if (false === empty($paramsString)) {
+            // Match named parameters or positional parameters, respecting quotes
+            $pattern = '/\s*([a-zA-Z0-9_]+)\s*:\s*([\'"].*?[\'"]|[^,]+)|([\'"].*?[\'"]|[^,]+)/';
+            if (preg_match_all($pattern, $paramsString, $paramMatches, PREG_SET_ORDER)) {
+                foreach ($paramMatches as $match) {
+                    if (false === empty($match[1])) {
+                        // Named parameter: key: value
+                        $key          = $match[1];
+                        $value        = trim($match[2]);
+                        $params[$key] = $value;
+                    } else {
+                        // Positional parameter: value
+                        $value    = trim($match[3]);
+                        $params[] = $value;
+                    }
+                }
             }
         }
 

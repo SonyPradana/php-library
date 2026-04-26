@@ -63,7 +63,7 @@ class ViewCommand extends Command
                 'view:watch' => 'Watch all view file',
             ],
             'options'   => [
-                '--prefix' => 'Finding file by pattern given',
+                '--prefix' => 'Finding file by pattern given (default *.php)',
             ],
             'relation'  => [
                 'view:cache' => ['--prefix'],
@@ -81,6 +81,9 @@ class ViewCommand extends Command
     private function findFiles(string $directory, string $pattern): array
     {
         $files    = [];
+        if (false === is_dir($directory)) {
+            return [];
+        }
         $iterator = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($directory),
             \RecursiveIteratorIterator::SELF_FIRST
@@ -126,8 +129,8 @@ class ViewCommand extends Command
 
     public function clear(): int
     {
-        warn('Clear cache file in ' . cache_path())->out(false);
-        $files = $this->findFiles(cache_path() . DIRECTORY_SEPARATOR, $this->prefix);
+        warn('Clear cache file in ' . compiled_view_path())->out(false);
+        $files = $this->findFiles(compiled_view_path() . DIRECTORY_SEPARATOR, $this->prefix);
 
         if (0 === count($files)) {
             warn('No file cache clear.')->out();
@@ -137,7 +140,7 @@ class ViewCommand extends Command
 
         $count     = 0;
         $proggress = new ProgressBar(':progress :percent - :current', [
-            ':current' => fn ($current, $max): string => array_key_exists($current, $files) ? Str::replace($files[$current], view_path(), '') : '',
+            ':current' => fn ($current, $max): string => array_key_exists($current, $files) ? Str::replace($files[$current], compiled_view_path(), '') : '',
         ]);
 
         $proggress->maks = count($files);
@@ -145,6 +148,13 @@ class ViewCommand extends Command
         foreach ($files as $file) {
             if (is_file($file)) {
                 $count += unlink($file) ? 1 : 0;
+                // also remove .dep file if prefix is default or matched .php
+                if (Str::endsWith($file, '.php')) {
+                    $dep_file = Str::replace($file, '.php', '.dep');
+                    if (file_exists($dep_file)) {
+                        unlink($dep_file);
+                    }
+                }
             }
             $proggress->current++;
             $time                = round(microtime(true) - $watch_start, 3) * 1000;
@@ -157,7 +167,7 @@ class ViewCommand extends Command
 
     public function watch(Templator $templator): int
     {
-        warn('Clear cache file in ' . view_path() . $this->prefix)->out(false);
+        warn('Watch view file in ' . view_path() . $this->prefix)->out(false);
 
         $compiled    = [];
         $width       = $this->getWidth(40, 80);
@@ -184,7 +194,7 @@ class ViewCommand extends Command
                 clearstatcache(true, $file);
                 $now = filemtime($file);
 
-                // compile only newst file
+                // compile only newest file
                 if ($now > $time) {
                     $dependency = $this->compile($templator, $file, $width);
                     foreach ($dependency as $compile => $time) {
@@ -194,7 +204,7 @@ class ViewCommand extends Command
                     $get_indexes[$file] = $now;
                     $reindex            = true;
 
-                    // recompile dependent
+                    // recompile parent/dependent files
                     if (isset($compiled[$file])) {
                         foreach ($compiled[$file] as $compile => $time) {
                             $this->compile($templator, $compile, $width);
@@ -209,12 +219,13 @@ class ViewCommand extends Command
                 $get_indexes = $new_indexes;
                 $compiled    = $this->precompile($templator, $get_indexes, $width);
             }
+
             if ($reindex) {
                 asort($get_indexes);
             }
 
             usleep(1_000); // 1ms
-        } while (!$signal);
+        } while (false === $signal);
 
         return 0;
     }
