@@ -20,7 +20,7 @@ final class ViewCommandsTest extends TestCase
     {
         $app = new Application(__DIR__);
 
-        $app->setCachePath(DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'view_cache' . DIRECTORY_SEPARATOR);
+        $app->setCompiledViewPath(DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'view_cache' . DIRECTORY_SEPARATOR);
         $app->setViewPath(DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR);
 
         $app->set(
@@ -30,7 +30,7 @@ final class ViewCommandsTest extends TestCase
 
         $app->set(
             'view.instance',
-            fn (TemplatorFinder $finder) => new Templator($finder, $app->cache_path())
+            fn (TemplatorFinder $finder) => new Templator($finder, $app->compiled_view_path())
         );
 
         $view_command = new ViewCommand(['php', 'cli', 'view:cache'], [
@@ -41,7 +41,7 @@ final class ViewCommandsTest extends TestCase
         ob_get_clean();
 
         $this->assertEquals(0, $exit);
-        $this->assertFileExists(cache_path() . md5('test.php') . '.php');
+        $this->assertFileExists(compiled_view_path() . md5('test.php') . '.php');
     }
 
     /**
@@ -52,11 +52,11 @@ final class ViewCommandsTest extends TestCase
         // tests\Integrate\Commands\assets\view_cache
         $app = new Application('');
         $app->loadConfig(new ConfigRepository($app->defaultConfigs()));
-        $app->setCachePath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'view_cache' . DIRECTORY_SEPARATOR);
+        $app->setCompiledViewPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'view_cache' . DIRECTORY_SEPARATOR);
 
-        file_put_contents(cache_path() . 'test01.php', '');
-        file_put_contents(cache_path() . 'test01.dep', '');
-        file_put_contents(cache_path() . 'test02.php', '');
+        file_put_contents(compiled_view_path() . 'test01.php', '');
+        file_put_contents(compiled_view_path() . 'test01.dep', '');
+        file_put_contents(compiled_view_path() . 'test02.php', '');
         $view_command = new ViewCommand(['php', 'cli', 'view:clear'], [
             'prefix' => '*.php',
         ]);
@@ -64,8 +64,8 @@ final class ViewCommandsTest extends TestCase
         $exit = $view_command->clear();
         ob_get_clean();
         $this->assertEquals(0, $exit);
-        $this->assertFileDoesNotExist(cache_path() . 'test01.php');
-        $this->assertFileDoesNotExist(cache_path() . 'test01.dep');
-        $this->assertFileDoesNotExist(cache_path() . 'test02.php');
+        $this->assertFileDoesNotExist(compiled_view_path() . 'test01.php');
+        $this->assertFileDoesNotExist(compiled_view_path() . 'test01.dep');
+        $this->assertFileDoesNotExist(compiled_view_path() . 'test02.php');
     }
 }
