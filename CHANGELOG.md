@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 0.41.2 - 2026-04-27
+### Fixed
+- Fixed `VarExport` array indentation ([#500](https://github.com/SonyPradana/php-library/pull/500)).
+- Fixed redis unix socket dsn parse ([#504](https://github.com/SonyPradana/php-library/pull/504)).
+- Fixed improve templator component variable extraction and cache invalidation ([#501](https://github.com/SonyPradana/php-library/pull/501)).
+
 ## 0.41.1 - 2026-03-29
 ### Added
 - Added Redis DSN parser ([#496](https://github.com/SonyPradana/php-library/pull/498)).

@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-/** @var array<string, string> */
+// auto-generated file, do not edit!
+// generated on 2026-04-27 12:45:51
+
 return [
-    'tag_version'       => '^0.41.1',
+    'tag_version'       => '^0.41.2',
     'split_repositorys' => [
         'sonypradana/cache'       => '/src/System/Cache/',
         'sonypradana/collection'  => '/src/System/Collection/',
